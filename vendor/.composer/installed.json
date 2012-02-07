@@ -1,0 +1,264 @@
+[
+    {
+        "name": "symfony\/console",
+        "version": "2.1.0-dev",
+        "version_normalized": "2.1.0.0-dev",
+        "target-dir": "Symfony\/Component\/Console",
+        "source": {
+            "type": "git",
+            "url": "http:\/\/github.com\/symfony\/Console.git",
+            "reference": "75ca31776bd98ad427f759cbe8a62400e40c73a1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http:\/\/github.com\/symfony\/Console\/zipball\/75ca31776bd98ad427f759cbe8a62400e40c73a1",
+            "reference": "75ca31776bd98ad427f759cbe8a62400e40c73a1",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2"
+        },
+        "type": "library",
+        "names": [
+            "symfony\/console"
+        ],
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ],
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Console": ""
+            }
+        }
+    },
+    {
+        "name": "symfony\/event-dispatcher",
+        "version": "2.1.0-dev",
+        "version_normalized": "2.1.0.0-dev",
+        "target-dir": "Symfony\/Component\/EventDispatcher",
+        "source": {
+            "type": "git",
+            "url": "http:\/\/github.com\/symfony\/EventDispatcher.git",
+            "reference": "716d0f5e627c66538853c0e52a3778534438b100"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http:\/\/github.com\/symfony\/EventDispatcher\/zipball\/716d0f5e627c66538853c0e52a3778534438b100",
+            "reference": "716d0f5e627c66538853c0e52a3778534438b100",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2"
+        },
+        "type": "library",
+        "names": [
+            "symfony\/event-dispatcher"
+        ],
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ],
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\EventDispatcher": ""
+            }
+        }
+    },
+    {
+        "name": "symfony\/filesystem",
+        "version": "2.1.0-dev",
+        "version_normalized": "2.1.0.0-dev",
+        "target-dir": "Symfony\/Component\/Filesystem",
+        "source": {
+            "type": "git",
+            "url": "http:\/\/github.com\/symfony\/filesystem.git",
+            "reference": "a085980d8becf87271978a5516b52bc1834511fa"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http:\/\/github.com\/symfony\/filesystem\/zipball\/a085980d8becf87271978a5516b52bc1834511fa",
+            "reference": "a085980d8becf87271978a5516b52bc1834511fa",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2"
+        },
+        "type": "library",
+        "names": [
+            "symfony\/filesystem"
+        ],
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ],
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Filesystem": ""
+            }
+        }
+    },
+    {
+        "name": "symfony\/finder",
+        "version": "2.1.0-dev",
+        "version_normalized": "2.1.0.0-dev",
+        "target-dir": "Symfony\/Component\/Finder",
+        "source": {
+            "type": "git",
+            "url": "http:\/\/github.com\/symfony\/Finder.git",
+            "reference": "dd56fc9f1f0baa006d7491d5c17eb3e2dd8a066c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http:\/\/github.com\/symfony\/Finder\/zipball\/dd56fc9f1f0baa006d7491d5c17eb3e2dd8a066c",
+            "reference": "dd56fc9f1f0baa006d7491d5c17eb3e2dd8a066c",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2"
+        },
+        "type": "library",
+        "names": [
+            "symfony\/finder"
+        ],
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ],
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Finder": ""
+            }
+        }
+    },
+    {
+        "name": "symfony\/yaml",
+        "version": "2.1.0-dev",
+        "version_normalized": "2.1.0.0-dev",
+        "target-dir": "Symfony\/Component\/Yaml",
+        "source": {
+            "type": "git",
+            "url": "http:\/\/github.com\/symfony\/Yaml.git",
+            "reference": "1eaee09e4ac15923594502bc37e769b29eb7101d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http:\/\/github.com\/symfony\/Yaml\/zipball\/1eaee09e4ac15923594502bc37e769b29eb7101d",
+            "reference": "1eaee09e4ac15923594502bc37e769b29eb7101d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2"
+        },
+        "type": "library",
+        "names": [
+            "symfony\/yaml"
+        ],
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ],
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Yaml": ""
+            }
+        }
+    },
+    {
+        "name": "symfony\/class-loader",
+        "version": "2.1.0-dev",
+        "version_normalized": "2.1.0.0-dev",
+        "target-dir": "Symfony\/Component\/ClassLoader",
+        "source": {
+            "type": "git",
+            "url": "http:\/\/github.com\/symfony\/ClassLoader.git",
+            "reference": "54a1bdbe994b1f88861561b55f810e318f0edbbd"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http:\/\/github.com\/symfony\/ClassLoader\/zipball\/54a1bdbe994b1f88861561b55f810e318f0edbbd",
+            "reference": "54a1bdbe994b1f88861561b55f810e318f0edbbd",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2"
+        },
+        "type": "library",
+        "names": [
+            "symfony\/class-loader"
+        ],
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ],
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\ClassLoader": ""
+            }
+        }
+    },
+    {
+        "name": "twig\/twig",
+        "version": "1.6.0",
+        "version_normalized": "1.6.0.0",
+        "source": {
+            "type": "git",
+            "url": "http:\/\/github.com\/fabpot\/Twig.git",
+            "reference": "v1.6.0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http:\/\/github.com\/fabpot\/Twig\/zipball\/v1.6.0",
+            "reference": "v1.6.0",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.4"
+        },
+        "type": "library",
+        "names": [
+            "twig\/twig"
+        ],
+        "installation-source": "dist",
+        "license": [
+            "BSD"
+        ],
+        "autoload": {
+            "psr-0": {
+                "Twig_": "lib\/"
+            }
+        }
+    },
+    {
+        "name": "pimple\/pimple",
+        "version": "1.0.0-dev",
+        "version_normalized": "1.0.0.0-dev",
+        "source": {
+            "type": "git",
+            "url": "http:\/\/github.com\/fabpot\/Pimple.git",
+            "reference": "321db91e49b6cf8cbeed58d8db662d40de96d2c3"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http:\/\/github.com\/fabpot\/Pimple\/zipball\/321db91e49b6cf8cbeed58d8db662d40de96d2c3",
+            "reference": "321db91e49b6cf8cbeed58d8db662d40de96d2c3",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "type": "library",
+        "names": [
+            "pimple\/pimple"
+        ],
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ],
+        "autoload": {
+            "psr-0": {
+                "Pimple": "lib\/"
+            }
+        }
+    }
+]
