@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="{{ book.language }}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Metadata used by PrinceXML to set PDF metadata -->
+    <title>{{ book.title }}</title>
+    <meta name="author" content="{{ book.author }}" />
+    <meta name="date" content="{{ book.publication_date|default('now')|date(app.getLabel('date_format')) }}"/>
+    <meta name="generator" content="{{ book.generator.name }} {{ book.generator.version }}"/>
+</head>
+
+<body>
+
+{% for item in items %}
+    {{ item.content }}
+{% endfor %}
+
+</body>
+</html>

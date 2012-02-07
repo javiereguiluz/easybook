@@ -1,0 +1,45 @@
+book:
+    title:            easybook documentation
+    author:           Javier Eguiluz
+    edition:          First edition
+    language:         en
+    publication_date: ~
+
+    generator: { name: easybook, version: 4.0 }
+
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+        - { element: chapter, number: 3, content: chapter3.md }
+
+    editions:
+        print:
+            format:         pdf
+            isbn:           ~
+            auto_label:     true
+            include_styles: true
+            two_sided:      true
+            page_size:      A4
+            margin:
+                top:        25mm
+                bottom:     25mm
+                inner:      30mm
+                outter:     20mm
+            toc:
+                deep:       2
+                elements:   ["appendix", "chapter"]
+
+        web:
+            format:         html
+            auto_label:     true
+            include_styles: true
+            highlight_code: true
+            toc:
+                deep:       2
+                elements:   ["appendix", "chapter"]
+
+        website:
+            extends:        web
+            format:         html_chunked

@@ -1,0 +1,10 @@
+# Deutsch translation of easybook default titles
+title:
+    acknowledgement: 'Danksagungen'
+    author:          'Autor'
+    cover:           'Einband'
+    dedication:      'Widmung'
+    edition:         'Ausgabe'
+    license:         'Lizenz'
+    title:           'Schmutztitel'
+    toc:             'Inhaltsverzeichnis'

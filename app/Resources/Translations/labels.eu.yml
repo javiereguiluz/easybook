@@ -1,0 +1,33 @@
+# Basque translation of the strings managed by easybook
+label:
+    appendix: ['{{ item.number }} Apendizea', '', '', '', '', '']
+    chapter:
+        - '{{ item.number }}. Kapitulua'
+        - '{{ counters[0:2]|join(".") }}' # 1.1
+        - '{{ counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+    figure:          'Figura {{ item.number }}.{{ counter }}'
+    part:            '{{ item.number }}. Zatia'
+    table:           'Taula {{ item.number }}.{{ counter }}'
+
+    acknowledgement: ''
+    author:          ''
+    cover:           ''
+    dedication:      ''
+    edition:         ''
+    title:           ''
+    toc:             ''
+
+    # Navigation elements
+    index:           'Indizea'
+    next:            'Hurrengoa'
+    previous:        'Aurrekoa'
+
+    # Special
+    date_format:     'Y/m/d'
+
+    # Other
+    by:              ''
+    page:            'orria'

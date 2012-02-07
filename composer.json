@@ -1,0 +1,32 @@
+{
+    "name":        "easybook",
+    "description": "Book publishing application",
+    "keywords":    ["book", "publish", "ebook", "e-book", "documentation"],
+    "homepage":    "http://",
+    "version":     "4.0",
+    "license":     "MIT",
+    "authors": [
+        {
+            "name":     "Javier Eguiluz",
+            "email":    "javier.eguiluz@gmail.com",
+            "homepage": "http://javiereguiluz.com"
+        }
+    ],
+
+    "require": {
+        "pimple/pimple":            "1.*",
+
+        "symfony/class-loader":     "2.1.*",
+        "symfony/console":          "2.1.*",
+        "symfony/event-dispatcher": "2.1.*",
+        "symfony/filesystem":       "2.1.*",
+        "symfony/finder":           "2.1.*",
+        "symfony/yaml":             "2.1.*",
+        
+        "twig/twig":                "1.6.*"
+    },
+
+    "autoload": {
+        "psr-0": { "Easybook": "src/" }
+    }
+}

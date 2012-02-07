@@ -1,0 +1,10 @@
+# Catalan translation of easybook default titles
+title:
+    acknowledgement: 'Agraïments'
+    author:          'Autor'
+    cover:           'Coberta'
+    dedication:      'Dedicatòria'
+    edition:         'Edició'
+    license:         'Llicència'
+    title:           'Portadella'
+    toc:             'Sumari'

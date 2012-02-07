@@ -1,0 +1,10 @@
+# Basque translation of easybook default titles
+title:
+    acknowledgement: 'Eskerrak'
+    author:          'Autor'
+    cover:           'Azala'
+    dedication:      'Eskaintza'
+    edition:         'Edizioa'
+    license:         'Lizentzia'
+    title:           'Titulua'
+    toc:             'Gaien Aurkibidea'

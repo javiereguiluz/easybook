@@ -1,0 +1,33 @@
+# Catalan translation of the strings managed by easybook
+label:
+    appendix: ['Apèndix {{ item.number }} ', '', '', '', '', '']
+    chapter:
+        - 'Capítol {{ item.number }} '
+        - '{{ counters[0:2]|join(".") }}' # 1.1
+        - '{{ counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+    figure:          'Figura {{ item.number }}.{{ counter }} '
+    part:            'Secció {{ item.number }} '
+    table:           'Taula {{ item.number }}.{{ counter }} '
+
+    acknowledgement: ''
+    author:          ''
+    cover:           ''
+    dedication:      ''
+    edition:         ''
+    title:           ''
+    toc:             ''
+
+    # Navigation elements
+    index:           'Inici'
+    next:            'Següent'
+    previous:        'Anterior'
+
+    # Special
+    date_format:     'd/m/Y'
+
+    # Other
+    by:              'per'
+    page:            'pàgina'

@@ -1,0 +1,46 @@
+book:
+    title:            "{{ title }}"
+    author:           "Change this: Author Name"
+    edition:          "First edition"
+    language:         en
+    publication_date: ~
+
+    generator: { name: {{ generator.name }}, version: {{ generator.version }} }
+
+    contents:
+        # available element types: acknowledgement, appendix, author, chapter,
+        # cover, dedication, edition, license, part, title, toc
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+
+    editions:
+        print:
+            format:         pdf
+            auto_label:     true
+            include_styles: true
+            isbn:           ~
+            margin:
+                top:        25mm
+                bottom:     25mm
+                inner:      30mm
+                outter:     20mm
+            page_size:      A4
+            two_sided:      true
+            toc:
+                deep:       2
+                elements:   ["appendix", "chapter"]
+
+        web:
+            format:         html
+            auto_label:     true
+            highlight_code: true
+            include_styles: true
+            toc:
+                deep:       2
+                elements:   ["appendix", "chapter"]
+
+        website:
+            extends:        web
+            format:         html_chunked

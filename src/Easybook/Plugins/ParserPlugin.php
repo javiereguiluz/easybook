@@ -1,0 +1,157 @@
+<?php
+
+/*
+ * This file is part of the easybook application.
+ *
+ * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Easybook\Plugins;
+
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\ParseEvent;
+
+class ParserPlugin implements EventSubscriberInterface
+{
+    static public function getSubscribedEvents()
+    {
+        return array(
+            Events::POST_PARSE => 'onItemPostParse',
+        );
+    }
+
+    public function onItemPostParse(ParseEvent $event)
+    {
+        $item = $event->getItem();
+
+        // strip title from the parsed content
+        if (count($item['toc']) > 0) {
+            $heading = $item['toc'][0];
+
+            $title = sprintf("<h%s id=\"%s\">%s</h%s>\n\n",
+                $heading['level'],
+                $heading['slug'],
+                $heading['title'],
+                $heading['level']
+            );
+
+            $item['content'] = str_replace($title, '', $item['content']);
+            $item['slug']    = $heading['slug'];
+            $item['title']   = $heading['title'];
+        }
+
+        $event->setItem($item);
+
+        // add labels if the book wants them ('auto_label' option)
+        // TODO: extensibility: each content should be able to override 'auto_label' option
+        $item = $event->getItem();
+        if ($event->app->edition('auto_label') && count($item['toc']) > 0) {
+            // prepare labels
+            $counters = array(
+                1 => $item['config']['number'],
+                2 => 0,
+                3 => 0,
+                4 => 0,
+                5 => 0,
+                6 => 0
+            );
+
+            foreach ($item['toc'] as $key => $entry) {
+                $level = $entry['level'];
+                if ($level > 1) {
+                    $counters[$level]++;
+                }
+
+                // Reset the counters for the higher heading levels
+                for ($i = $level+1; $i <= 6; $i++) {
+                    $counters[$i] = 0;
+                }
+
+                $label = $event->app->getLabel($item['config']['element'], array(
+                    'item'     => $item['config'],
+                    'counters' => $counters,
+                    'level'    => $level
+                ));
+
+                $entry['label'] = $label;
+                $item['toc'][$key] = $entry;
+            }
+
+            // the label of the item matches the label of the first toc element
+            $item['label'] = $item['toc'][0]['label'];
+
+            $event->setItem($item);
+
+            // add labels to content
+            $item = $event->getItem();
+            foreach ($item['toc'] as $i => $entry) {
+                // the parsed title can be different from the toc entry title
+                // that's the case for the titles with markup code inside (* ` ** etc.)
+                // thus, the replacement must be done based on a fuzzy title that
+                // doesn't include the title text
+                $fuzzyTitle = "/<h".$entry['level']." id=\"".$entry['slug']."\">.*<\/h".$entry['level'].">\n\n/";
+
+                $labeledTitle = sprintf("<h%s id=\"%s\">%s %s</h%s>\n\n",
+                    $entry['level'],
+                    $entry['slug'],
+                    $entry['label'],
+                    $entry['title'],
+                    $entry['level']
+                );
+
+                $item['content'] = preg_replace($fuzzyTitle, $labeledTitle, $item['content']);
+            }
+
+            $event->setItem($item);
+        }
+
+        // ensure that the item has a title (using the default title if necessary)
+        $item = $event->getItem();
+        if ('' == $item['title']) {
+            $item['title'] = $event->app->getTitle($item['config']['element']);
+            $item['slug']  = $event->app->get('slugger')->slugify($item['title']);
+
+            $event->setItem($item);
+        }
+
+        // ensure that the item has a label (using the default label if necessary)
+        $item = $event->getItem();
+        if ('' == $item['label']) {
+            $item['label'] = $event->app->getLabel($item['config']['element'], array(
+                'item' => $item['config'],
+            ));
+            $event->setItem($item);
+        }
+
+        // fix image URLs
+        $item = $event->getItem();
+        $item['content'] = preg_replace_callback(
+            '/<img src="(.*)"(.*) \/>/U',
+            function($matches) {
+                $uri = $matches[1];
+                if ('images/' != substr($uri, 0, 7)) {
+                    $uri = 'images/'.$uri;
+                }
+
+                return sprintf('<img src="%s"%s />', $uri, $matches[2]);
+            },
+            $item['content']
+        );
+        $event->setItem($item);
+
+        // parse internal links
+        $item = $event->getItem();
+        $item['content'] = preg_replace_callback(
+            '/<a href="#(.*)"(.*)<\/a>/U',
+            function($matches) {
+                return sprintf('<a class="link:internal" href="#%s"%s</a>', $matches[1], $matches[2]);
+            },
+            $item['content']
+        );
+        $event->setItem($item);
+    }
+}

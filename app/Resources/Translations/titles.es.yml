@@ -1,0 +1,10 @@
+# Spanish translation of easybook default titles
+title:
+    acknowledgement: 'Agradecimientos'
+    author:          'Sobre el autor'
+    cover:           'Portada'
+    dedication:      'Dedicatoria'
+    edition:         'Sobre esta edición'
+    license:         'Licencia'
+    title:           'Título'
+    toc:             'Índice de contenidos'

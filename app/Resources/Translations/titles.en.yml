@@ -1,0 +1,10 @@
+# English translation of easybook default titles
+title:
+    acknowledgement: 'Acknowledgements'
+    author:          'About the author'
+    cover:           'Cover'
+    dedication:      'Dedication'
+    edition:         'About this edition'
+    license:         'License'
+    title:           'Title'
+    toc:             'Table of contents'

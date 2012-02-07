@@ -1,0 +1,33 @@
+# Deutsch translation of the strings managed by easybook
+label:
+    appendix: ['Anhang {{ item.number }} ', '', '', '', '', '']
+    chapter:
+        - 'Kapitel {{ item.number }} '
+        - '{{ counters[0:2]|join(".") }}' # 1.1
+        - '{{ counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+    figure:          'Abbildung {{ item.number }}.{{ counter }} '
+    part:            'Teil {{ item.number }} '
+    table:           'Tabelle {{ item.number }}.{{ counter }} '
+
+    acknowledgement: ''
+    author:          ''
+    cover:           ''
+    dedication:      ''
+    edition:         ''
+    title:           ''
+    toc:             ''
+
+    # Navigation elements
+    index:           'Zum Anfang'
+    next:            'Weiter'
+    previous:        'Zurück'
+
+    # Special
+    date_format:     'd.m.Y'
+
+    # Other
+    by:              ''
+    page:            'Seite'

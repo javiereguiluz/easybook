@@ -1,0 +1,33 @@
+# Italian translation of the strings managed by easybook
+label:
+    appendix: ['Appendice {{ item.number }} ', '', '', '', '', '']
+    chapter:
+        - 'Capitolo {{ item.number }} '
+        - '{{ counters[0:2]|join(".") }}' # 1.1
+        - '{{ counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+    figure:          'Figura {{ item.number }}.{{ counter }} '
+    part:            'Sezione {{ item.number }} '
+    table:           'Tabella {{ item.number }}.{{ counter }} '
+
+    acknowledgement: ''
+    author:          ''
+    cover:           ''
+    dedication:      ''
+    edition:         ''
+    title:           ''
+    toc:             ''
+
+    # Navigation elements
+    index:           'Partenza'
+    next:            'Avanti'
+    previous:        'Indietro'
+
+    # Special
+    date_format:     'd/m/Y'
+
+    # Other
+    by:              'di'
+    page:            'pagina'

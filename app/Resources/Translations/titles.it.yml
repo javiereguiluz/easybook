@@ -1,0 +1,10 @@
+# Italian translation of easybook default titles
+title:
+    acknowledgement: 'Riconoscimenti'
+    author:          'Autore'
+    cover:           'Copertina'
+    dedication:      'Dedica'
+    edition:         'Edizione'
+    license:         'Licenza'
+    title:           'Frontespizio'
+    toc:             'Indice dei contenuti'

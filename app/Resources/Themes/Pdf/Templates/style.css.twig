@@ -1,0 +1,790 @@
+/*
+                    |              |
+,---.,---.,---.,   .|---.,---.,---.|__/
+|---',---|`---.|   ||   ||   ||   ||  \
+`---'`---^`---'`---|`---'`---'`---'`   `
+               `---'
+
+  Title:        Base CSS for easybook v4 books
+  Author:       javier.eguiluz@gmail.com
+  Version:      4.0
+  Last updated: 6 - feb - 2012
+*/
+
+/* Custom fonts
+   ------------------------------------------------------------------------- */
+
+/* Alte Haas Grotesk : http://www.dafont.com/alte-haas-grotesk.font */
+@font-face {
+    font-family: alte-haas-grotesk;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Alte_Haas_Grotesk/AlteHaasGroteskRegular.ttf")
+}
+
+@font-face {
+    font-family: alte-haas-grotesk;
+    font-style: normal;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Alte_Haas_Grotesk/AlteHaasGroteskBold.ttf")
+}
+
+/* Neuton : http://www.fontsquirrel.com/fonts/neuton */
+@font-face {
+    font-family: neuton;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Neuton/Neuton-Regular.ttf")
+}
+
+@font-face {
+    font-family: neuton;
+    font-style: normal;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Neuton/Neuton-Bold.ttf")
+}
+
+@font-face {
+    font-family: neuton;
+    font-style: italic;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Neuton/Neuton-Italic.ttf")
+}
+
+@font-face {
+    font-family: neuton;
+    font-style: italic;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Neuton/Neuton-Italic.ttf")
+}
+
+/* Open Sans : http://www.google.com/webfonts/specimen/Open+Sans */
+@font-face {
+    font-family: open-sans;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-Regular.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: normal;
+    font-weight: 600;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-Semibold.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: normal;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-Bold.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: italic;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-Italic.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: italic;
+    font-weight: 600;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-SemiboldItalic.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: italic;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-BoldItalic.ttf")
+}
+
+/* Inconsolata : http://www.google.com/webfonts/specimen/Inconsolata */
+@font-face {
+    font-family: inconsolata;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Inconsolata/Inconsolata.ttf")
+}
+
+/* Reset styles
+   ------------------------------------------------------------------------- */
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    border: 0;
+    outline: 0;
+    background: transparent;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Basic
+   ------------------------------------------------------------------------- */
+
+body {
+    background: #FFF;
+    color: #000;
+    font: 14pt/1.2 neuton, serif;
+}
+
+/* links */
+a {
+    border-bottom: 1px solid #EFEFEF;
+    color: #000;
+    text-decoration: none;
+}
+
+a::after {
+    border: none;
+    color: #777;
+    content: " (" attr(href) ") ";
+    font-style: normal;
+}
+
+a:contains("www")::after,
+a:contains("http://")::after,
+a:contains("https://")::after  {
+    border: none;
+    content: "";
+}
+
+/* headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: open-sans, sans-serif;
+    font-weight: 600;
+    letter-spacing: -.5pt;
+    line-height: 1;
+}
+
+h1 {
+    font-size: 26pt;
+    margin: 12pt 0 3pt 0;
+}
+
+h2 {
+    font-size: 17pt;
+    margin: 12pt 0 3pt 0;
+}
+
+h3 {
+    font-size: 14pt;
+    margin: 12pt 0 3pt 0;
+}
+
+h4 {
+    font-size: 12pt;
+    margin: 12pt 0 3pt 0;
+}
+
+h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+    margin-top: 0;
+}
+
+/* paragraphs */
+p {
+    ffont-size: 14pt;
+    lline-height: 1.2;
+    margin-bottom: 1em;
+    text-align: justify;
+
+    hyphens: auto;
+    hyphenate-patterns: url("{{ resources_dir }}/Dictionaries/hyph_{{ book.language }}.dic");
+}
+
+/* lists */
+ul, ol {
+    list-style-type: disc;
+    margin: 1em 0;
+    padding-left: 1cm;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ul li, ol li {
+    margin: .5em 0;
+}
+
+acronym {
+    text-decoration: none;
+    border: none;
+}
+
+blockquote::before {
+    content: "\201C";
+}
+
+blockquote::after {
+    content: "\201D";
+}
+
+/* Generated content
+   ------------------------------------------------------------------------- */
+.page\:cover h1 {
+    string-set: book_title content();
+}
+
+.page\:chapter h1 {
+    string-set: chapter_title content();
+    counter-increment: chapter_number;
+}
+
+.page\:chapter h2 {
+    string-set: chapter_section content();
+}
+
+.page\:appendix h1 {
+    string-set: appendix_title content();
+}
+
+.page\:appendix h2 {
+    string-set: appendix_section content();
+}
+
+/* Page layout
+   ------------------------------------------------------------------------- */
+@page {
+    size: {{ edition.page_size }};
+}
+
+{% if edition.two_sided %}
+@page:right {
+    margin: {{ edition.margin.top|default('25mm') }} {{ edition.margin.outter|default('20mm') }} {{ edition.margin.bottom|default('25mm') }} {{ edition.margin.inner|default('30mm') }};
+
+    @top-left {
+        border-bottom: 1px solid #CCC;
+        color: #777;
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: baseline;
+    }
+
+    @top-right {
+        border-bottom: 1px solid #CCC;
+        color: #777;
+        font: 9pt  open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: baseline;
+    }
+
+    @bottom-right {
+        font: bold 12pt open-sans, sans-serif;
+        padding-top: 11pt;
+        vertical-align: top;
+    }
+
+    @bottom-left {
+    }
+}
+
+@page:left {
+    margin: {{ edition.margin.top|default('25mm') }} {{ edition.margin.inner|default('30mm') }} {{ edition.margin.bottom|default('25mm') }} {{ edition.margin.outter|default('20mm') }};
+
+    @top-left {
+        border-bottom: 1px solid #CCC;
+        color: #AAA;
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: baseline;
+    }
+
+    @top-right {
+        border-bottom: 1px solid #CCC;
+        color: #AAA;
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: baseline;
+    }
+
+    @bottom-left {
+        font: bold 12pt open-sans, sans-serif;
+        padding-top: 11pt;
+        vertical-align: top;
+    }
+
+    @bottom-right {
+    }
+}
+{% else %}
+@page {
+    margin: {{ edition.margin.top|default('25mm') }} {{ edition.margin.outter|default('20mm') }} {{ edition.margin.bottom|default('25mm') }} {{ edition.margin.inner|default('30mm') }};
+
+    @top-left {
+        border-bottom: 1px solid #CCC;
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: bottom;
+    }
+
+    @top-right {
+        border-bottom: 1px solid #CCC;
+        font: 9pt  open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: bottom;
+    }
+
+    @bottom-right {
+        font: bold 12pt open-sans, sans-serif;
+        padding-top: 11pt;
+        vertical-align: top;
+    }
+
+    @bottom-left {
+    }
+}
+{% endif %}
+
+/* special pages */
+@page no-header-footer {
+    @top-left     { content: ''; border: none; }
+    @top-right    { content: ''; border: none; }
+    @bottom-left  { content: ''; border: none; }
+    @bottom-right { content: ''; border: none; }
+}
+
+@page no-header {
+    @top-left  { content: ''; border: none; }
+    @top-right { content: ''; border: none; }
+}
+@page no-header-black {
+    @top-left  { content: ''; border: none; }
+    @top-right { content: ''; border: none; }
+    background: #000;
+    color: #FFF;
+}
+
+@page no-footer {
+    @bottom-left  { content: ''; border: none; }
+    @bottom-right { content: ''; border: none; }
+}
+
+@page page_chapter:first {
+    @top { content: '' !important; border: none; }
+    @top-left { content: '' !important; border: none; }
+    @top-right { content: '' !important; border: none; }
+}
+
+{% if edition.two_sided %}
+@page page_chapter:right {
+    @top-left  { content: string(book_title); }
+    @top-right { content: string(chapter_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+
+@page page_chapter:left {
+    @top-left  { content: string(chapter_title, first); }
+    @top-right { content: string(book_title); }
+    @bottom-right { }
+    @bottom-left  { content: counter(page); }
+}
+{% else %}
+@page page_chapter {
+    @top-left  { content: string(book_title); }
+    @top-right { content: string(chapter_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+{% endif %}
+
+@page page_appendix:first {
+    @top-left  { content: '' !important; border: none; }
+    @top-right { content: '' !important; border: none; }
+}
+
+{% if edition.two_sided %}
+@page page_appendix:right {
+    @top-left  { content: string(book_title); }
+    @top-right { content: string(appendix_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+
+@page page_appendix:left {
+    @top-left  { content: string(appendix_title, first); }
+    @top-right { content: string(book_title); }
+    @bottom-right { }
+    @bottom-left  { content: counter(page); }
+}
+{% else %}
+@page page_appendix {
+    @top-left  { content: string(book_title); }
+    @top-right { content: string(appendix_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+{% endif %}
+
+@page landscape {
+    size: {{ edition.page_size }} landscape;
+}
+
+/* common features */
+.new-page {
+    page-break-before: always !important;
+}
+.follow-blank {
+    page-break-after: always !important;
+}
+.start-left {
+    page-break-before: left !important;
+}
+
+/* exceptions */
+.page\:edition + .page\:license {
+    page-break-before: avoid !important;
+}
+
+/* page 'blank' */
+.page\:blank {
+    page-break-before: always !important;
+    page-break-after: always !important;
+    page: no-header-footer;
+}
+
+/* page 'cover' */
+.page\:cover {
+    page: no-header-footer;
+}
+.page\:cover h1 {
+    font-family: alte-haas-grotesk;
+    font-size: 64pt;
+    line-height: 1.1;
+    letter-spacing: -2pt;
+    margin-top: 5cm;
+    text-align: center;
+    width: 95%;
+}
+.page\:cover h2 {
+    font-family: alte-haas-grotesk;
+    font-size: 24pt;
+    font-weight: normal;
+    text-align: center;
+    width: 95%;
+    position: absolute;
+    bottom: 0;
+}
+
+/* page 'title' */
+.page\:title {
+    page: no-header-footer;
+}
+
+.page\:title h1 {
+    font-size: 36pt;
+    line-height: 1;
+    margin-top: 7cm;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 80%;
+}
+
+.page\:title h2 {
+    font-size: 24pt;
+    margin-top: 1cm;
+    text-align: center;
+}
+
+.page\:title h3 {
+    font-size: 18pt;
+    font-style: italic;
+    font-weight: normal;
+    margin-top: 1cm;
+    text-align: center;
+}
+
+/* page 'edition' */
+.page\:edition {
+    page: no-header;
+}
+
+/* page 'license' */
+.page\:license {
+    page: no-header;
+}
+
+/* page 'part' */
+.page\:part {
+    page-break-before: right !important;
+}
+
+.page\:part, .page\:part + .page\:blank {
+    page: no-header-black;
+}
+
+.page\:part h1 {
+    background: #000 !important;
+    border: 1cm solid #000;
+    color: #FFF !important;
+    font-size: 48pt;
+    padding-top: 10cm;
+    text-align: right;
+    margin-top: -1cm;
+    margin-left: -1cm;
+    height: 24cm;
+    width: 100%;
+}
+.page\:part h1 span {
+    display: block;
+    font-weight: normal;
+    font-size: 36pt;
+}
+
+/* page 'dedication' */
+.page\:dedication {
+    page-break-before: right !important;
+    page: no-header;
+    margin-top: 10em;
+}
+
+.page\:dedication p {
+    font-style: italic;
+    font-size: 16pt;
+    text-align: right;
+}
+
+/* page 'toc' */
+.page\:toc {
+    page-break-before: right !important;
+    page: no-header;
+}
+
+.page\:toc h1 {
+    margin-bottom: .5em;
+}
+
+.page\:toc ul {
+    list-style-type: none;
+    margin: 0 0 0 1em;
+    padding: 0;
+}
+
+.page\:toc ul li {
+    margin: .3em 0;
+}
+
+.page\:toc li:first-child {
+    margin: 0 0 .3em 0;
+}
+
+.page\:toc ul a {
+    border: none;
+    font-size: 14pt;
+    text-decoration: none;
+}
+
+.page\:toc ul li.level-1,
+.page\:toc ul li.level-1 a {
+    font-weight: bold;
+    font-size: 16pt;
+}
+.page\:toc ul li.level-1 span {
+    font-weight: normal;
+}
+
+.page\:toc ul li.level-2,
+.page\:toc ul li.level-3,
+.page\:toc ul li.level-4,
+.page\:toc ul li.level-5,
+.page\:toc ul li.level-6 {
+    font-size: 14pt;
+    margin-left: 1em;
+}
+
+.page\:toc ul li a span::after {
+    content: " - ";
+}
+
+.page\:toc a::after {
+    color: inherit;
+    content: leader('.') target-counter(attr(href), page);
+}
+
+/* page 'chapter' */
+.page\:chapter {
+    page-break-before: right !important;
+    page: page_chapter;
+    prince-page-group: start;  /* don't touch this! needed for 'page' property */
+}
+
+.page\:chapter h1 span {
+    display: block;
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 4pt;
+    text-transform: uppercase;
+}
+
+.page\:chapter a.link\:internal::after {
+    content: " ({{ app.getLabel('page') }} " target-counter(attr(href), page) ")";
+}
+
+/* page 'appendix' */
+.page\:appendix {
+    page-break-before: right !important;
+    page: page_appendix;
+    prince-page-group: start;  /* don't touch this! needed for 'page' property */
+}
+
+.page\:appendix h1 span {
+    display: block;
+    font-size: 16pt;
+    text-transform: uppercase;
+}
+
+.page\:appendix a.link\:internal::after {
+    content: " ({{ app.getLabel('page') }} " target-counter(attr(href), page) ")";
+}
+
+/* Code listings
+   ------------------------------------------------------------------------- */
+
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+    font-size: inherit;
+    font-weight: normal;
+}
+
+code, pre {
+    color: #000;
+    font-family: inconsolata, monospace;
+    font-size: 12pt;
+    border-radius: 3px;
+    line-height: 1.4;
+    padding: 0 3px 2px;
+}
+
+code {
+    background-color: #F7F7F9;
+    border: 1px solid #E1E1E8;
+    color: #076920;
+    hyphens: none;
+    padding: 3px 4px;
+}
+
+pre {
+    display: block;
+    border-left: 1px solid #CCC;
+    border-radius: 0;
+    font-size: 11pt;
+    line-height: 1.4;
+    margin-left: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding-left: .4cm;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+pre code {
+    background-color: transparent;
+    border: none;
+    color: #111;
+    padding: 0;
+}
+
+
+/* Images
+   ------------------------------------------------------------------------- */
+div.img {
+    text-align: center;
+    margin: .5em auto;
+}
+
+div.img p.title {
+    margin: 0;
+    text-align: center;
+}
+
+/* Tables
+   ------------------------------------------------------------------------- */
+table {
+    width: 100%;
+    margin: 1cm 0;
+    font-size: 12pt;
+}
+table p, table ul, table ol {
+    font-size: 12pt;
+}
+table code {
+    font-size: 11pt;
+}
+
+table, th, td {
+    border: solid;
+    border-collapse: collapse;
+    border-color: #CCC;
+    border-width: 1px 0 1px;
+    padding: .3em;
+}
+
+table th {
+    border-color: #000;
+    font: 600 9pt open-sans, sans-serif;
+    text-align: left;
+    vertical-align: middle;
+}
+
+table tr:last-child td {
+    border-color: #000;
+}
+
+table thead th, table thead td {
+    border-bottom-width: 2px;
+}
+
+table p {
+    margin: 0;
+}
+
+/* Footnotes
+   ------------------------------------------------------------------------- */
+.fn {
+    display: prince-footnote;
+    counter-increment: footnote;
+    font-size: 9pt !important;
+}
+.page\:chapter h1, .page\:appendix h1 { counter-reset: footnote }
+
+.fn::footnote-call {
+    content: "[" counter(footnote) "]";
+    font: bold 8pt open-sans, sans-serif;
+    vertical-align: super;
+    line-height: none;
+}
+
+.fn::footnote-marker {
+    content: "[" counter(footnote) "]";
+    font: bold 9pt open-sans, sans-serif;
+    padding: 0 4pt 0 8pt;
+}
+
+@page {
+    @footnotes {
+        border-top: solid black thin;
+        margin-top: 6pt;
+        padding: 6pt 0 0 12pt;
+    }
+}
