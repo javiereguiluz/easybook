@@ -4,6 +4,8 @@
 
 **easybook** is an application that lets you easily publish books in various electronic formats. It was originally designed to publish technical programming books, but you can use **easyboook** to publish any kind of book, manual or documentation.
 
+**easybook** project website: <http://easybook-project.org>
+
 ## Installation ##
 
   * If you use Git:
