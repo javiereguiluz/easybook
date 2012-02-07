@@ -66,7 +66,7 @@ class BookPublishCommand extends BaseCommand
             $slug = $dialog->ask($output, "\n Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>):\n > ");
 
             $slugExists = file_exists($dir.'/'.$slug);
-            if (!$slugExists) {
+            if ('' == $slug || !$slugExists) {
                 $output->writeln(array(
                     "",
                     " <bg=red;fg=white> ERROR </> The <info>$slug</info> directory doesn't exist in:",
