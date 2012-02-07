@@ -62,7 +62,7 @@ class BookPublishCommand extends BaseCommand
 
         // Ask for the 'slug' if it doesn't exist
         $slugExists = file_exists($dir.'/'.$slug);
-        while (!$slugExists) {
+        while ('' == $slug || !$slugExists) {
             $slug = $dialog->ask($output, "\n Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>):\n > ");
 
             $slugExists = file_exists($dir.'/'.$slug);
