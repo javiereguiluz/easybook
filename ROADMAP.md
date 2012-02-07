@@ -2,6 +2,8 @@
 
 ## easybook 4.X () ##
 
+(in no particular order)
+
   * Code syntax highlighting (both in PDF and HTML books)
   * Consider a cache mechanism for not regenerating unchanged contents
   * Plugins should be able to register resources (external libs, assets, ...)
@@ -20,6 +22,7 @@
   * Add support for multiple edition inheritance
   * Add unit tests
   * Improve HTML editions design and UX
+  * Add ePub format publisher
 
 ## easybook 4.0 (7-feb-2012) ##
 
