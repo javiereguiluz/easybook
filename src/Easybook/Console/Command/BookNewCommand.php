@@ -83,8 +83,19 @@ class BookNewCommand extends BaseCommand
         }
 
         // create the skeleton of the new book
+        // don't use mirror() method because git repository deletes empty directories
         $skeletonDir = $this->app['app.dir.skeletons'].'/Book';
-        $this->app->get('filesystem')->mirror($skeletonDir, $docdir);
+        $this->app->get('filesystem')->mkdir($docdir.'/Contents');
+        $this->app->get('filesystem')->copy(
+            $skeletonDir.'/Contents/chapter1.md',
+            $docdir.'/Contents/chapter1.md'
+        );
+        $this->app->get('filesystem')->copy(
+            $skeletonDir.'/Contents/chapter2.md',
+            $docdir.'/Contents/chapter2.md'
+        );
+        $this->app->get('filesystem')->mkdir($docdir.'/Contents/images');
+        $this->app->get('filesystem')->mkdir($docdir.'/Output');
         $this->app->renderFile($skeletonDir, 'config.yml', $docdir.'/config.yml', array(
             'generator' => array(
                 'name'    => $this->app['app.name'],
