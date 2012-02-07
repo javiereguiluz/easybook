@@ -150,7 +150,7 @@ Using significant names for the book content files can easy its management:
             - { element: chapter, number: 1, content: publishing-your-first-book.md }
             - { element: chapter, number: 2, content: publishing-your-second-book.md }
 
-The most important thing about the `contents` option is the order in which you define the contents. The published book will be always composed of those contents and in that order. Therefore, the following configuration will output a book with  the cover between the two chapters and the table of contents at the very end (completely crazy, but really easy to od with **easybook**):
+The most important thing about the `contents` option is the order in which you define the contents. The published book will be always composed of those contents and in that order. Therefore, the following configuration will output a book with  the cover between the two chapters and the table of contents at the very end (completely crazy, but really easy to do with **easybook**):
 
     book:
         ...

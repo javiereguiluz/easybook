@@ -98,8 +98,6 @@ The name of each edition must be unique for the same book and cannot contain spa
   * `html`, the book is published as a HTML page named `book.html`.
   * `html_chunked`, the book is published as a static website in a directory named `book`.
 
-Cada tipo de edición define sus propias opciones de configuración. Los tipos `html` y `html_chunked` disponen de las mismas opciones:
-
 Editions can modify the aspect of the published book through several configuration options. The `html` and `html_chunked`  edition types share the same options:
 
   * `auto_label`, if `true` all the book headings are prefixed with labels (`1.1`, `1.2`, `1.2.1`, `1.2.2`, etc.)
@@ -109,7 +107,7 @@ Editions can modify the aspect of the published book through several configurati
     * `deep`, the maximum heading level included in the TOC (`1` is the lowest possible number and would only show `<h1>` level headings; `6` is the highest possible value and would show all `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` and `<h6>` headings).
     * `items`, the type of elements included in the TOC (by default, only `appendix`, `chapter` and `part` are included).
 
-The `pdf` editions have can define even more options:
+The `pdf` editions can define even more options:
 
   * `auto_label`, it's the same option and has the same meaning as for the `html` and `html_chunked` editions
   * `isbn`, the ISBN-10 or ISBN-13 code of the book (this option is a placeholder and it doesn't work for the momment).

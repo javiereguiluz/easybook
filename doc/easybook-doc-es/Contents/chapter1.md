@@ -171,7 +171,7 @@ Por defecto todos los archivos de contenidos se guardan directamente en el direc
             - { element: chapter, number: 2, content: introduccion/capitulo2.md }
             - { element: chapter, number: 3, content: avanzado/capitulo1.md }
 
-La configuración anterior significa que que los contenidos de tu libro están estructurados de la siguiente manera:
+La configuración anterior significa que los contenidos de tu libro están estructurados de la siguiente manera:
 
     <tu-libro>/
         ...
