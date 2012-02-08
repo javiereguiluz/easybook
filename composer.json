@@ -1,5 +1,5 @@
 {
-    "name":        "easybook",
+    "name":        "easybook/easybook",
     "description": "Book publishing application",
     "keywords":    ["book", "publish", "ebook", "e-book", "documentation"],
     "homepage":    "http://easybook-project.org",
