@@ -62,6 +62,7 @@ class Application extends \Pimple
         $this['publishing.dir.app_theme'] = '';  # holds the app theme dir for the current edition
         $this['publishing.dir.book']      = '';
         $this['publishing.dir.contents']  = '';
+        $this['publishing.dir.resources'] = '';
         $this['publishing.dir.plugins']   = '';
         $this['publishing.dir.templates'] = '';
         $this['publishing.dir.output']    = '';
@@ -241,25 +242,33 @@ class Application extends \Pimple
         });
 
         // -- labels ---------------------------------------------------------
-        // TODO: books can define their own labels
         $this['labels'] = $app->share(function () use ($app) {
-            $labelsFile = sprintf("%s/labels.%s.yml",
-                $app['app.dir.translations'],
-                $app->book('language')
+            $labels = Yaml::parse(
+                $app['app.dir.translations'].'/labels.'.$app->book('language').'.yml'
             );
-
-            return Yaml::parse($labelsFile);
+            
+            // books can define their own labels files
+            if (null != $customLabelsFile = $app->getCustomLabelsFile()) {
+                $customLabels = Yaml::parse($customLabelsFile);
+                return array_merge($labels, $customLabels);
+            }
+            
+            return $labels;
         });
 
         // -- titles ----------------------------------------------------------
-        // TODO: books can define their own titles
         $this['titles'] = $app->share(function () use ($app) {
-            $titlesFile = sprintf("%s/titles.%s.yml",
-                $app['app.dir.translations'],
-                $app->book('language')
+            $titles = Yaml::parse(
+                $app['app.dir.translations'].'/titles.'.$app->book('language').'.yml'
             );
-
-            return Yaml::parse($titlesFile);
+            
+            // books can define their own titles files
+            if (null != $customTitlesFile = $app->getCustomTitlesFile()) {
+                $customTitles = Yaml::parse($customTitlesFile);
+                return array_merge($titles, $customTitles);
+            }
+            
+            return $titles;
         });
     }
     
@@ -358,26 +367,78 @@ class Application extends \Pimple
     }
 
     /*
-     * Looks for the given fileName in several book directories.
-     * The search order is:
-     *   1. <book>/Resources/Templates/<edition-name>/<fileName>
-     *   2. <book>/Resources/Templates/<edition-format>/<fileName>
-     *   3. <book>/Resources/Templates/<fileName>
+     * If the book overrides the given templateName, this method returns the path
+     * of the custom template. The search order is:
+     *
+     *   1. <book>/Resources/Templates/<edition-name>/<templateName>
+     *   2. <book>/Resources/Templates/<edition-format>/<templateName>
+     *   3. <book>/Resources/Templates/<templateName>
+     *
+     * It returns null if there is no custom template for $templateName.
      */
-    public function getCustomFile($fileName)
+    public function getCustomTemplate($templateName)
     {
-        $candidates = array(
-            $this['publishing.dir.templates'].'/'.$this['publishing.edition'].'/'.$fileName,
-            $this['publishing.dir.templates'].'/'.$this->edition('format').'/'.$fileName,
-            $this['publishing.dir.templates'].'/'.$fileName
+        $paths = array(
+            $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
+            $this['publishing.dir.templates'].'/'.$this->edition('format'),
+            $this['publishing.dir.templates']
         );
 
-        foreach ($candidates as $candidate) {
-            if (file_exists($candidate)) {
-                return $candidate;
+        return $this->getCustomFile($templateName, $paths);
+    }
+    
+    /*
+     * It looks for custom book labels. The search order is:
+     *   1. <book>/Resources/Translations/<edition-name>/labels.<book-language>.yml
+     *   2. <book>/Resources/Translations/<edition-format>/labels.<book-language>.yml
+     *   3. <book>/Resources/Translations/labels.<book-language>.yml
+     *
+     * It returns null if there is no custom labels for the book.
+     */
+    public function getCustomLabelsFile()
+    {
+        $labelsFileName = 'labels.'.$this->book('language').'.yml';
+        $paths = array(
+            $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
+            $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
+            $this['publishing.dir.resources'].'/Translations'
+        );
+        
+        return $this->getCustomFile($labelsFileName, $paths);
+    }
+    
+    /*
+     * It looks for custom book titles. The search order is:
+     *   1. <book>/Resources/Translations/<edition-name>/titles.<book-language>.yml
+     *   2. <book>/Resources/Translations/<edition-format>/titles.<book-language>.yml
+     *   3. <book>/Resources/Translations/titles.<book-language>.yml
+     *
+     * It returns null if there is no custom labels for the book.
+     */
+    public function getCustomTitlesFile()
+    {
+        $titlesFileName = 'titles.'.$this->book('language').'.yml';
+        $paths = array(
+            $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
+            $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
+            $this['publishing.dir.resources'].'/Translations'
+        );
+        
+        return $this->getCustomFile($titlesFileName, $paths);
+    }
+
+    /*
+     * Looks for the existance of $fileName inside the paths defined in $paths array.
+     * It returns null if the file doesn't exist in any of the paths
+     */
+    public function getCustomFile($file, $paths)
+    {
+        foreach ($paths as $path) {
+            if (file_exists($path.'/'.$file)) {
+                return $path.'/'.$file;
             }
         }
-
+        
         return null;
     }
 

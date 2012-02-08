@@ -1,6 +1,6 @@
 # ROADMAP #
 
-## easybook 4.X () ##
+## easybook 4.X ##
 
 (in no particular order)
 
@@ -17,12 +17,16 @@
   * Add new content type: `lof` (list of figures)
   * Add new content type: `lot` (list of tables)
   * Add a new `plugin` command to bootstrap plugin creation
-  * Books should be able to use their own custom labels and titles
   * Add counters for figures and tables
   * Add support for multiple edition inheritance
   * Add unit tests
   * Improve HTML editions design and UX
   * Add ePub format publisher
+
+
+## easybook 4.2 (XX-feb-2012) ##
+
+  * [OK] Books should be able to use their own custom labels and titles
 
 ## easybook 4.0 (7-feb-2012) ##
 

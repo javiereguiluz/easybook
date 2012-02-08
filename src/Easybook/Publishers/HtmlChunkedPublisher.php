@@ -41,7 +41,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         }
 
         // generate custom CSS file
-        $customCss = $this->app->getCustomFile('style.css');
+        $customCss = $this->app->getCustomTemplate('style.css');
         if (file_exists($customCss)) {
             $this->get('filesystem')->copy(
                 $customCss,

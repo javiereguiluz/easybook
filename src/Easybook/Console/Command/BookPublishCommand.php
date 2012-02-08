@@ -106,6 +106,7 @@ class BookPublishCommand extends BaseCommand
         $bookdir = $dir.'/'.$slug;
         $this->app->set('publishing.dir.book',      $bookdir);
         $this->app->set('publishing.dir.contents',  $bookdir.'/Contents');
+        $this->app->set('publishing.dir.resources', $bookdir.'/Resources');
         $this->app->set('publishing.dir.plugins',   $bookdir.'/Resources/Plugins');
         $this->app->set('publishing.dir.templates', $bookdir.'/Resources/Templates');
         $this->app->set('publishing.book.slug',     $slug);

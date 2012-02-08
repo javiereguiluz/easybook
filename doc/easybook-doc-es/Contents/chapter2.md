@@ -178,13 +178,18 @@ En la mayoría de libros, los únicos elementos que definen de sus propios conte
 
 La portada interna por defecto simplemente muestra el título del libro, el nombre del autor o autores y la edición del libro. Todos estos valores se configuran bajo la opción `book` del archivo `config.yml`.
 
-Los contenidos por defecto dependen tanto del elemento como del tipo de edición. Puedes observar estos contenidos en el directorio `Contents/` del tema. Si no quieres utilizar el contenido por defecto para un determinado elemento, simplemente añade la opción `content` e indica el archivo que define sus contenidos:
+Los contenidos por defecto dependen tanto del elemento como del tipo de edición. Puedes observar estos contenidos en el directorio `Contents/` del tema.
+
+### Contenidos propios ###
+
+Si no quieres utilizar el contenido por defecto de **easybook** para este tipo de elementos, simplemente añade la opción `content` e indica el archivo que define sus contenidos:
 
     book:
         ...
         contents:
             - ...
-            - { element: title, content: portada-interna.md }
+            - { element: title, content: mi-portada-interna.md }
+            - { element: toc, content: mi-indice-de-contenidos.md }
             - ...
 
 ### Plantillas por defecto ###
@@ -211,17 +216,25 @@ Los datos del contenido que se decora se encuentran en una variable llamada `ite
   * `item.original`, contenido original del elemento sin procesar ni manipular.
   * `item.config`, array con todas las opciones del elemento definidas en el archivo `config.yml`. Sus propiedades internas son `number`, `title`, `content` y `element`. Así por ejemplo, para determinar el tipo de elemento puedes utilizar la expresión `{{ item.config.element }}`.
 
-Además de estas propiedades relativas al elemento que se está decorando, en todas las plantillas dispones de las siguientes tres variables globales:
+Además de estas propiedades relativas al elemento que se está decorando, todas las plantillas disponen de las siguientes tres variables globales:
 
   * `book`, proporciona acceso directo a todas las opciones de configuración definidas bajo `book` en el archivo `config.yml`. Así por ejemplo, puedes obtener el autor en cualquier plantilla mediante `{{ book.author }}` y la versión de **easybook** mediante `{{ book.generator.version }}`.
   * `edition`, proporciona acceso directo a todas las opciones de configuración de la edición que se está publicando actualmente.
   * `app`, proporciona acceso directo a todas las opciones de configuración y servicios de la propia aplicación **easybook** (definidos en el archivo `Application.php` del directorio `src/DependencyInjection/`).
+
+### Plantillas propias ###
+
+En el siguiente capítulo se explica con detalle cómo utilizar tus propias plantillas en vez de las de **easybook**
 
 ### Estilos por defecto ###
 
 El aspecto de los libros se controla mediante hojas de estilo CSS, incluso en el caso de las ediciones de tipo `pdf`. Los estilos por defecto se encuentran en el directorio `Templates/` del tema que utiliza la edición. En el caso de las ediciones `html` y `html_chunked`, el único límite es la versión de CSS que puedas utilizar en tu sitio web (CSS 2.1, CSS 3, CSS 4, etc.)
 
 En el caso de la edición de tipo `pdf` el único límite es la imaginación. Los libros PDF se generan mediante la aplicación [PrinceXML](http://www.princexml.com/) convirtiendo un documento HTML en un archivo PDF con ayuda de una hoja de estilos CSS. Lo mejor de PrinceXML es que define decenas de nuevas propiedades CSS que no existen en el estándar y que permiten hacer cosas que simplemente parecen imposibles. Te recomendamos que eches un vistazo al archivo `styles.css.twig` del tema `Pdf/` para aprender algunas de las características más avanzadas. ¡Vas a alucinar! Y no olvides echar un vistazo también a la [ayuda de PrinceXML](http://www.princexml.com/doc/8.0/).
+
+### Estilos propios ###
+
+En el siguiente capítulo se explica con detalle cómo utilizar tus propios estilos CSS en vez de los de **easybook**
 
 ### Fuentes por defecto ###
 
@@ -240,7 +253,7 @@ A diferencia de los títulos, las etiquetas contienen partes variables, como por
         part:   'Sección {{ item.number }} '
         table:  'Tabla {{ item.number }}.{{ counter }} '
 
-La opción `item.number` es el número (o letra) incluido en la opción `number` del elemento dentro del archivo `config.yml`. En el caso de los apéndices y capítulos, es necesario definir seis etiquetas, cada una perteneciente a uno de los seis niveles de título (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` y `<h6>`,). El siguiente ejemplo hace que los apéndices sólo muestren una etiqueta en su título, por lo que dejan vacíos los cinco últimos niveles:
+La opción `item.number` es el número (o letra) incluido en la opción `number` del elemento dentro del archivo `config.yml`. En el caso de los apéndices y capítulos, es necesario definir seis etiquetas, cada una perteneciente a uno de los seis niveles de título (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` y `<h6>`). El siguiente ejemplo hace que los apéndices sólo muestren una etiqueta en su título, por lo que dejan vacíos los cinco últimos niveles:
 
     label:
         appendix: ['Apéndice {{ item.number }} ', '', '', '', '', '']
@@ -250,7 +263,7 @@ Además de `item.number`, la plantilla de cada etiqueta tiene acceso a una varia
     label:
         chapter:
             - 'Capítulo {{ item.number }} '
-            - '{{ counters[1] }}.{{ counters[2] }}'
+            - '{{ counters[0] }}.{{ counters[1] }}'
             - ...
 
 Generalizando el ejemplo anterior, puedes utilizar el siguiente código Twig para hacer que las etiquetas de los capítulos sean de tipo `1.1`, `1.1.1`, `1.1.1.1`, etc.:
@@ -265,3 +278,15 @@ Generalizando el ejemplo anterior, puedes utilizar el siguiente código Twig par
             - '{{ counters[0:6]|join(".") }}'  # 1.1.1.1.1.1
 
 Este último ejemplo da una buena idea de todo lo que puedes conseguir aunando la flexibilidad de **easybook** y la potencia de Twig.
+
+### Títulos y etiquetas propias ###
+
+Para utilizar tus propios títulos y etiquetas, debes crear en primer lugar el directorio `Translations` dentro del directorio `Resources` del libro (crea también este último si no existe). Después, añade el nuevo archivo de etiquetas en uno de los siguientes directorios:
+
+  1. `<libro>/Resources/Translations/<nombre-edicion>/labels.es.yml`, si quieres modificar las etiquetas en una única edición. El directorio dentro de `Translations` debe llamarse exactamente igual que la edición que se está publicando.
+  2. `<libro>/Resources/Translations/<tipo-edicion>/labels.es.yml`, si quieres modificar las etiquetas en todas las ediciones de un mismo tipo. El directorio dentro de `Translations` sólo puede llamarse `html`, `html_chunked` o `pdf`.
+  3. `<libro>/Resources/Translations/labels.es.yml`, si quieres modificar las etiquetas en todas las ediciones del libro, sin importar ni su nombre ni su tipo.
+
+Cuando creas un archivo propio de etiquetas no es necesario que definas el nuevo valor de todas las etiquetas. Añade solamente las que quieres modificar y al resto **easybook** les asigna sus valores por defecto.
+
+Si quieres modificar los títulos en vez de las etiquetas, sigue los pasos anteriores pero crea un archivo llamado `titles.es.yml` en vez de `labels.es.yml`. Si tu libro está escrito en otro idioma que no sea español, reemplaza el valor `es` por el código del otro idioma (ejemplo: `labels.en.yml` para las etiquetas en inglés).

@@ -88,7 +88,7 @@ class PdfPublisher extends BasePublisher
         }
 
         // TODO: custom book styles could also be defined with Twig
-        $customCss = $this->app->getCustomFile('style.css');
+        $customCss = $this->app->getCustomTemplate('style.css');
         if (file_exists($customCss)) {
             $prince->addStyleSheet($customCss);
         }
