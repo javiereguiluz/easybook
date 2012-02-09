@@ -305,7 +305,7 @@ class Application extends \Pimple
         $editionConfig = $book['editions'][$edition];
         $parentConfig  = $book['editions'][$parent];
         $config = array_merge($parentConfig, $editionConfig);
-
+        
         $book['editions'][$edition] = $config;
         $this->set('book', $book);
     }

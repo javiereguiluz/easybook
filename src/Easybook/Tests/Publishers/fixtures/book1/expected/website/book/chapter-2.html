@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Javier Eguiluz" />
+    <meta name="date" content="02/09/2012"/>
+    <meta name="generator" content="easybook 4"/>
+
+    <title>Publishing your second book | easybook test book #1</title>
+
+        <link rel="stylesheet" href="./css/easybook.css" />
+    
+    </head>
+
+<body class="page:chapter"><div id="wrapper">
+
+<h1 id="chapter-2"><span>Chapter 2 </span> Publishing your second book</h1>
+
+<ul id="item_toc">
+            <li>
+            <span></span>
+            <a href="#publishing-your-second-book">Publishing your second book</a>
+        </li>
+                <li>
+            <span>2.1</span>
+            <a href="#content-types">Content types</a>
+        </li>
+                <li>
+            <span>2.2</span>
+            <a href="#editions">Editions</a>
+        </li>
+                <li>
+            <span>2.3</span>
+            <a href="#themes">Themes</a>
+        </li>
+                                        </ul>
+
+<p>In the previous chapter, you learned how to create a basic book and publish it with <strong>easybook</strong>. However, we didn't mention any of the more advanced features. This chapter explains all the available content types, how to master book editions and how to tweak its appearance using templates.</p>
+
+<h2 id="content-types">2.1 Content types</h2>
+
+<p>Books define their contents with the <code>contents</code> options in the <code>config.yml</code> file. After creating a new book with the <code>new</code> command, the default contents are:</p>
+
+<pre><code>book:
+    ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+</code></pre>
+
+<p>The most important option of each content is <code>element</code>, which defines its content type. <strong>easybook</strong> currently defines the following elevent content types:</p>
+
+<ul>
+<li><code>acknowledgement</code>, where the author acknowledges those who contributed to the creation of the book.</li>
+<li><code>appendix</code>, similar to chapters, but it usually contains related but supplemental additions to the book main work.</li>
+<li><code>author</code>, information about the book author/authors.</li>
+<li><code>chapter</code>, the most used type in regular books.</li>
+<li><code>cover</code>, the cover of your book.</li>
+<li><code>dedication</code>, a page that usually precedes the text, in which the author names the person or people for whom he has written the book.</li>
+<li><code>edition</code>, information about the current edition of the book, including the publication date.</li>
+<li><code>license</code>, information about the copyright holder or any other author/publisher rights that affect the book.</li>
+<li><code>part</code>, used to group several related chapters or appendices.</li>
+<li><code>title</code>, the page that displays book title and author, usually together with information relating to the publication of the book.</li>
+<li><code>toc</code>, the table of contents.</li>
+</ul>
+
+<p>Most of the content types don't require any other option besides <code>element</code>:</p>
+
+<pre><code>book:
+    ...
+    contents:
+        - { element: cover }
+        - { element: title }
+        - { element: license }
+        - { element: toc }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+        - ...
+        - { element: author }
+        - { element: acknowledgement }
+</code></pre>
+
+<p>The <code>appendix</code> and <code>chapter</code> content types can define the following options:</p>
+
+<ul>
+<li><code>number</code>, the number of the chapter or appendix. This value is used to generate the labels of each section heading (<code>1.1</code>, <code>1.2</code>, <code>1.2.1</code>, <code>1.2.2</code>, etc.) <strong>easybook</strong> doesn't restrict its format, so you can use Roman numerals (<code>I.1</code>, <code>I.2</code>), letters (<code>A.1</code>, <code>A.2</code>) or any other symbol or string.</li>
+<li><code>content</code>, the name of the file with the contents of this element. The file name should include the extension (<code>.md</code> in the case of Markdown). The value of this option is interpreted as the path from your book <code>Contents/</code> directory, so you can add all the subdirectories you want.</li>
+</ul>
+
+<p>The <code>part</code> content type also define the following option:</p>
+
+<ul>
+<li><code>title</code>, the title of the part or section. In a printed book, a section is shown as a page that separates chapters. In a web book, the section is only shown in the table of contents.</li>
+</ul>
+
+<p>These elevent content types defined by <strong>easybook</strong> are enough to publish most books, but if you need it, the next chapter explains how to create new content types.</p>
+
+<h2 id="editions">2.2 Editions</h2>
+
+<p><strong>easybook</strong> is so flexible it allows you to publish the very same book in radically different ways. This is possible thanks to the <strong>editions</strong>, that define the specific characteristics with which the book is published.</p>
+
+<p>Editions are defined under the <code>editions</code> options in <code>config.yml</code> file. By default, the books created with the <code>new</code> command have three editions named <code>print</code>, <code>web</code> and <code>website</code> with the following options:</p>
+
+<pre><code>book:
+    ...
+    editions:
+        print:
+            format:         pdf
+            auto_label:     true
+            include_styles: true
+            isbn:           ~
+            margin:
+                top:        25mm
+                bottom:     25mm
+                inner:      30mm
+                outter:     20mm
+            page_size:      A4
+            two_sided:      true
+            toc:
+                deep:       2
+                elements:   ["appendix", "chapter"]
+
+        web:
+            format:         html
+            auto_label:     true
+            highlight_code: true
+            include_styles: true
+            toc:
+                deep:       2
+                elements:   ["appendix", "chapter"]
+
+        website:
+            extends:        web
+            format:         html_chunked
+</code></pre>
+
+<p>The name of each edition must be unique for the same book and cannot contain spaces.  The edition name is used as the subdirectory inside <code>Output/</code> directory to separate the contents of each edition. You can define as many editions as you need, but all must belong to one of the following three types defined by the <code>format</code> option:</p>
+
+<ul>
+<li><code>pdf</code>, the book is published as a PDF file named <code>book.pdf</code></li>
+<li><code>html</code>, the book is published as a HTML page named <code>book.html</code>.</li>
+<li><code>html_chunked</code>, the book is published as a static website in a directory named <code>book</code>.</li>
+</ul>
+
+<p>Editions can modify the aspect of the published book through several configuration options. The <code>html</code> and <code>html_chunked</code>  edition types share the same options:</p>
+
+<ul>
+<li><code>auto_label</code>, if <code>true</code> all the book headings are prefixed with labels (<code>1.1</code>, <code>1.2</code>, <code>1.2.1</code>, <code>1.2.2</code>, etc.)</li>
+<li><code>highligh_code</code>, if <code>true</code> the syntax of the code listings is highlighted (this option is a placeholder and it doesn't work for the momment).</li>
+<li><code>include_styles</code>, if <code>true</code> the generated HTML pages include a link to <strong>easybook</strong> default CSS file.</li>
+<li><code>toc</code>, sets the options of the table of contents. It's ignored unless the book has at least one <code>toc</code> element type. It has two options:
+
+<ul>
+<li><code>deep</code>, the maximum heading level included in the TOC (<code>1</code> is the lowest possible number and would only show <code>&lt;h1&gt;</code> level headings; <code>6</code> is the highest possible value and would show all <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code> and <code>&lt;h6&gt;</code> headings).</li>
+<li><code>items</code>, the type of elements included in the TOC (by default, only <code>appendix</code>, <code>chapter</code> and <code>part</code> are included).</li>
+</ul></li>
+</ul>
+
+<p>The <code>pdf</code> editions can define even more options:</p>
+
+<ul>
+<li><code>auto_label</code>, it's the same option and has the same meaning as for the <code>html</code> and <code>html_chunked</code> editions</li>
+<li><code>isbn</code>, the ISBN-10 or ISBN-13 code of the book (this option is a placeholder and it doesn't work for the momment).</li>
+<li><code>include_styles</code>, if <code>true</code> <strong>easybook</strong> will decide the layout, typesetting and design of the book. Use this option to create stunning books effortlessly. The next chapter will explain how to define your own styles.</li>
+<li><code>margin</code>, sets the four margins of the printed book: <code>top</code>, <code>bottom</code>, <code>inner</code> and <code>outter</code>. If the book is one-sided, <code>inner</code> equals left margin and <code>outter</code> equals right margin. The values of the margins can be set with any CSS valid lenght unit (<code>1in</code>, <code>25mm</code>, <code>2.5cm</code>).</li>
+<li><code>page_size</code>, the page size of the printed book. <strong>easybook</strong> only supports <code>A4</code> size for the moment (<code>A4</code> size is 8.27 inches × 11.69 inches).</li>
+<li><code>toc</code>, it's the same option and has the same meaning as for the <code>html</code> and <code>html_chunked</code> editions</li>
+<li><code>two_sided</code>, if <code>true</code> the PDF file is ready for two-sided printing.</li>
+</ul>
+
+<p>In addition to all these options, editions can set a very useful option named <code>extends</code>. The value of this option indicates the name of the edition from which this edition <em>inherits</em>. When an edition <em>inherits</em> from another edition, the options of the parent edition are copied on the <em>heir</em> edition, which can then override any value.</p>
+
+<p>Imagine for example you want to publish one PDF book with three slightly different design. The draft version (<code>draft</code>) must be double-sided and must have very small margins to reduce its length, the normal version (<code>print</code>) is one-sided and has normal margins. The version prepared for lulu.com website (<code>lulu</code>) is similar to the normal version, except is double-sided:</p>
+
+<pre><code>book:
+    ...
+    editions:
+        print:
+            format:       pdf
+            isbn:         ~
+            auto_label:   true
+            two_sided:    false
+            page_size:    A4
+            margin:
+                top:      25mm
+                bottom:   25mm
+                inner:    30mm
+                outter:   20mm
+            toc:
+                deep:     2
+                elements: ['appendix', 'chapter']
+
+        draft:
+            extends:      print
+            two_sided:    true
+            margin:
+                top:      15mm
+                bottom:   15mm
+                inner:    20mm
+                outter:   10mm
+
+        lulu:
+            extends:      print
+            two_sided:    true
+</code></pre>
+
+<p>The only limitation of <code>extends</code> is that it only works with one level inheritance. Therefore, and edition cannot extend another edition that extends a third one.</p>
+
+<h2 id="themes">2.3 Themes</h2>
+
+<p>A theme is a set of templates, stylesheets and other resources that define the visual design of the books. <strong>easybook</strong> already includes a theme for each edition type (<code>pdf</code>, <code>html</code>, <code>html_chunked</code>), so your books will look professional without any effort.</p>
+
+<p>Bundled themes are located in the <code>app/Resources/Themes/</code> directory. If you need to change the design of your books, <strong>don't</strong> modify the files in these directories. The next chapter explains how to easily override any template or resource for your book.</p>
+
+<h3 id="default-contents">2.3.1 Default contents</h3>
+
+<p>In most books, the only elements that define their own content are the chapters and appendices (with the <code>content</code> options). <strong>easybook</strong> defines sensible default contents for every content type. If the book adds for example an inner cover (<code>title</code> content type):</p>
+
+<pre><code>book:
+    ...
+    contents:
+        - ...
+        - { element: title }
+        - ...
+</code></pre>
+
+<p><strong>easybook</strong> will use the following as the default content of this element:</p>
+
+<pre><code>&lt;h1&gt;{{ book.title }}&lt;/h1&gt;
+&lt;h2&gt;{{ book.author }}&lt;/h2&gt;
+&lt;h3&gt;{{ book.edition }}&lt;/h3&gt;
+</code></pre>
+
+<p>The default title page shows the title, the name of the author and the current edition of the book. All these values are configured in the <code>book</code> option of <code>config.yml</code> file.</p>
+
+<p>The contents defined by <strong>easybook</strong> depend on both the edition being published and the content type. You can access these default contents on the <code>Contents/</code> directory of the theme.</p>
+
+<h3 id="custom-contents">2.3.2 Custom contents</h3>
+
+<p>If you don't want to use <strong>easybook</strong> default contents for these elements, simply add the <code>content</code> option indicating the file that defines its contents:</p>
+
+<pre><code>book:
+    ...
+    contents:
+        - ...
+        - { element: title, content: my-own-title-page.md }
+        - { element: toc, content: my-table-of-contents.md }
+        - ...
+</code></pre>
+
+<h3 id="default-templates">2.3.3 Default templates</h3>
+
+<p>The content of each element is <em>decorated</em> with a template before including it in the published book. <strong>easybook</strong> templates are created with <a href="http://twig.sensiolabs.org/">Twig</a>, the best templating language for PHP. You can access all the default templates in the <code>Templates/</code> directory of the theme.</p>
+
+<p>See for example the template used to decorate each chapter of a PDF book:</p>
+
+<pre><code>&lt;div class="page:chapter new-page"&gt;
+
+&lt;h1 id="{{ item.slug }}"&gt;&lt;span&gt;{{ item.label }}&lt;/span&gt; {{ item.title }}&lt;/h1&gt;
+
+{{ item.content }}
+
+&lt;/div&gt;
+</code></pre>
+
+<p>The data of the content being decorated are accessible through a special variable called <code>item</code>, which holds the following properties:</p>
+
+<ul>
+<li><code>item.title</code>, is the title of the content. It's obtained from the <code>title</code> configuration option, from the content or from the default titles defined by <strong>easybook</strong>.</li>
+<li><code>item.slug</code>, is a <em>safe</em> version of the <code>title</code> that doesn't include white spaces or any other <em>troublesome characters</em> (such as accents, <code>.</code>, <code>?</code>, <code>!</code>, ...). This value is used on URLs, on <code>id</code> HTML attributes, etc.</li>
+<li><code>item.label</code>, the label of the main heading of the content. Usually it's only defined for chapters (<code>Chapter XX</code>), parts (<code>Part XX</code>) and appendices (<code>Apendix XX</code>).</li>
+<li><code>toc</code>, array with the table of contents of this element. It's empty for most of the content types  (<code>cover</code>, <code>license</code>, etc.) but can be very large for complex chapters and appendices.</li>
+<li><code>item.content</code>, the content of the element prepared to be included in the book (it already has been converted rom its original Markdown format).</li>
+<li><code>item.original</code>, the original content of the element without any modification.</li>
+<li><code>item.config</code>, array with all the configuration options defined for the elemento in the <code>config.yml</code> file. Internally it holds <code>number</code>, <code>title</code>, <code>content</code> and <code>element</code> properties. For example, you can access the type of the element with the following expression: <code>{{ item.config.element }}</code>.</li>
+</ul>
+
+<p>In addition to these item properties, all the <strong>easybook</strong> templates have access to three global variables:</p>
+
+<ul>
+<li><code>book</code>, provides direct access to the configuration options defined under <code>book</code> in <code>config.yml</code> file. You can access for example the book author in any template using <code>{{ book.author }}</code> and the current <strong>easybook</strong> version using <code>{{ book.generator.version }}</code>.</li>
+<li><code>edition</code>, provides direct access to the configuration options of the edition curently being published.</li>
+<li><code>app</code>, provides direct access to all configuration options and services of <strong>easybook</strong> (defined in the <code>src/DependencyInjection/Application.php</code> file).</li>
+</ul>
+
+<h3 id="custom-templates">2.3.4 Custom templates</h3>
+
+<p>In the next chapter you'll learn how to use your own templates instead of <strong>easybook</strong> default templates.</p>
+
+<h3 id="default-styles">2.3.5 Default styles</h3>
+
+<p>The appearance of the books is defined by CSS stylesheets, even in the case of the <code>pdf</code> type editions. <strong>easybook</strong> includes several default styles in the <code>Templates/</code> directory of the theme. For <code>html</code> and <code>html_chunked</code> editions, the limit is the highest CSS version that you can use on your website (CSS 2.1, CSS 3, CSS 4, etc..)</p>
+
+<p>In the case of <code>pdf</code> editions, your imagination is the only limit. PDF books are generated by <a href="http://www.princexml.com/">PrinceXML</a> transforming a HTML document using a CSS stylesheet. PrinceXML defines tens of new CSS properties and options unavailable in the CSS standards. Using these exclusive properties you can easily add amazing features to your book design and layout. We strongly recommend you take a look at the <code>styles.css.twig</code> file of the <code>Pdf/</code> theme to learn some of the most advanced features. It will blow your mind away! And don't forget to read <a href="http://www.princexml.com/doc/8.0/">PrinceXML documentation</a>.</p>
+
+<h3 id="custom-styles">2.3.6 Custom styles</h3>
+
+<p>In the next chapter you'll learn how to use your own CSS styles instead of <strong>easybook</strong> default styles.</p>
+
+<h3 id="default-fonts">2.3.7 Default fonts</h3>
+
+<p><strong>easybook</strong> bundles several free and high-quality fonts to make published books look professional. You can see the fonts and their license in the <code>app/Resources/Fonts/</code> directory.</p>
+
+<h3 id="default-labels-and-titles">2.3.8 Default labels and titles</h3>
+
+<p><strong>easybook</strong> requires each content to have its own title.  Chapters and appendices include the title within their own content and parts define it in the <code>title</code> option of the <code>config.yml</code> file. For the rest of content types, <strong>easybook</strong> assigns a default title that varies depending on the language in which the book is written. You can see the titles applied to English books in <code>app/Resources/Translations/titles.en.yml</code>.</p>
+
+<p>Similarly, if the book sets the <code>auto_labels</code> option, <strong>easybook</strong> adds labels to the headings of <code>chapter</code>, <code>appendix</code> and <code>part</code> content types. You can see the default labels applied to books written in English in <code>app/Resources/Translations/labels.en.yml</code> file.</p>
+
+<p>Unlike the titles, labels can contain variable parts, such as the appendix or chapter number. Therefore, <strong>easybook</strong> uses Twig templates to define each label:</p>
+
+<pre><code>label:
+    figure: 'Figure {{ item.number }}.{{ counter }} '
+    part:   'Part {{ item.number }} '
+    table:  'Table {{ item.number }}.{{ counter }} '
+</code></pre>
+
+<p>The <code>item.number</code> property is the number (or letter) defined in the <code>number</code> option of the element in <code>config.yml</code> file. Chapters and appendices must define six different labels, each corresponding to one of the six headings levels (<code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code> and <code>&lt;h6&gt;</code>). In the following example, appendices only include a label in its title, thus leaving empty the last five levels:</p>
+
+<pre><code>label:
+    appendix: ['Appendix {{ item.number }} ', '', '', '', '', '']
+</code></pre>
+
+<p>In addition to <code>item.number</code> property, label templates have access to a special variable called <code>counters</code> which is an array with the counters of all heading levels. For that reason, to show second-level headings as <code>1.1</code>, <code>1.2</code> ... <code>7.1</code>, <code>7.2</code> you can use the following expression:</p>
+
+<pre><code>label:
+    chapter:
+        - 'Chapter {{ item.number }} '
+        - '{{ counters[0] }}.{{ counters[1] }}'
+        - ...
+</code></pre>
+
+<p>Extending the previous example, you can use the following templates to format all the heading levels as <code>1.1</code>, <code>1.1.1</code>, <code>1.1.1.1</code>, etc.:</p>
+
+<pre><code> label:
+     chapter:
+         - 'Chapter {{ item.number }} '
+         - '{{ counters[0:2]|join(".") }}'  # 1.1
+         - '{{ counters[0:3]|join(".") }}'  # 1.1.1
+         - '{{ counters[0:4]|join(".") }}'  # 1.1.1.1
+         - '{{ counters[0:5]|join(".") }}'  # 1.1.1.1.1
+         - '{{ counters[0:6]|join(".") }}'  # 1.1.1.1.1.1
+</code></pre>
+
+<p>This last example clearly shows what you can achieve by combining the flexibility of <strong>easybook</strong> and the power of Twig.</p>
+
+<h3 id="custom-labels-and-titles">2.3.9 Custom labels and titles</h3>
+
+<p>If you want to use your own titles and labels, you must first create the <code>Translations</code> directory inside the <code>Resources</code> directory of your book (you must also create the latter if it doesn't exist). Then add the new label file in one of the following directories:</p>
+
+<ol>
+<li><code>&lt;book&gt;/Resources/Translations/&lt;edition-name&gt;/labels.en.yml</code>, if you want to change the labels in a single edition. The subdirectory of <code>Translations</code> must be named exactly like the edition being published.</li>
+<li><code>&lt;book&gt;/Resources/Translations/&lt;edition-type&gt;/labels.en.yml</code>, if you want to change the labels in all editions of the same type. The directory in <code>Translations</code> can only be called <code>html</code>, <code>html_chunked</code> or <code>pdf</code>.</li>
+<li><code>&lt;book&gt;/Resources/Translations/labels.en.yml</code>, if you want to change the labels on all the editions of the book, regardless of its name or type.</li>
+</ol>
+
+<p>When you use your own label file, you don't have to define the value of all labels. Add only the labels that you want to modify and <strong>easybook</strong> will assign to the rest their default values.</p>
+
+<p>If you want to change the titles instead of the labels, follow the same steps but create a file called <code>titles.en.yml</code> instead of <code>labels.en.yml</code>. If your book isn't written in English, replace <code>en</code> for the code of the other language (e.g. <code>labels.es.yml</code> for Spanish labels).</p>
+
+
+<ul id="nav">
+    <li class="previous">
+                    <a href="./chapter-1.html"><span>&larr;</span> Previous</a>
+            </li>
+
+    <li class="index"><a href="./index.html"><span>&uarr;</span> Index</a></li>
+
+    <li class="next">
+                    <a href="./chapter-3.html">Next <span>&rarr;</span></a>
+            </li>
+</ul>
+
+
+</div></body>
+</html>

@@ -19,13 +19,15 @@
   * Add a new `plugin` command to bootstrap plugin creation
   * Add counters for figures and tables
   * Add support for multiple edition inheritance
-  * Add unit tests
+  * Add more unit tests
   * Improve HTML editions design and UX
   * Add ePub format publisher
+  * Package the application as PHAR file
 
 
 ## easybook 4.2 (XX-feb-2012) ##
 
+  * [OK] Added tests for publishing command
   * [OK] Books should be able to use their own custom labels and titles
 
 ## easybook 4.0 (7-feb-2012) ##

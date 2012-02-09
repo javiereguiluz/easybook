@@ -1,0 +1,30 @@
+<div class="page:toc new-page">
+
+<h1>{{ item.title }}</h1>
+
+<ol>
+{% for item in app.get('publishing.items')|reverse %}
+    {# editions define the *tocable* items #}
+    {% if item.config.element in edition.toc.elements|default([]) %}
+
+        {# item has several elements in its toc #}
+        {% if item.toc|length > 0 %}
+            {% for entry in item.toc %}
+                {% if entry.level <= edition.toc.deep %}
+                    <li class="{{ item.config.element }} level-{{ entry.level }}">
+                        <span>{{ entry.label }}</span> <a href="#{{ entry.slug }}">{{ entry.title }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+        {# empty or special item (anything different from 'chapter' and 'appendix' #}
+        {% else %}
+            <li class="{{ item.config.element }} level-1">
+                <span>{{ item.label }}</span> <a href="#{{ item.slug }}">{{ item.title }}</a>
+            </li>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+</ol>
+
+</div>

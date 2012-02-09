@@ -1,0 +1,15 @@
+<div class="page:cover new-page">
+    <h2>{{ book.author|upper }}</h2>
+    <hr/>
+    <h1>{{ book.title|reverse|capitalize }}</h1>
+    
+    <p>{{ book.edition }}</p>
+    
+    <pre>
+        Edition debug info
+        -------------------------------------------------
+        {% for key, value in edition %}
+            [{{key}}] - {{ value }}
+        {% endfor %}
+    </pre>
+</div>

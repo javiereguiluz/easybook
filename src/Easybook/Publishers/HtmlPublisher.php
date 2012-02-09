@@ -62,7 +62,6 @@ class HtmlPublisher extends BasePublisher
         $this->app->set('publishing.items', $decoratedItems);
     }
 
-
     public function assembleBook()
     {
         // generate easybook CSS file

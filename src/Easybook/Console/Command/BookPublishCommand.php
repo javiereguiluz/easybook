@@ -111,11 +111,17 @@ class BookPublishCommand extends BaseCommand
         $this->app->set('publishing.dir.templates', $bookdir.'/Resources/Templates');
         $this->app->set('publishing.book.slug',     $slug);
         $this->app->set('publishing.edition',       $edition);
-        $this->app->set('publishing.dir.app_theme', $this->app['app.dir.theme_'.$this->app->edition('format')]);
-
+        
         $this->registerPlugins();
-
+        
         $this->app->dispatch(Events::PRE_PUBLISH, new BaseEvent($this->app));
+        
+        // Show publishing message
+        $output->writeln(sprintf(
+            "\n Publishing '<comment>%s</comment>' edition of <info>%s</info> book...\n",
+            $edition,
+            $this->app->book('title')
+        ));
         
         // Check that the given book already exists
         if (!file_exists($bookdir = $this->app['publishing.dir.book'])) {
@@ -123,13 +129,6 @@ class BookPublishCommand extends BaseCommand
                'The given book ("%s") doesn\'t exist in "%s" directory', $slug, realpath($bookdir)
            ));
         }
-        
-        // Show publishing message
-        $output->writeln(sprintf(
-            "\n Publishing '<comment>%s</comment>' edition of <info>%s</info> book...\n",
-            $this->app['publishing.edition'],
-            $this->app->book('title')
-        ));
         
         // Check that the book has defined the given edition
         if (!array_key_exists($edition, $this->app->book('editions'))) {
@@ -144,7 +143,11 @@ class BookPublishCommand extends BaseCommand
         if (null != $parent = $this->app->edition('extends')) {
             $this->app->extendEdition($parent);
         }
-
+        
+        // This `publishing` variable depends on the edition configuration.
+        // It always must go after the `extendEdition()` method call
+        $this->app->set('publishing.dir.app_theme', $this->app['app.dir.theme_'.$this->app->edition('format')]);
+        
         // 1-line magic!
         $this->app->get('publisher')->publishBook();
 
