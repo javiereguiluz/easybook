@@ -8,8 +8,11 @@
     <pre>
         Edition debug info
         -------------------------------------------------
-        {% for key, value in edition %}
-            [{{key}}] - {{ value }}
-        {% endfor %}
+        format         : {{ edition.format }}
+        auto_label     : {{ edition.auto_label     ? 'true' : 'false' }}
+        include_styles : {{ edition.include_styles ? 'true' : 'false' }}
+        highlight_code : {{ edition.highlight_code ? 'true' : 'false' }}
+        toc deep       : {{ edition.toc.deep }}
+        toc elements   : {{ edition.toc.elements|join(', ') }}
     </pre>
 </div>
