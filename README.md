@@ -17,11 +17,11 @@ $ git clone http://github.com/javiereguiluz/easybook.git easybook
 
 If you don't use Git:
 
-    1. `mkdir easybook`
-    2. Download https://github.com/javiereguiluz/easybook/zipball/master ZIP file
-    3. Uncompress the ZIP file in `easybook` directory
+  1. `mkdir easybook`
+  2. Download https://github.com/javiereguiluz/easybook/zipball/master ZIP file
+  3. Uncompress the ZIP file in `easybook` directory
 
-Once downloaded, you can use **easybook** as easy as:
+Regardless the installation mode, use **easybook** with the `book` command:
 
 ```
 $ cd easybook
@@ -40,7 +40,7 @@ If the last command doesn't work, try `php book`
 
 ## Tests ##
 
-Execute the following commands to test **easybook** (requires PHPUnit):
+Execute the following command to test **easybook** (requires PHPUnit):
 
 ```
 $ cd easybook
