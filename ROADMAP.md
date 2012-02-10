@@ -11,22 +11,26 @@
   * Add a new FootnotePlugin (PrinceXML support them by default)
   * Add a new InternalLinkPlugin (internal links don't work on `html_chunked` books)
   * Default contents should be different for each supported language
-  * Temp fles (need in `pdf` editions) should be created in app/Cache, not in OS temp/ dir.
+  * Temp files (needed in `pdf` editions) should be created in app/Cache, not in OS temp/ dir.
   * Add new content type: `introduction`
   * Add new content type: `preface`
+  * Add new content type: `backcover`
   * Add new content type: `lof` (list of figures)
   * Add new content type: `lot` (list of tables)
   * Add a new `plugin` command to bootstrap plugin creation
-  * Add counters for figures and tables
   * Add support for multiple edition inheritance
   * Add more unit tests
   * Improve HTML editions design and UX
   * Add ePub format publisher
   * Package the application as PHAR file
+  * Remove vendors from versioning and add composer.lock file
+  * Add table captions for Markdown parser
 
 
 ## easybook 4.2 (XX-feb-2012) ##
 
+  * [OK] Add counters for figures and tables
+  * [OK] Improve label options (replace `auto_label` for `labels`)
   * [OK] Added tests for publishing command
   * [OK] Books should be able to use their own custom labels and titles
 

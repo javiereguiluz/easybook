@@ -1,16 +1,22 @@
 # English translation of the strings managed by easybook
 label:
-    appendix: ['Appendix {{ item.number }} ', '', '', '', '', '']
+    appendix:
+        - 'Appendix {{ item.number }}'
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
     chapter:
         - 'Chapter {{ item.number }} '
-        - '{{ counters[0:2]|join(".") }}' # 1.1
-        - '{{ counters[0:3]|join(".") }}' # 1.1.1
-        - '{{ counters[0:4]|join(".") }}' # 1.1.1.1
-        - '{{ counters[0:5]|join(".") }}' # 1.1.1.1.1
-        - '{{ counters[0:6]|join(".") }}' # 1.1.1.1.1.1
-    figure:          'Figure {{ item.number }}.{{ counter }} '
-    part:            'Part {{ item.number }} '
-    table:           'Table {{ item.number }}.{{ counter }} '
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+    figure:          'Figure {{ element.number }}.{{ item.number }}'
+    part:            'Part {{ item.number }}'
+    table:           'Table {{ element.number }}.{{ item.number }}'
 
     acknowledgement: ''
     author:          ''

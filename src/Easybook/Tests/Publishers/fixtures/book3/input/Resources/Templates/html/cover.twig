@@ -9,7 +9,7 @@
         Edition debug info
         -------------------------------------------------
         format         : {{ edition.format }}
-        auto_label     : {{ edition.auto_label     ? 'true' : 'false' }}
+        labels         : {{ edition.labels|join(', ') }}
         include_styles : {{ edition.include_styles ? 'true' : 'false' }}
         highlight_code : {{ edition.highlight_code ? 'true' : 'false' }}
         toc deep       : {{ edition.toc.deep }}

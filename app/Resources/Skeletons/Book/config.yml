@@ -18,25 +18,25 @@ book:
     editions:
         print:
             format:         pdf
-            auto_label:     true
             include_styles: true
             isbn:           ~
+            labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
             margin:
                 top:        25mm
                 bottom:     25mm
                 inner:      30mm
                 outter:     20mm
             page_size:      A4
-            two_sided:      true
             toc:
                 deep:       2
-                elements:   ["appendix", "chapter"]
+                elements:   ["appendix", "chapter", "part"]
+            two_sided:      true
 
         web:
             format:         html
-            auto_label:     true
             highlight_code: true
             include_styles: true
+            labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
             toc:
                 deep:       2
                 elements:   ["appendix", "chapter"]

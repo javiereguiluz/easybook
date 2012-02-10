@@ -33,7 +33,7 @@ class Application extends \Pimple
         $this['app.debug']     = true;
         $this['app.charset']   = 'UTF-8';
         $this['app.name']      = 'easybook';
-        $this['app.version']   = '4.0';
+        $this['app.version']   = '4.2-dev';
         $this['app.signature'] = "\n"
         ."                     |              |    \n"
         ." ,---.,---.,---.,   .|---.,---.,---.|__/ \n"
@@ -316,9 +316,9 @@ class Application extends \Pimple
             ? $this['labels']['label'][$element]
             : '';
 
-        // chapters and appendices have a different label for each level (h1, ..., h6)
-        if ('chapter' == $element || 'appendix' == $element) {
-            $label = $label[$variables['level']-1];
+        // some elements (mostly chapters and appendices) have a different label for each level (h1, ..., h6)
+        if (is_array($label)) {
+            $label = $label[$variables['item']['level']-1];
         }
 
         return $this->renderString($label, $variables);

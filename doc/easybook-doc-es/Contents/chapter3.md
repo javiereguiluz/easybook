@@ -27,25 +27,29 @@ Las ediciones de tipo `pdf` y `html` disponen de las siguientes plantillas (su c
   * `cover.twig`
   * `dedication.twig`
   * `edition.twig`
+  * `figure.twig`, plantilla con la que se decoran todas las imágenes del libro.
   * `license.twig`
   * `part.twig`
+  * `table.twig`, plantilla con la que se decoran todas las tablas del libro.
   * `title.twig`
 
-Las ediciones de tipo `html_chunked` no disponen de una plantilla diferente para cada tipo de contenido, sino que simplemente disponen de las siguientes tres plantillas:
+Las ediciones de tipo `html_chunked` no disponen de una plantilla diferente para cada tipo de contenido, sino que simplemente disponen de las siguientes cinco plantillas:
 
+  * `figure.twig`, plantilla con la que se decoran todas las imágenes del libro.
   * `index.twig`, corresponde a la portada del sitio web y por defecto incluye la portada, el índice de contenidos, la información sobre la edición y la licencia de la obra.
   * `chunk.twig`, plantilla genérica con la que se decoran todos los contenidos. Se recomienda que incluya solamente los contenidos del elemento, ya que los contenidos comunes al sitio web se colocan en la plantilla `layout.twig`.
   * `layout.twig`, plantilla genérica con la que se decoran todos los contenidos después de decorarlos con las otras plantillas. Esta es la plantilla ideal para añadir todos los elementos comunes del sitio web, como la cabecera, el pie de página y los enlaces a recursos como archivos CSS y JavaScript.
+  * `table.twig`, plantilla con la que se decoran todas las tablas del libro.
 
 ### Hojas de estilos ###
 
 Además de las plantillas Twig, los temas incluyen una hoja de estilos CSS adecuada para cada edición. Estos estilos por defecto de **easybook** se aplican siempre que la opción `include_styles` de la edición sea `true`. Si no quieres aplicarlos, no añadas la opción `include_styles` o cambia su valor a `false`.
 
-En cualquier caso, lo más común es mantener los estilos por defecto y añadir también una hoja de estilos propia que incluya nuevos estilos o modifique los de **easybook**. Para ello, añade un archivo llamado `styles.css` dentro del directorio:
+En cualquier caso, lo más común es mantener los estilos por defecto y añadir también una hoja de estilos propia que incluya nuevos estilos o modifique los de **easybook**. Para ello, añade un archivo llamado `style.css` dentro del directorio:
 
-  1. `<libro>/Resources/Templates/<nombre-edicion>/styles.css`, si quieres aplicar los estilos a una única edición.
-  2. `<libro>/Resources/Templates/<tipo-edicion>/styles.css`, si quieres aplicar los estilos a todas las ediciones del mismo tipo  (`html`, `html_chunked` o `pdf`).
-  3. `<libro>/Resources/Templates/styles.css`,  para aplicar los mismos estilos a todas las ediciones.
+  1. `<libro>/Resources/Templates/<nombre-edicion>/style.css`, si quieres aplicar los estilos a una única edición.
+  2. `<libro>/Resources/Templates/<tipo-edicion>/style.css`, si quieres aplicar los estilos a todas las ediciones del mismo tipo  (`html`, `html_chunked` o `pdf`).
+  3. `<libro>/Resources/Templates/style.css`,  para aplicar los mismos estilos a todas las ediciones.
 
 ## Plugins ##
 

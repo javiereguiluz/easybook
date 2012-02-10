@@ -1,16 +1,22 @@
 # French translation of the strings managed by easybook
 label:
-    appendix: ['Annexe {{ item.number }} ', '', '', '', '', '']
+    appendix:
+        - 'Annexe {{ item.number }}'
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
     chapter:
         - 'Chapitre {{ item.number }} '
-        - '{{ counters[0:2]|join(".") }}' # 1.1
-        - '{{ counters[0:3]|join(".") }}' # 1.1.1
-        - '{{ counters[0:4]|join(".") }}' # 1.1.1.1
-        - '{{ counters[0:5]|join(".") }}' # 1.1.1.1.1
-        - '{{ counters[0:6]|join(".") }}' # 1.1.1.1.1.1
-    figure:          'Figure {{ item.number }}.{{ counter }} '
-    part:            'Partie {{ item.number }} '
-    table:           'Tableau {{ item.number }}.{{ counter }} '
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+    figure:          'Figure {{ element.number }}.{{ item.number }}'
+    part:            'Partie {{ item.number }}'
+    table:           'Tableau {{ element.number }}.{{ item.number }}'
 
     acknowledgement: ''
     author:          ''

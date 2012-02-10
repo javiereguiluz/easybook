@@ -27,29 +27,33 @@ The following list shows the default templates included in `pdf` and `html` type
   * `cover.twig`
   * `dedication.twig`
   * `edition.twig`
+  * `figure.twig`, the template used to decorate all the images included in the book.
   * `license.twig`
   * `part.twig`
+  * `table.twig`, the template used to decorate all the tables included in the book.
   * `title.twig`
 
-The `html_chunked` edition type doesn't include a different template for each content type. It onle defines the following three templates:
+The `html_chunked` edition type doesn't include a different template for each content type. It onle defines the following five templates:
 
+  * `figure.twig`, the template used to decorate all the images included in the book.
   * `index.twig`, the template that generates the front page of the website. By default it includes the following contents: `cover`, `toc`, `edition` and `license`.
   * `chunk.twig`, generic template applied to all the rest of the content types. This template must only include the contents of the item being decorated. The common features of the website are defined in the `layout.twig` template.
   * `layout.twig`, generic template applied to all the content types, including the front page, after decorating them with their own templates. This is the best template to include the common features of the website, such as header, footer and links to CSS and JavaScript files.
+  * `table.twig`, the template used to decorate all the tables included in the book.
 
 ### Stylesheets ###
 
 In addition to Twig templates, themes include a custom CSS stylesheet for each edition type. These default styles are applied whenever the `include_styles` option of the edition is `true`. If you don't want to apply these styles, delete the option or give it a `false` value.
 
-However, the most common scenario is to maintain the default **easybook** styles and then apply your custom CSS to include new styles or modify them. To do this, add a file called `styles.css` within the directory:
+However, the most common scenario is to maintain the default **easybook** styles and then apply your custom CSS to include new styles or modify them. To do this, add a file called `style.css` within the directory:
 
-  1. `<book>/Resources/Templates/<edition-name>/styles.css`, if you want to apply the styles just to one specific edition.
-  2. `<book>/Resources/Templates/<edtion-type>/styles.css`, if you want to apply the same styles to all the editions of the same type (`html`, `html_chunked` or `pdf`).
-  3. `<book>/Resources/Templates/styles.css`,  if you want to apply the same styles to all the editions of the book.
+  1. `<book>/Resources/Templates/<edition-name>/style.css`, if you want to apply the styles just to one specific edition.
+  2. `<book>/Resources/Templates/<edtion-type>/style.css`, if you want to apply the same styles to all the editions of the same type (`html`, `html_chunked` or `pdf`).
+  3. `<book>/Resources/Templates/style.css`,  if you want to apply the same styles to all the editions of the book.
 
 ## Plugins ##
 
-Despite being a simple application, **easybook** easily adapts to your requirements. The previous chapters showed lots of examples of this flexibility, but the **plugins** explained in this section are by far the more powerful example.
+Despite being a simple application, **easybook** easily adapts to your requirements. The previous chapters showed lots of examples of this flexibility, but the **plugins** explained in this section are by far the most powerful example.
 
 A plugin allows you to completely modify the behavior of **easybook**. Imagine you want to modify the original Markdown content of the chapters  before converting it to HTML. This is really easy because, before converting a content, **easybook** notifies that it's going to convert it. Then, your book can create a plugin that *listens* to this events and executes some code when an specific event is notified.
 

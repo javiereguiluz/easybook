@@ -65,25 +65,25 @@ Editions are defined under the `editions` options in `config.yml` file. By defau
         editions:
             print:
                 format:         pdf
-                auto_label:     true
                 include_styles: true
                 isbn:           ~
+                labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 margin:
                     top:        25mm
                     bottom:     25mm
                     inner:      30mm
                     outter:     20mm
                 page_size:      A4
-                two_sided:      true
                 toc:
                     deep:       2
                     elements:   ["appendix", "chapter"]
+                two_sided:      true
 
             web:
                 format:         html
-                auto_label:     true
                 highlight_code: true
                 include_styles: true
+                labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 toc:
                     deep:       2
                     elements:   ["appendix", "chapter"]
@@ -100,18 +100,18 @@ The name of each edition must be unique for the same book and cannot contain spa
 
 Editions can modify the aspect of the published book through several configuration options. The `html` and `html_chunked`  edition types share the same options:
 
-  * `auto_label`, if `true` all the book headings are prefixed with labels (`1.1`, `1.2`, `1.2.1`, `1.2.2`, etc.)
   * `highligh_code`, if `true` the syntax of the code listings is highlighted (this option is a placeholder and it doesn't work for the momment).
   * `include_styles`, if `true` the generated HTML pages include a link to **easybook** default CSS file.
+  * `labels`, indicates the content types for which **easybook** will add labels to their section headings. By default labels are only added to headings of chapters and appendices. In addition to **easybook** content types, you can use two special values called `figure` and `table` to add labels for book images and tables. If you want to show no labels in your book, delete all values of this option: `labels: []`.
   * `toc`, sets the options of the table of contents. It's ignored unless the book has at least one `toc` element type. It has two options:
     * `deep`, the maximum heading level included in the TOC (`1` is the lowest possible number and would only show `<h1>` level headings; `6` is the highest possible value and would show all `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` and `<h6>` headings).
     * `items`, the type of elements included in the TOC (by default, only `appendix`, `chapter` and `part` are included).
 
 The `pdf` editions can define even more options:
 
-  * `auto_label`, it's the same option and has the same meaning as for the `html` and `html_chunked` editions
   * `isbn`, the ISBN-10 or ISBN-13 code of the book (this option is a placeholder and it doesn't work for the momment).
   * `include_styles`, if `true` **easybook** will decide the layout, typesetting and design of the book. Use this option to create stunning books effortlessly. The next chapter will explain how to define your own styles.
+  * `labels`, it's the same option and has the same meaning as for the `html` and `html_chunked` editions
   * `margin`, sets the four margins of the printed book: `top`, `bottom`, `inner` and `outter`. If the book is one-sided, `inner` equals left margin and `outter` equals right margin. The values of the margins can be set with any CSS valid lenght unit (`1in`, `25mm`, `2.5cm`).
   * `page_size`, the page size of the printed book. **easybook** only supports `A4` size for the moment (`A4` size is 8.27 inches × 11.69 inches).
   * `toc`, it's the same option and has the same meaning as for the `html` and `html_chunked` editions
@@ -127,26 +127,26 @@ Imagine for example you want to publish one PDF book with three slightly differe
             print:
                 format:       pdf
                 isbn:         ~
-                auto_label:   true
-                two_sided:    false
-                page_size:    A4
+                labels:       ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 margin:
                     top:      25mm
                     bottom:   25mm
                     inner:    30mm
                     outter:   20mm
+                page_size:    A4
                 toc:
                     deep:     2
                     elements: ['appendix', 'chapter']
+                two_sided:    false
 
             draft:
                 extends:      print
-                two_sided:    true
                 margin:
                     top:      15mm
                     bottom:   15mm
                     inner:    20mm
                     outter:   10mm
+                two_sided:    true
 
             lulu:
                 extends:      print
@@ -217,7 +217,15 @@ The data of the content being decorated are accessible through a special variabl
   * `item.original`, the original content of the element without any modification.
   * `item.config`, array with all the configuration options defined for the elemento in the `config.yml` file. Internally it holds `number`, `title`, `content` and `element` properties. For example, you can access the type of the element with the following expression: `{{ item.config.element }}`.
 
-In addition to these item properties, all the **easybook** templates have access to three global variables:
+Images and tables are decorated with special templates called `figure.twig` and `table.twig` which have access to the following variables:
+
+   * `item.caption`, is the title of the image/table as indicated in the original content.
+   * `item.content`, is the complete HTML code generated to display the image/table in the book (`<img src="..." alt="..." />` or `<table> ... </ table>`).
+   * `item.label`, is the label of the image/table. This value is empty unless the `labels` option of the edition includes `figure` and/or `table`.
+   * `item.number`, is the autogenerated number of the image/table inside the item being processed. The first image/table is considered to be the number `1` and the following are increased by one.
+   * `element.number`, is the number of the parent element (chapter, appendix, etc.) of the image/table. This property will be for example `5` for all the images/tables included in the chapter number `5` of the book.
+
+In addition to these properties, all the **easybook** templates have access to three global variables:
   
   * `book`, provides direct access to the configuration options defined under `book` in `config.yml` file. You can access for example the book author in any template using `{{ book.author }}` and the current **easybook** version using `{{ book.generator.version }}`.
   * `edition`, provides direct access to the configuration options of the edition curently being published.
@@ -245,26 +253,36 @@ In the next chapter you'll learn how to use your own CSS styles instead of **eas
 
 **easybook** requires each content to have its own title.  Chapters and appendices include the title within their own content and parts define it in the `title` option of the `config.yml` file. For the rest of content types, **easybook** assigns a default title that varies depending on the language in which the book is written. You can see the titles applied to English books in `app/Resources/Translations/titles.en.yml`.
 
-Similarly, if the book sets the `auto_labels` option, **easybook** adds labels to the headings of `chapter`, `appendix` and `part` content types. You can see the default labels applied to books written in English in `app/Resources/Translations/labels.en.yml` file.
+Moreover, the book can add labels (`Chapter XX`, `Appendix XX`, etc.) to section titles using the `labels` option. As explained above, this option indicates the content types for which tags are added automatically. By default the book only adds tags in chapters and appendices. The default labels applied to books written in English are defined in `app/Resources/Translations/labels.en.yml` file.
 
 Unlike the titles, labels can contain variable parts, such as the appendix or chapter number. Therefore, **easybook** uses Twig templates to define each label:
 
     label:
-        figure: 'Figure {{ item.number }}.{{ counter }} '
-        part:   'Part {{ item.number }} '
-        table:  'Table {{ item.number }}.{{ counter }} '
+        figure: 'Figure {{ element.number }}.{{ item.number }}'
+        part:   'Part {{ item.number }}'
+        table:  'Table {{ element.number }}.{{ item.number }}'
 
-The `item.number` property is the number (or letter) defined in the `number` option of the element in `config.yml` file. Chapters and appendices must define six different labels, each corresponding to one of the six headings levels (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` and `<h6>`). In the following example, appendices only include a label in its title, thus leaving empty the last five levels:
+The templates for `figure` and `table` labels can use the same variables as `figure.twig` and `table.twig` templates explained before. Therefore, `{{ item.number }}` shows the autogenerated number of the image/table and `{{ element.number }}` shows the number of the chapter or appendix.
+
+Chapters and appendices must define six different labels, each corresponding to one of the six heading levels (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` and `<h6>`). In the following example, appendices only include a label in their titles, thus leaving empty the last five levels:
 
     label:
-        appendix: ['Appendix {{ item.number }} ', '', '', '', '', '']
+        appendix:
+            - 'Appendix {{ item.number }}'
+            - ''
+            - ''
+            - ''
+            - ''
+            - ''
 
-In addition to `item.number` property, label templates have access to a special variable called `counters` which is an array with the counters of all heading levels. For that reason, to show second-level headings as `1.1`, `1.2` ... `7.1`, `7.2` you can use the following expression:
+Labels can access to all configuration options defined by the item in the `config.yml` file. The label of a chapter can then use `{{ item.number }}` to show the number of the chapter. In addition to these properties, label templates have access to two special variables called `level` and `counters`.
+
+The `level` variable indicates the section heading level for which you want to get the label, being `1` the level of `<h1>` heading and `6` the level of `<h6>` headings. The `counters` variable is an array with the counters of all heading levels. For that reason, to show second-level headings as `1.1`, `1.2` ... `7.1`, `7.2` you can use the following expression:
 
     label:
         chapter:
-            - 'Chapter {{ item.number }} '
-            - '{{ counters[0] }}.{{ counters[1] }}'
+            - 'Chapter {{ item.number }}'
+            - '{{ item.counters[0] }}.{{ item.counters [1] }}'
             - ...
 
 Extending the previous example, you can use the following templates to format all the heading levels as `1.1`, `1.1.1`, `1.1.1.1`, etc.:
@@ -272,11 +290,11 @@ Extending the previous example, you can use the following templates to format al
      label:
          chapter:
              - 'Chapter {{ item.number }} '
-             - '{{ counters[0:2]|join(".") }}'  # 1.1
-             - '{{ counters[0:3]|join(".") }}'  # 1.1.1
-             - '{{ counters[0:4]|join(".") }}'  # 1.1.1.1
-             - '{{ counters[0:5]|join(".") }}'  # 1.1.1.1.1
-             - '{{ counters[0:6]|join(".") }}'  # 1.1.1.1.1.1
+             - '{{ item.counters[0:2]|join(".") }}'  # 1.1
+             - '{{ item.counters[0:3]|join(".") }}'  # 1.1.1
+             - '{{ item.counters[0:4]|join(".") }}'  # 1.1.1.1
+             - '{{ item.counters[0:5]|join(".") }}'  # 1.1.1.1.1
+             - '{{ item.counters[0:6]|join(".") }}'  # 1.1.1.1.1.1
 
 This last example clearly shows what you can achieve by combining the flexibility of **easybook** and the power of Twig.
 

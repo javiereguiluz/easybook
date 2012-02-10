@@ -1,16 +1,22 @@
 # Italian translation of the strings managed by easybook
 label:
-    appendix: ['Appendice {{ item.number }} ', '', '', '', '', '']
+    appendix:
+        - 'Appendice {{ item.number }}'
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
     chapter:
         - 'Capitolo {{ item.number }} '
-        - '{{ counters[0:2]|join(".") }}' # 1.1
-        - '{{ counters[0:3]|join(".") }}' # 1.1.1
-        - '{{ counters[0:4]|join(".") }}' # 1.1.1.1
-        - '{{ counters[0:5]|join(".") }}' # 1.1.1.1.1
-        - '{{ counters[0:6]|join(".") }}' # 1.1.1.1.1.1
-    figure:          'Figura {{ item.number }}.{{ counter }} '
-    part:            'Sezione {{ item.number }} '
-    table:           'Tabella {{ item.number }}.{{ counter }} '
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+    figure:          'Figura {{ element.number }}.{{ item.number }}'
+    part:            'Sezione {{ item.number }}'
+    table:           'Tabella {{ element.number }}.{{ item.number }}'
 
     acknowledgement: ''
     author:          ''

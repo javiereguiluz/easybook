@@ -3,7 +3,7 @@ book:
     author:           'Javier Eguiluz'
     edition:          'First edition'
     language:         en
-    publication_date: ~
+    publication_date: '09-02-2012'
 
     generator: { name: easybook, version: 4.0 }
 
@@ -17,18 +17,18 @@ book:
     editions:
         my_edition_1:
             format:         html
-            auto_label:     true
-            include_styles: false
             highlight_code: false
+            include_styles: false
+            labels:         ['appendix', 'chapter', 'figure', 'table']
             toc:
                 deep:       1
                 elements:   ["chapter"]
 
         my_edition_2:
             format:         html_chunked
-            auto_label:     true
-            include_styles: true
             highlight_code: true
+            include_styles: true
+            labels:         ['appendix', 'chapter', 'figure', 'table']
             toc:
                 deep:       1
                 elements:   ["chapter"]

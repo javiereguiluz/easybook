@@ -46,10 +46,11 @@ class ParserPlugin implements EventSubscriberInterface
 
         $event->setItem($item);
 
-        // add labels if the book wants them ('auto_label' option)
-        // TODO: extensibility: each content should be able to override 'auto_label' option
+        // add labels if the publishing edition wants labels for this element type ('label' option)
+        // TODO: extensibility: each content should be able to override 'label' option
         $item = $event->getItem();
-        if ($event->app->edition('auto_label') && count($item['toc']) > 0) {
+        if (in_array($item['config']['element'], $event->app->edition('labels'))
+            && count($item['toc']) > 0) {
             // prepare labels
             $counters = array(
                 1 => $item['config']['number'],
@@ -71,10 +72,12 @@ class ParserPlugin implements EventSubscriberInterface
                     $counters[$i] = 0;
                 }
 
-                $label = $event->app->getLabel($item['config']['element'], array(
-                    'item'     => $item['config'],
+                $parameters = array_merge($item['config'], array(
                     'counters' => $counters,
                     'level'    => $level
+                ));
+                $label = $event->app->getLabel($item['config']['element'], array(
+                    'item' => $parameters
                 ));
 
                 $entry['label'] = $label;
@@ -126,22 +129,6 @@ class ParserPlugin implements EventSubscriberInterface
             ));
             $event->setItem($item);
         }
-
-        // fix image URLs
-        $item = $event->getItem();
-        $item['content'] = preg_replace_callback(
-            '/<img src="(.*)"(.*) \/>/U',
-            function($matches) {
-                $uri = $matches[1];
-                if ('images/' != substr($uri, 0, 7)) {
-                    $uri = 'images/'.$uri;
-                }
-
-                return sprintf('<img src="%s"%s />', $uri, $matches[2]);
-            },
-            $item['content']
-        );
-        $event->setItem($item);
 
         // parse internal links
         $item = $event->getItem();

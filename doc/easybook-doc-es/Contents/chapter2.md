@@ -66,23 +66,23 @@ Las ediciones se definen bajo la opción `editions` en el archivo `config.yml`. 
             print:
                 format:         pdf
                 isbn:           ~
-                auto_label:     true
-                two_sided:      true
-                page_size:      A4
+                labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 margin:
                     top:        25mm
                     bottom:     25mm
                     inner:      30mm
                     outter:     20mm
+                page_size:      A4
                 toc:
                     deep:       2
                     elements:   ['appendix', 'chapter']
+                two_sided:      true
 
             web:
                 format:         html
-                auto_label:     true
-                include_styles: true
                 highlight_code: true
+                include_styles: true
+                labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 toc:
                     deep:       2
                     elements:   ['appendix', 'chapter']
@@ -99,18 +99,18 @@ El nombre de las ediciones debe ser único para un mismo libro y no puede conten
 
 Cada tipo de edición define sus propias opciones de configuración. Los tipos `html` y `html_chunked` disponen de las mismas opciones:
 
-  * `auto_label`, si vale `true` se añaden *labels* o etiquetas a los títulos de las secciones (`1.1`, `1.2`, `1.2.1`, `1.2.2`, etc.)
   * `highligh_code`, si vale `true` se colorea la sintaxis de los listados de código del libro (esta opción todavía no se tiene en cuenta).
   * `include_styles`, si vale `true` se enlazan los estilos CSS por defecto de **easybook** en las páginas HTML generadas.
+  * `labels`, indica los tipos de elementos para los que se añaden etiquetas en sus títulos de sección. Por defecto sólo se aplican a los capítulos y apéndices. Además de los tipos de contenido de **easybook**, puedes utilizar dos valores especiales llamados `figure` y `table`, que añaden respectivamente etiquetas a las imágenes y las tablas del libro. Si no quieres mostrar ninguna etiqueta, elimina todos los contenidos de esta opción: `labels: []`.
   * `toc`, establece las opciones del índice de contenidos. Sólo se tiene en cuenta si el libro incluye un contenido de tipo `toc`. A su vez, dispone de dos subopciones:
     * `deep`, indica el nivel de título máximo que se incluye en el índice (`1` es el valor más pequeño posible y equivale a mostrar sólo los títulos de nivel `<h1>`; el valor más grande es `6` y equivale a mostrar todos los títulos `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` y `<h6>`).
     * `items`, indica el tipo de contenidos que se incluyen en el índice (por defecto sólo se muestran, si las hay, las secciones y los títulos de apéndices y capítulos).
 
 Por su parte, el tipo de edición `pdf` dispone de las siguientes opciones:
 
-  * `auto_label`, mismo significado y opciones que en las ediciones de tipo `html` y `html_chunked`.
   * `isbn`, idica el código ISBN-10 o ISBN-13 del libro impreso (esta opción todavía no se tiene en cuenta).
   * `include_styles`, si vale `true` el libro PDF se maqueta con los estilos por defecto de **easybook**. Así podrás crear libros bonitos sin esfuerzo. En el próximo capítulo se explica cómo añadir también tus propios estilos.
+  * `labels`, mismo significado y opciones que en las ediciones de tipo `html` y `html_chunked`.
   * `margin`, permite indicar los cuatro márgenes de las páginas del archivo PDF: superior (`top`), inferior (`bottom`), interior (`inner`) y exterior (`outter`). En los libros impresos a una cara, los márgenes interior y exterior se interpretan respectivamente como margen izquierdo y derecho. Los valores de los márgenes se pueden indicar con cualquier unidad de medida válida en CSS (`25mm`, `2.5cm`, `1in`).
   * `page_size`, indica el tamaño de página del archivo PDF. Por el momento sólo soporta el valor `A4`, que corresponde al tamaño *DIN A-4*.
   * `toc`, mismo significado y opciones que en las ediciones de tipo `html` y `html_chunked`.
@@ -126,17 +126,17 @@ Imagina por ejemplo que quieres publicar en PDF un mismo libro modificando liger
             print:
                 format:       pdf
                 isbn:         ~
-                auto_label:   true
-                two_sided:    false
-                page_size:    A4
+                labels:       ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 margin:
                     top:      25mm
                     bottom:   25mm
                     inner:    30mm
                     outter:   20mm
+                page_size:    A4
                 toc:
                     deep:     2
                     elements: ['appendix', 'chapter']
+                two_sided:    false
 
             draft:
                 extends:      print
@@ -216,7 +216,15 @@ Los datos del contenido que se decora se encuentran en una variable llamada `ite
   * `item.original`, contenido original del elemento sin procesar ni manipular.
   * `item.config`, array con todas las opciones del elemento definidas en el archivo `config.yml`. Sus propiedades internas son `number`, `title`, `content` y `element`. Así por ejemplo, para determinar el tipo de elemento puedes utilizar la expresión `{{ item.config.element }}`.
 
-Además de estas propiedades relativas al elemento que se está decorando, todas las plantillas disponen de las siguientes tres variables globales:
+Las imágenes y tablas se decoran con unas plantillas especiales llamadas `figure.twig` y `table.twig` que tienen acceso a las siguientes variables:
+
+  * `item.caption`, es el título de la imagen/tabla tal y como se indicó en el contenido original.
+  * `item.content`, es el código HTML completo generado para mostrar la imagen/tabla en el libro (`<img src="..." alt="..." />` o `<table> ... </table>`).
+  * `item.label`, es la etiqueta de la imagen/tabla. Su valor es vacío a menos que la opción `labels` de la edición incluya el valor `figure` y/o `table`.
+  * `item.number`, es el número autogenerado de la imagen/tabla dentro del elemento que se está procesando. La primera imagen/tabla se considera que es la número `1` y las siguientes se incrementan en una unidad.
+  * `element.number`, es el número del elemento (capítulo, apéndice, etc.) en el que está incluida la imagen/tabla. Así por ejemplo, esta propiedad valdrá `5` para todas las imágenes/tablas incluidas dentro del capítulo `5` del libro.
+
+Además de estas propiedades, todas las plantillas, independientemente de su tipo, disponen de las siguientes tres variables globales:
 
   * `book`, proporciona acceso directo a todas las opciones de configuración definidas bajo `book` en el archivo `config.yml`. Así por ejemplo, puedes obtener el autor en cualquier plantilla mediante `{{ book.author }}` y la versión de **easybook** mediante `{{ book.generator.version }}`.
   * `edition`, proporciona acceso directo a todas las opciones de configuración de la edición que se está publicando actualmente.
@@ -244,26 +252,36 @@ Para que los libros publicados tengan un aspecto profesional, **easybook** inclu
 
 **easybook** requiere para su funcionamiento que cada contenido disponga de su propio título. En el caso de los capítulos y apéndices, el título se incluye dentro de su propio contenido. En otros casos como el de las secciones, el título se define mediante la opción `title` en el archivo `config.yml`. Al resto de contenidos que no definen o incluyen un título, **easybook** les asigna un título por defecto que varía en función del idioma en el que está escrito el libro. Puedes ver los títulos que se aplican a los libros escritos en español en el archivo `app/Resources/Translations/titles.es.yml`.
 
-Igualmente, si el libro incluye la opción `auto_labels`, se añaden etiquetas a los títulos de sección de los elementos `cahpter`, `appendix` y `part`. Los valores por defecto de las etiquetas en español se encuentran en el archivo `app/Resources/Translations/labels.es.yml`.
+Por otra parte, el libro puede añadir etiquetas (`Capítulo XX`, `Apéndice XX`, etc.) a los títulos de sección mediante la opción `labels`. Como se explicó anteriormente, esta opción indica el tipo de elementos para los que se añaden las etiquetas automáticamente. Si no modificas su valor, el libro solamente añade etiquetas en los capítulos y apéndices. Los valores por defecto de las etiquetas en español se encuentran en el archivo `app/Resources/Translations/labels.es.yml`.
 
-A diferencia de los títulos, las etiquetas contienen partes variables, como por ejemplo el número de apéndice o capítulo. Por ello, **easybook** permite definir cada etiqueta mediante una pequeña plantilla Twig:
-
-    label:
-        figure: 'Figura {{ item.number }}.{{ counter }} '
-        part:   'Sección {{ item.number }} '
-        table:  'Tabla {{ item.number }}.{{ counter }} '
-
-La opción `item.number` es el número (o letra) incluido en la opción `number` del elemento dentro del archivo `config.yml`. En el caso de los apéndices y capítulos, es necesario definir seis etiquetas, cada una perteneciente a uno de los seis niveles de título (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` y `<h6>`). El siguiente ejemplo hace que los apéndices sólo muestren una etiqueta en su título, por lo que dejan vacíos los cinco últimos niveles:
+A diferencia de los títulos, las etiquetas contienen partes variables, como por ejemplo el número de apéndice o capítulo. Por ello, **easybook** define cada etiqueta mediante una pequeña plantilla Twig:
 
     label:
-        appendix: ['Apéndice {{ item.number }} ', '', '', '', '', '']
+        figure: 'Figura {{ element.number }}.{{ item.number }}'
+        part:   'Sección {{ item.number }}'
+        table:  'Tabla {{ element.number }}.{{ item.number }}'
 
-Además de `item.number`, la plantilla de cada etiqueta tiene acceso a una variable especial llamada `counters` que es un array con los contadores de todos los niveles de título. Así, para hacer que las secciones de segundo nivel se muestren como `1.1`, `1.2`, ..., `7.1`, `7.2` puedes utilizar la siguiente expresión:
+Las etiquetas `figure` y `table` tienen accceso a las mismas variables que las plantillas `figure.twig` y `table.twig` explicadas anteriormente. Así que `{{ item.number }}` muestra el número autogenerado para cada imagen/tabla y `{{ element.number }}` muestra el número de capítulo o apéndice.
+
+En el caso de los apéndices y capítulos, es necesario definir seis etiquetas, cada una perteneciente a uno de los seis niveles de título (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` y `<h6>`). El siguiente ejemplo hace que los apéndices sólo muestren una etiqueta en su título, por lo que dejan vacíos los cinco últimos niveles:
+
+    label:
+        appendix:
+            - 'Apéndice {{ item.number }}'
+            - ''
+            - ''
+            - ''
+            - ''
+            - ''
+
+Las etiquetas tienen acceso a todas las opciones de configuración definidas por el elemento en el archivo `config.yml`. Así que la etiqueta de un capítulo puede utilizar por ejemplo `{{ item.number }}` para mostrar el número del capítulo. Además de todas estas propiedades, las etiquetas disponen de dos propiedades especiales llamadas `counters` y `level`.
+
+La propiedad `level` indica el nivel de título de sección para el que se quiere obtener la etiqueta, siendo `1` el nivel correspondiente al título `<h1>` y así hasta el `6` que equivale al título de nivel `<h6>`. La propiedad `counters` es un array con los contadores de todos los títulos de sección encontrados hasta ese punto. Así, para hacer que las secciones de segundo nivel de los capítulos se muestren como `1.1`, `1.2`, ..., `7.1`, `7.2` puedes utilizar la siguiente expresión:
 
     label:
         chapter:
             - 'Capítulo {{ item.number }} '
-            - '{{ counters[0] }}.{{ counters[1] }}'
+            - '{{ item.counters[0] }}.{{ item.counters[1] }}'
             - ...
 
 Generalizando el ejemplo anterior, puedes utilizar el siguiente código Twig para hacer que las etiquetas de los capítulos sean de tipo `1.1`, `1.1.1`, `1.1.1.1`, etc.:
@@ -271,11 +289,11 @@ Generalizando el ejemplo anterior, puedes utilizar el siguiente código Twig par
     label:
         chapter:
             - 'Capítulo {{ item.number }} '
-            - '{{ counters[0:2]|join(".") }}'  # 1.1
-            - '{{ counters[0:3]|join(".") }}'  # 1.1.1
-            - '{{ counters[0:4]|join(".") }}'  # 1.1.1.1
-            - '{{ counters[0:5]|join(".") }}'  # 1.1.1.1.1
-            - '{{ counters[0:6]|join(".") }}'  # 1.1.1.1.1.1
+            - '{{ item.counters[0:2]|join(".") }}'  # 1.1
+            - '{{ item.counters[0:3]|join(".") }}'  # 1.1.1
+            - '{{ item.counters[0:4]|join(".") }}'  # 1.1.1.1
+            - '{{ item.counters[0:5]|join(".") }}'  # 1.1.1.1.1
+            - '{{ item.counters[0:6]|join(".") }}'  # 1.1.1.1.1.1
 
 Este último ejemplo da una buena idea de todo lo que puedes conseguir aunando la flexibilidad de **easybook** y la potencia de Twig.
 

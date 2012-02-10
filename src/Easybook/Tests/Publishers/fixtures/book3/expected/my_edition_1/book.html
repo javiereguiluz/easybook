@@ -24,7 +24,7 @@
         Edition debug info
         -------------------------------------------------
         format         : html
-        auto_label     : true
+        labels         : appendix, chapter, figure, table
         include_styles : false
         highlight_code : false
         toc deep       : 1
@@ -637,9 +637,9 @@ easybook installed version: 4.0
 
     <div class="page:appendix new-page">
 
-<h1 id="publishing-your-third-book"><span>Appendix A </span> Publishing your third book</h1>
+<h1 id="publishing-your-third-book"><span>Appendix A</span> Publishing your third book</h1>
 
-<h2 id="creating-your-own-theme"> Creating your own theme</h2>
+<h2 id="creating-your-own-theme">A.1 Creating your own theme</h2>
 
 <p><strong>easybook</strong> themes make your books look beautiful by default. However, your books should define their own styles to fine-tune its appearance. To do this, create a directory called <code>Resources</code> within the directory of the book and inside it, create another directory called <code>Templates</code>.</p>
 
@@ -655,7 +655,7 @@ easybook installed version: 4.0
 
 <p>As explained in the previous chapter, the templates have access to a variable named <code>item</code> with all the information about the item that is being decorated and three global variables with information about the book (<code>book</code>), the edition being published (<code>edition</code>) and the entire application (<code>app</code>).</p>
 
-<h3 id="available-templates-per-edition"> Available templates per edition</h3>
+<h3 id="available-templates-per-edition">A.1.1 Available templates per edition</h3>
 
 <p>The following list shows the default templates included in <code>pdf</code> and <code>html</code> type editions (their contents obviously varies from one type to the other):</p>
 
@@ -682,7 +682,7 @@ easybook installed version: 4.0
 <li><code>layout.twig</code>, generic template applied to all the content types, including the front page, after decorating them with their own templates. This is the best template to include the common features of the website, such as header, footer and links to CSS and JavaScript files.</li>
 </ul>
 
-<h3 id="stylesheets"> Stylesheets</h3>
+<h3 id="stylesheets">A.1.2 Stylesheets</h3>
 
 <p>In addition to Twig templates, themes include a custom CSS stylesheet for each edition type. These default styles are applied whenever the <code>include_styles</code> option of the edition is <code>true</code>. If you don't want to apply these styles, delete the option or give it a <code>false</code> value.</p>
 
@@ -694,7 +694,7 @@ easybook installed version: 4.0
 <li><code>&lt;book&gt;/Resources/Templates/styles.css</code>,  if you want to apply the same styles to all the editions of the book.</li>
 </ol>
 
-<h2 id="plugins"> Plugins</h2>
+<h2 id="plugins">A.2 Plugins</h2>
 
 <p>Despite being a simple application, <strong>easybook</strong> easily adapts to your requirements. The previous chapters showed lots of examples of this flexibility, but the <strong>plugins</strong> explained in this section are by far the more powerful example.</p>
 
@@ -803,9 +803,9 @@ class BrandingPlugin implements EventSubscriberInterface
 
 <p>The event <code>Events::PRE_PARSE</code> is notified before the conversion, so you only have access to the original content (<code>getOriginal()</code>). In contrast, the event <code>Events::POST_PARSE</code> is notified after the conversion, so it doesn't make sense to modify the original content but the converted content (<code>getContent()</code>).</p>
 
-<h2 id="advanced-features"> Advanced features</h2>
+<h2 id="advanced-features">A.3 Advanced features</h2>
 
-<h3 id="different-directories-per-book"> Different directories per book</h3>
+<h3 id="different-directories-per-book">A.3.1 Different directories per book</h3>
 
 <p>Unless stated otherwise, the books are created in the <code>doc/</code> directory of <strong>easybook</strong>. If you want to save the contents in any other directory, add the <code>--dir</code> option when creating and/or publishig the book:</p>
 
@@ -816,7 +816,7 @@ $ ./book publish the-origin-of-species print --dir="/Users/javier/books"
 (the book is published in "/Users/javier/books/the-origin-of-species/Output/print/book.pdf")
 </code></pre>
 
-<h3 id="advanced-configuration"> Advanced configuration</h3>
+<h3 id="advanced-configuration">A.3.2 Advanced configuration</h3>
 
 <p><strong>easybook</strong> doesn't restrict the configuration options that you can set on your book, editions and contents. <strong>easybook</strong> always puts you in control, so you can define all the new settings that you may need.</p>
 
@@ -852,7 +852,7 @@ $ ./book publish the-origin-of-species print --dir="/Users/javier/books"
 
 <p>And now you can add <code>{{ item.config.time }}</code> in <code>chapter.twig</code> template to show the estimated reading time for each chapter.</p>
 
-<h3 id="defining-new-content-types"> Defining new content types</h3>
+<h3 id="defining-new-content-types">A.3.3 Defining new content types</h3>
 
 <p>It's uncommon and generally unneeded, but you can also define new content types besides the elvent types included in <strong>easybook</strong>. Imagine that you want to include a page with a humorous cartoon between some chapters. Let's call this new content type <code>cartoon</code>. First, you should add it to your book contents list:</p>
 
@@ -876,7 +876,7 @@ $ ./book publish the-origin-of-species print --dir="/Users/javier/books"
 
 <p>That's it! You can now use the new <code>cartoon</code> content type in your book and you can create new content types following the same steps explained above.</p>
 
-<h3 id="easybook-internals"> easybook internals</h3>
+<h3 id="easybook-internals">A.3.4 easybook internals</h3>
 
 <p><strong>easybook</strong> flexibility allows you to create advanced books without effort and without having to study the source code of the application. However, to master <strong>easybook</strong> you'll have to dive into the guts of the application.</p>
 
