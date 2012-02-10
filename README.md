@@ -21,10 +21,17 @@ If you don't use Git:
   2. Download https://github.com/javiereguiluz/easybook/zipball/master ZIP file
   3. Uncompress the ZIP file in `easybook` directory
 
-Regardless the installation mode, use **easybook** with the `book` command:
+Regardless the installation mode, install dependencies via [composer](http://packagist.org/):
 
 ```
 $ cd easybook
+$ wget http://getcomposer.org/composer.phar
+$ php composer.phar install
+```
+
+Then use **easybook** with the `book` command:
+
+```
 $ ./book
 ```
 
