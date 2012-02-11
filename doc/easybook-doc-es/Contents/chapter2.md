@@ -16,10 +16,6 @@ Los contenidos del libro se definen en la opción de configuración `contents` d
 
 La opción más importante de cada contenido es `element`, que define el tipo de contenido que se trata. **easybook** soporta actualmente diecinueve tipos de contenidos (las siguientes definiciones se han obtenido de la Wikipedia):
 
-  * `conclusion`, ***
-  * `title`, the page at or near the front which displays book title and author, usually together with information relating to the publication of the book.
-  * `toc`, the table of contents.
-
   * `acknowledgement` o *agradecimientos*, en ocasiones se incluyen como parte del prefacio, en vez de como sección independiente. Se utiliza para que el autor reconozca a todas las personas que le han ayudado en la elaboración del libro.
   * `afterword` o *epílogo*,  se emplea para describir un momento muy posterior al marco temporal en el que se desarrolla el contenido principal de la obra.
   * `appendix` o *apéndice*, ofrecen información suplementaria al contenido principal de la obra. En ocasiones corrigen errores o aclaran las inconsistencias. Otras veces amplían o actualizan el contenido de los capítulos.

@@ -27,7 +27,6 @@
 ## easybook 4.2 (XX-feb-2012) ##
 
   * [OK] Addded eight new content types (`afterword`, `conclusion`, `epilogue`, `foreword`, `glossary`, `introduction`, `preface`, `prologue`)
-  * Add new content type: `preface`
   * [OK] Default contents are no longer necessary
   * [OK] Add counters for figures and tables
   * [OK] Improve label options (replace `auto_label` for `labels`)
