@@ -161,7 +161,7 @@ Los temas por defecto se encuentran en el directorio`app/Resources/Themes/`. Si 
 
 ### Contenidos por defecto ###
 
-En la mayoría de libros, los únicos elementos que definen de sus propios contenidos son los capítulos y los apéndices (utilizando la opción `content`). Por eso **easybook** define contenidos por defecto sensatos para algunos tipos de elementos. Así por ejemplo, si en el libro añades una portada interna (contenido de tipo `title`):
+En la mayoría de libros, los únicos elementos que definen de sus propios contenidos son los capítulos y los apéndices (utilizando la opción `content`). Por eso **easybook** define contenidos por defecto sensatos para algunos tipos de elementos. Así por ejemplo, si en el libro añades una portada interna (contenido de tipo `title`) sin indicar su archivo de contenidos:
 
     book:
         ...
@@ -170,7 +170,7 @@ En la mayoría de libros, los únicos elementos que definen de sus propios conte
             - { element: title }
             - ...
 
-**easybook** utiliza lo siguiente como contenido por defecto de este elemento:
+**easybook** utiliza lo siguiente como contenido de este elemento:
 
     <h1>{{ book.title }}</h1>
     <h2>{{ book.author }}</h2>
@@ -182,7 +182,7 @@ Los contenidos por defecto dependen tanto del elemento como del tipo de edición
 
 ### Contenidos propios ###
 
-Si no quieres utilizar el contenido por defecto de **easybook** para este tipo de elementos, simplemente añade la opción `content` e indica el archivo que define sus contenidos:
+Si no quieres utilizar el contenido por defecto de **easybook** para algún elemento, simplemente añade la opción `content` e indica el archivo que define sus contenidos:
 
     book:
         ...

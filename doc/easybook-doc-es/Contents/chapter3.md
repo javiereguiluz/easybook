@@ -202,22 +202,47 @@ Y ahora puedes mostrar en cada capítulo el tiempo estimado que se tarda en leer
 
 ### Definiendo nuevos tipos de contenido ###
 
-No es algo común y casi nunca es necesario, pero puedes crear nuevos tipos de contenidos al margen de los once tipos definidos por **easybook**. Imagina que entre algunos capítulos quieres incluir una página con una viñeta humorística. Si llamamos `cartoon` a este nuevo tipo de contenido, lo primero que debes hacer es incluirlo en el listado de contenidos del libro:
+No es algo común y casi nunca es necesario, pero puedes crear nuevos tipos de contenidos al margen de los once tipos definidos por **easybook**. Imagina que entre algunos capítulos quieres incluir una página con una viñeta humorística. Llamemos `cartoon` a este nuevo tipo de contenido.
+
+Si en las páginas de tipo `cartoon` muestras poca información (una imagen con la viñeta y una frase explicativa por ejemplo), lo más sencillo es que definas estos contenidos directamente en el archivo `config.yml`:
 
     contents:
         - { element: cover }
         - ...
         - { element: chapter, number: 1, ... }
-        - { element: cartoon, imagen: chiste1.png, content: chiste.md }
+        - { element: cartoon, imagen: chiste1.png, frase: '...' }
         - { element: chapter, number: 2, ... }
         - ...
 
-A continuación, crea el archivo `chiste.md` dentro del directorio de contenidos. No importa si este archivo `chiste.md` está vacío. Lo importante es que **easybook** necesita el contenido de este elemento y no puede utilizar uno de sus contenidos por defecto porque `cartoon` no es uno de los tipos de elemento conocidos por **easybook**.
+Después, sólo tienes que crear en el directorio `Resources/Templates/` una plantilla llamada `cartoon.twig`:
 
-A continuación, crea los directorios `Resources/Templates/` dentro del directorio de tu libro. En su interior, crea una plantilla llamada `cartoon.twig` y añade por ejemplo el siguiente contenido:
-
-    <div class="page:cartoon new-page">
+    <div class="page:cartoon">
         <img src="{{ item.config.imagen }}" />
+        <p>{{ item.config.frase }}</p>
+    </div>
+
+Por el contrario, si las páginas de tipo `cartoon` tienen muchos contenidos, lo mejor es que crees un archivo de contenidos para cada elemento de este tipo:
+
+    contents:
+        - { element: cover }
+        - ...
+        - { element: chapter, number: 1, ... }
+        - { element: cartoon, content: 'chiste1.md' }
+        - { element: chapter, number: 2, ... }
+        - ...
+
+Después, muestra estos contenidos mediante la plantilla `cartoon.twig`:
+
+    <div class="page:cartoon">
+        {{ item.content }}
+    </div>
+
+Por último, también puedes combinar estos dos métodos y crear un archivo con los contenidos, varias opciones de configuración en el archivo `config.yml` y luego en la plantilla utilizar todos los valores:
+
+    <div class="page:cartoon">
+        <img src="{{ item.config.imagen }}" />
+        
+        {{ item.content }}
     </div>
 
 ¡Y esto es todo! Ya puedes utilizar el nuevo contenido `cartoon` tantas veces como quieras en tu libro y ya puedes crear nuevos tipos de contenido siguiendo los mismos pasos que se acaban de explicar.

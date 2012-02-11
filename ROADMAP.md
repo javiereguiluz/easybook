@@ -29,6 +29,7 @@
 
 ## easybook 4.2 (XX-feb-2012) ##
 
+  * [OK] Default contents are no longer necessary
   * [OK] Add counters for figures and tables
   * [OK] Improve label options (replace `auto_label` for `labels`)
   * [OK] Added tests for publishing command

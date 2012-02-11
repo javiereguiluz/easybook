@@ -146,3 +146,14 @@ following content:
 ```jinja
 {{ item.content }}
 ```
+
+### 7. It's no longer necessary to define a default content ###
+
+Previous versions of **easybook** required that every content type had a default
+content, just in case book config hadn't defined it. This also simplifies the creation
+of custom content types.
+
+Now **easybook** only defines sensible default contents for `title`, `license`
+and `edition` content type. The other empty defeault files have been deleted.
+
+Documentation has been updated to better explain how to define a custom content type.

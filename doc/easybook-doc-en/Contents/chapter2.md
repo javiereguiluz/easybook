@@ -162,7 +162,7 @@ Bundled themes are located in the `app/Resources/Themes/` directory. If you need
 
 ### Default contents ###
 
-In most books, the only elements that define their own content are the chapters and appendices (with the `content` options). **easybook** defines sensible default contents for every content type. If the book adds for example an inner cover (`title` content type):
+In most books, the only elements that define their own content are chapters and appendices (with the `content` option). In addition, **easybook** defines sensible default contents for some content types. If your book for example includes an inner cover (`title` content type) without any contents file:
 
     book:
         ...
@@ -171,7 +171,7 @@ In most books, the only elements that define their own content are the chapters 
             - { element: title }
             - ...
 
-**easybook** will use the following as the default content of this element:
+**easybook** will use the following as the content for this element:
 
     <h1>{{ book.title }}</h1>
     <h2>{{ book.author }}</h2>
@@ -183,7 +183,7 @@ The contents defined by **easybook** depend on both the edition being published 
 
 ### Custom contents ###
 
-If you don't want to use **easybook** default contents for these elements, simply add the `content` option indicating the file that defines its contents:
+If you don't want to use **easybook** default contents for some element, simply add the `content` option indicating the file that defines its contents:
 
     book:
         ...

@@ -203,23 +203,48 @@ And now you can add `{{ item.config.time }}` in `chapter.twig` template to show 
 
 ### Defining new content types ###
 
-It's uncommon and generally unneeded, but you can also define new content types besides the elvent types included in **easybook**. Imagine that you want to include a page with a humorous cartoon between some chapters. Let's call this new content type `cartoon`. First, you should add it to your book contents list:
+It's uncommon and generally unneeded, but you can also define new content types besides the eleven types included in **easybook**. Imagine that you want to include a page with a humorous cartoon between some chapters. Let's call this new content type `cartoon`.
+
+If pages of type `cartoon` include few contents (a picture and its caption for example), it's better to define these contents directly in the  `config.yml` file:
 
     contents:
         - { element: cover }
         - ...
         - { element: chapter, number: 1, ... }
-        - { element: cartoon, image: cartoon1.png, content: cartoon.md }
+        - { element: cartoon, image: cartoon1.png, caption: '...' }
         - { element: chapter, number: 2, ... }
         - ...
 
-Secondly, create the `cartoon.md` file in your book `Contents/` directory. For this new content type it's unnecessary to write content, so leave it empty. **easybook** needs some content for every element of the book. Since `cartoon` is a custom made type, **easybook** doesn't define a default content for it, so you **must** create the `cartoon.md` file even if you leve it empty.
+Then, create a custom `cartoon.twig` template in your book `Resources/Templates/` directory:
 
-Lastly, create the `Resources/Templates/` directory inside your book directory. Add a new `cartoon.twig` template and copy the following Twig code:
-
-    <div class="page:cartoon new-page">
+    <div class="page:cartoon">
         <img src="{{ item.config.image }}" />
+        <p>{{ item.config.caption }}</p>
     </div>
+
+In contrast, if pages of type `cartoon` include a lot of contents, it's better to create a content file for each of these elements:
+
+    contents:
+        - { element: cover }
+        - ...
+        - { element: chapter, number: 1, ... }
+        - { element: cartoon, content: cartoon.md }
+        - { element: chapter, number: 2, ... }
+        - ...
+
+Then, display this content with the following simplified `cartoon.twig` template:
+
+     <div class="page:cartoon">
+         {{ item.content }}
+     </div>
+
+Finally, you can also combine these two methods creating a file with the contents and adding several configuration options in `config.yml`. The template can easily use both sources of information:
+
+     <div class="page:cartoon">
+         <img src="{{ item.config.image }}" />
+        
+         {{ item.content }}
+     </div>
 
 That's it! You can now use the new `cartoon` content type in your book and you can create new content types following the same steps explained above.
 

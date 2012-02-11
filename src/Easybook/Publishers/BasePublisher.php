@@ -18,7 +18,6 @@ class BasePublisher
     public function __construct($app)
     {
         $this->app = $app;
-
         $this->prepareOutputDir();
     }
 
@@ -32,80 +31,80 @@ class BasePublisher
 
     public function prepareOutputDir()
     {
-        $bookOutputdir = $this->app['publishing.dir.book'].'/Output';
-        if (!file_exists($bookOutputdir)) {
-            mkdir($bookOutputdir);
+        $bookOutputDir = $this->app['publishing.dir.book'].'/Output';
+        if (!file_exists($bookOutputDir)) {
+            mkdir($bookOutputDir);
             // TODO: edge case -> output dir cannot be created
         }
 
-        $editionOutputdir = $bookOutputdir.'/'.$this->app['publishing.edition'];
+        $editionOutputDir = $bookOutputDir.'/'.$this->app['publishing.edition'];
 
-        if (!file_exists($editionOutputdir)) {
-            mkdir($editionOutputdir);
+        if (!file_exists($editionOutputDir)) {
+            mkdir($editionOutputDir);
             // TODO: edge case -> output dir cannot be created
         }
 
-        $this->app->set('publishing.dir.output', $editionOutputdir);
+        $this->app->set('publishing.dir.output', $editionOutputDir);
     }
 
 
     public function loadContents()
     {
         // TODO: extensibility -> editions can redefine book contents (to remove or reorder items)
+        foreach ($this->app->book('contents') as $contentConfig) {
+            $item = $this->initializeItem($contentConfig);
 
-        foreach ($this->app->book('contents') as $content) {
-            $item = $this->initializeItem($content);
-
-            // content define its own content file (usually: chapters, appendices)
-            if (array_key_exists('content', $content)) {
+            // if the element defines its own content file (usually: `chapter`, `appendix`)
+            if (array_key_exists('content', $contentConfig)) {
                 // TODO: extensibility -> contents could be written in several formats simultaneously
                 // (e.g. Twig *and* Markdown)
-                $path = $this->app['publishing.dir.contents'].'/'.$content['content'];
-                $item['original'] = file_get_contents($path);
-                $item['config']['format'] = pathinfo($path, PATHINFO_EXTENSION);
+                $contentFile = $this->app['publishing.dir.contents'].'/'.$contentConfig['content'];
+                $item['original'] = file_get_contents($contentFile);
+                $item['config']['format'] = pathinfo($contentFile, PATHINFO_EXTENSION);
             }
-
-            // special contents (cover, title, toc, section, ...) can, but usually don't, define their own content file
-            // in this case, use the default content for these contents
             else {
-                $outputFormat = $this->app->edition('format');
-                $path = $this->app['app.dir.theme_'.$outputFormat].'/Contents/';
-                $template = $content['element'].'.md.twig';
+                $path = $this->app['publishing.dir.app_theme'].'/Contents/';
+                $template = $contentConfig['element'].'.md.twig';
 
-                $this->app->set('twig.path', $path);
-                $item['original'] = $this->app->render($template);
+                // if easybook theme defines a default content for this element (`cover`, `license`, `title`)
+                if (file_exists($path.'/'.$template)) {
+                    $this->app->set('twig.path', $path);
+                    $item['original'] = $this->app->render($template);
+                    $item['config']['format']  = 'md';
 
-                $item['config']['content'] = pathinfo($path, PATHINFO_FILENAME);
-                $item['config']['format']  = 'md';
+                    // reset twig path variable to not interfere with further renderings
+                    $this->app->set('twig.path', null);
+                }
+                // the element doesn't define its content and there is no easybook default content
+                else {
+                    $item['original'] = '';
+                    $item['config']['format']  = 'md';
+                }
             }
 
             $this->app->append('publishing.items', $item);
         }
-
-        // reset twig path variable to not interfere with further renderings
-        $this->app->set('twig.path', null);
     }
 
-    private function initializeItem($element)
+    private function initializeItem($contentConfig)
     {
+        // each book element is represented by a variable of type `item`
         $item = array();
 
-        $item['config'] = array(
-            'content' => '',
-            'element' => '',
-            'format'  => '',
-            'number'  => '',
-            'title'   => ''
-        );
+        $item['config'] = array_merge(array(
+            'content' => '',  // the name of this item contents file (it's a relative path from book's `Contents/`)
+            'element' => '',  // the type of this content (`chapter`, `appendix`, `toc`, `license`, ...)
+            'format'  => '',  // the format in which contents are written ('md' for MArkdown)
+            'number'  => '',  // the number/letter of the content (useful for `chapter`, `part` and `appendix`)
+            'title'   => ''   // the title of the content defined in `config.yml` (usually only `part` defines it)
+        ), $contentConfig);
 
-        $item['config'] = array_replace($item['config'], $element);
-
-        $item['content']  = '';
-        $item['label']    = '';
-        $item['original'] = '';
-        $item['slug']     = '';
-        $item['title']    = '';
-        $item['toc']      = array();
+        $item['content']  = '';      // transformed content of the element (HTML usually)
+        $item['label']    = '';      // the label of this element ('Chapter XX', 'Appendix XX', ...)
+        $item['original'] = '';      // original content as written by book author
+        $item['slug']     = '';      // the slug of the title
+        $item['title']    = '';      // the title of the element without any label ('Lorem ipsum dolor')
+        $item['toc']      = array(); // the table of contents of this element
 
         if ('' != $item['config']['title']) {
             $item['title'] = $item['config']['title'];
