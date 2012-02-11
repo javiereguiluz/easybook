@@ -1,10 +1,18 @@
 # Basque translation of easybook default titles
 title:
     acknowledgement: 'Eskerrak'
+    afterword:       '*Afterword*'
     author:          'Autor'
+    conclusion:      'Ondorioak'
     cover:           'Azala'
     dedication:      'Eskaintza'
     edition:         'Edizioa'
+    epilogue:        'Azken solas'
+    foreword:        'Hitzaurrea'
+    glossary:        'Glosarioa'
+    introduction:    'Sarrera'
     license:         'Lizentzia'
+    preface:         'Aitzinsolas'
+    prologue:        'Aitzinsolas'
     title:           'Titulua'
     toc:             'Gaien Aurkibidea'

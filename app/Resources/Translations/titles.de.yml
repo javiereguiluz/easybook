@@ -1,10 +1,19 @@
 # Deutsch translation of easybook default titles
 title:
     acknowledgement: 'Danksagungen'
+    afterword:       'Nachwort'
     author:          'Autor'
+    conclusion:      '*Conclusion*'
     cover:           'Einband'
     dedication:      'Widmung'
     edition:         'Ausgabe'
+    epilogue:        'Epilog'
+    foreword:        'Vorwort'
+    glossary:        'Glossar'
+    introduction:    'Einführung'
     license:         'Lizenz'
+    preface:         'Vorwort'
+    prologue:        'Prolog'
     title:           'Schmutztitel'
     toc:             'Inhaltsverzeichnis'
+

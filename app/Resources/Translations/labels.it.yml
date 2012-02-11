@@ -7,22 +7,32 @@ label:
         - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
         - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
         - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+
     chapter:
-        - 'Capitolo {{ item.number }} '
+        - 'Capitolo {{ item.number }}'
         - '{{ item.counters[0:2]|join(".") }}' # 1.1
         - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
         - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
         - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
         - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+
     figure:          'Figura {{ element.number }}.{{ item.number }}'
     part:            'Sezione {{ item.number }}'
     table:           'Tabella {{ element.number }}.{{ item.number }}'
 
     acknowledgement: ''
+    afterword:       ''
     author:          ''
+    conclusion:      ''
     cover:           ''
     dedication:      ''
     edition:         ''
+    epilogue:        ''
+    foreword:        ''
+    glossary:        ''
+    introduction:    ''
+    preface:         ''
+    prologue:        ''
     title:           ''
     toc:             ''
 

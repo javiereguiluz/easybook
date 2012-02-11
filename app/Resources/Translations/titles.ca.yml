@@ -1,10 +1,18 @@
 # Catalan translation of easybook default titles
 title:
     acknowledgement: 'Agraïments'
+    afterword:       '*Afterword*'
     author:          'Autor'
+    conclusion:      'Conclusió'
     cover:           'Coberta'
     dedication:      'Dedicatòria'
     edition:         'Edició'
+    epilogue:        'Epíleg'
+    foreword:        '*Foreword*'
+    glossary:        'Glossari'
+    introduction:    'Introducció'
     license:         'Llicència'
+    preface:         'Prefaci'
+    prologue:        'Pròleg'
     title:           'Portadella'
     toc:             'Sumari'

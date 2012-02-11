@@ -219,8 +219,9 @@ In the previous sections we've mentioned the `author` configuration option. In f
         generator: { name: easybook, version: 4.0 }
 
         contents:
-            # available element types: acknowledgement, appendix, author, chapter,
-            # cover, dedication, edition, license, part, title, toc
+            # available content types: acknowledgement, afterword, appendix, author,
+            # chapter, conclusion, cover, dedication, edition, epilogue, foreword,
+            # glossary, introduction, license, part, preface, prologue, title, toc
             - { element: cover }
             - { element: toc   }
             - { element: chapter, number: 1, content: chapter1.md }

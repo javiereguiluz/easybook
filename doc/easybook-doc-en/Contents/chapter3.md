@@ -19,19 +19,27 @@ As explained in the previous chapter, the templates have access to a variable na
 The following list shows the default templates included in `pdf` and `html` type editions (their contents obviously varies from one type to the other):
 
   * `acknowledgement.twig`
-  * `toc.twig`
+  * `afterword.twig`
   * `appendix.twig`
   * `author.twig`
   * `book.twig`, this is the final template that assembles all the book contents.
   * `chapter.twig`
+  * `conclusion.twig`
   * `cover.twig`
   * `dedication.twig`
   * `edition.twig`
+  * `epilogue.twig`
   * `figure.twig`, the template used to decorate all the images included in the book.
+  * `foreword.twig`
+  * `glossary.twig`
+  * `introduction.twig`
   * `license.twig`
   * `part.twig`
+  * `preface.twig`
+  * `prologue.twig`
   * `table.twig`, the template used to decorate all the tables included in the book.
   * `title.twig`
+  * `toc.twig`
 
 The `html_chunked` edition type doesn't include a different template for each content type. It onle defines the following five templates:
 
@@ -203,7 +211,7 @@ And now you can add `{{ item.config.time }}` in `chapter.twig` template to show 
 
 ### Defining new content types ###
 
-It's uncommon and generally unneeded, but you can also define new content types besides the eleven types included in **easybook**. Imagine that you want to include a page with a humorous cartoon between some chapters. Let's call this new content type `cartoon`.
+It's uncommon and generally unneeded, but you can also define new content types besides the nineteen types included in **easybook**. Imagine that you want to include a page with a humorous cartoon between some chapters. Let's call this new content type `cartoon`.
 
 If pages of type `cartoon` include few contents (a picture and its caption for example), it's better to define these contents directly in the  `config.yml` file:
 
@@ -228,7 +236,7 @@ In contrast, if pages of type `cartoon` include a lot of contents, it's better t
         - { element: cover }
         - ...
         - { element: chapter, number: 1, ... }
-        - { element: cartoon, content: cartoon.md }
+        - { element: cartoon, content: cartoon1.md }
         - { element: chapter, number: 2, ... }
         - ...
 

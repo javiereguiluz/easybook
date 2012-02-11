@@ -1,10 +1,18 @@
 # Italian translation of easybook default titles
 title:
     acknowledgement: 'Riconoscimenti'
+    afterword:       'Postfazione'
     author:          'Autore'
+    conclusion:      'Conclusioni'
     cover:           'Copertina'
     dedication:      'Dedica'
     edition:         'Edizione'
+    epilogue:        'Epilogo'
+    foreword:        'Prefazione'
+    glossary:        'Glossario'
+    introduction:    'Introduzione'
     license:         'Licenza'
+    preface:         'Prefazione'
+    prologue:        'Prologo'
     title:           'Frontespizio'
     toc:             'Indice dei contenuti'

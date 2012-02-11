@@ -14,19 +14,27 @@ Books define their contents with the `contents` options in the `config.yml` file
             - { element: chapter, number: 1, content: chapter1.md }
             - { element: chapter, number: 2, content: chapter2.md }
 
-The most important option of each content is `element`, which defines its content type. **easybook** currently defines the following elevent content types:
+The most important option of each content is `element`, which defines its content type. **easybook** currently supports nineteen content types (the following definitions are [copied from Wikipedia](http://en.wikipedia.org/wiki/Book_design)):
 
-  * `acknowledgement`, where the author acknowledges those who contributed to the creation of the book.
-  * `appendix`, similar to chapters, but it usually contains related but supplemental additions to the book main work.
+  * `acknowledgement`, often part of the preface, rather than a separate section in its own right. It acknowledges those who contributed to the creation of the book.
+  * `afterword`, a piece of writing describing a time well after the time frame of the main story of the book.
+  * `appendix`, is a supplemental addition to a given main work. It may correct errors, explain inconsistencies or otherwise detail or update the information found in the main content of the book.
   * `author`, information about the book author/authors.
   * `chapter`, the most used type in regular books.
+  * `conclusion`, the end of the book or document, where all of the pending issues are resolved or where idea and thoughts are settled.
   * `cover`, the cover of your book.
   * `dedication`, a page that usually precedes the text, in which the author names the person or people for whom he has written the book.
   * `edition`, information about the current edition of the book, including the publication date.
+  * `epilogue`, a piece of writing at the end of a work of literature or drama, usually used to bring closure to the work.
+  * `foreword`, usually written by any person other than the author of the book. It often tells of some interaction between the writer of the foreword and the story or the writer of the story.
+  * `glossary`, consists of a set of definitions of words of importance to the work, normally alphabetized.
+  * `introduction`, a beginning section which states the purpose and goals of the following writing.
   * `license`, information about the copyright holder or any other author/publisher rights that affect the book.
   * `part`, used to group several related chapters or appendices.
-  * `title`, the page that displays book title and author, usually together with information relating to the publication of the book.
-  * `toc`, the table of contents.
+  * `preface`, generally covers the story of how the book came into being, or how the idea for the book was developed.
+  * `prologue`, *written* by the narrator or any other character in the book. It's an opening to a story that establishes the setting and gives background details, often some earlier story that ties into the main one, and other miscellaneous information.
+  * `title`, the page at or near the front which displays book title and author, usually together with information relating to the publication of the book.
+  * `toc` or *table of contents*, a list of the parts of a book or document organized in the order in which the parts appear.
 
 Most of the content types don't require any other option besides `element`:
 
@@ -52,7 +60,7 @@ The `part` content type also define the following option:
 
   * `title`, the title of the part or section. In a printed book, a section is shown as a page that separates chapters. In a web book, the section is only shown in the table of contents.
 
-These elevent content types defined by **easybook** are enough to publish most books, but if you need it, the next chapter explains how to create new content types.
+These nineteen content types defined by **easybook** are enough to publish most books, but if you need it, the next chapter explains how to create new content types.
 
 ## Editions ##
 

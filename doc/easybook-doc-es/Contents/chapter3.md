@@ -19,19 +19,27 @@ Como se explicó en el capítulo anterior, las plantillas tienen acceso a una va
 Las ediciones de tipo `pdf` y `html` disponen de las siguientes plantillas (su contenido varía en cada tipo de edición):
 
   * `acknowledgement.twig`
-  * `toc.twig`
+  * `afterword.twig`
   * `appendix.twig`
   * `author.twig`
   * `book.twig`, esta es la plantilla con la que se crea el libro uniendo todos sus contenidos.
   * `chapter.twig`
+  * `conclusion.twig`
   * `cover.twig`
   * `dedication.twig`
   * `edition.twig`
+  * `epilogue.twig`
   * `figure.twig`, plantilla con la que se decoran todas las imágenes del libro.
+  * `foreword.twig`
+  * `glossary.twig`
+  * `introduction.twig`
   * `license.twig`
   * `part.twig`
+  * `preface.twig`
+  * `prologue.twig`
   * `table.twig`, plantilla con la que se decoran todas las tablas del libro.
   * `title.twig`
+  * `toc.twig`
 
 Las ediciones de tipo `html_chunked` no disponen de una plantilla diferente para cada tipo de contenido, sino que simplemente disponen de las siguientes cinco plantillas:
 
@@ -202,7 +210,7 @@ Y ahora puedes mostrar en cada capítulo el tiempo estimado que se tarda en leer
 
 ### Definiendo nuevos tipos de contenido ###
 
-No es algo común y casi nunca es necesario, pero puedes crear nuevos tipos de contenidos al margen de los once tipos definidos por **easybook**. Imagina que entre algunos capítulos quieres incluir una página con una viñeta humorística. Llamemos `cartoon` a este nuevo tipo de contenido.
+No es algo común y casi nunca es necesario, pero puedes crear nuevos tipos de contenidos al margen de los diecinueve tipos definidos por **easybook**. Imagina que entre algunos capítulos quieres incluir una página con una viñeta humorística. Llamemos `cartoon` a este nuevo tipo de contenido.
 
 Si en las páginas de tipo `cartoon` muestras poca información (una imagen con la viñeta y una frase explicativa por ejemplo), lo más sencillo es que definas estos contenidos directamente en el archivo `config.yml`:
 

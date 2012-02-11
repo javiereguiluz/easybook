@@ -14,19 +14,31 @@ Los contenidos del libro se definen en la opción de configuración `contents` d
             - { element: chapter, number: 1, content: chapter1.md }
             - { element: chapter, number: 2, content: chapter2.md }
 
-La opción más importante de cada contenido es `element`, que define el tipo de contenido que se trata. **easybook** define actualmente los siguientes once tipos de contenidos, que siempre se indican mediante su palabra en inglés:
+La opción más importante de cada contenido es `element`, que define el tipo de contenido que se trata. **easybook** soporta actualmente diecinueve tipos de contenidos (las siguientes definiciones se han obtenido de la Wikipedia):
 
-  * `acknowledgement` o agradecimientos.
-  * `appendix` o apéndice. Parecido a un capítulo, pero normalmente se incluyen al final del libro de forma separada a los capítulos.
-  * `author` o información sobre el autor/autores de la obra.
-  * `chapter` o capítulo.
-  * `cover` o portada.
-  * `dedication` o dedicatoria.
-  * `edition` o información sobre la edición del libro.
-  * `license` o información sobre la licencia del libro.
-  * `part` o sección. Se emplea normalmente para agrupar capítulos o apéndices.
-  * `title` o portada interior. Se trata de la primera página que se ve en el interior del libro. Normalmente se trata de una versión simplificada de la portada y muestra el título, nombre del autor y edición.
-  * `toc` o índice de contenidos.
+  * `conclusion`, ***
+  * `title`, the page at or near the front which displays book title and author, usually together with information relating to the publication of the book.
+  * `toc`, the table of contents.
+
+  * `acknowledgement` o *agradecimientos*, en ocasiones se incluyen como parte del prefacio, en vez de como sección independiente. Se utiliza para que el autor reconozca a todas las personas que le han ayudado en la elaboración del libro.
+  * `afterword` o *epílogo*,  se emplea para describir un momento muy posterior al marco temporal en el que se desarrolla el contenido principal de la obra.
+  * `appendix` o *apéndice*, ofrecen información suplementaria al contenido principal de la obra. En ocasiones corrigen errores o aclaran las inconsistencias. Otras veces amplían o actualizan el contenido de los capítulos.
+  * `author` o *autor*, incluye información sobre el autor/autores de la obra.
+  * `chapter` o *capítulo*, es el tipo de contenido más utilizado normalmente en los libros.
+  * `conclusion` o *conclusiones*, última parte del contenido de la obra, donde se resuleven todos los temas pendientes o donde se fijan las ideas y pensamientos.
+  * `cover` o *portada*, es la portada frontal principal del libro.
+  * `dedication` o *dedicatoria*, página que normalmente precede al comienzo del contenido del libro y en la que el autor indica la persona o personas para las que ha escrito el libro.
+  * `edition` o *edición*, muestra información sobre la actual edición del libro, incluyendo su fecha de publicación.
+  * `epilogue` o *epílogo*, contenido que se incluye al final de una obra y sirve para *cerrar* sus contenidos.
+  * `foreword` o *preámbulo*, normalmente escrito por otra persona diferente al autor principal de la obra. Normalmente trata sobre la relación entre la persona que escribe el preámbulo y el autor de la obra o su contenido.
+  * `glossary` o *glosario*, consiste en una serie de definiciones de las palabras o términos más importantes de la obra, normalmente por orden alfabético.
+  * `introduction` o *introducción*, sección inicial de la obra que indica su prpósito u objetivos.
+  * `license` o *licencia*, incluye información sobre el *copyright* de la obra o sobre cualquier otro derecho del autor o del editor que afectan al contenido de la obra.
+  * `part` o *sección*. Se emplean normalmente para agrupar capítulos o apéndices relacionados.
+  * `preface` o *prefacio*, explica cómo se creó el libro o cómo surgió la idea de escribirlo.
+  * `prologue` o *prólogo*, normalmente está *escrito* por el narrador de la obra o por algún otro personaje. Se trata de una introducción a la historia principal de la obra e incluye detalles e información relacionados pero previos al marco temporal en el que de desarrolla la historia principal.
+  * `title` o *portada interior*, es la primera página interior del libro y normalmente muestra el título de la obra, el nombre de su autor y la edición actual.
+  * `toc` o *índice de contenidos*, se trata de un listado de los contenidos que se muestran en el mismo orden en el que se incluyen en la obra.
 
 Salvo `appendix`, `chapter` y `part` el resto de contenidos normalmente no requieren ninguna opción adicional:
 
@@ -52,7 +64,7 @@ El contenido `part` admite la siguiente opción:
 
   * `title` o título de la sección. En un libro impreso, una sección simplemente es una página que separa unos capítulos de otros. En un libro web, la sección sólo se muestra en el índice de contenidos para separar los capítulos entre sí.
 
-Los once tipos de contenidos de **easybook** son suficientes para publicar la mayoría de libros, pero si lo necesitas, el siguiente capítulo explica cómo crear nuevos tipos de contenido.
+Los diecinueve tipos de contenidos de **easybook** son suficientes para publicar la mayoría de libros, pero si lo necesitas, el siguiente capítulo explica cómo crear nuevos tipos de contenido.
 
 ## Ediciones ##
 

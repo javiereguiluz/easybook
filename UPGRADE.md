@@ -157,3 +157,14 @@ Now **easybook** only defines sensible default contents for `title`, `license`
 and `edition` content type. The other empty defeault files have been deleted.
 
 Documentation has been updated to better explain how to define a custom content type.
+
+### 8. Added eight new content types ###
+
+**easybook** has added eight new content types (`afterword`, `conclusion`, `epilogue`,
+`foreword`, `glossary`, `introduction`, `preface`, `prologue`).
+
+This means that you no longer need to define a custom content type if you need any of the
+new content types. Moreover, eight new default labels, titles and templates have been defined
+for the new contents.
+
+
