@@ -12,6 +12,8 @@ title:
     glossary:        'Glossary'
     introduction:    'Introduction'
     license:         'License'
+    lof:             'List of Figures'
+    lot:             'List of Tables'
     preface:         'Preface'
     prologue:        'Prologue'
     title:           'Title'

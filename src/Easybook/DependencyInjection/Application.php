@@ -73,6 +73,8 @@ class Application extends \Pimple
         $this['publishing.book.slug']     = '';
         $this['publishing.book.items']    = array();
         $this['publishing.slugs']         = array(); // Holds all the slugs generated, to avoid repetitions
+        $this['publishing.list.images']   = array();
+        $this['publishing.list.tables']   = array();
 
         // -- event dispatcher ------------------------------------------------
         $this['dispatcher'] = $this->share(function () {

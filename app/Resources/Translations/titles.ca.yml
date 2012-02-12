@@ -12,6 +12,8 @@ title:
     glossary:        'Glossari'
     introduction:    'Introducció'
     license:         'Llicència'
+    lof:             'Llistat de figures'
+    lot:             'Llistat de taules'
     preface:         'Prefaci'
     prologue:        'Pròleg'
     title:           'Portadella'

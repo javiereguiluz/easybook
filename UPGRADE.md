@@ -167,4 +167,22 @@ This means that you no longer need to define a custom content type if you need a
 new content types. Moreover, eight new default labels, titles and templates have been defined
 for the new contents.
 
+### 9. Added list-of-figures and list-of-tables content types ###
 
+**easybook** has added two new content types: `lof` (list of figures) and `lot` (list of tables).
+You can easily add these types on your books:
+
+```yaml
+book:
+    # ...
+    contents:
+        # ...
+        - { element: lof }
+        - { element: lot }
+```
+
+`figure.twig` and `table.twig` have been modified to add an `id` attribute necessary for
+linking tables and images.
+
+Two new templates have been created: `lof.twig` and `lot.twig` and two new default titles
+have been defined for all supported languages.

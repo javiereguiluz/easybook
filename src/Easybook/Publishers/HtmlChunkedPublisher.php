@@ -24,6 +24,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
     public function assembleBook()
     {
+        // TODO: the elements that generate a page should be configurable
+        $elementsGeneratingPages = array('appendix', 'chapter');
+
         // TODO: the name of the chunked book directory (book/) must be configurable
         $this->app->set('publishing.dir.output', $this->app['publishing.dir.output'].'/book');
 
@@ -60,7 +63,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
             $item['slug'] = $slug;
             $items[] = $item;
 
-            if (in_array($item['config']['element'], array('appendix', 'chapter'))) {
+            if (in_array($item['config']['element'], $elementsGeneratingPages)) {
                 $nav[] = $slug;
             }
         }
@@ -74,7 +77,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         foreach ($this->app['publishing.items'] as $item) {
             $element = $item['config']['element'];
 
-            if (in_array($element, array('appendix', 'chapter'))) {
+            if (in_array($element, $elementsGeneratingPages)) {
                 $chunkPath = $this->app['publishing.dir.output'].'/'.$item['slug'].'.html';
 
                 $chunkContent = $this->app->render('chunk.twig', array(

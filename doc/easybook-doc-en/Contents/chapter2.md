@@ -14,7 +14,7 @@ Books define their contents with the `contents` options in the `config.yml` file
             - { element: chapter, number: 1, content: chapter1.md }
             - { element: chapter, number: 2, content: chapter2.md }
 
-The most important option of each content is `element`, which defines its content type. **easybook** currently supports nineteen content types (the following definitions are [copied from Wikipedia](http://en.wikipedia.org/wiki/Book_design)):
+The most important option of each content is `element`, which defines its content type. **easybook** currently supports 21 content types (the following definitions are [copied from Wikipedia](http://en.wikipedia.org/wiki/Book_design)):
 
   * `acknowledgement`, often part of the preface, rather than a separate section in its own right. It acknowledges those who contributed to the creation of the book.
   * `afterword`, a piece of writing describing a time well after the time frame of the main story of the book.
@@ -30,11 +30,14 @@ The most important option of each content is `element`, which defines its conten
   * `glossary`, consists of a set of definitions of words of importance to the work, normally alphabetized.
   * `introduction`, a beginning section which states the purpose and goals of the following writing.
   * `license`, information about the copyright holder or any other author/publisher rights that affect the book.
+  * `lof` (*list of figures*),  is an ordered list of the book images and illustrations, including their numbers and captions. The page in which the image is included is also shown for `pdf` type editions.
+  * `lot` (*list of tables*),  is an ordered list of the book data tables, including their numbers and captions. The page in which the table is included is also shown for `pdf` type editions.
+  * `lot` de *list of tables* o *lista de tablas*, muestra un listado ordenado de todas las tablas de la obra (en las ediciones de tipo `pdf` también se muestra la página en la que se encuentra la tabla).
   * `part`, used to group several related chapters or appendices.
   * `preface`, generally covers the story of how the book came into being, or how the idea for the book was developed.
   * `prologue`, *written* by the narrator or any other character in the book. It's an opening to a story that establishes the setting and gives background details, often some earlier story that ties into the main one, and other miscellaneous information.
   * `title`, the page at or near the front which displays book title and author, usually together with information relating to the publication of the book.
-  * `toc` or *table of contents*, a list of the parts of a book or document organized in the order in which the parts appear.
+  * `toc` (*table of contents*), a list of the parts of a book or document organized in the order in which the parts appear.
 
 Most of the content types don't require any other option besides `element`:
 

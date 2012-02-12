@@ -14,7 +14,7 @@ Los contenidos del libro se definen en la opción de configuración `contents` d
             - { element: chapter, number: 1, content: chapter1.md }
             - { element: chapter, number: 2, content: chapter2.md }
 
-La opción más importante de cada contenido es `element`, que define el tipo de contenido que se trata. **easybook** soporta actualmente diecinueve tipos de contenidos (las siguientes definiciones se han obtenido de la Wikipedia):
+La opción más importante de cada contenido es `element`, que define el tipo de contenido que se trata. **easybook** soporta actualmente 21 tipos de contenidos (las siguientes definiciones se han obtenido de la Wikipedia):
 
   * `acknowledgement` o *agradecimientos*, en ocasiones se incluyen como parte del prefacio, en vez de como sección independiente. Se utiliza para que el autor reconozca a todas las personas que le han ayudado en la elaboración del libro.
   * `afterword` o *epílogo*,  se emplea para describir un momento muy posterior al marco temporal en el que se desarrolla el contenido principal de la obra.
@@ -30,6 +30,8 @@ La opción más importante de cada contenido es `element`, que define el tipo de
   * `glossary` o *glosario*, consiste en una serie de definiciones de las palabras o términos más importantes de la obra, normalmente por orden alfabético.
   * `introduction` o *introducción*, sección inicial de la obra que indica su prpósito u objetivos.
   * `license` o *licencia*, incluye información sobre el *copyright* de la obra o sobre cualquier otro derecho del autor o del editor que afectan al contenido de la obra.
+  * `lof` de *list of figures* o *lista de figuras*, muestra un listado ordenado de todas las figuras e ilustraciones de la obra, junto con su número y título (en las ediciones de tipo `pdf` también se muestra la página en la que se encuentra la imagen).
+  * `lot` de *list of tables* o *lista de tablas*, muestra un listado ordenado de todas las tablas de la obra (en las ediciones de tipo `pdf` también se muestra la página en la que se encuentra la tabla).
   * `part` o *sección*. Se emplean normalmente para agrupar capítulos o apéndices relacionados.
   * `preface` o *prefacio*, explica cómo se creó el libro o cómo surgió la idea de escribirlo.
   * `prologue` o *prólogo*, normalmente está *escrito* por el narrador de la obra o por algún otro personaje. Se trata de una introducción a la historia principal de la obra e incluye detalles e información relacionados pero previos al marco temporal en el que de desarrolla la historia principal.

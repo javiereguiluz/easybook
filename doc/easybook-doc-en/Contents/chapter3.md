@@ -34,12 +34,14 @@ The following list shows the default templates included in `pdf` and `html` type
   * `glossary.twig`
   * `introduction.twig`
   * `license.twig`
+  * `lof` (list of figures).
+  * `lot` (list of tables).
   * `part.twig`
   * `preface.twig`
   * `prologue.twig`
   * `table.twig`, the template used to decorate all the tables included in the book.
   * `title.twig`
-  * `toc.twig`
+  * `toc.twig` (table of contents).
 
 The `html_chunked` edition type doesn't include a different template for each content type. It onle defines the following five templates:
 
@@ -211,7 +213,7 @@ And now you can add `{{ item.config.time }}` in `chapter.twig` template to show 
 
 ### Defining new content types ###
 
-It's uncommon and generally unneeded, but you can also define new content types besides the nineteen types included in **easybook**. Imagine that you want to include a page with a humorous cartoon between some chapters. Let's call this new content type `cartoon`.
+It's uncommon and generally unneeded, but you can also define new content types besides the 21 types included in **easybook**. Imagine that you want to include a page with a humorous cartoon between some chapters. Let's call this new content type `cartoon`.
 
 If pages of type `cartoon` include few contents (a picture and its caption for example), it's better to define these contents directly in the  `config.yml` file:
 

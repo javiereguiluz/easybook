@@ -221,7 +221,8 @@ In the previous sections we've mentioned the `author` configuration option. In f
         contents:
             # available content types: acknowledgement, afterword, appendix, author,
             # chapter, conclusion, cover, dedication, edition, epilogue, foreword,
-            # glossary, introduction, license, part, preface, prologue, title, toc
+            # glossary, introduction, license, lof (list of figures), lot (list of
+            # tables), part, preface, prologue, title, toc (table of contents)
             - { element: cover }
             - { element: toc   }
             - { element: chapter, number: 1, content: chapter1.md }

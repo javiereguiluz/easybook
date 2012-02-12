@@ -565,6 +565,52 @@ blockquote::after {
     text-align: right;
 }
 
+/* pages 'lof' and 'lot' */
+.page\:lof,
+.page\:lot {
+    page-break-before: right !important;
+    page: no-header;
+}
+
+.page\:lof h1,
+.page\:lot h1 {
+    margin-bottom: .5em;
+}
+
+.page\:lof ul,
+.page\:lot ul {
+    list-style-type: none;
+    margin: 0 0 0 1em;
+    padding: 0;
+}
+
+.page\:lof ul li,
+.page\:lot ul li {
+    margin: .4em 0;
+}
+
+.page\:lof li:first-child,
+.page\:lot li:first-child {
+    margin: 0 0 .3em 0;
+}
+
+.page\:lof ul a,
+.page\:lot ul a {
+    border: none;
+    text-decoration: none;
+}
+.page\:lof ul a span,
+.page\:lot ul a span {
+    padding-right: .5em;
+}
+
+.page\:lof a::after,
+.page\:lot a::after {
+    color: inherit;
+    content: leader('.  ') target-counter(attr(href), page);
+    margin-left: .5em;
+}
+
 /* page 'toc' */
 .page\:toc {
     page-break-before: right !important;
@@ -619,7 +665,7 @@ blockquote::after {
 
 .page\:toc a::after {
     color: inherit;
-    content: leader('.') target-counter(attr(href), page);
+    content: leader('.  ') target-counter(attr(href), page);
 }
 
 /* page 'chapter' */

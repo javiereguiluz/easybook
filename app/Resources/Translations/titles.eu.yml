@@ -12,6 +12,8 @@ title:
     glossary:        'Glosarioa'
     introduction:    'Sarrera'
     license:         'Lizentzia'
+    lof:             'Irudien zerrenda'
+    lot:             'Taulen zerrenda'
     preface:         'Aitzinsolas'
     prologue:        'Aitzinsolas'
     title:           'Titulua'

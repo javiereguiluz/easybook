@@ -255,6 +255,45 @@ blockquote::after {
     content: " - ";
 }
 
+/* pages 'lof' and 'lot' */
+.page\:lof,
+.page\:lot {
+    page-break-after: right !important;
+}
+
+.page\:lof h1,
+.page\:lot h1 {
+    margin-bottom: .5em;
+}
+
+.page\:lof ul,
+.page\:lot ul {
+    list-style-type: none;
+    margin: 0 0 0 1em;
+    padding: 0;
+}
+
+.page\:lot ul li,
+.page\:lof ul li {
+    margin: .3em 0;
+}
+
+.page\:lof li:first-child,
+.page\:lot li:first-child {
+    margin: 0 0 .3em 0;
+}
+
+.page\:lof ul a,
+.page\:lot ul a {
+    border: none;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.page\:lof ul li span::after {
+    content: " - ";
+}
+
 /* page 'chapter' */
 .page\:chapter h1 span {
     font-weight: normal;

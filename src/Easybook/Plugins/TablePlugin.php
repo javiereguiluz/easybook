@@ -28,11 +28,12 @@ class TablePlugin implements EventSubscriberInterface
     {
         // decorate each table with a template (and add labels if needed)
         $item = $event->getItem();
+        $listOfTables = array();
         $elementNumber = $item['config']['number'];
         $counter = 0;
         $item['content'] = preg_replace_callback(
             '/(?<content><table.*\n<\/table>)/Ums',
-            function($matches) use ($event, $elementNumber, &$counter) {
+            function($matches) use ($event, $elementNumber, &$listOfTables, &$counter) {
                 // prepare item parameters for template and label
                 $counter++;
                 $parameters = array(
@@ -40,7 +41,8 @@ class TablePlugin implements EventSubscriberInterface
                         'caption' => '',
                         'content' => $matches['content'],
                         'label'   => '',
-                        'number'  => $counter
+                        'number'  => $counter,
+                        'slug'    => $event->app->get('slugger')->slugify('Table '.$elementNumber.'-'.$counter)
                     ),
                     'element' => array(
                         'number' => $elementNumber
@@ -53,10 +55,16 @@ class TablePlugin implements EventSubscriberInterface
                     $parameters['item']['label'] = $label;
                 }
 
+                // add table datails to list-of-images
+                $listOfTables[] = $parameters;
+
                 return $event->app->render('table.twig', $parameters);
             },
             $item['content']
         );
+
+        $event->app->append('publishing.list.tables', $listOfTables);
+
         $event->setItem($item);
     }
 }

@@ -13,8 +13,6 @@
   * Default contents should be different for each supported language
   * Temp files (needed in `pdf` editions) should be created in app/Cache, not in OS temp/ dir.
   * Add new content type: `backcover`
-  * Add new content type: `lof` (list of figures)
-  * Add new content type: `lot` (list of tables)
   * Add a new `plugin` command to bootstrap plugin creation
   * Add support for multiple edition inheritance
   * Add more unit tests
@@ -26,6 +24,8 @@
 
 ## easybook 4.2 (XX-feb-2012) ##
 
+  * [OK] Add new content type: `lof` (list of figures)
+  * [OK] Add new content type: `lot` (list of tables)
   * [OK] Addded eight new content types (`afterword`, `conclusion`, `epilogue`, `foreword`, `glossary`, `introduction`, `preface`, `prologue`)
   * [OK] Default contents are no longer necessary
   * [OK] Add counters for figures and tables
