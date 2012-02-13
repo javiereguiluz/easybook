@@ -80,7 +80,7 @@ class HtmlPublisher extends BasePublisher
         // generate custom CSS file
         $customCss = $this->app->getCustomTemplate('style.css');
         if (file_exists($customCss)) {
-            $this->get('filesystem')->copy(
+            $this->app->get('filesystem')->copy(
                 $customCss,
                 $this->app['publishing.dir.output'].'/css/styles.css',
                 true
