@@ -20,7 +20,7 @@ class TablePlugin implements EventSubscriberInterface
     static public function getSubscribedEvents()
     {
         return array(
-            Events::POST_PARSE => 'onItemPostParse',
+            Events::POST_PARSE => array('onItemPostParse', -500),
         );
     }
 

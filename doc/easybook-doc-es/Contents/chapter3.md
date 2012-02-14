@@ -24,6 +24,7 @@ Las ediciones de tipo `pdf` y `html` disponen de las siguientes plantillas (su c
   * `author.twig`
   * `book.twig`, esta es la plantilla con la que se crea el libro uniendo todos sus contenidos.
   * `chapter.twig`
+  * `code.twig`, plantilla con la que se decoran todos los listados de código del libro.
   * `conclusion.twig`
   * `cover.twig`
   * `dedication.twig`
@@ -45,6 +46,7 @@ Las ediciones de tipo `pdf` y `html` disponen de las siguientes plantillas (su c
 
 Las ediciones de tipo `html_chunked` no disponen de una plantilla diferente para cada tipo de contenido, sino que simplemente disponen de las siguientes cinco plantillas:
 
+  * `code.twig`, plantilla con la que se decoran todos los listados de código del libro.
   * `figure.twig`, plantilla con la que se decoran todas las imágenes del libro.
   * `index.twig`, corresponde a la portada del sitio web y por defecto incluye la portada, el índice de contenidos, la información sobre la edición y la licencia de la obra.
   * `chunk.twig`, plantilla genérica con la que se decoran todos los contenidos. Se recomienda que incluya solamente los contenidos del elemento, ya que los contenidos comunes al sitio web se colocan en la plantilla `layout.twig`.
@@ -69,6 +71,7 @@ Un plugin te permite modificar el comportamiento de **easybook** a tu antojo. Im
 
 Técnicamente, los plugins se basan en los *subscribers* del componente *event dispatcher* de Symfony2 y son clases PHP cuyo nombre siempre acaba en `Plugin`. Observa por ejemplo el código de un plugin sencillo llamado `TimerPlugin.php` que se utiliza para medir cuánto tiempo tarda la publicación del libro:
 
+    [php]
     <?php
     namespace Easybook\Plugins;
     
@@ -112,17 +115,19 @@ Los métodos que se ejecutan para responder a los eventos reciben como primer pa
 
 A través del objeto del evento puedes acceder a cualquier propiedad y servicio de la aplicación mediante `$event->app`, tal como se muestra en el código mostrado anteriormente :
 
-        // ...
+    [php]
+    // ...
         
-        public function onStart(BaseEvent $event)
-        {
-            $event->app->set('app.timer.start', microtime(true));
-        }
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime(true));
+    }
 
 Si quieres añadir plugins propios a tu libro, crea un directorio llamado `Plugins` dentro del directorio `Resources` de tu libro (crea también este último directorio si no existe). Después, añade tantas clases PHP como quieras, pero haz que su nombre siempre acabe en `Plugin.php`. No añadas ningún *namespace* a las clases de tus plugins.
 
 El siguiente ejemplo muestra un plugin que modifica todos los contenidos del libro antes de su conversión para poner en negrita todas las apariciones de la palabra *easybook*. Después de la conversión, el plugin modifica de nuevo el contenido para añadir el atributo `class` en la etiqueta `<strong>`  que encierra la palabra **easybook**:
 
+    [php]
     <?php
     use Symfony\Component\EventDispatcher\EventSubscriberInterface;
     use Easybook\Events\EasybookEvents as Events;
@@ -171,11 +176,42 @@ Así por ejemplo, el evento `Events::PRE_PARSE` se notifica antes de convertir e
 
 Si no se indica lo contrario, los libros se crean dentro del directorio `doc/` de **easybook**. Si quieres guardar los contenidos en otro directorio, añade la opción `--dir` tanto al crear el libro como al publicarlo:
 
+    [cli]
     $ ./book new "El origen de las especies" --dir="/Users/javier/libros"
     (el libro se crea en "/Users/javier/libros/el-origen-de-las-especies")
     
     $ ./book publish el-origen-de-las-especies print --dir="/Users/javier/libros"
     (el libro se publica en "/Users/javier/libros/el-origen-de-las-especies/Output/print/book.pdf")
+
+### Coloreado de sintaxis ###
+
+Si utilizas **easybook** para escribir libros técnicos o documentación sobre programación, puedes colorear automáticamente la sintaxis de los listados de código. Para ello, añade primero la opción `highlight_code` a `true` en todas las ediciones que van a mostrar el código coloreado.
+
+Después, indica el lenguaje de programación en los listados que quieras colorear. Imagina que dispones por ejemplo del siguiente listado de código PHP:
+
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime(true));
+    }
+
+Para colorear el código, añade `[php]` como primera línea del listado:
+
+    [code]
+    [php]
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime(true));
+    }
+
+El resultado será el siguiente código con la sintaxis coloreada:
+
+    [php]
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime(true));
+    }
+
+**easybook** utiliza internamente la [librería GeSHi](http://qbnz.com/highlighter) para colorear la sintaxis de los listados, por lo que soporta más de 200 lenguajes de programación (`[php]`, `[java]`, `[c]`, `[javascript]`, `[ruby]`, `[python]`, `[perl]`, `[erlang]`, `[haskell]`, ...), lenguajes de marcado (`[html]`, `[yaml]`, `[xml]`, ...) y configuración (`[ini]`, `[apache]`, ...).
 
 ### Configuración avanzada ###
 
@@ -183,17 +219,19 @@ Si no se indica lo contrario, los libros se crean dentro del directorio `doc/` d
 
 ¿Quieres incluir el precio del libro en la portada? Añade una opción llamada `precio` bajo `book` en el archivo `config.yml`:
 
+    [yaml]
     book:
-        ...
+        # ...
         precio: 10
 
 Ahora ya puedes utilizar esta opción en cualquier plantilla mediante `{{ book.precio }}`. ¿Quieres utilizar diferentes *frameworks CSS* al publicar el libro como sitio web? Añade una opción llamada `framework` en todas las ediciones que lo necesiten:
 
+    [yaml]
     editions:
         mi_sitio1:
             format:    html_chunked
             framework: twitter_bootstrap
-            ...
+            # ...
         
         mi_sitio2:
             extends:   mi_sitio1
@@ -201,6 +239,7 @@ Ahora ya puedes utilizar esta opción en cualquier plantilla mediante `{{ book.p
 
 Esta nueva opción `framework` ya está disponible en cualquier plantilla mediante `{{ edition.framework }}`. Por último, también puedes añadir nuevas opciones en los contenidos del libro. ¿Quieres indicar cuál es el tiempo estimado de lectura en cada capítulo? Añade lo siguiente:
 
+    [yaml]
     contents:
         - { element: cover }
         - ...
@@ -216,6 +255,7 @@ No es algo común y casi nunca es necesario, pero puedes crear nuevos tipos de c
 
 Si en las páginas de tipo `cartoon` muestras poca información (una imagen con la viñeta y una frase explicativa por ejemplo), lo más sencillo es que definas estos contenidos directamente en el archivo `config.yml`:
 
+    [yaml]
     contents:
         - { element: cover }
         - ...
@@ -226,6 +266,7 @@ Si en las páginas de tipo `cartoon` muestras poca información (una imagen con 
 
 Después, sólo tienes que crear en el directorio `Resources/Templates/` una plantilla llamada `cartoon.twig`:
 
+    [twig]
     <div class="page:cartoon">
         <img src="{{ item.config.imagen }}" />
         <p>{{ item.config.frase }}</p>
@@ -233,6 +274,7 @@ Después, sólo tienes que crear en el directorio `Resources/Templates/` una pla
 
 Por el contrario, si las páginas de tipo `cartoon` tienen muchos contenidos, lo mejor es que crees un archivo de contenidos para cada elemento de este tipo:
 
+    [yaml]
     contents:
         - { element: cover }
         - ...
@@ -243,12 +285,14 @@ Por el contrario, si las páginas de tipo `cartoon` tienen muchos contenidos, lo
 
 Después, muestra estos contenidos mediante la plantilla `cartoon.twig`:
 
+    [twig]
     <div class="page:cartoon">
         {{ item.content }}
     </div>
 
 Por último, también puedes combinar estos dos métodos y crear un archivo con los contenidos, varias opciones de configuración en el archivo `config.yml` y luego en la plantilla utilizar todos los valores:
 
+    [twig]
     <div class="page:cartoon">
         <img src="{{ item.config.imagen }}" />
         
@@ -267,6 +311,7 @@ La clase más importante de **easybook** es `src/Easybook/DependencyInjection/Ap
 
 El comando más interesante de **easybook** es `publish`, que se encarga de publicar los libros. Para ello hace uso de una clase de tipo *publisher*, que depende del tipo de edición que se publica (`html`, `html_chunked` o `pdf`). Los detalles de cada *publisher* varían, pero su funcionamiento básico siempre es el mismo:
 
+    [php]
     public function publishBook()
     {
         $this->loadContents();

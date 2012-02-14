@@ -41,14 +41,15 @@
 
 <p>Books define their contents with the <code>contents</code> options in the <code>config.yml</code> file. After creating a new book with the <code>new</code> command, the default contents are:</p>
 
-<pre><code>book:
+<div class="code code">
+<pre class="code">book:
     ...
     contents:
         - { element: cover }
         - { element: toc   }
         - { element: chapter, number: 1, content: chapter1.md }
-        - { element: chapter, number: 2, content: chapter2.md }
-</code></pre>
+        - { element: chapter, number: 2, content: chapter2.md }</pre>
+</div>
 
 <p>The most important option of each content is <code>element</code>, which defines its content type. <strong>easybook</strong> currently defines the following elevent content types:</p>
 
@@ -68,7 +69,8 @@
 
 <p>Most of the content types don't require any other option besides <code>element</code>:</p>
 
-<pre><code>book:
+<div class="code code">
+<pre class="code">book:
     ...
     contents:
         - { element: cover }
@@ -79,8 +81,8 @@
         - { element: chapter, number: 2, content: chapter2.md }
         - ...
         - { element: author }
-        - { element: acknowledgement }
-</code></pre>
+        - { element: acknowledgement }</pre>
+</div>
 
 <p>The <code>appendix</code> and <code>chapter</code> content types can define the following options:</p>
 
@@ -103,7 +105,8 @@
 
 <p>Editions are defined under the <code>editions</code> options in <code>config.yml</code> file. By default, the books created with the <code>new</code> command have three editions named <code>print</code>, <code>web</code> and <code>website</code> with the following options:</p>
 
-<pre><code>book:
+<div class="code code">
+<pre class="code">book:
     ...
     editions:
         print:
@@ -120,8 +123,8 @@
             two_sided:      true
             toc:
                 deep:       2
-                elements:   ["appendix", "chapter"]
-
+                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]
+&nbsp;
         web:
             format:         html
             auto_label:     true
@@ -129,12 +132,12 @@
             include_styles: true
             toc:
                 deep:       2
-                elements:   ["appendix", "chapter"]
-
+                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]
+&nbsp;
         website:
             extends:        web
-            format:         html_chunked
-</code></pre>
+            format:         html_chunked</pre>
+</div>
 
 <p>The name of each edition must be unique for the same book and cannot contain spaces.  The edition name is used as the subdirectory inside <code>Output/</code> directory to separate the contents of each edition. You can define as many editions as you need, but all must belong to one of the following three types defined by the <code>format</code> option:</p>
 
@@ -174,7 +177,8 @@
 
 <p>Imagine for example you want to publish one PDF book with three slightly different design. The draft version (<code>draft</code>) must be double-sided and must have very small margins to reduce its length, the normal version (<code>print</code>) is one-sided and has normal margins. The version prepared for lulu.com website (<code>lulu</code>) is similar to the normal version, except is double-sided:</p>
 
-<pre><code>book:
+<div class="code code">
+<pre class="code">book:
     ...
     editions:
         print:
@@ -191,7 +195,7 @@
             toc:
                 deep:     2
                 elements: ['appendix', 'chapter']
-
+&nbsp;
         draft:
             extends:      print
             two_sided:    true
@@ -200,11 +204,11 @@
                 bottom:   15mm
                 inner:    20mm
                 outter:   10mm
-
+&nbsp;
         lulu:
             extends:      print
-            two_sided:    true
-</code></pre>
+            two_sided:    true</pre>
+</div>
 
 <p>The only limitation of <code>extends</code> is that it only works with one level inheritance. Therefore, and edition cannot extend another edition that extends a third one.</p>
 
@@ -218,20 +222,22 @@
 
 <p>In most books, the only elements that define their own content are the chapters and appendices (with the <code>content</code> options). <strong>easybook</strong> defines sensible default contents for every content type. If the book adds for example an inner cover (<code>title</code> content type):</p>
 
-<pre><code>book:
+<div class="code code">
+<pre class="code">book:
     ...
     contents:
         - ...
         - { element: title }
-        - ...
-</code></pre>
+        - ...</pre>
+</div>
 
 <p><strong>easybook</strong> will use the following as the default content of this element:</p>
 
-<pre><code>&lt;h1&gt;{{ book.title }}&lt;/h1&gt;
+<div class="code code">
+<pre class="code">&lt;h1&gt;{{ book.title }}&lt;/h1&gt;
 &lt;h2&gt;{{ book.author }}&lt;/h2&gt;
-&lt;h3&gt;{{ book.edition }}&lt;/h3&gt;
-</code></pre>
+&lt;h3&gt;{{ book.edition }}&lt;/h3&gt;</pre>
+</div>
 
 <p>The default title page shows the title, the name of the author and the current edition of the book. All these values are configured in the <code>book</code> option of <code>config.yml</code> file.</p>
 
@@ -241,14 +247,15 @@
 
 <p>If you don't want to use <strong>easybook</strong> default contents for these elements, simply add the <code>content</code> option indicating the file that defines its contents:</p>
 
-<pre><code>book:
+<div class="code code">
+<pre class="code">book:
     ...
     contents:
         - ...
         - { element: title, content: my-own-title-page.md }
         - { element: toc, content: my-table-of-contents.md }
-        - ...
-</code></pre>
+        - ...</pre>
+</div>
 
 <h3 id="default-templates">2.3.3 Default templates</h3>
 
@@ -256,14 +263,15 @@
 
 <p>See for example the template used to decorate each chapter of a PDF book:</p>
 
-<pre><code>&lt;div class="page:chapter new-page"&gt;
-
-&lt;h1 id="{{ item.slug }}"&gt;&lt;span&gt;{{ item.label }}&lt;/span&gt; {{ item.title }}&lt;/h1&gt;
-
+<div class="code code">
+<pre class="code">&lt;div class=&quot;page:chapter new-page&quot;&gt;
+&nbsp;
+&lt;h1 id=&quot;{{ item.slug }}&quot;&gt;&lt;span&gt;{{ item.label }}&lt;/span&gt; {{ item.title }}&lt;/h1&gt;
+&nbsp;
 {{ item.content }}
-
-&lt;/div&gt;
-</code></pre>
+&nbsp;
+&lt;/div&gt;</pre>
+</div>
 
 <p>The data of the content being decorated are accessible through a special variable called <code>item</code>, which holds the following properties:</p>
 
@@ -311,26 +319,29 @@
 
 <p>Unlike the titles, labels can contain variable parts, such as the appendix or chapter number. Therefore, <strong>easybook</strong> uses Twig templates to define each label:</p>
 
-<pre><code>label:
+<div class="code code">
+<pre class="code">label:
     figure: 'Figure {{ item.number }}.{{ counter }} '
     part:   'Part {{ item.number }} '
-    table:  'Table {{ item.number }}.{{ counter }} '
-</code></pre>
+    table:  'Table {{ item.number }}.{{ counter }} '</pre>
+</div>
 
 <p>The <code>item.number</code> property is the number (or letter) defined in the <code>number</code> option of the element in <code>config.yml</code> file. Chapters and appendices must define six different labels, each corresponding to one of the six headings levels (<code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code> and <code>&lt;h6&gt;</code>). In the following example, appendices only include a label in its title, thus leaving empty the last five levels:</p>
 
-<pre><code>label:
-    appendix: ['Appendix {{ item.number }} ', '', '', '', '', '']
-</code></pre>
+<div class="code code">
+<pre class="code">label:
+    appendix: ['Appendix {{ item.number }} ', '', '', '', '', '']</pre>
+</div>
 
 <p>In addition to <code>item.number</code> property, label templates have access to a special variable called <code>counters</code> which is an array with the counters of all heading levels. For that reason, to show second-level headings as <code>1.1</code>, <code>1.2</code> ... <code>7.1</code>, <code>7.2</code> you can use the following expression:</p>
 
-<pre><code>label:
+<div class="code code">
+<pre class="code">label:
     chapter:
         - 'Chapter {{ item.number }} '
         - '{{ counters[0] }}.{{ counters[1] }}'
-        - ...
-</code></pre>
+        - ...</pre>
+</div>
 
 <p>Extending the previous example, you can use the following templates to format all the heading levels as <code>1.1</code>, <code>1.1.1</code>, <code>1.1.1.1</code>, etc.:</p>
 

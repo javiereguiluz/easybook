@@ -186,3 +186,50 @@ linking tables and images.
 
 Two new templates have been created: `lof.twig` and `lot.twig` and two new default titles
 have been defined for all supported languages.
+
+### 10. Code listings are now decorated with their own Twig template ###
+
+```jinja
+<div class="code {{ item.language }}">
+{{ item.content }}
+</div>
+```
+
+You can tweak the previous design creating a `code.twig` template in your
+own theme. If you want to maintain the previous no-decoration design, just
+create in your book the template `Resources/Templates/code.twig` with the
+following content:
+
+```jinja
+{{ item.content }}
+```
+
+### 11. Added syntax highlighting for code listings ###
+
+**easybook** now can highlight any code listing. Just add the programming, markup
+or configuration language as the first line of the listing.
+
+Code listing with no syntax highlighting:
+
+```
+public function onStart(BaseEvent $event)
+{
+    $event->app->set('app.timer.start', microtime(true));
+}
+```
+
+Code listing with syntax highlighting:
+
+```
+[php]
+public function onStart(BaseEvent $event)
+{
+    $event->app->set('app.timer.start', microtime(true));
+}
+```
+
+**easybook** uses the [GeSHi library](http://qbnz.com/highlighter) to highlight
+the code listings. Therefore, it supports more than 200 programming languages
+​(`[php]`, `[java]`, `[c]`, `[javascript]`, `[ruby]`, `[python]`, `[perl]`,
+`[erlang]`, `[haskell]`, ...), markup languages ​​(`[html]`, `[yaml]`, `[xml]`, ...)
+and configuration (`[ini]`, `[apache]`, ...).

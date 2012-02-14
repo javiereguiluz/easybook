@@ -20,6 +20,7 @@ book:
     editions:
         print:
             format:         pdf
+            highlight_code: true
             include_styles: true
             isbn:           ~
             labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'

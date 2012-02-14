@@ -17,6 +17,7 @@ book:
     editions:
         print:
             format:         pdf
+            highlight_code: true
             isbn:           ~
             include_styles: true
             labels:         ['appendix', 'chapter', 'figure']

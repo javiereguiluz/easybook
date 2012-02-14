@@ -6,8 +6,9 @@ En el capítulo anterior se explica cómo crear y publicar fácilmente un libro 
 
 Los contenidos del libro se definen en la opción de configuración `contents` del archivo `config.yml`. Al crear un nuevo libro con el comando `new` sus contenidos por defecto son los siguientes:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: toc   }
@@ -40,8 +41,9 @@ La opción más importante de cada contenido es `element`, que define el tipo de
 
 Salvo `appendix`, `chapter` y `part` el resto de contenidos normalmente no requieren ninguna opción adicional:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: title }
@@ -70,8 +72,9 @@ Los diecinueve tipos de contenidos de **easybook** son suficientes para publicar
 
 Las ediciones se definen bajo la opción `editions` en el archivo `config.yml`. Por defecto los libros creados con el comando `new` disponen de tres ediciones llamadas `print`, `web` y `website` con las siguientes opciones:
 
+    [yaml]
     book:
-        ...
+        # ...
         editions:
             print:
                 format:         pdf
@@ -130,8 +133,9 @@ Una última opción de configuración muy útil y disponible en todos los tipos 
 
 Imagina por ejemplo que quieres publicar en PDF un mismo libro modificando ligeramente su aspecto. La versión borrador (`draft`) se publica a doble cara y con unos márgenes muy pequeños para ahorrar papel, la versión normal (`print`) se publica a una cara y con unos márgenes normales. La versión para publicar en el sitio lulu.com (`lulu`) es parecida a la versión normal, pero se publica a doble cara:
 
+    [yaml]
     book:
-        ...
+        # ...
         editions:
             print:
                 format:       pdf
@@ -173,8 +177,9 @@ Los temas por defecto se encuentran en el directorio`app/Resources/Themes/`. Si 
 
 En la mayoría de libros, los únicos elementos que definen de sus propios contenidos son los capítulos y los apéndices (utilizando la opción `content`). Por eso **easybook** define contenidos por defecto sensatos para algunos tipos de elementos. Así por ejemplo, si en el libro añades una portada interna (contenido de tipo `title`) sin indicar su archivo de contenidos:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - ...
             - { element: title }
@@ -182,6 +187,7 @@ En la mayoría de libros, los únicos elementos que definen de sus propios conte
 
 **easybook** utiliza lo siguiente como contenido de este elemento:
 
+    [twig]
     <h1>{{ book.title }}</h1>
     <h2>{{ book.author }}</h2>
     <h3>{{ book.edition }}</h3>
@@ -194,8 +200,9 @@ Los contenidos por defecto dependen tanto del elemento como del tipo de edición
 
 Si no quieres utilizar el contenido por defecto de **easybook** para algún elemento, simplemente añade la opción `content` e indica el archivo que define sus contenidos:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - ...
             - { element: title, content: mi-portada-interna.md }
@@ -208,6 +215,7 @@ El contenido de cada elemento se *decora* con una plantilla antes de incluirlo e
 
 Observa por ejemplo la plantilla utilizada para decorar cada capítulo de un libro PDF:
 
+    [twig]
     <div class="page:chapter new-page">
 
     <h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
@@ -266,6 +274,7 @@ Por otra parte, el libro puede añadir etiquetas (`Capítulo XX`, `Apéndice XX`
 
 A diferencia de los títulos, las etiquetas contienen partes variables, como por ejemplo el número de apéndice o capítulo. Por ello, **easybook** define cada etiqueta mediante una pequeña plantilla Twig:
 
+    [yaml]
     label:
         figure: 'Figura {{ element.number }}.{{ item.number }}'
         part:   'Sección {{ item.number }}'
@@ -275,6 +284,7 @@ Las etiquetas `figure` y `table` tienen accceso a las mismas variables que las p
 
 En el caso de los apéndices y capítulos, es necesario definir seis etiquetas, cada una perteneciente a uno de los seis niveles de título (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` y `<h6>`). El siguiente ejemplo hace que los apéndices sólo muestren una etiqueta en su título, por lo que dejan vacíos los cinco últimos niveles:
 
+    [yaml]
     label:
         appendix:
             - 'Apéndice {{ item.number }}'
@@ -288,6 +298,7 @@ Las etiquetas tienen acceso a todas las opciones de configuración definidas por
 
 La propiedad `level` indica el nivel de título de sección para el que se quiere obtener la etiqueta, siendo `1` el nivel correspondiente al título `<h1>` y así hasta el `6` que equivale al título de nivel `<h6>`. La propiedad `counters` es un array con los contadores de todos los títulos de sección encontrados hasta ese punto. Así, para hacer que las secciones de segundo nivel de los capítulos se muestren como `1.1`, `1.2`, ..., `7.1`, `7.2` puedes utilizar la siguiente expresión:
 
+    [yaml]
     label:
         chapter:
             - 'Capítulo {{ item.number }} '
@@ -295,7 +306,8 @@ La propiedad `level` indica el nivel de título de sección para el que se quier
             - ...
 
 Generalizando el ejemplo anterior, puedes utilizar el siguiente código Twig para hacer que las etiquetas de los capítulos sean de tipo `1.1`, `1.1.1`, `1.1.1.1`, etc.:
-            
+
+    [yaml]
     label:
         chapter:
             - 'Capítulo {{ item.number }} '

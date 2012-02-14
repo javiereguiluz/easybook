@@ -243,6 +243,19 @@ class Application extends \Pimple
             return new Slugger($app);
         });
 
+        // -- code syntax highlighter -----------------------------------------
+        $this['geshi'] = function () use ($app) {
+            require_once __DIR__.'/../../../vendor/geshi/geshi.php';
+
+            $geshi = new \GeSHi\GeSHi();
+            $geshi->enable_classes(); // this must be the first method (see Geshi doc)
+            $geshi->set_encoding($app['app.charset']);
+            $geshi->enable_line_numbers(GESHI_NO_LINE_NUMBERS);
+            $geshi->enable_keyword_links(false);
+
+            return $geshi;
+        };
+
         // -- labels ---------------------------------------------------------
         $this['labels'] = $app->share(function () use ($app) {
             $labels = Yaml::parse(
@@ -340,16 +353,14 @@ class Application extends \Pimple
         return $twig->render($string, $variables);
     }
 
-    // copied from http://github.com/sensio/SensioGeneratorBundle/blob/master/Generator/Generator.php
-    public function renderFile($originDir, $template, $target, $parameters)
+    // inspired by http://github.com/sensio/SensioGeneratorBundle/blob/master/Generator/Generator.php
+    public function renderFile($template, $target, $parameters)
     {
         if (!is_dir(dirname($target))) {
             mkdir(dirname($target), 0777, true);
         }
 
-        $twig = new \Twig_Environment(new \Twig_Loader_Filesystem($originDir), $this->get('twig.options'));
-
-        file_put_contents($target, $twig->render($template, $parameters));
+        file_put_contents($target, $this->render($template, $parameters));
     }
 
     /*
@@ -362,7 +373,7 @@ class Application extends \Pimple
         }
         else {
             throw new \Exception(sprintf(
-                'Unsupported "%s" template format (Easybook only supports Twig)',
+                'Unsupported "%s" template format (easybook only supports Twig)',
                 substr($template, -5)
             ));
         }
@@ -442,6 +453,16 @@ class Application extends \Pimple
         }
         
         return null;
+    }
+
+    public function highlight($code, $language = 'code')
+    {
+        $geshi = $this->get('geshi');
+
+        $geshi->set_source($code);
+        $geshi->set_language($language);
+
+        return $geshi->parse_code();
     }
 
     /*

@@ -24,6 +24,7 @@ The following list shows the default templates included in `pdf` and `html` type
   * `author.twig`
   * `book.twig`, this is the final template that assembles all the book contents.
   * `chapter.twig`
+  * `code.twig`, the template used to decorate all the code listings included in the book.
   * `conclusion.twig`
   * `cover.twig`
   * `dedication.twig`
@@ -45,6 +46,7 @@ The following list shows the default templates included in `pdf` and `html` type
 
 The `html_chunked` edition type doesn't include a different template for each content type. It onle defines the following five templates:
 
+  * `code.twig`, the template used to decorate all the code listings included in the book.
   * `figure.twig`, the template used to decorate all the images included in the book.
   * `index.twig`, the template that generates the front page of the website. By default it includes the following contents: `cover`, `toc`, `edition` and `license`.
   * `chunk.twig`, generic template applied to all the rest of the content types. This template must only include the contents of the item being decorated. The common features of the website are defined in the `layout.twig` template.
@@ -69,6 +71,7 @@ A plugin allows you to completely modify the behavior of **easybook**. Imagine y
 
 Technically, plugins are based on the subscribers defined by the event dispatcher component of Symfony2. They are regular PHP classes whose name always ends with the word `Plugin`. The following code shows the source of `TimerPlugin.php`, the plugin used by **easybook** to measure how long it takes to publish a book:
 
+    [php]
     <?php
     namespace Easybook\Plugins;
     
@@ -113,17 +116,19 @@ The methods that are executed in response to events receive as first parameter a
 
 You can access any property and service application through the event object using `$event-> app`, as shown below:
 
-        // ...
-        
-        public function onStart(BaseEvent $event)
-        {
-            $event->app->set('app.timer.start', microtime(true));
-        }
+    [php]
+    // ...
+
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime(true));
+    }
 
 If you want to add plugins to your own book, create a directory called `Plugins` inside the `Resources` directory of your book (create the latter one if it doesn't exist). Then add as many PHP classes as you want, but make their name always end in `Plugin.php`. Do not add any namespace to your plugin classes.
 
 The following example shows a plugin that modifies the contents of the book before and after its conversion. First, the plugin modifies the original Markdown content to put in bold all occurrences of the word *easybook*. Then, it modifies the HTML content to add a `class` attribute to all these occurrences:
 
+    [php]
     <?php
     use Symfony\Component\EventDispatcher\EventSubscriberInterface;
     use Easybook\Events\EasybookEvents as Events;
@@ -172,11 +177,42 @@ The event `Events::PRE_PARSE` is notified before the conversion, so you only hav
 
 Unless stated otherwise, the books are created in the `doc/` directory of **easybook**. If you want to save the contents in any other directory, add the `--dir` option when creating and/or publishig the book:
 
+    [cli]
     $ ./book new "The Origin of Species" --dir="/Users/javier/books"
     (the book is created in "/Users/javier/books/the-origin-of-species")
     
     $ ./book publish the-origin-of-species print --dir="/Users/javier/books"
     (the book is published in "/Users/javier/books/the-origin-of-species/Output/print/book.pdf")
+
+### Syntax highlighting ###
+
+If you use **easybook** to write technical books or programming related documentation, you can automatically highlight the code listings. First, set the option `highlight_code` to `true` in any edition with syntax highlighting.
+
+Then, set the programming language in the listings you want to color. Imagine that you have the following PHP code:
+
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime (true));
+    }
+
+Add `[php]` as the first line of the listing to highlight its code:
+
+    [code]
+    [php]
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime (true));
+    }
+
+The result is the following code with syntax highlighting:
+
+    [php]
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime (true));
+    }
+
+**easybook** uses the [GeSHi library](http://qbnz.com/highlighter) to highlight the code listings. Therefore, it supports more than 200 programming languages ​​(`[php]`, `[java]`, `[c]`, `[javascript]`, `[ruby]`, `[python]`, `[perl]`, `[erlang]`, `[haskell]`, ...), markup languages ​​(`[html]`, `[yaml]`, `[xml]`, ...) and configuration (`[ini]`, `[apache]`, ...).
 
 ### Advanced configuration ###
 
@@ -184,17 +220,19 @@ Unless stated otherwise, the books are created in the `doc/` directory of **easy
 
 Do you want to show the price of the book on the cover? Add a new option called `price` under the `book` option of `config.yml` file:
 
+    [yaml]
     book:
-        ...
+        # ...
         price: 10
 
 Now you can use this option in any template with the following expression: `{{ book.price }}`.  Do you want to use different CSS frameworks to generate the book website? Add a new option called `framework` in some editions:
 
+    [yaml]
     editions:
         my_website1:
             format:    html_chunked
             framework: twitter_bootstrap
-            ...
+            # ...
         
         my_website2:
             extends:   my_website1
@@ -202,6 +240,7 @@ Now you can use this option in any template with the following expression: `{{ b
 
 This new option is now available in any template through the following expression: `{{ edition.framework }}`. Finally, you can also add new options to the contents of the book.  Do you want to indicate the estimated reading time in each chapter? Add the following `time` option for `chapter` elements:
 
+    [yaml]
     contents:
         - { element: cover }
         - ...
@@ -217,6 +256,7 @@ It's uncommon and generally unneeded, but you can also define new content types 
 
 If pages of type `cartoon` include few contents (a picture and its caption for example), it's better to define these contents directly in the  `config.yml` file:
 
+    [yaml]
     contents:
         - { element: cover }
         - ...
@@ -227,6 +267,7 @@ If pages of type `cartoon` include few contents (a picture and its caption for e
 
 Then, create a custom `cartoon.twig` template in your book `Resources/Templates/` directory:
 
+    [twig]
     <div class="page:cartoon">
         <img src="{{ item.config.image }}" />
         <p>{{ item.config.caption }}</p>
@@ -234,6 +275,7 @@ Then, create a custom `cartoon.twig` template in your book `Resources/Templates/
 
 In contrast, if pages of type `cartoon` include a lot of contents, it's better to create a content file for each of these elements:
 
+    [yaml]
     contents:
         - { element: cover }
         - ...
@@ -244,12 +286,14 @@ In contrast, if pages of type `cartoon` include a lot of contents, it's better t
 
 Then, display this content with the following simplified `cartoon.twig` template:
 
+    [twig]
      <div class="page:cartoon">
          {{ item.content }}
      </div>
 
 Finally, you can also combine these two methods creating a file with the contents and adding several configuration options in `config.yml`. The template can easily use both sources of information:
 
+    [twig]
      <div class="page:cartoon">
          <img src="{{ item.config.image }}" />
         
@@ -268,6 +312,7 @@ The most important class of **easybook** is `src/Easybook/DependencyInjection/Ap
 
 The most interesting command of **easybook** is `publish`, which publishes an specific edition of the book. Internally it uses a class of type *publisher*, which depends on the type of edition that is published (`html`, `html_chunked` or `pdf`). The details of each *publisher* vary, but its basic operation is always the same:
 
+    [php]
     public function publishBook()
     {
         $this->loadContents();

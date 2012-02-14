@@ -33,12 +33,10 @@ class HtmlChunkedPublisher extends HtmlPublisher
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
             $this->app->renderFile(
-                $this->app['publishing.dir.app_theme'].'/Templates',
                 'style.css.twig',
                 $this->app['publishing.dir.output'].'/css/easybook.css',
                 array(
-                    'app'  => $this->app,
-                    'book' => $this->app->get('book')
+                    'resources_dir' => $this->app['app.dir.resources'].'/'
                 )
             );
         }

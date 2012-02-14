@@ -6,8 +6,9 @@ In the previous chapter, you learned how to create a basic book and publish it w
 
 Books define their contents with the `contents` options in the `config.yml` file. After creating a new book with the `new` command, the default contents are:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: toc   }
@@ -41,8 +42,9 @@ The most important option of each content is `element`, which defines its conten
 
 Most of the content types don't require any other option besides `element`:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: title }
@@ -71,8 +73,9 @@ These nineteen content types defined by **easybook** are enough to publish most 
 
 Editions are defined under the `editions` options in `config.yml` file. By default, the books created with the `new` command have three editions named `print`, `web` and `website` with the following options:
 
+    [yaml]
     book:
-        ...
+        # ...
         editions:
             print:
                 format:         pdf
@@ -132,8 +135,9 @@ In addition to all these options, editions can set a very useful option named `e
 
 Imagine for example you want to publish one PDF book with three slightly different design. The draft version (`draft`) must be double-sided and must have very small margins to reduce its length, the normal version (`print`) is one-sided and has normal margins. The version prepared for lulu.com website (`lulu`) is similar to the normal version, except is double-sided:
 
+    [yaml]
     book:
-        ...
+        # ...
         editions:
             print:
                 format:       pdf
@@ -175,8 +179,9 @@ Bundled themes are located in the `app/Resources/Themes/` directory. If you need
 
 In most books, the only elements that define their own content are chapters and appendices (with the `content` option). In addition, **easybook** defines sensible default contents for some content types. If your book for example includes an inner cover (`title` content type) without any contents file:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - ...
             - { element: title }
@@ -184,6 +189,7 @@ In most books, the only elements that define their own content are chapters and 
 
 **easybook** will use the following as the content for this element:
 
+    [twig]
     <h1>{{ book.title }}</h1>
     <h2>{{ book.author }}</h2>
     <h3>{{ book.edition }}</h3>
@@ -196,8 +202,9 @@ The contents defined by **easybook** depend on both the edition being published 
 
 If you don't want to use **easybook** default contents for some element, simply add the `content` option indicating the file that defines its contents:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - ...
             - { element: title, content: my-own-title-page.md }
@@ -210,6 +217,7 @@ The content of each element is *decorated* with a template before including it i
 
 See for example the template used to decorate each chapter of a PDF book:
 
+    [twig]
     <div class="page:chapter new-page">
 
     <h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
@@ -268,6 +276,7 @@ Moreover, the book can add labels (`Chapter XX`, `Appendix XX`, etc.) to section
 
 Unlike the titles, labels can contain variable parts, such as the appendix or chapter number. Therefore, **easybook** uses Twig templates to define each label:
 
+    [yaml]
     label:
         figure: 'Figure {{ element.number }}.{{ item.number }}'
         part:   'Part {{ item.number }}'
@@ -277,6 +286,7 @@ The templates for `figure` and `table` labels can use the same variables as `fig
 
 Chapters and appendices must define six different labels, each corresponding to one of the six heading levels (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` and `<h6>`). In the following example, appendices only include a label in their titles, thus leaving empty the last five levels:
 
+    [yaml]
     label:
         appendix:
             - 'Appendix {{ item.number }}'
@@ -290,6 +300,7 @@ Labels can access to all configuration options defined by the item in the `confi
 
 The `level` variable indicates the section heading level for which you want to get the label, being `1` the level of `<h1>` heading and `6` the level of `<h6>` headings. The `counters` variable is an array with the counters of all heading levels. For that reason, to show second-level headings as `1.1`, `1.2` ... `7.1`, `7.2` you can use the following expression:
 
+    [yaml]
     label:
         chapter:
             - 'Chapter {{ item.number }}'
@@ -297,7 +308,8 @@ The `level` variable indicates the section heading level for which you want to g
             - ...
 
 Extending the previous example, you can use the following templates to format all the heading levels as `1.1`, `1.1.1`, `1.1.1.1`, etc.:
- 
+
+    [yaml]
      label:
          chapter:
              - 'Chapter {{ item.number }} '

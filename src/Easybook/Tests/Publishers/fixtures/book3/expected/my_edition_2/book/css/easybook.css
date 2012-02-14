@@ -7,8 +7,8 @@
 
   Title:        Base CSS for easybook v4 books
   Author:       javier.eguiluz@gmail.com
-  Version:      4.0
-  Last updated: 6 - feb - 2012
+  Version:      4.2
+  Last updated: 14 - feb - 2012
 */
 
 /* Reset styles
@@ -513,4 +513,79 @@ table tbody:last-child tr:last-child td:last-child {
     text-decoration: none;
     border-bottom: 1px solid #DFDFDF;
     line-height: 0.9;
+}
+
+/* Code highlighting
+   ------------------------------------------------------------------------- */
+div.code pre br {
+    display: none;
+}
+/* keywords */
+.kw0, .kw1, .kw2, .kw3, .kw4, .kw5, .kw6 {
+    color: #2100D5;
+}
+/* comments, .comulti = multiline comment */
+.co0, .co1, .co2, .co3, .co4, .coMULTI {
+    color: #007800;
+}
+/* escape chars, .es_h = escape char hard quotes */
+.es0, .es1, .es2, .es3, .es4, .es5, .es6, .es_h {
+    color: #000;
+}
+/* brackets */
+.br1, .br2 {
+    color: #000;
+}
+/* symbols '(', ')', '[', ']', '{', '}', '!', '@', '%', '&', '|', '/', */
+.sy0, .sy1 {
+    color: #000;
+}
+/* brackets */
+.br1, .br2 {
+    color: #000;
+}
+/* strings, .st_h = string hard quotes */
+.st0, .st1, .st2, .st_h {
+    color: #D90000;
+}
+/* numbers */
+.nu0 {
+    color: #2100D5;
+}
+/* methods */
+.me1, .me2 {
+    color: #000;
+}
+/* scripts */
+.sc0, .sc1, .sc2, .sc3, .sc4, .sc5 {
+    color: #000;
+}
+/* regexps */
+.re0, .re1, .re2 {
+    color: #000;
+}
+/* special code blocks */
+div.cli pre {
+    background: #222;
+    border-color: #222;
+    color: #FFF;
+}
+
+div.php .kw3,                 /* PHP built-in functions */
+div.html .kw3,                /* HTML tag attributes */
+div.twig .re0 .me1            /* Twig object.property (property only) */
+{
+    color: #641F9D;
+}
+div.php .re0,                  /* PHP variables */
+div.yaml .co3, div.yaml .co4,  /* YAML keys */
+div.yaml .re0,                 /* YAML underscored keys */
+div.ini .re0,                  /* INI brackets */
+div.twig .re0                  /* Twig object.property (object only) */
+{
+    color: #BC0092;
+}
+div.yaml .co2                  /* YAML directives */
+{
+    color: #D90000;
 }

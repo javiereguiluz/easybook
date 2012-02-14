@@ -4,7 +4,6 @@
 
 (in no particular order)
 
-  * Code syntax highlighting (both in PDF and HTML books)
   * Consider a cache mechanism for not regenerating unchanged contents
   * Plugins should be able to register resources (external libs, assets, ...)
   * Add a new AdmonitionPlugin (adds support for `[note]`, `[tip]`, `[caution]`, `[sidebar]`)
@@ -24,6 +23,7 @@
 
 ## easybook 4.2 (XX-feb-2012) ##
 
+  * [OK] Code syntax highlighting (both in PDF and HTML books)
   * [OK] Add new content type: `lof` (list of figures)
   * [OK] Add new content type: `lot` (list of tables)
   * [OK] Addded eight new content types (`afterword`, `conclusion`, `epilogue`, `foreword`, `glossary`, `introduction`, `preface`, `prologue`)

@@ -4,6 +4,7 @@
 
 Para utilizar **easybook** tienes que tener instalado en tu ordenador PHP 5.3.2 o superior. Si no entiendes la frase anterior, coméntaselo a algún amigo informático y envíale un enlace a esta página para que pueda ayudarte. Si no lo haces, no vas a poder continuar. Para comprobar qué versión de PHP tienes instalada, abre una consola de comandos y ejecuta lo siguiente:
 
+    [cli]
     php -v
 
 **easybook** es una aplicación gratuita y de software libre. Esto significa que puedes hacer con ella lo que quieras, incluso venderla y ganar dinero. Las únicas condiciones que debes cumplir son:
@@ -23,6 +24,7 @@ Antes de descargar **easybook**, crea un directorio para guardarlo, como por eje
 
 Si conoces y utilizas la herramienta Git, abre una consola de comandos y ejecuta lo siguiente para clonar el repositorio público de **easybook** (reemplaza `<directorio>` por la ruta del directorio creado anteriormente):
 
+    [cli]
     $ git clone http://github.com/javiereguiluz/easybook.git <directorio>
 
 Si no utilizas Git, puedes descargar **easybook** mediante un archivo comprimido `.zip`. No es algo tan chulo como usar Git, pero funciona igual de bien. Descarga el siguiente archivo y descomprímelo en el directorio creado anteriormente: <http://github.com/javiereguiluz/easybook/zipball/master>
@@ -31,10 +33,12 @@ Si no utilizas Git, puedes descargar **easybook** mediante un archivo comprimido
 
 Una vez descargado/descomprimido, abre una consola de comandos, entra en el directorio donde has guardado **easybook** y comprueba que se ha descargado correctamente ejecutando el siguiente *script* de PHP:
 
+    [cli]
     $ ./book
 
 Si todo va bien, deberías ver el siguiente mensaje de bienvenida de **easybook**:
 
+    [cli]
                         |              |    
     ,---.,---.,---.,   .|---.,---.,---.|__/ 
     |---',---|`---.|   ||   ||   ||   ||  \ 
@@ -55,6 +59,7 @@ Si se produce algún error al ejecutar `./book`, prueba a ejecutarlo como `php b
 
 El *script* `./book` es el punto de acceso a todos los comandos internos de **easybook**. Así por ejemplo, para conocer qué versión de **easybook** tienes instalada, debes ejecutar el comando `version` a través del *script* `book`:
 
+    [cli]
     $ ./book version
 
 
@@ -72,6 +77,7 @@ En esta sección vas a crear el primer libro de prueba con **easybook**. Si lo q
 
 **easybook** requiere para su funcionamiento que tu libro tenga una determinada estructura de archivos y directorios. Para que no tengas que hacerlo a mano, los libros de **easybook** se crean con el comando `new` :
 
+    [cli]
     $ ./book new "El origen de las especies"
 
 Después del comando `new` deja un espacio en blanco y escribe el título de tu libro encerrándolo entre comillas. El resultado de este comando es un directorio llamado `el-origen-de-las-especies` dentro del directorio `doc/` de **easybook**. Dentro del nuevo directorio deberías ver la siguiente estructura:
@@ -100,8 +106,9 @@ Así que olvida por un momento **easybook**, coge tu editor de textos favorito (
 
 La estructura de un libro puede ser muy compleja (portada, página de título, agradecimientos, dedicatoria, capítulos, secciones, etc.). **easybook** soporta todos los tipos de contenido comunes de los libros, pero de momento sólo vamos a centrarnos en los capítulos. Puedes crear tantos capítulos como quieras y cada uno puede ser tan pequeño o tan grande como necesites. Lo único que debes hacer es añadir en la opción `contents` del archivo `config.yml` todos los capítulos que forman el libro:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: toc   }
@@ -112,8 +119,9 @@ Cada línea de la opción `contents` indica un contenido del libro. Los elemento
 
 La principal característica de **easybook**, además de su increíble rapidez, es su flexibilidad, ya que nunca te obliga a trabajar de una determinada manera. ¿Quiéres numerar tus capítulos no consecutivamente? Pensarán que estás loco, pero puedes hacerlo:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: toc   }
@@ -122,8 +130,9 @@ La principal característica de **easybook**, además de su increíble rapidez, 
 
 ¿Quiéres utilizar letras en vez de números? Esto es más propio de los apéndices que de los capítulos, pero también puedes hacerlo:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: toc   }
@@ -132,8 +141,9 @@ La principal característica de **easybook**, además de su increíble rapidez, 
 
 Igualmente, puedes utilizar cualquier nombre para el arhivo de los contenidos del capítulo, como en el siguiente ejemplo que mezcla varios idiomas:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: toc   }
@@ -142,8 +152,9 @@ Igualmente, puedes utilizar cualquier nombre para el arhivo de los contenidos de
 
 También puedes utilizar nombres de archivo más significativos para que te sea más fácil localizar los contenidos del libro:
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: toc   }
@@ -152,8 +163,9 @@ También puedes utilizar nombres de archivo más significativos para que te sea 
 
 Lo más importante de la opción `contents` es el orden en el que defines los contenidos. El libro publicado siempre estará formado por esos contenidos y en ese orden. Así que por ejemplo, la siguiente configuración mostraría la portada del libro entre los dos capítulos y el índice de contenidos justo al final (completamente delirante, pero con **easybook** es muy fácil hacerlo):
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: chapter, number: 1, content: publica-tu-primer-libro.md  }
             - { element: cover }
@@ -162,8 +174,9 @@ Lo más importante de la opción `contents` es el orden en el que defines los co
 
 Por defecto todos los archivos de contenidos se guardan directamente en el directorio `Contents/`. No obstante, si tu libro es muy complejo, puedes dividir los contenidos en subdirectorios . Después, sólo tienes que indicarlo en la opción `content` (si la ruta del archivo tiene espacios, no olvides encerrarlo entre comillas):
 
+    [yaml]
     book:
-        ...
+        # ...
         contents:
             - { element: cover }
             - { element: toc   }
@@ -187,18 +200,21 @@ La configuración anterior significa que los contenidos de tu libro están estru
 
 Cuando termines de escribir todos los capítulos y de añadirlos en el archivo `config.yml`, abre una consola de comandos y ejecuta lo siguiente (cambia `el-origen-de-las-especies` por el nombre del directorio donde se encuentra tu libro):
 
+    [cli]
     $ ./book publish 'el-origen-de-las-especies' web
 
 Si todo funciona bien, en el directorio `Output/` del libro verás que se ha creado un directorio llamado `web` y en su interior encontrarás el archivo `book.html`. Este es el libro completo en formato HTML, listo para publicar en Internet.
 
 Ejecuta a continuación el siguiente comando :
 
+    [cli]
     $ ./book publish 'el-origen-de-las-especies' website
 
 Ahora en el directorio `Output/` del libro se ha creado el directorio `website` y en su interior verás varias páginas HTML, una para cada capítulo del libro. Abre el archivo `index.html` en un navegador y verás que **easybook** ha convertido tu libro en todo un sitio web listo para publicar en Internet.
 
 Por último, ejecuta el siguiente comando:
 
+    [cli]
     $ ./book publish 'el-origen-de-las-especies' print
 
 Dentro del directorio `Output/` verás el directorio `print` y en su interior, un archivo llamado `book.pdf` que contiene la versión PDF del libro, lista para imprimir. La conversión a PDF se realiza con ayuda de una aplicación externa llamada [PrinceXML](http://www.princexml.com/). Si no la tienes instalada en tu ordenador, puedes descargar una versión de prueba completamente funcional en <http://www.princexml.com/download/>
@@ -209,6 +225,7 @@ Como acabas de ver, **easybook** te permite publicar un mismo libro de muchas ma
 
 En las secciones anteriores has modificado las opciones `author` y `language` para indicar el autor y el idioma del libro. En realidad, los libros de **easybook** cuentan con muchas más opciones que se configuran en el archivo `config.yml`. Sus valores por defecto se muestran a continuación:
 
+    [yaml]
     book:
         title:            "(el título que escribiste al crear el libro)"
         author:           "Change this: Author Name"

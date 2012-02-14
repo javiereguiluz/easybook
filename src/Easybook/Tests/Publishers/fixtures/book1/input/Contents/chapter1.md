@@ -2,6 +2,8 @@
 
 **easybook** is an application that lets you easily publish books in various electronic formats. Originally it was designed to publish technical programming books, but you can use **easyboook** to publish any kind of book, manual or documentation.
 
+![Lorem ipsum dolor sit amet](placeholder.png)
+
 Before using **easybook** check that you have installed and configured PHP 5.3.2 or higher on your computer. If you do not understand the previous sentence, ask advice from a computer savvy friend and send him the link to this page. You can check your installed PHP version executing the following command on the console:
 
     php -v
