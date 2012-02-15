@@ -86,6 +86,10 @@ class Compiler
         $phar->setStub($this->getStub());
 
         $phar->stopBuffering();
+
+        $phar->compressFiles(\Phar::GZ);
+
+        unset($phar);
     }
 
     private function addFile($phar, $file, $strip = true)
