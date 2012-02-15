@@ -1,0 +1,49 @@
+# Dutch translation of the strings managed by easybook
+label:
+    appendix:
+        - 'Appendix {{ item.number }}'
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+    
+    chapter:
+        - 'Hoofdstuk {{ item.number }}'
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+
+    figure:          'Afbeelding {{ element.number }}.{{ item.number }}'
+    part:            'Onderdeel {{ item.number }}'
+    table:           'Tabel {{ element.number }}.{{ item.number }}'
+
+    acknowledgement: ''
+    afterword:       ''
+    author:          ''
+    conclusion:      ''
+    cover:           ''
+    dedication:      ''
+    edition:         ''
+    epilogue:        ''
+    foreword:        ''
+    glossary:        ''
+    introduction:    ''
+    preface:         ''
+    prologue:        ''
+    title:           ''
+    toc:             ''
+
+    # Navigation elements
+    index:           'Inhoudsopgave'
+    next:            'Volgende'
+    previous:        'Vorige'
+
+    # Special
+    date_format:     'd-m-Y'
+
+    # Other
+    by:              'door'
+    page:            'pagina'
