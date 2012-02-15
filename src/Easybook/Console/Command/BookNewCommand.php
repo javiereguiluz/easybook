@@ -96,7 +96,7 @@ class BookNewCommand extends BaseCommand
         );
         $this->app->get('filesystem')->mkdir($docdir.'/Contents/images');
         $this->app->get('filesystem')->mkdir($docdir.'/Output');
-        $this->app->renderFile($skeletonDir, 'config.yml', $docdir.'/config.yml', array(
+        $this->app->renderFile($skeletonDir, 'config.yml.twig', $docdir.'/config.yml', array(
             'generator' => array(
                 'name'    => $this->app['app.name'],
                 'version' => $this->app['app.version']

@@ -33,7 +33,7 @@ class Application extends \Pimple
         $this['app.debug']     = true;
         $this['app.charset']   = 'UTF-8';
         $this['app.name']      = 'easybook';
-        $this['app.version']   = '4.2-dev';
+        $this['app.version']   = '4.2';
         $this['app.signature'] = "\n"
         ."                     |              |    \n"
         ." ,---.,---.,---.,   .|---.,---.,---.|__/ \n"
@@ -353,14 +353,18 @@ class Application extends \Pimple
         return $twig->render($string, $variables);
     }
 
-    // inspired by http://github.com/sensio/SensioGeneratorBundle/blob/master/Generator/Generator.php
-    public function renderFile($template, $target, $parameters)
+    // copied from http://github.com/sensio/SensioGeneratorBundle/blob/master/Generator/Generator.php
+    public function renderFile($originDir, $template, $target, $parameters)
     {
         if (!is_dir(dirname($target))) {
             mkdir(dirname($target), 0777, true);
         }
 
-        file_put_contents($target, $this->render($template, $parameters));
+        $twig = new \Twig_Environment(
+            new \Twig_Loader_Filesystem($originDir),
+            $this->get('twig.options')
+        );
+        file_put_contents($target, $twig->render($template, $parameters));
     }
 
     /*
