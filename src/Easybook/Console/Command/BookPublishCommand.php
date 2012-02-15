@@ -75,8 +75,20 @@ class BookPublishCommand extends BaseCommand
             }
         }
         $input->setArgument('slug', $slug);
-        
-        $bookConfig = Yaml::parse($dir.'/'.$slug.'/config.yml');
+
+        $bookConfigFile = $dir.'/'.$slug.'/config.yml';
+        if (!file_exists($bookConfigFile)) {
+            throw new \RuntimeException(sprintf(
+                'There is no "config.yml" configuration file for "%s" book'
+                ."\n"
+                .'Try to create the book again with the "new" command or create'
+                ."\n"
+                .'"%s" file by hand',
+                $slug, realpath($dir.'/'.$slug).'/config.yml'
+            ));
+        }
+
+        $bookConfig = Yaml::parse($bookConfigFile);
         $this->app->set('book', $bookConfig['book']);
         
         // Ask for the 'edition' if it doesn't exist
