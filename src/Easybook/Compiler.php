@@ -55,6 +55,8 @@ class Compiler
         $finder = new Finder();
         $finder->files()
             ->ignoreVCS(true)
+            ->exclude('tests')
+            ->exclude('docs')
             ->in(__DIR__.'/../../vendor/');
 
         foreach ($finder as $file) {
