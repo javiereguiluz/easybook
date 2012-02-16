@@ -48,7 +48,7 @@ class CodePlugin implements EventSubscriberInterface
                 $language = 'code';
                 $code = preg_replace_callback('{
                         ^\[(?<lang>.*)\]\n(?<code>.*)
-                    }xm',
+                    }x',
                     function($matches) use (&$language) {
                         $language = trim($matches['lang']);
                         return $matches['code'];
