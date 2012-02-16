@@ -31,17 +31,20 @@ class ParserPlugin implements EventSubscriberInterface
         // strip title from the parsed content
         if (count($item['toc']) > 0) {
             $heading = $item['toc'][0];
-
-            $title = sprintf("<h%s id=\"%s\">%s</h%s>\n\n",
-                $heading['level'],
-                $heading['slug'],
-                $heading['title'],
-                $heading['level']
-            );
-
-            $item['content'] = str_replace($title, '', $item['content']);
-            $item['slug']    = $heading['slug'];
-            $item['title']   = $heading['title'];
+            
+            // only <h1> headings can be the title of the content
+            if (1 == $heading['level']) {
+                // the <h1> heading must be the first line to consider it a title
+                $item['content'] = preg_replace('{
+                        ^<h1.*<\/h1>\n+(.*)
+                    }x',
+                    '$1',
+                    $item['content']
+                );
+                
+                $item['slug']  = $heading['slug'];
+                $item['title'] = $heading['title'];
+            }
         }
 
         $event->setItem($item);
