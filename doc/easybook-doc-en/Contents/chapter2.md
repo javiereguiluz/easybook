@@ -119,7 +119,7 @@ Editions can modify the aspect of the published book through several configurati
   * `labels`, indicates the content types for which **easybook** will add labels to their section headings. By default labels are only added to headings of chapters and appendices. In addition to **easybook** content types, you can use two special values called `figure` and `table` to add labels for book images and tables. If you want to show no labels in your book, delete all values of this option: `labels: []`.
   * `toc`, sets the options of the table of contents. It's ignored unless the book has at least one `toc` element type. It has two options:
     * `deep`, the maximum heading level included in the TOC (`1` is the lowest possible number and would only show `<h1>` level headings; `6` is the highest possible value and would show all `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` and `<h6>` headings).
-    * `items`, the type of elements included in the TOC (by default, only `appendix`, `chapter` and `part` are included).
+    * `elements`, the type of elements included in the TOC (by default, only `appendix`, `chapter` and `part` are included).
 
 The `pdf` editions can define even more options:
 

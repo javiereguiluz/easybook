@@ -117,7 +117,7 @@ Cada tipo de edición define sus propias opciones de configuración. Los tipos `
   * `labels`, indica los tipos de elementos para los que se añaden etiquetas en sus títulos de sección. Por defecto sólo se aplican a los capítulos y apéndices. Además de los tipos de contenido de **easybook**, puedes utilizar dos valores especiales llamados `figure` y `table`, que añaden respectivamente etiquetas a las imágenes y las tablas del libro. Si no quieres mostrar ninguna etiqueta, elimina todos los contenidos de esta opción: `labels: []`.
   * `toc`, establece las opciones del índice de contenidos. Sólo se tiene en cuenta si el libro incluye un contenido de tipo `toc`. A su vez, dispone de dos subopciones:
     * `deep`, indica el nivel de título máximo que se incluye en el índice (`1` es el valor más pequeño posible y equivale a mostrar sólo los títulos de nivel `<h1>`; el valor más grande es `6` y equivale a mostrar todos los títulos `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` y `<h6>`).
-    * `items`, indica el tipo de contenidos que se incluyen en el índice (por defecto sólo se muestran, si las hay, las secciones y los títulos de apéndices y capítulos).
+    * `elements`, indica el tipo de contenidos que se incluyen en el índice (por defecto sólo se muestran, si las hay, las secciones y los títulos de apéndices y capítulos).
 
 Por su parte, el tipo de edición `pdf` dispone de las siguientes opciones:
 
