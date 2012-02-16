@@ -367,12 +367,6 @@ blockquote::after {
     @top-left  { content: ''; border: none; }
     @top-right { content: ''; border: none; }
 }
-@page no-header-black {
-    @top-left  { content: ''; border: none; }
-    @top-right { content: ''; border: none; }
-    background: #000;
-    color: #FFF;
-}
 
 @page no-footer {
     @bottom-left  { content: ''; border: none; }
@@ -531,25 +525,17 @@ blockquote::after {
 }
 
 .page\:part, .page\:part + .page\:blank {
-    page: no-header-black;
+    page: no-header;
 }
 
 .page\:part h1 {
-    background: #000 !important;
-    border: 1cm solid #000;
-    color: #FFF !important;
     font-size: 48pt;
-    padding-top: 10cm;
-    text-align: right;
-    margin-top: -1cm;
-    margin-left: -1cm;
-    height: 24cm;
-    width: 100%;
+    padding-top: 5em;
 }
 .page\:part h1 span {
     display: block;
     font-weight: normal;
-    font-size: 36pt;
+    font-size: 24pt;
 }
 
 /* page 'dedication' */
@@ -563,6 +549,12 @@ blockquote::after {
     font-style: italic;
     font-size: 16pt;
     text-align: right;
+}
+
+/* page 'introduction' */
+.page\:introduction {
+    page-break-before: right !important;
+    page: no-header;
 }
 
 /* pages 'lof' and 'lot' */
