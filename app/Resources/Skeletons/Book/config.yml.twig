@@ -1,5 +1,5 @@
 book:
-    title:            "{{ title }}"
+    title:            "{{ title|replace({'"': '\\"'}) }}"
     author:           "Change this: Author Name"
     edition:          "First edition"
     language:         en
@@ -23,7 +23,7 @@ book:
             highlight_code: true
             include_styles: true
             isbn:           ~
-            labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
+            labels:         ["appendix", "chapter"]  # labels also available for: "figure", "table"
             margin:
                 top:        25mm
                 bottom:     25mm
@@ -39,7 +39,7 @@ book:
             format:         html
             highlight_code: true
             include_styles: true
-            labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
+            labels:         ["appendix", "chapter"]  # labels also available for: "figure", "table"
             toc:
                 deep:       2
                 elements:   ["appendix", "chapter"]
