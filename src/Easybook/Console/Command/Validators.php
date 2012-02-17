@@ -16,17 +16,28 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Validators
-{
-    public static function validateBookTitle($title)
+{   
+    public static function validateNonEmptyString($id, $value)
     {
-        if (null == $title || '' == $title) {
-            throw new \InvalidArgumentException("ERROR: The title cannot be empty.");
+        if (null == $value || '' == trim($value)) {
+            throw new \InvalidArgumentException("ERROR: The $id cannot be empty.");
         }
 
-        return $title;
+        return $value;
     }
     
-    public static function validateBookDir($dir)
+    public static function validateBookSlug($slug)
+    {
+        if (!preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
+            throw new \InvalidArgumentException(
+                "ERROR: The slug can only contain letters, numbers and dashes (no spaces)"
+            );
+        }
+        
+        return $slug;
+    }
+    
+    public static function validateDir($dir)
     {
         if (!file_exists($dir)) {
             throw new \InvalidArgumentException(sprintf(
