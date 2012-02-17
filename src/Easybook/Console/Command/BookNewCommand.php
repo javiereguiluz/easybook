@@ -77,13 +77,11 @@ EOT
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $dialog = $this->getHelperSet()->get('dialog');
-        
-        $title = Validators::validateBookTitle(
-            $input->getArgument('title')
+        $title = Validators::validateNonEmptyString(
+            'title', $input->getArgument('title')
         );
         
-        $dir = Validators::validateBookDir(
+        $dir = Validators::validateDir(
             $input->getOption('dir') ?: $this->app['app.dir.doc']
         );
         
@@ -135,27 +133,30 @@ EOT
     
     protected function interact(InputInterface $input, OutputInterface $output)
     {
-        $title = $input->getArgument('title');
+        $output->writeln($this->app['app.signature']);
         
+        $title = $input->getArgument('title');
         if (null != $title && '' != $title) {
             return;
         }
         
-        $dialog = $this->getHelperSet()->get('dialog');
-        
         $output->writeln(array(
-            $this->app['app.signature'],
-            ' Welcome to the <comment>easybook</comment> interactive book generator'
+            '',
+            ' Welcome to the <comment>easybook</comment> interactive book generator',
+            ''
         ));
         
+        $dialog = $this->getHelperSet()->get('dialog');
+        
         // check `title` argument
-        $title = $dialog->askAndValidate(
+        $title = $input->getArgument('title') ?: $dialog->askAndValidate(
             $output,
-            array(
-                "\n Please, type the <info>title</info> of the book (e.g. <comment>The Origin of Species</comment>)\n",
-                " > "
-            ),
-            array('Easybook\Console\Command\Validators', 'validateBookTitle')
+            "\n Please, type the <info>title</info> of the book"
+            ."(e.g. <comment>The Origin of Species</comment>)"
+            ."\n > ",
+            function ($title) {
+                return Validators::validateNonEmptyString('title', $title);
+            }
         );
         $input->setArgument('title', $title);
     }

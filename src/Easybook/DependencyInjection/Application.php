@@ -313,7 +313,12 @@ class Application extends \Pimple
 
         if (!array_key_exists($parent, $book['editions'])) {
             throw new \UnexpectedValueException(sprintf(
-                '"%s" edition extends nonexistent "%s" edition', $edition, $parent
+                " ERROR: '%s' edition extends nonexistent '%s' edition"
+                ."\n\n"
+                ."Check in '%s' file \n"
+                ."that the value of 'extends' option in '%s' edition is a valid \n"
+                ."edition of the book",
+                $edition, $parent, realpath($this['publishing.dir.book'].'/config.yml'), $edition
             ));
         }
 
