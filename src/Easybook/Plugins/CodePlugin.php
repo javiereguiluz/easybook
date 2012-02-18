@@ -60,6 +60,14 @@ class CodePlugin implements EventSubscriberInterface
                 if ($event->app->edition('highlight_code')) {
                     $code = $event->app->highlight($code, $language);
                 }
+                // escape code to show it instead of interpreting it
+                else {
+                    // yaml-style comments could be interpreted as Markdown headings
+                    // replace any starting # character by its HTML entity (&#35;)
+                    $code = '<pre>'
+                            .preg_replace('/^# (.*)/', "&#35; \1", htmlspecialchars($code))
+                            .'</pre>';
+                }
 
                 // the publishing edition wants to label codeblocks
                 // TODO
