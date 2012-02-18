@@ -34,6 +34,13 @@ If the last command doesn't work, try `php book`
 
 **easybook** is fully documented at http://easybook-project.org/doc/
 
+## Examples ##
+
+[easybook-examples](http://github.com/javiereguiluz/easybook-examples)
+is a repository with several examples of how to use **easybook** to
+produce advanced and high quality books. This is by far the best way
+to learn **easybook**.
+
 ## License ##
 
 **easybook** is licensed under the MIT license.
