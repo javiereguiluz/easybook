@@ -22,6 +22,7 @@ use Easybook\Publishers\HtmlChunkedPublisher;
 use Easybook\Parsers\MdParser;
 use Easybook\Util\Prince;
 use Easybook\Util\Slugger;
+use Easybook\Util\Toolkit;
 
 class Application extends \Pimple
 {
@@ -265,7 +266,7 @@ class Application extends \Pimple
             // books can define their own labels files
             if (null != $customLabelsFile = $app->getCustomLabelsFile()) {
                 $customLabels = Yaml::parse($customLabelsFile);
-                return array_merge($labels, $customLabels);
+                return Toolkit::array_deep_merge($labels, $customLabels);
             }
             
             return $labels;
@@ -280,7 +281,7 @@ class Application extends \Pimple
             // books can define their own titles files
             if (null != $customTitlesFile = $app->getCustomTitlesFile()) {
                 $customTitles = Yaml::parse($customTitlesFile);
-                return array_merge($titles, $customTitles);
+                return Toolkit::array_deep_merge($titles, $customTitles);
             }
             
             return $titles;
@@ -340,7 +341,7 @@ class Application extends \Pimple
         if (is_array($label)) {
             $label = $label[$variables['item']['level']-1];
         }
-
+        
         return $this->renderString($label, $variables);
     }
 
