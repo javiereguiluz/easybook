@@ -39,7 +39,7 @@
 <p>Before using <strong>easybook</strong> check that you have installed and configured PHP 5.3.2 or higher on your computer. If you do not understand the previous sentence, ask advice from a computer savvy friend and send him the link to this page. You can check your installed PHP version executing the following command on the console:</p>
 
 <div class="code code">
-php -v
+<pre>php -v</pre>
 </div>
 
 <p><strong>easybook</strong> is a free and open-source application. This means that you can do anything with it, even profiting from it. Anyway, you must meet the following two conditions:</p>
@@ -64,7 +64,7 @@ php -v
 <p>If you have Git installed on your computer, you should download  <strong>easybook</strong> cloning its public repository with the following command (replace <code>&lt;dir&gt;</code> for the path of the directory created previously):</p>
 
 <div class="code code">
-$ git clone http://github.com/javiereguiluz/easybook.git <dir>
+<pre>$ git clone http://github.com/javiereguiluz/easybook.git &lt;dir&gt;</pre>
 </div>
 
 <p>If you don't use Git, you can download <strong>easybook</strong> as a compressed <code>.zip</code> archive. It's not as cool as using Git, but it works fine. Download the following file and uncompress it on the previously created directory: <a href="http://github.com/javiereguiluz/easybook/zipball/master">http://github.com/javiereguiluz/easybook/zipball/master</a></p>
@@ -74,13 +74,13 @@ $ git clone http://github.com/javiereguiluz/easybook.git <dir>
 <p>Once downloaded/unzipped, open a command console and run the following PHP script to check that you have downloaded <strong>easybook</strong>  correctly:</p>
 
 <div class="code code">
-$ ./book
+<pre>$ ./book</pre>
 </div>
 
 <p>If everything is fine, <strong>easybook</strong> should welcome you with the following message:</p>
 
 <div class="code code">
-|              |    
+<pre>|              |    
 ,---.,---.,---.,   .|---.,---.,---.|__/ 
 |---',---|`---.|   ||   ||   ||   ||  \ 
 `---'`---^`---'`---|`---'`---'`---'`   `
@@ -94,7 +94,7 @@ Available commands:
   list      Lists commands
   new       Creates a new empty book
   publish   Publishes an edition of a book
-  version   Shows installed easybook version
+  version   Shows installed easybook version</pre>
 </div>
 
 <p>If you find any issue running <code>./book</code> script, try running it as <code>php book</code>. If you still  find any issues, check the permissions of the <code>book</code> script. If everything fails, ask again advice from your computer savvy friends.</p>
@@ -102,7 +102,7 @@ Available commands:
 <p>The <code>./book</code> script is the unique <em>entry point</em> for every <strong>easybook</strong> command. If you need to know for example the installed version, just run the <code>version</code> command through <code>book</code> script:</p>
 
 <div class="code code">
-$ ./book version
+<pre>$ ./book version
 
 
                     |              |    
@@ -111,7 +111,7 @@ $ ./book version
 `---'`---^`---'`---|`---'`---'`---'`   `
                `---'
 
-easybook installed version: 4.0
+easybook installed version: 4.0</pre>
 </div>
 
 <h2 id="creating-the-book">1.2 Creating the book</h2>
@@ -121,13 +121,13 @@ easybook installed version: 4.0
 <p><strong>easybook</strong> requires that your books follow a certain structure of archives and directories. To avoid creating this structure by hand, new books are bootstrapped with <strong>easybook</strong> <code>new</code> command:</p>
 
 <div class="code code">
-$ ./book new "The Origin of Species"
+<pre>$ ./book new &quot;The Origin of Species&quot;</pre>
 </div>
 
 <p>Type the title of your book after <code>new</code> command enclosing it with quotes. The result of this command is a new <code>the-origin-of-species</code> directory inside <strong>easybook</strong> <code>doc/</code> directory. Inside the new directory, you should see the following structure:</p>
 
 <div class="code code">
-<easybook>/
+<pre>&lt;easybook&gt;/
     doc/
         the-origin-of-species/
             config.yml
@@ -135,7 +135,7 @@ $ ./book new "The Origin of Species"
                 chapter1.md
                 chapter2.md
                 images/
-            Output/
+            Output/</pre>
 </div>
 
 <p>These are the archives and directories created by <strong>easybook</strong>:</p>
@@ -155,13 +155,13 @@ $ ./book new "The Origin of Species"
 <p>The structure of a book can be very complex (cover, title page, acknowledgements, dedication, chapters, parts, etc.). <strong>easybook</strong> supports all the common book content types, but for now, we'll just focus on the chapters. You can add as many chapters as you want and each one can be as large or as short as you need. All you have to do is to define the book chapters under the <code>contents</code> option of the <code>config.yml</code> file:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - { element: cover }
         - { element: toc   }
         - { element: chapter, number: 1, content: chapter1.md }
-        - { element: chapter, number: 2, content: chapter2.md }
+        - { element: chapter, number: 2, content: chapter2.md }</pre>
 </div>
 
 <p>Each line under the <code>contents</code> option defines a content of the book. The <code>cover</code> and <code>toc</code> lines are special contents that will be explained later. Add your book chapters with the  <code>chapter</code> type element. A chapter must set its number (with the <code>number</code> option) and the name of the file that holds its contents (with the <code>content</code> option).</p>
@@ -169,87 +169,87 @@ book:
 <p>Besides being lightning-fast, the main feature of <strong>easybook</strong> is its flexibility, as it never forces you to work in a certain way. Do you want to number your chapters in an <em>imaginative</em> way? People will think you're crazy, but <strong>easybook</strong> allows you to do it:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - { element: cover }
         - { element: toc   }
         - { element: chapter, number: 100, content: chapter1.md }
-        - { element: chapter, number: 56,  content: chapter2.md }
+        - { element: chapter, number: 56,  content: chapter2.md }</pre>
 </div>
 
 <p>Do you need letters instead of numbers? This is usual for appendices instead of chapters, but <strong>easybook</strong> won't stop you from doing it:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - { element: cover }
         - { element: toc   }
         - { element: chapter, number: A, content: chapter1.md }
-        - { element: chapter, number: B, content: chapter2.md }
+        - { element: chapter, number: B, content: chapter2.md }</pre>
 </div>
 
 <p>You can also use any name for the chapter contents file, as in the following example that mixes English and Spanish:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - { element: cover }
         - { element: toc   }
         - { element: chapter, number: 1, content: chapter1.md }
-        - { element: chapter, number: 2, content: capitulo2.md }
+        - { element: chapter, number: 2, content: capitulo2.md }</pre>
 </div>
 
 <p>Using significant names for the book content files can easy its management:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - { element: cover }
         - { element: toc   }
         - { element: chapter, number: 1, content: publishing-your-first-book.md }
-        - { element: chapter, number: 2, content: publishing-your-second-book.md }
+        - { element: chapter, number: 2, content: publishing-your-second-book.md }</pre>
 </div>
 
 <p>The most important thing about the <code>contents</code> option is the order in which you define the contents. The published book will be always composed of those contents and in that order. Therefore, the following configuration will output a book with  the cover between the two chapters and the table of contents at the very end (completely crazy, but really easy to do with <strong>easybook</strong>):</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - { element: chapter, number: 1, content: publishing-your-first-book.md }
         - { element: cover }
         - { element: chapter, number: 2, content: publishing-your-second-book.md }
-        - { element: toc   }
+        - { element: toc   }</pre>
 </div>
 
 <p>By default, all content archives are stored in the <code>Contents/</code> directory. However, if your book is complex, you can divide the contents into subdirectories. Then, include the name of all the subdirectories in the <code>content</code> option  (don't forget to enclose it with quotes if the file path has spaces):</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - { element: cover }
         - { element: toc   }
         - { element: chapter, number: 1, content: introduction/chapter1.md }
         - { element: chapter, number: 2, content: introduction/chapter2.md }
-        - { element: chapter, number: 3, content: advanced/chapter1.md }
+        - { element: chapter, number: 3, content: advanced/chapter1.md }</pre>
 </div>
 
 <p>The above configuration means that your book contents are distributed this way:</p>
 
 <div class="code code">
-<book_dir>/
+<pre>&lt;book_dir&gt;/
     ...
     Contents/
         introduction/
             chapter1.md
             chapter2.md
         advanced/
-            chapter1.md
+            chapter1.md</pre>
 </div>
 
 <h2 id="publishing-the-book">1.4 Publishing the book</h2>
@@ -257,7 +257,7 @@ book:
 <p>When you finish writing all the chapters and after adding them to the <code>config.yml</code> archive, run the following command to publish the book (replace <code>the-origin-of-the-species</code> by the name of your book directory):</p>
 
 <div class="code code">
-$ ./book publish 'the-origin-of-species' web
+<pre>$ ./book publish 'the-origin-of-species' web</pre>
 </div>
 
 <p>If everything works fine, you should see a new <code>web</code> directory inside <code>Output/</code> directory. Enter the <code>web/</code> directory and you'll find a file named <code>book.html</code>. This is the complete book in HTML format, ready to publish it on the Internet.</p>
@@ -265,7 +265,7 @@ $ ./book publish 'the-origin-of-species' web
 <p>Then, run the following command:</p>
 
 <div class="code code">
-$ ./book publish 'the-origin-of-species' website
+<pre>$ ./book publish 'the-origin-of-species' website</pre>
 </div>
 
 <p>Now, inside <code>Output/</code> directory you'll find a new <code>website</code> directory with several HTML pages. Open <code>index.html</code> in your browser and you'll see that <strong>easybook</strong> has published your book as a fully-functional static website.</p>
@@ -273,7 +273,7 @@ $ ./book publish 'the-origin-of-species' website
 <p>Lastly, run the following command:</p>
 
 <div class="code code">
-$ ./book publish 'the-origin-of-species' print
+<pre>$ ./book publish 'the-origin-of-species' print</pre>
 </div>
 
 <p>Inside <code>Output/</code> directory you'll find a new <code>print</code> directory which contains a file name <code>book.pdf</code>. Open the file with your PDF reader and you'll see your book as a beautiful and carefully created PDF ebook. The PDF conversion is made with an external application named <a href="http://www.princexml.com/">PrinceXML</a>. If you don't have it installed on your computer, you can download a fully-functional demo version at <a href="http://www.princexml.com/download/">http://www.princexml.com/download/</a></p>
@@ -285,10 +285,10 @@ $ ./book publish 'the-origin-of-species' print
 <p>In the previous sections we've mentioned the <code>author</code> configuration option. In fact, <strong>easybook</strong> books can set many more options in the <code>config.yml</code>file. The defaut values of the options are as follows:</p>
 
 <div class="code code">
-book:
-    title:            "(the title typed when creating the book)"
-    author:           "Change this: Author Name"
-    edition:          "First edition"
+<pre>book:
+    title:            &quot;(the title typed when creating the book)&quot;
+    author:           &quot;Change this: Author Name&quot;
+    edition:          &quot;First edition&quot;
     language:         en
     publication_date: ~
 
@@ -308,7 +308,7 @@ book:
         web:
             # (this is a complex option, we'll see it later)
         website:
-            # (this is a complex option, we'll see it later)
+            # (this is a complex option, we'll see it later)</pre>
 </div>
 
 <p>The last two options are complex and are explained in detail in the following chapters: <code>contents</code> defines the book contents and their order; <code>editions</code> defines the features of each edition of the book.</p>
@@ -334,13 +334,13 @@ book:
 <p>Books define their contents with the <code>contents</code> options in the <code>config.yml</code> file. After creating a new book with the <code>new</code> command, the default contents are:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - { element: cover }
         - { element: toc   }
         - { element: chapter, number: 1, content: chapter1.md }
-        - { element: chapter, number: 2, content: chapter2.md }
+        - { element: chapter, number: 2, content: chapter2.md }</pre>
 </div>
 
 <p>The most important option of each content is <code>element</code>, which defines its content type. <strong>easybook</strong> currently defines the following elevent content types:</p>
@@ -362,7 +362,7 @@ book:
 <p>Most of the content types don't require any other option besides <code>element</code>:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - { element: cover }
@@ -373,7 +373,7 @@ book:
         - { element: chapter, number: 2, content: chapter2.md }
         - ...
         - { element: author }
-        - { element: acknowledgement }
+        - { element: acknowledgement }</pre>
 </div>
 
 <p>The <code>appendix</code> and <code>chapter</code> content types can define the following options:</p>
@@ -398,7 +398,7 @@ book:
 <p>Editions are defined under the <code>editions</code> options in <code>config.yml</code> file. By default, the books created with the <code>new</code> command have three editions named <code>print</code>, <code>web</code> and <code>website</code> with the following options:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     editions:
         print:
@@ -415,7 +415,7 @@ book:
             two_sided:      true
             toc:
                 deep:       2
-                elements:   ["appendix", "chapter"]
+                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]
 
         web:
             format:         html
@@ -424,11 +424,11 @@ book:
             include_styles: true
             toc:
                 deep:       2
-                elements:   ["appendix", "chapter"]
+                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]
 
         website:
             extends:        web
-            format:         html_chunked
+            format:         html_chunked</pre>
 </div>
 
 <p>The name of each edition must be unique for the same book and cannot contain spaces.  The edition name is used as the subdirectory inside <code>Output/</code> directory to separate the contents of each edition. You can define as many editions as you need, but all must belong to one of the following three types defined by the <code>format</code> option:</p>
@@ -470,7 +470,7 @@ book:
 <p>Imagine for example you want to publish one PDF book with three slightly different design. The draft version (<code>draft</code>) must be double-sided and must have very small margins to reduce its length, the normal version (<code>print</code>) is one-sided and has normal margins. The version prepared for lulu.com website (<code>lulu</code>) is similar to the normal version, except is double-sided:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     editions:
         print:
@@ -499,7 +499,7 @@ book:
 
         lulu:
             extends:      print
-            two_sided:    true
+            two_sided:    true</pre>
 </div>
 
 <p>The only limitation of <code>extends</code> is that it only works with one level inheritance. Therefore, and edition cannot extend another edition that extends a third one.</p>
@@ -515,20 +515,20 @@ book:
 <p>In most books, the only elements that define their own content are the chapters and appendices (with the <code>content</code> options). <strong>easybook</strong> defines sensible default contents for every content type. If the book adds for example an inner cover (<code>title</code> content type):</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - ...
         - { element: title }
-        - ...
+        - ...</pre>
 </div>
 
 <p><strong>easybook</strong> will use the following as the default content of this element:</p>
 
 <div class="code code">
-<h1>{{ book.title }}</h1>
-<h2>{{ book.author }}</h2>
-<h3>{{ book.edition }}</h3>
+<pre>&lt;h1&gt;{{ book.title }}&lt;/h1&gt;
+&lt;h2&gt;{{ book.author }}&lt;/h2&gt;
+&lt;h3&gt;{{ book.edition }}&lt;/h3&gt;</pre>
 </div>
 
 <p>The default title page shows the title, the name of the author and the current edition of the book. All these values are configured in the <code>book</code> option of <code>config.yml</code> file.</p>
@@ -540,13 +540,13 @@ book:
 <p>If you don't want to use <strong>easybook</strong> default contents for these elements, simply add the <code>content</code> option indicating the file that defines its contents:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
     contents:
         - ...
         - { element: title, content: my-own-title-page.md }
         - { element: toc, content: my-table-of-contents.md }
-        - ...
+        - ...</pre>
 </div>
 
 <h3 id="default-templates">2.3.3 Default templates</h3>
@@ -556,13 +556,13 @@ book:
 <p>See for example the template used to decorate each chapter of a PDF book:</p>
 
 <div class="code code">
-<div class="page:chapter new-page">
+<pre>&lt;div class=&quot;page:chapter new-page&quot;&gt;
 
-<h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
+&lt;h1 id=&quot;{{ item.slug }}&quot;&gt;&lt;span&gt;{{ item.label }}&lt;/span&gt; {{ item.title }}&lt;/h1&gt;
 
 {{ item.content }}
 
-</div>
+&lt;/div&gt;</pre>
 </div>
 
 <p>The data of the content being decorated are accessible through a special variable called <code>item</code>, which holds the following properties:</p>
@@ -612,27 +612,27 @@ book:
 <p>Unlike the titles, labels can contain variable parts, such as the appendix or chapter number. Therefore, <strong>easybook</strong> uses Twig templates to define each label:</p>
 
 <div class="code code">
-label:
+<pre>label:
     figure: 'Figure {{ item.number }}.{{ counter }} '
     part:   'Part {{ item.number }} '
-    table:  'Table {{ item.number }}.{{ counter }} '
+    table:  'Table {{ item.number }}.{{ counter }} '</pre>
 </div>
 
 <p>The <code>item.number</code> property is the number (or letter) defined in the <code>number</code> option of the element in <code>config.yml</code> file. Chapters and appendices must define six different labels, each corresponding to one of the six headings levels (<code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code> and <code>&lt;h6&gt;</code>). In the following example, appendices only include a label in its title, thus leaving empty the last five levels:</p>
 
 <div class="code code">
-label:
-    appendix: ['Appendix {{ item.number }} ', '', '', '', '', '']
+<pre>label:
+    appendix: ['Appendix {{ item.number }} ', '', '', '', '', '']</pre>
 </div>
 
 <p>In addition to <code>item.number</code> property, label templates have access to a special variable called <code>counters</code> which is an array with the counters of all heading levels. For that reason, to show second-level headings as <code>1.1</code>, <code>1.2</code> ... <code>7.1</code>, <code>7.2</code> you can use the following expression:</p>
 
 <div class="code code">
-label:
+<pre>label:
     chapter:
         - 'Chapter {{ item.number }} '
         - '{{ counters[0] }}.{{ counters[1] }}'
-        - ...
+        - ...</pre>
 </div>
 
 <p>Extending the previous example, you can use the following templates to format all the heading levels as <code>1.1</code>, <code>1.1.1</code>, <code>1.1.1.1</code>, etc.:</p>
@@ -733,7 +733,7 @@ label:
 <p>Technically, plugins are based on the subscribers defined by the event dispatcher component of Symfony2. They are regular PHP classes whose name always ends with the word <code>Plugin</code>. The following code shows the source of <code>TimerPlugin.php</code>, the plugin used by <strong>easybook</strong> to measure how long it takes to publish a book:</p>
 
 <div class="code code">
-<?php
+<pre>&lt;?php
 namespace Easybook\Plugins;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -745,21 +745,21 @@ class TimerPlugin implements EventSubscriberInterface
     static public function getSubscribedEvents()
     {
         return array(
-            Events::PRE_PUBLISH  => 'onStart',
-            Events::POST_PUBLISH => 'onFinish',
+            Events::PRE_PUBLISH  =&gt; 'onStart',
+            Events::POST_PUBLISH =&gt; 'onFinish',
         );
     }
 
     public function onStart(BaseEvent $event)
     {
-        $event->app->set('app.timer.start', microtime(true));
+        $event-&gt;app-&gt;set('app.timer.start', microtime(true));
     }
 
     public function onFinish(BaseEvent $event)
     {
-        $event->app->set('app.timer.finish', microtime(true));
+        $event-&gt;app-&gt;set('app.timer.finish', microtime(true));
     }
-}
+}</pre>
 </div>
 
 <p><strong>easybook</strong> plugins must implement <code>EventSubscriberInterface</code> interface, which in turn forces to define a method called <code>getSubscribedEvents()</code>. This method simply returns an array of events that you want to subscribe to and the name of the methods that are executed when those events occur.</p>
@@ -780,12 +780,12 @@ class TimerPlugin implements EventSubscriberInterface
 <p>You can access any property and service application through the event object using <code>$event-&gt; app</code>, as shown below:</p>
 
 <div class="code code">
-// ...
+<pre>// ...
     
     public function onStart(BaseEvent $event)
     {
-        $event->app->set('app.timer.start', microtime(true));
-    }
+        $event-&gt;app-&gt;set('app.timer.start', microtime(true));
+    }</pre>
 </div>
 
 <p>If you want to add plugins to your own book, create a directory called <code>Plugins</code> inside the <code>Resources</code> directory of your book (create the latter one if it doesn't exist). Then add as many PHP classes as you want, but make their name always end in <code>Plugin.php</code>. Do not add any namespace to your plugin classes.</p>
@@ -793,7 +793,7 @@ class TimerPlugin implements EventSubscriberInterface
 <p>The following example shows a plugin that modifies the contents of the book before and after its conversion. First, the plugin modifies the original Markdown content to put in bold all occurrences of the word <em>easybook</em>. Then, it modifies the HTML content to add a <code>class</code> attribute to all these occurrences:</p>
 
 <div class="code code">
-<?php
+<pre>&lt;?php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
@@ -803,8 +803,8 @@ class BrandingPlugin implements EventSubscriberInterface
     static public function getSubscribedEvents()
     {
         return array(
-            Events::PRE_PARSE  => 'onItemPreParse',
-            Events::POST_PARSE => 'onItemPostParse',
+            Events::PRE_PARSE  =&gt; 'onItemPreParse',
+            Events::POST_PARSE =&gt; 'onItemPostParse',
         );
     }
 
@@ -813,23 +813,23 @@ class BrandingPlugin implements EventSubscriberInterface
         $txt = str_replace(
             'easybook',
             '**easybook**',
-            $event->getOriginal()
+            $event-&gt;getOriginal()
         );
         
-        $event->setOriginal($txt);
+        $event-&gt;setOriginal($txt);
     }
     
     public function onItemPostParse(ParseEvent $event)
     {
         $html = str_replace(
-            '<strong>easybook</strong>',
-            '<strong class="branding">easybook</strong>',
-            $event->getContent()
+            '&lt;strong&gt;easybook&lt;/strong&gt;',
+            '&lt;strong class=&quot;branding&quot;&gt;easybook&lt;/strong&gt;',
+            $event-&gt;getContent()
         );
         
-        $event->setContent($html);
+        $event-&gt;setContent($html);
     }
-}
+}</pre>
 </div>
 
 <p>The event object received by plugins related to content parsing is of type <code>ParseEvent</code>. In addition to application access (<code>$event-&gt;app</code>), this object has getters and setters for all the properties of the parsing object.</p>
@@ -843,11 +843,11 @@ class BrandingPlugin implements EventSubscriberInterface
 <p>Unless stated otherwise, the books are created in the <code>doc/</code> directory of <strong>easybook</strong>. If you want to save the contents in any other directory, add the <code>--dir</code> option when creating and/or publishig the book:</p>
 
 <div class="code code">
-$ ./book new "The Origin of Species" --dir="/Users/javier/books"
-(the book is created in "/Users/javier/books/the-origin-of-species")
+<pre>$ ./book new &quot;The Origin of Species&quot; --dir=&quot;/Users/javier/books&quot;
+(the book is created in &quot;/Users/javier/books/the-origin-of-species&quot;)
 
-$ ./book publish the-origin-of-species print --dir="/Users/javier/books"
-(the book is published in "/Users/javier/books/the-origin-of-species/Output/print/book.pdf")
+$ ./book publish the-origin-of-species print --dir=&quot;/Users/javier/books&quot;
+(the book is published in &quot;/Users/javier/books/the-origin-of-species/Output/print/book.pdf&quot;)</pre>
 </div>
 
 <h3 id="advanced-configuration">A.3.2 Advanced configuration</h3>
@@ -857,15 +857,15 @@ $ ./book publish the-origin-of-species print --dir="/Users/javier/books"
 <p>Do you want to show the price of the book on the cover? Add a new option called <code>price</code> under the <code>book</code> option of <code>config.yml</code> file:</p>
 
 <div class="code code">
-book:
+<pre>book:
     ...
-    price: 10
+    price: 10</pre>
 </div>
 
 <p>Now you can use this option in any template with the following expression: <code>{{ book.price }}</code>.  Do you want to use different CSS frameworks to generate the book website? Add a new option called <code>framework</code> in some editions:</p>
 
 <div class="code code">
-editions:
+<pre>editions:
     my_website1:
         format:    html_chunked
         framework: twitter_bootstrap
@@ -873,18 +873,18 @@ editions:
     
     my_website2:
         extends:   my_website1
-        framework: 960_gs
+        framework: 960_gs</pre>
 </div>
 
 <p>This new option is now available in any template through the following expression: <code>{{ edition.framework }}</code>. Finally, you can also add new options to the contents of the book.  Do you want to indicate the estimated reading time in each chapter? Add the following <code>time</code> option for <code>chapter</code> elements:</p>
 
 <div class="code code">
-contents:
+<pre>contents:
     - { element: cover }
     - ...
     - { element: chapter, number: 1, ..., time: 20 }
     - { element: chapter, number: 2, ..., time: 12 }
-    - ...
+    - ...</pre>
 </div>
 
 <p>And now you can add <code>{{ item.config.time }}</code> in <code>chapter.twig</code> template to show the estimated reading time for each chapter.</p>
@@ -894,13 +894,13 @@ contents:
 <p>It's uncommon and generally unneeded, but you can also define new content types besides the elvent types included in <strong>easybook</strong>. Imagine that you want to include a page with a humorous cartoon between some chapters. Let's call this new content type <code>cartoon</code>. First, you should add it to your book contents list:</p>
 
 <div class="code code">
-contents:
+<pre>contents:
     - { element: cover }
     - ...
     - { element: chapter, number: 1, ... }
     - { element: cartoon, image: cartoon1.png, content: cartoon.md }
     - { element: chapter, number: 2, ... }
-    - ...
+    - ...</pre>
 </div>
 
 <p>Secondly, create the <code>cartoon.md</code> file in your book <code>Contents/</code> directory. For this new content type it's unnecessary to write content, so leave it empty. <strong>easybook</strong> needs some content for every element of the book. Since <code>cartoon</code> is a custom made type, <strong>easybook</strong> doesn't define a default content for it, so you <strong>must</strong> create the <code>cartoon.md</code> file even if you leve it empty.</p>
@@ -908,9 +908,9 @@ contents:
 <p>Lastly, create the <code>Resources/Templates/</code> directory inside your book directory. Add a new <code>cartoon.twig</code> template and copy the following Twig code:</p>
 
 <div class="code code">
-<div class="page:cartoon new-page">
-    <img src="images/{{ item.config.image }}" />
-</div>
+<pre>&lt;div class=&quot;page:cartoon new-page&quot;&gt;
+    &lt;img src=&quot;{{ item.config.image }}&quot; /&gt;
+&lt;/div&gt;</pre>
 </div>
 
 <p>That's it! You can now use the new <code>cartoon</code> content type in your book and you can create new content types following the same steps explained above.</p>
@@ -926,13 +926,13 @@ contents:
 <p>The most interesting command of <strong>easybook</strong> is <code>publish</code>, which publishes an specific edition of the book. Internally it uses a class of type <em>publisher</em>, which depends on the type of edition that is published (<code>html</code>, <code>html_chunked</code> or <code>pdf</code>). The details of each <em>publisher</em> vary, but its basic operation is always the same:</p>
 
 <div class="code code">
-public function publishBook()
+<pre>public function publishBook()
 {
-    $this->loadContents();
-    $this->parseContents();
-    $this->decorateContents();
-    $this->assembleBook();
-}
+    $this-&gt;loadContents();
+    $this-&gt;parseContents();
+    $this-&gt;decorateContents();
+    $this-&gt;assembleBook();
+}</pre>
 </div>
 
 <p>First the contents of the book, defined in the <code>contents</code> option of <code>config.yml</code> file, are loaded (<code>loadContents()</code>) . Then, each content is parsed (<code>parseContents()</code>) to convert it from its original format to the format needed by this <em>publisher</em>.</p>
