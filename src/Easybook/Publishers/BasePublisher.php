@@ -59,6 +59,20 @@ class BasePublisher
                 // TODO: extensibility -> contents could be written in several formats simultaneously
                 // (e.g. Twig *and* Markdown)
                 $contentFile = $this->app['publishing.dir.contents'].'/'.$contentConfig['content'];
+                
+                // check that content file exists and is readable
+                if (!is_readable($contentFile)) {
+                    throw new \RuntimeException(sprintf(
+                        "The '%s' content associated with '%s' element doesn't exist\n"
+                        ."or is not readable.\n\n"
+                        ."Check that '%s'\n"
+                        ."file exists and check its permissions.",
+                        $contentConfig['content'],
+                        $item['config']['element'],
+                        realpath($this->app['publishing.dir.contents']).'/'.$contentConfig['content']
+                    ));
+                }
+                
                 $item['original'] = file_get_contents($contentFile);
                 $item['config']['format'] = pathinfo($contentFile, PATHINFO_EXTENSION);
             }
