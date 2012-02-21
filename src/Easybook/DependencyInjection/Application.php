@@ -19,6 +19,7 @@ use Symfony\Component\Yaml\Yaml;
 use Easybook\Publishers\PdfPublisher;
 use Easybook\Publishers\HtmlPublisher;
 use Easybook\Publishers\HtmlChunkedPublisher;
+use Easybook\Publishers\Epub2Publisher;
 use Easybook\Parsers\MdParser;
 use Easybook\Util\Prince;
 use Easybook\Util\Slugger;
@@ -54,6 +55,9 @@ class Application extends \Pimple
         $this['app.dir.theme_pdf']          = $this['app.dir.resources'].'/Themes/Pdf';
         $this['app.dir.theme_html']         = $this['app.dir.resources'].'/Themes/Html';
         $this['app.dir.theme_html_chunked'] = $this['app.dir.resources'].'/Themes/HtmlChunked';
+        $this['app.dir.theme_epub']         = $this['app.dir.resources'].'/Themes/Epub2';
+        $this['app.dir.theme_epub2']        = $this['app.dir.resources'].'/Themes/Epub2';
+        //$this['app.dir.theme_epub3'] = $this['app.dir.resources'].'/Themes/Epub3';
 
         // -- timer -----------------------------------------------------------
         $this['app.timer.start']  = 0.0;
@@ -76,7 +80,17 @@ class Application extends \Pimple
         $this['publishing.slugs']         = array(); // Holds all the slugs generated, to avoid repetitions
         $this['publishing.list.images']   = array();
         $this['publishing.list.tables']   = array();
-
+        
+        $this['publishing.id'] = $this->share(function ($app) {
+            if (null != $isbn = $app->edition('isbn')) {
+                return array('scheme' => 'isbn', 'value' => $isbn);
+            }
+            
+            // if the book doesn't declare an ISBN, generate
+            // a unique ID based on RFC 4211 UUID v4
+            return array('scheme' => 'URN', 'value' => Toolkit::uuid());
+        });
+        
         // -- event dispatcher ------------------------------------------------
         $this['dispatcher'] = $this->share(function () {
             return new EventDispatcher();
@@ -99,13 +113,23 @@ class Application extends \Pimple
             switch (strtolower($outputFormat)) {
                 case 'pdf':
                     return new PdfPublisher($app);
+                
                 case 'html':
                     return new HtmlPublisher($app);
+                
                 case 'html_chunked':
                     return new HtmlChunkedPublisher($app);
+                
+                case 'epub':
+                case 'epub2':
+                    return new Epub2Publisher($app);
+                
+                //case 'epub3':
+                //    return new Epub3Publisher($app);
+                
                 default:
                     throw new \Exception(sprintf(
-                        'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked")',
+                        'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "epub2")',
                         $outputFormat,
                         $app->get('publishing.edition')
                     ));
@@ -144,14 +168,17 @@ class Application extends \Pimple
 
         $this['twig'] = function() use ($app) {
             $twig = new \Twig_Environment($app['twig.loader'], $app['twig.options']);
-            $twig->addGlobal('book', $app->get('book'));
-
-            $publishingEdition = $app->get('publishing.edition');
-            $editions = $app->book('editions');
-            $twig->addGlobal('edition', $editions[$publishingEdition]);
-
+            
             $twig->addGlobal('app', $app);
-
+            
+            if (null != $app->get('book')) {
+                $twig->addGlobal('book', $app->get('book'));
+            
+                $publishingEdition = $app->get('publishing.edition');
+                $editions = $app->book('editions');
+                $twig->addGlobal('edition', $editions[$publishingEdition]);
+            }
+            
             return $twig;
         };
 
@@ -376,10 +403,16 @@ class Application extends \Pimple
     /*
      * Shortcut method to render templates
      */
-    public function render($template, $variables = array())
+    public function render($template, $variables = array(), $target = null)
     {
         if ('.twig' == substr($template, -5)) {
-            return $this->get('twig')->render($template, $variables);
+            $rendered = $this->get('twig')->render($template, $variables);
+            
+            if (null != $target) {
+                file_put_contents($target, $rendered);
+            }
+            
+            return $rendered;
         }
         else {
             throw new \Exception(sprintf(

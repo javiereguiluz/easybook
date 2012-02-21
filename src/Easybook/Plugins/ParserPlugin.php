@@ -26,9 +26,13 @@ class ParserPlugin implements EventSubscriberInterface
 
     public function onItemPostParse(ParseEvent $event)
     {
+        // replace <br> by <br/> (it causes problems for epub books)
         $item = $event->getItem();
-
+        $item['content'] = str_replace('<br>', '<br/>', $item['content']);
+        $event->setItem($item);
+        
         // strip title from the parsed content
+        $item = $event->getItem();
         if (count($item['toc']) > 0) {
             $heading = $item['toc'][0];
             

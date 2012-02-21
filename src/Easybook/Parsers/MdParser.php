@@ -23,6 +23,9 @@ class MdParser extends BaseParser
             case 'pdf':
             case 'html':
             case 'html_chunked':
+            case 'epub':
+            case 'epub2':
+            case 'epub3':
                 return $this->parseToHtml($content);
 
             default:

@@ -20,7 +20,8 @@ class CodePlugin implements EventSubscriberInterface
     static public function getSubscribedEvents()
     {
         return array(
-            Events::PRE_PARSE => array('onItemPreParse', -500),
+            Events::PRE_PARSE  => array('onItemPreParse', -500),
+            Events::POST_PARSE => array('onItemPostParse', -500),
         );
     }
 
@@ -65,7 +66,7 @@ class CodePlugin implements EventSubscriberInterface
                     // yaml-style comments could be interpreted as Markdown headings
                     // replace any starting # character by its HTML entity (&#35;)
                     $code = '<pre>'
-                            .preg_replace('/^# (.*)/', "&#35; \1", htmlspecialchars($code))
+                            .preg_replace('/^# (.*)/', "&#35; $1", htmlspecialchars($code))
                             .'</pre>';
                 }
 
@@ -84,6 +85,17 @@ class CodePlugin implements EventSubscriberInterface
             },
             $item['original']
         );
+        $event->setItem($item);
+    }
+    
+    public function onItemPostParse(ParseEvent $event)
+    {
+        $item = $event->getItem();
+        
+        // unescape yaml-style comments that before parsing could
+        // be interpreted as Markdown first-level headings
+        $item['content'] = str_replace('&#35;', '#', $item['content']);
+        
         $event->setItem($item);
     }
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<package version="2.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId">
+
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:title>{{ book.title }}</dc:title>
+        <dc:language>{{ book.language }}</dc:language>
+        <dc:identifier id="BookId" opf:scheme="{{ edition.id.scheme }}">{{ edition.id.value }}</dc:identifier>
+        <dc:creator opf:role="aut">{{ book.author }}</dc:creator>
+        <dc:publisher>{{ book.generator.name }} {{ book.generator.version }}</dc:publisher>
+        <dc:date opf:event="publication">{{ book.publication_date|date('Y') }}</dc:date>
+        <dc:date opf:event="creation">{{ book.publication_date|date('Y-m-d') }}</dc:date>
+{#
+        <dc:subject>...</dc:subject>
+        <dc:subject>...</dc:subject>
+        <dc:description>...</dc:description>
+#}
+    </metadata>
+ 
+    <manifest>
+{% for item in app.get('publishing.items') %}
+        <item id="{{ item.slug }}" href="{{ item.fileName }}" media-type="application/xhtml+xml" />
+{% endfor %}
+{% if edition.include_styles %}
+        <item id="stylesheet" href="css/easybook.css" media-type="text/css" />
+{% endif %}
+{% if has_custom_css %}
+        <item id="stylesheet" href="css/styles.css" media-type="text/css" />
+{% endif %}
+{% for image in images %}
+        <item id="{{ image.id }}" href="{{ image.filePath }}" media-type="{{ image.mediaType }}" />
+{% endfor %}
+{% for font in fonts %}
+        <item id="{{ font.id }}" href="{{ font.filePath }}" media-type="{{ font.mediaType }}" />
+{% endfor %}
+        <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+    </manifest>
+
+    <spine toc="ncx">
+{% for item in app.get('publishing.items') %}
+        <itemref idref="{{ item.slug }}" />
+{% endfor %}
+    </spine>
+ 
+ <!--
+    <guide>
+        <reference type="loi" title="List Of Illustrations" href="appendix.html#figures" />
+    </guide>
+ -->
+ 
+</package>

@@ -1,0 +1,42 @@
+{% extends 'layout.twig' %}
+
+{% block class 'page:index' %}
+
+{% block body %}
+<div class="page:cover new-page">
+    <h1>{{ book.title }}</h1>
+    <h2>{{ book.author }}</h2>
+</div>
+
+<div class="page:toc new-page">
+    <h1>{{ items.toc.title }}</h1>
+
+    <ul>
+    {% for item in app.get('publishing.items') %}
+        {% if item.config.element in ['appendix', 'chapter'] %}
+            <li class="{{ item.config.element }} level-1">
+                <span>{{ item.label }}</span> <a href="./{{ item.slug }}.html">{{ item.title }}</a>
+            </li>
+        {% elseif item.config.element in ['part'] %}
+            <li class="{{ item.config.element }} level-1">
+                <span>{{ item.label }}</span> {{ item.title }}
+            </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+</div>
+
+{% if items.edition is defined %}
+<div class="page:edition new-page">
+    <h1>{{ items.edition.title }}</h1>
+    {{ items.edition.content }}
+</div>
+{% endif %}
+
+{% if items.license is defined %}
+<div class="page:license new-page">
+    <h1>{{ items.license.title }}</h1>
+    {{ items.license.content }}
+</div>
+{% endif %}
+{% endblock %}
