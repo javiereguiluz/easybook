@@ -166,6 +166,8 @@ blockquote::after {
     border-bottom: thick solid #111;
     margin-bottom: 4em;
     padding-bottom: 4em;
+    margin: 0;
+    text-align: center;
 }
 .page\:cover h1 {
     font-size: 64px;
@@ -181,10 +183,6 @@ blockquote::after {
 }
 
 /* page 'title' */
-.page\:cover + .page\:title {
-    display: none;
-}
-
 .page\:title h1 {
     font-size: 64px;
     line-height: 1.1;
@@ -212,6 +210,7 @@ blockquote::after {
 /* page 'dedication' */
 .page\:dedication {
     font-style: italic;
+    margin-top: 3em;
     text-align: center;
 }
 
@@ -280,7 +279,7 @@ h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
 }
 
 code, pre {
-    font-family: inconsolata, monospace;
+    font-family: monospace;
     line-height: 1.6;
     padding: 0 3px 2px;
 }
@@ -292,9 +291,7 @@ code {
 
 pre {
     display: block;
-    border: solid #CCC;
-    border-width: 0 0 0 1px;
-    margin: 1em 0 1em .5em;
+    margin: 1em 0;
     white-space: pre;
     white-space: pre-wrap;
     word-break: break-all;

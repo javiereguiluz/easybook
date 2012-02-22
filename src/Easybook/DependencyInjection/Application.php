@@ -484,6 +484,26 @@ class Application extends \Pimple
     }
 
     /*
+     * It looks for custom book cover images. The search order is:
+     *   1. <book>/Resources/Templates/<edition-name>/cover.jpg
+     *   2. <book>/Resources/Templates/<edition-format>/cover.jpg
+     *   3. <book>/Resources/Templates/<templateName>/cover.jpg
+     *
+     * It returns null if there is no custom cover image.
+     */
+    public function getCustomCoverImage()
+    {
+        $coverFileName = 'cover.jpg';
+        $paths = array(
+            $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
+            $this['publishing.dir.templates'].'/'.$this->edition('format'),
+            $this['publishing.dir.templates']
+        );
+
+        return $this->getCustomFile($coverFileName, $paths);
+    }
+
+    /*
      * Looks for the existance of $fileName inside the paths defined in $paths array.
      * It returns null if the file doesn't exist in any of the paths
      */

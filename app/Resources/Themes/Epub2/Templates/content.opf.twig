@@ -9,6 +9,7 @@
         <dc:publisher>{{ book.generator.name }} {{ book.generator.version }}</dc:publisher>
         <dc:date opf:event="publication">{{ book.publication_date|date('Y') }}</dc:date>
         <dc:date opf:event="creation">{{ book.publication_date|date('Y-m-d') }}</dc:date>
+        <meta name="cover" content="cover" />
 {#
         <dc:subject>...</dc:subject>
         <dc:subject>...</dc:subject>
@@ -17,6 +18,7 @@
     </metadata>
  
     <manifest>
+        <item id="titlepage" href="titlepage.html" media-type="application/xhtml+xml"/>
 {% for item in app.get('publishing.items') %}
         <item id="{{ item.slug }}" href="{{ item.fileName }}" media-type="application/xhtml+xml" />
 {% endfor %}
@@ -29,6 +31,9 @@
 {% for image in images %}
         <item id="{{ image.id }}" href="{{ image.filePath }}" media-type="{{ image.mediaType }}" />
 {% endfor %}
+{% if cover %}
+        <item id="cover" href="{{ cover.filePath }}" media-type="{{ cover.mediaType }}"/>
+{% endif %}
 {% for font in fonts %}
         <item id="{{ font.id }}" href="{{ font.filePath }}" media-type="{{ font.mediaType }}" />
 {% endfor %}
@@ -36,15 +41,14 @@
     </manifest>
 
     <spine toc="ncx">
+        <itemref idref="titlepage" />
 {% for item in app.get('publishing.items') %}
         <itemref idref="{{ item.slug }}" />
 {% endfor %}
     </spine>
- 
- <!--
+
     <guide>
-        <reference type="loi" title="List Of Illustrations" href="appendix.html#figures" />
+        <reference href="titlepage.html" type="cover" title="Cover"/>
     </guide>
- -->
- 
+
 </package>

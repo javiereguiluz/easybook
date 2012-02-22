@@ -13,6 +13,8 @@
     {% if has_custom_css|default(false) %}
     <link rel="stylesheet" href="css/styles.css" />
     {% endif %}
+
+    {% block template_css %}{% endblock %}
 </head>
 
 <body>

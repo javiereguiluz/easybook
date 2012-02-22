@@ -21,10 +21,13 @@ class Epub2Publisher extends HtmlPublisher
     public function loadContents()
     {
         // 'toc' content type makes no sense in epub books
-        // strip 'toc' elements before loading book contents
+        // 'cover' is a very special content for epub books
+        $excludedElements = array('cover', 'toc');
+
+        // strip 'toc' and 'cover' elements before loading book contents
         $contents = array();
         foreach ($this->app->book('contents') as $content) {
-            if ('toc' != $content['element']) {
+            if (!in_array($content['element'], $excludedElements)) {
                 $contents[] = $content;
             }
         }
@@ -61,7 +64,7 @@ class Epub2Publisher extends HtmlPublisher
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
             $this->app->render('style.css.twig', array(
-                    'resources_dir' => $bookTempDir.'/book/OEBPS/'
+                    'resources_dir' => '..'
                 ),
                 $bookTempDir.'/book/OEBPS/css/easybook.css'
             );
@@ -74,7 +77,7 @@ class Epub2Publisher extends HtmlPublisher
             $fontsData[] = array(
                 'id'        => 'font-1',
                 'filePath'  => 'fonts/Inconsolata.ttf',
-                'mediaType' => 'font/x-font-truetype'
+                'mediaType' => 'application/octet-stream'
             );
         }
         
@@ -137,9 +140,35 @@ class Epub2Publisher extends HtmlPublisher
                 'mediaType' => 'image/'.pathinfo($image->getFilename(), PATHINFO_EXTENSION)
             );
         }
-        
+
+        // look for cover images
+        $cover = null;
+        if (null != $image = $this->app->getCustomCoverImage()) {
+            list($width, $height, $type) = getimagesize($image);
+            $cover = array(
+                'height'    => $height,
+                'width'     => $width,
+                'filePath'  => 'images/'.basename($image),
+                'mediaType' => image_type_to_mime_type($type)
+            );
+
+            // copy the cover image
+            $this->app->get('filesystem')->copy(
+                $image,
+                $bookTempDir.'/book/OEBPS/images/'.basename($image)
+            );
+        }
+
+        // generate book cover
+        $this->app->render('cover.twig', array(
+                'cover' => $cover
+            ),
+            $bookTempDir.'/book/OEBPS/titlepage.html'
+        );
+
         // generate OPF file
         $this->app->render('content.opf.twig', array(
+                'cover'          => $cover,
                 'has_custom_css' => file_exists($customCss),
                 'fonts'          => $fontsData  ?: array(),
                 'images'         => $imagesData ?: array()
