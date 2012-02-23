@@ -233,3 +233,23 @@ the code listings. Therefore, it supports more than 200 programming languages
 ​(`[php]`, `[java]`, `[c]`, `[javascript]`, `[ruby]`, `[python]`, `[perl]`,
 `[erlang]`, `[haskell]`, ...), markup languages ​​(`[html]`, `[yaml]`, `[xml]`, ...)
 and configuration (`[ini]`, `[apache]`, ...).
+
+### 12. Added ePub support ###
+
+Read the updated documentation for details, but in short you can now
+define editions of type `epub` which generates `.epub` version 2 books:
+
+```yaml
+book:
+    # ...
+    editions:
+        ebook:
+            format:         epub
+            highlight_code: false
+            include_styles: true
+            labels:         ['appendix', 'chapter']  # labels also available for: "figure", "table"
+            toc:
+                deep:       1
+                elements:   ["appendix", "chapter", "part"]
+```
+

@@ -18,6 +18,15 @@ book:
         - { element: chapter, number: 2, content: chapter2.md }
 
     editions:
+        ebook:
+            format:         epub
+            highlight_code: false
+            include_styles: true
+            labels:         ['appendix', 'chapter']  # labels also available for: "figure", "table"
+            toc:
+                deep:       1
+                elements:   ["appendix", "chapter", "part"]
+
         print:
             format:         pdf
             highlight_code: true

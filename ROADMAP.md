@@ -16,13 +16,13 @@
   * Add support for multiple edition inheritance
   * Add more unit tests
   * Improve HTML editions design and UX
-  * Add ePub format publisher
   * Package the application as PHAR file
   * Remove vendors from versioning and add composer.lock file
   * Add table captions for Markdown parser
 
 ## easybook 4.2 (XX-feb-2012) ##
 
+  * [OK] Add ePub format publisher
   * [OK] Code syntax highlighting (both in PDF and HTML books)
   * [OK] Add new content type: `lof` (list of figures)
   * [OK] Add new content type: `lot` (list of tables)
