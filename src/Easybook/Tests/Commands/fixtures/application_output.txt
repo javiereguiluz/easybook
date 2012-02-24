@@ -1,0 +1,16 @@
+
+                     |              |    
+ ,---.,---.,---.,   .|---.,---.,---.|__/ 
+ |---',---|`---.|   ||   ||   ||   ||  \ 
+ `---'`---^`---'`---|`---'`---'`---'`   `
+                `---'
+
+easybook is the easiest and fastest tool to generate
+technical documentation, books, manuals and websites.
+
+Available commands:
+  help      Displays help for a command
+  list      Lists commands
+  new       Creates a new empty book
+  publish   Publishes an edition of a book
+  version   Shows installed easybook version
