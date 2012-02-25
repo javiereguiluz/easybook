@@ -14,7 +14,6 @@
   * Add new content type: `backcover`
   * Add a new `plugin` command to bootstrap plugin creation
   * Add support for multiple edition inheritance
-  * Add more unit tests
   * Improve HTML editions design and UX
   * Package the application as PHAR file
   * Remove vendors from versioning and add composer.lock file
@@ -22,6 +21,7 @@
 
 ## easybook 4.2 (XX-feb-2012) ##
 
+  * [OK] Add more unit tests
   * [OK] Add ePub format publisher
   * [OK] Code syntax highlighting (both in PDF and HTML books)
   * [OK] Add new content type: `lof` (list of figures)
