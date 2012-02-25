@@ -46,6 +46,10 @@ class Epub2Publisher extends HtmlPublisher
         // set the edition id needed for ebook generation
         $this->app->edition('id', $this->app['publishing.id']);
         
+        // variables needed to hold the list of images and fonts of the book
+        $bookImages = array();
+        $bookFonts  = array();
+
         // prepare the temp directory used to build the book
         $bookTempDir = $this->app['app.dir.cache']
                        .'/'.$this->app['publishing.book.slug']
@@ -74,7 +78,7 @@ class Epub2Publisher extends HtmlPublisher
                 $this->app['app.dir.resources'].'/Fonts/Inconsolata/Inconsolata.ttf',
                 $bookTempDir.'/book/OEBPS/fonts/Inconsolata.ttf'
             );
-            $fontsData[] = array(
+            $bookFonts[] = array(
                 'id'        => 'font-1',
                 'filePath'  => 'fonts/Inconsolata.ttf',
                 'mediaType' => 'application/octet-stream'
@@ -134,7 +138,7 @@ class Epub2Publisher extends HtmlPublisher
                 $bookTempDir.'/book/OEBPS/images/'.$image->getFileName()
             );
             
-            $imagesData[] = array(
+            $bookImages[] = array(
                 'id'        => 'figure-'.$i++,
                 'filePath'  => 'images/'.$image->getFileName(),
                 'mediaType' => 'image/'.pathinfo($image->getFilename(), PATHINFO_EXTENSION)
@@ -170,8 +174,8 @@ class Epub2Publisher extends HtmlPublisher
         $this->app->render('content.opf.twig', array(
                 'cover'          => $cover,
                 'has_custom_css' => file_exists($customCss),
-                'fonts'          => $fontsData  ?: array(),
-                'images'         => $imagesData ?: array()
+                'fonts'          => $bookFonts,
+                'images'         => $bookImages
             ),
             $bookTempDir.'/book/OEBPS/content.opf'
         );
