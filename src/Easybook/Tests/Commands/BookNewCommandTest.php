@@ -15,6 +15,9 @@ use Easybook\DependencyInjection\Application;
 use Easybook\Console\ConsoleApplication;
 use Easybook\Console\Command\BookNewCommand;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Console\Helper\DialogHelper;
+use Symfony\Component\Console\Helper\FormatterHelper;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
@@ -42,7 +45,57 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         $this->filesystem->remove($this->tmpDir);
     }
 
-    public function testNonInteractiveExecute()
+    public function testInteractiveCommand()
+    {
+        $command = $this->console->find('new');
+
+        // prepare the data that will be input interactively
+        // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
+        $dialog = new DialogHelper();
+        $dialog->setInputStream($this->getInputStream("\n\nThe Origin of Species\n"));
+        $helper = new HelperSet(array(new FormatterHelper(), $dialog));
+        $command->setHelperSet($helper);
+
+        $tester  = new CommandTester($command);
+        $tester->execute(array(
+            'command' => $command->getName(),
+            '--dir'   => $this->tmpDir
+        ), array(
+            'interactive' => true
+        ));
+
+        $this->assertContains(
+            'ERROR: The title cannot be empty.',
+            $tester->getDisplay(),
+            'The interactive generator validates wrong title input'
+        );
+
+        $this->assertContains(
+            'Welcome to the easybook interactive book generator',
+            $tester->getDisplay(),
+            'The interactive generator welcome message is shown'
+        );
+
+        $this->assertContains(
+            'Please, type the title of the book (e.g. The Origin of Species)',
+            $tester->getDisplay(),
+            'The interactive generator asks for the title of the book'
+        );
+
+        $this->assertContains(
+            'OK  You can start writing your book in the following directory',
+            $tester->getDisplay(),
+            'Interactive book generation is successfully completed'
+        );
+
+        $this->assertContains(
+            '/easybook/the-origin-of-species',
+            $tester->getDisplay(),
+            'The book is generated in the proper directory'
+        );
+    }
+
+    public function testNonInteractiveCommand()
     {
         $command = $this->console->find('new');
         $tester  = new CommandTester($command);
@@ -180,5 +233,15 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
             'title'   => 'The Origin of Species',
             '--dir'   => './'.uniqid('non_existent_dir')
         ));
+    }
+
+    // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
+    protected function getInputStream($input)
+    {
+        $stream = fopen('php://memory', 'r+', false);
+        fputs($stream, $input.str_repeat("\n", 10));
+        rewind($stream);
+
+        return $stream;
     }
 }

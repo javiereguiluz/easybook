@@ -152,7 +152,7 @@ EOT
         $title = $input->getArgument('title') ?: $dialog->askAndValidate(
             $output,
             "\n Please, type the <info>title</info> of the book"
-            ."(e.g. <comment>The Origin of Species</comment>)"
+            ." (e.g. <comment>The Origin of Species</comment>)"
             ."\n > ",
             function ($title) {
                 return Validators::validateNonEmptyString('title', $title);

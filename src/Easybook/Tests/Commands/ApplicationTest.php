@@ -17,14 +17,20 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
+    private $app;
+    private $console;
+
+    public function setUp()
+    {
+        $this->app = new Application();
+        $this->console = new ConsoleApplication($this->app);
+        $this->console->setAutoExit(false);
+    }
+
     public function testCommandList()
     {
-        $app = new Application();
-        $console = new ConsoleApplication($app);
-        $console->setAutoExit(false);
-
-        $tester = new ApplicationTester($console);
-        $tester->run(array());
+        $tester = new ApplicationTester($this->console);
+        $tester->run(array(), array('decorated' => false));
 
         $this->assertStringEqualsFile(
             __DIR__.'/fixtures/application_output.txt',
@@ -35,17 +41,25 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function testVersion()
     {
-        $app = new Application();
-        $console = new ConsoleApplication($app);
-        $console->setAutoExit(false);
-        
-        $tester = new ApplicationTester($console);
+        $tester = new ApplicationTester($this->console);
         $tester->run(array('command' => 'version'));
 
         $this->assertRegExp(
-            sprintf('/%s/', preg_quote($app['app.version'])),
+            sprintf('/easybook installed version: %s/', preg_quote($this->app['app.version'])),
             $tester->getDisplay(),
             'The "version" command shows the version of the application'
+        );
+    }
+
+    public function testSignature()
+    {
+        $tester = new ApplicationTester($this->console);
+        $tester->run(array(), array('decorated' => false));
+
+        $this->assertContains(
+            $this->app['app.signature'],
+            $tester->getDisplay(),
+            'The signature of the application is shown'
         );
     }
 }
