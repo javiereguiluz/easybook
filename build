@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+/*
+ * This file is part of the easybook application.
+ *
+ * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
+ * (c) Matthieu Moquet <matthieu@moquet.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+require_once __DIR__.'/app/autoload.php';
+
+use Easybook\Util\Compressor;
+
+$compressor = new Compressor();
+$compressor->build();
