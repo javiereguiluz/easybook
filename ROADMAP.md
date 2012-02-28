@@ -15,12 +15,13 @@
   * Add a new `plugin` command to bootstrap plugin creation
   * Add support for multiple edition inheritance
   * Improve HTML editions design and UX
-  * Package the application as PHAR file
-  * Remove vendors from versioning and add composer.lock file
   * Add table captions for Markdown parser
+  * Add PHPdoc to essential methods and classes
 
-## easybook 4.2 (XX-feb-2012) ##
+## easybook 4.2 (28-feb-2012) ##
 
+  * [OK] Remove vendors from versioning and add composer.lock file
+  * [OK] Package the application as -PHAR- ZIP file 
   * [OK] Add more unit tests
   * [OK] Add ePub format publisher
   * [OK] Code syntax highlighting (both in PDF and HTML books)

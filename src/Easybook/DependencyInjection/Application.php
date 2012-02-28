@@ -273,9 +273,9 @@ class Application extends \Pimple
 
         // -- code syntax highlighter -----------------------------------------
         $this['geshi'] = function () use ($app) {
-            require_once __DIR__.'/../../../vendor/geshi/geshi.php';
+            require_once __DIR__.'/../../../vendor/geshi/geshi/geshi.php';
 
-            $geshi = new \GeSHi\GeSHi();
+            $geshi = new \GeSHi();
             $geshi->enable_classes(); // this must be the first method (see Geshi doc)
             $geshi->set_encoding($app['app.charset']);
             $geshi->enable_line_numbers(GESHI_NO_LINE_NUMBERS);
@@ -521,6 +521,7 @@ class Application extends \Pimple
     public function highlight($code, $language = 'code')
     {
         $geshi = $this->get('geshi');
+        if ('html' == $language) { $language = 'html5'; }
 
         $geshi->set_source($code);
         $geshi->set_language($language);

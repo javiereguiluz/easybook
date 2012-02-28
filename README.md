@@ -2,33 +2,36 @@
 
 *«book publishing as easy as it should be»*
 
-**easybook** is an application that lets you easily publish books in various electronic formats. It was originally designed to publish technical programming books, but you can use **easyboook** to publish any kind of book, manual or documentation.
-
-**easybook** project website: <http://easybook-project.org>
+**[easybook](http://easybook-project.org)** lets you easily publish books in various electronic formats (PDF, ePub and HTML). It was originally designed to publish technical programming books, but you can use **easyboook** to publish any kind of book, manual or documentation.
 
 ## Installation ##
 
-If you use Git:
+Regular users **not using Git**:
+
+  1. Download [easybook.zip](https://github.com/javiereguiluz/easybook-package/blob/master/easybook.zip?raw=true) file 
+  2. Uncompress `easybook.zip` file
+
+Advanced users **using Git**:
 
 ```
+# clone easybook repository
 $ mkdir easybook
 $ git clone http://github.com/javiereguiluz/easybook.git easybook
+
+# download composer and install easybook vendors
+$ cd easybook
+$ wget http://getcomposer.org/composer.phar
+$ php composer.phar install
 ```
 
-If you don't use Git:
-
-  1. `mkdir easybook`
-  2. Download https://github.com/javiereguiluz/easybook/zipball/master ZIP file
-  3. Uncompress the ZIP file in `easybook` directory
-
-Regardless the installation mode, use **easybook** with the `book` command:
+Regardless the way you install it, use **easybook** with the `book` command:
 
 ```
 $ cd easybook
 $ ./book
 ```
 
-If the last command doesn't work, try `php book`
+If the last command doesn't work, try `php book` or check `book` script permissions.
 
 ## Documentation ##
 
