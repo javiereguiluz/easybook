@@ -13,7 +13,22 @@
         }
     ],
 
+    "repositories": {
+        "geshi": {
+            "package": {
+                "name": "geshi/geshi",
+                "version": "1.0.8.10",
+                "dist": {
+                    "url":  "http://sourceforge.net/projects/geshi/files/geshi/GeSHi%201.0.8.10/GeSHi-1.0.8.10.zip/download",
+                    "type": "zip"
+                }
+            }
+        }
+    },
+
     "require": {
+        "geshi/geshi":              "*",
+
         "pimple/pimple":            "1.*",
 
         "symfony/class-loader":     "2.1.*",
@@ -22,7 +37,7 @@
         "symfony/filesystem":       "2.1.*",
         "symfony/finder":           "2.1.*",
         "symfony/yaml":             "2.1.*",
-        
+
         "twig/twig":                "1.6.*"
     },
 

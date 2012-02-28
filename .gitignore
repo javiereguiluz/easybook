@@ -8,6 +8,8 @@
 composer.lock
 composer.phar
 
+/vendor
+
 app/Cache
 app/Logs
 
@@ -15,4 +17,3 @@ doc/easybook-doc-en/Output/*
 doc/easybook-doc-en/Resources
 doc/easybook-doc-es/Output/*
 doc/easybook-doc-es/Resources
-
