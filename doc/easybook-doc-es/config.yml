@@ -4,9 +4,9 @@ book:
     edition:          "Primera edición"
     language:         es
     publication_date: ~
-    
-    generator: { name: easybook, version: 4.0 }
-    
+
+    generator: { name: easybook, version: 4.2 }
+
     contents:
         - { element: cover }
         - { element: toc   }
@@ -15,6 +15,15 @@ book:
         - { element: chapter, number: 3, content: chapter3.md }
 
     editions:
+        ebook:
+            format:         epub
+            include_styles: true
+            highlight_code: true
+            labels:         ['appendix', 'chapter', 'figure']
+            toc:
+                deep:       1
+                elements:   ["appendix", "chapter"]
+
         print:
             format:         pdf
             highlight_code: true
