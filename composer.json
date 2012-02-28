@@ -13,10 +13,24 @@
         }
     ],
 
+    "repositories": {
+        "geshi": {
+            "type": "package",
+            "package": {
+                "name": "geshi/geshi",
+                "version": "1.0.8.10",
+                "dist": {
+                    "url":  "http://sourceforge.net/projects/geshi/files/geshi/GeSHi%201.0.8.10/GeSHi-1.0.8.10.zip/download",
+                    "type": "zip"
+                }
+            }
+        }
+    },
+
     "require": {
         "geshi/geshi":              "1.0.*",
 
-        "pimple/pimple":            "1.*",
+        "pimple/pimple":            "dev-master",
 
         "symfony/class-loader":     "2.1.*",
         "symfony/console":          "2.1.*",
@@ -30,19 +44,5 @@
 
     "autoload": {
         "psr-0": { "Easybook": "src/" }
-    },
-
-    "repositories": {
-        "geshi": {
-            "type": "package",
-            "package": {
-                "name": "geshi/geshi",
-                "version": "1.0.8.10",
-                "dist": {
-                    "url":  "http://sourceforge.net/projects/geshi/files/geshi/GeSHi%201.0.8.10/GeSHi-1.0.8.10.zip/download",
-                    "type": "zip"
-                }
-            }
-        }
     }
 }
