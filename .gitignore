@@ -6,6 +6,7 @@
 .Trashes
 
 composer.phar
+composer.lock
 
 app/Cache
 app/Logs
