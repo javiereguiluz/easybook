@@ -1,0 +1,456 @@
+{% extends 'style_common.css.twig' %}
+
+{% block base %}
+/* Base styles
+   ========================================================================= */
+
+body {
+    background: #FFF;
+    color: {{ color_black }};
+    font: 16px/1.6 "Helvetica Neue", Arial, sans-serif;
+}
+
+/* --- links --------------------------------------------------------------- */
+a, a:visited {
+    color: {{ color_blue }};
+    text-decoration: underline;
+}
+a:hover {
+    color: {{ color_accent }};
+    text-decoration: none;
+}
+
+/* --- headings ------------------------------------------------------------ */
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1;
+    margin: 1em 0 .25em 0;
+}
+
+h1 { font-size: 24px; }
+h2 { font-size: 21px; }
+h3 { font-size: 18px; }
+h4 { font-size: 14px; }
+h5 { font-size: 14px; }
+h6 { font-size: 14px; }
+
+h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+    margin-top: .25em;
+}
+
+/* --- lists --------------------------------------------------------------- */
+ul, ol {
+    list-style-type: disc;
+    margin: 1em 0 1em 1em;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ul li, ol li {
+    margin: .5em 0;
+}
+
+/* --- images -------------------------------------------------------------- */
+img {
+    max-width: {{ width_container }};
+}
+
+/* --- tables -------------------------------------------------------------- */
+table {
+    border: 1px solid {{ color_silver }};
+    margin-bottom: 1em;
+    max-width: 100%;
+    width: 100%;
+}
+
+table th, table td {
+    border-top: 1px solid {{ color_silver }};
+    padding: .5em;
+    line-height: 1.2;
+    text-align: left;
+}
+table th {
+    font-weight: bold;
+    vertical-align: bottom;
+}
+table td {
+    vertical-align: top;
+}
+table tbody + tbody {
+    border-top: 2px solid {{ color_silver }};
+}
+table th + th,
+table td + td,
+table th + td,
+table td + th {
+    border-left: 1px solid {{ color_silver }};
+}
+
+/* --- code and code listings ---------------------------------------------- */
+code, pre {
+    font-family: Menlo, Monaco, Consolas, Inconsolata, monospace;
+    font-size: 90%;
+    -webkit-border-radius: {{ width_rounded_corner }};
+    -moz-border-radius: {{ width_rounded_corner }};
+    border-radius: {{ width_rounded_corner }};
+    padding: 0 3px 2px;
+}
+
+code {
+    border: 1px solid #E1E1E8;
+    line-height: 1.6em;
+    padding: 3px 4px;
+}
+
+pre {
+    background-color: #F7F7F9;
+    border: 1px solid {{ color_silver }};
+    margin: 0 0 1em;
+    padding: .5em;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+pre code {
+    background-color: transparent;
+    border: none;
+    color: {{ color_black }};
+    padding: 0;
+}
+
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+    font-weight: normal;
+}
+{% endblock %}
+
+{% block layout %}
+/* Layout
+   ========================================================================= */
+
+/* inspired by Twitter Bootstrap */
+.container {
+  width: {{ width_container }};
+  margin-left: auto;
+  margin-right: auto;
+  *zoom: 1;
+}
+.container:before, .container:after {
+  display: table;
+  content: "";
+}
+.container:after {
+  clear: both;
+}
+{% endblock %}
+
+{% block book_items %}
+/* Book items
+   ========================================================================= */
+
+/* --- common -------------------------------------------------------------- */
+.item {
+    border-bottom: 1px solid {{ color_silver }};
+    margin-bottom: 2em;
+    padding-bottom: 2em;
+}
+
+/* --- item:cover ---------------------------------------------------------- */
+.item\:cover {
+    background: {{ color_accent }};
+    border-bottom: 1px solid {{ darken(color_accent, '5%') }};
+    color: #FFF;
+    margin-bottom: .5em;
+    padding: 2.5em 2.5em 1.75em;
+    box-shadow: 0 1px 1px 0 {{ fade(color_accent, '0.4') }};
+    border-radius: 0 0 {{ css_multiply(width_rounded_corner, 2) }} {{ css_multiply(width_rounded_corner, 2) }};
+}
+.item\:cover h1 {
+    font-size: 72px;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    margin: 2em 2em 0 0;
+}
+.item\:cover h2 {
+    color: {{ lighten(color_accent, '30%') }};
+    font-size: 36px;
+    font-weight: normal;
+    margin-top: .5em;
+}
+
+/* --- item:title ---------------------------------------------------------- */
+.item\:cover + .item\:title {
+    display: none;
+}
+.item\:title h1,
+.item\:title h2,
+.item\:title h3 {
+    font-weight: normal;
+    text-align: center;
+}
+.item\:title h1 {
+    font-size: 36px;
+    line-height: 1.1;
+    letter-spacing: -2pt;
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+.item\:title h2 {
+    font-size: 24px;
+    margin-top: .5em;
+}
+.item\:title h3 {
+    font-size: 18px;
+    font-style: italic;
+    margin-top: 1em;
+}
+
+/* --- item:dedication ----------------------------------------------------- */
+.item\:dedication {
+    font-style: italic;
+    text-align: center;
+}
+
+/* --- item:toc ------------------------------------------------------------ */
+.item\:toc {
+    margin-bottom: 2em;
+    padding-left: 2.5em;
+}
+
+.item\:toc h1 {
+    font-size: 36px;
+    margin-bottom: .5em;
+}
+
+.item\:toc ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    -moz-column-count: 2;
+    -moz-column-gap: 3em;
+    -moz-column-rule: 1px solid {{ color_silver }};
+    -webkit-column-count: 2;
+    -webkit-column-gap: 3em;
+    -webkit-column-rule: 1px solid {{ color_silver }};
+}
+
+.item\:toc ul li,
+.item\:toc ul li a {
+    font-size: 16px;
+    line-height: 1.2;
+    text-decoration: none;
+}
+.item\:toc ul li.level-1,
+.item\:toc ul li.level-1 a {
+    font-size: 21px;
+    font-weight: bold;
+}
+.item\:toc ul li span {
+    font-weight: normal;
+    padding-right: .3em;
+}
+
+.item\:toc ul li.level-2 {
+    margin-left: 1em;
+}
+.item\:toc ul li.level-3,
+.item\:toc ul li.level-4,
+.item\:toc ul li.level-5,
+.item\:toc ul li.level-6 {
+    margin-left: 3em;
+}
+
+/* --- item:lot, item:lof -------------------------------------------------- */
+.item\:lof ul,
+.item\:lot ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.item\:lof ul a,
+.item\:lot ul a {
+    text-decoration: none;
+}
+
+.item\:lof ul li span,
+.item\:lot ul li span {
+    padding-right: .3em;
+}
+
+/* --- item:chapter -------------------------------------------------------- */
+.item\:chapter h1 { font-size: 48px; color: {{ color_accent }}; margin-top: .5em; }
+.item\:chapter h2 { font-size: 24px; }
+.item\:chapter h3 { font-size: 21px; }
+.item\:chapter h4 { font-size: 16px; }
+.item\:chapter h5 { font-size: 14px; }
+.item\:chapter h6 { font-size: 14px; }
+
+.item\:chapter h1 + h2,
+.item\:chapter h2 + h3,
+.item\:chapter h3 + h4,
+.item\:chapter h4 + h5,
+.item\:chapter h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:chapter h1 span {
+    color: {{ color_black }};
+    display: block;
+    font-size: 24px;
+    font-weight: normal;
+    margin-bottom: .25em;
+}
+
+/* --- item:appendix ------------------------------------------------------- */
+.item\:appendix h1 { font-size: 48px; color: {{ color_accent }}; margin-top: .5em; }
+.item\:appendix h2 { font-size: 24px; }
+.item\:appendix h3 { font-size: 21px; }
+.item\:appendix h4 { font-size: 16px; }
+.item\:appendix h5 { font-size: 14px; }
+.item\:appendix h6 { font-size: 14px; }
+
+.item\:appendix h1 + h2,
+.item\:appendix h2 + h3,
+.item\:appendix h3 + h4,
+.item\:appendix h4 + h5,
+.item\:appendix h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:appendix h1 span {
+    font-weight: normal;
+}
+
+/* --- item:part ----------------------------------------------------------- */
+.item\:part {
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.item\:toc + .item\:part,
+.item\:lof + .item\:part,
+.item\:lot + .item\:part,
+.item\:chapter + .item\:part,
+.item\:appendix + .item\:part {
+    margin-top: -2em;
+}
+
+.item\:part h1 {
+    font-size: 48px;
+    padding: 1em 0;
+}
+.item\:part h1 span {
+    background-color: {{ color_accent }};
+    color: #FFF;
+    font-size: 24px;
+    font-weight: normal;
+    padding: .25em;
+    position: relative;
+    bottom: 6px;
+}
+{% endblock %}
+
+{% block responsive %}
+/* Responsive
+   ========================================================================= */
+
+/* inspired by Twitter Bootstrap */
+/* Landscape phones and down */
+@media (max-width: 480px) {
+    .item\:toc {
+        padding-left: .5em !important;
+    }
+    .item\:toc h1 {
+        display: none;
+    }
+    .item\:toc ul {
+        margin: 0 !important;
+        -moz-column-count: 1;
+        -webkit-column-count: 1;
+    }
+}
+ 
+/* Landscape phone to portrait tablet */
+@media (max-width: 768px) {
+    .item\:cover {
+        margin-bottom: 1em;
+        padding: 1.5em;
+    }
+    .item\:cover h1 {
+        font-size: 48px;
+        letter-spacing: -1px;
+        margin: 0;
+    }
+    .item\:cover h2 {
+        font-size: 24px;
+    }
+
+    .item\:toc {
+        padding-left: 1.5em;
+    }
+    .item\:toc h1 {
+        font-size: 24px;
+    }
+    .item\:toc ul {
+        -moz-column-count: 1;
+        -webkit-column-count: 1;
+    }
+
+    .item #chunk_toc {
+        border: none;
+        float: none;
+        margin: .5em 0;
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .item\:part h1,
+    .item\:chapter h1,
+    .item\:appendix h1 {
+        font-size: 28px;
+    }
+    .item\:chapter h2,
+    .item\:chapter h3,
+    .item\:chapter h4,
+    .item\:chapter h5,
+    .item\:chapter h6,
+    .item\:appendix h2,
+    .item\:appendix h3,
+    .item\:appendix h4,
+    .item\:appendix h5,
+    .item\:appendix h6 {
+        font-size: 24px;
+    }
+    .item\:part h1 span {
+        background: transparent;
+        color: {{ color_accent }};
+        font-size: 28px;
+        font-weight: normal;
+        padding: 0;
+        position: static;
+    }
+    .item\:chapter h1 span,
+    .item\:appendix h1 span {
+        display: inline;
+        font-size: 28px;
+        font-weight: normal;
+    }
+}
+ 
+ /* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: {{ width_container }}) {
+}
+ 
+/* Large desktop */
+@media (min-width: 1200px) {
+}
+
+@media (max-width: {{ width_container }}) {
+    .container {
+        width: auto;
+        padding: 0 20px;
+    }
+}
+{% endblock %}

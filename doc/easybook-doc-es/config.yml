@@ -5,11 +5,12 @@ book:
     language:         es
     publication_date: ~
 
-    generator: { name: easybook, version: 4.2 }
+    generator: { name: easybook, version: 4.4 }
 
     contents:
         - { element: cover }
         - { element: toc   }
+        #- { element: part, number: 1, title: "Introducción muy interesante" }
         - { element: chapter, number: 1, content: chapter1.md }
         - { element: chapter, number: 2, content: chapter2.md }
         - { element: chapter, number: 3, content: chapter3.md }
@@ -20,6 +21,7 @@ book:
             include_styles: true
             highlight_code: true
             labels:         ['appendix', 'chapter', 'figure']
+            theme:          clean
             toc:
                 deep:       1
                 elements:   ["appendix", "chapter"]
@@ -36,6 +38,7 @@ book:
                 inner:      30mm
                 outter:     20mm
             page_size:      A4
+            theme:          clean
             toc:
                 deep:       2
                 elements:   ['appendix', 'chapter']
@@ -46,6 +49,7 @@ book:
             highlight_code: true
             include_styles: true
             labels:         ['appendix', 'chapter', 'figure']
+            theme:          clean
             toc:
                 deep:       2
                 elements:   ['appendix', 'chapter']

@@ -8,28 +8,44 @@
 
     <title>Publishing your second book | easybook test book #1</title>
 
-        <link rel="stylesheet" href="./css/easybook.css" />
-    
-    </head>
+    <link rel="stylesheet" href="./css/easybook.css" />
 
-<body class="page:chapter"><div id="wrapper">
+</head>
+
+<body class="item item:chapter"><div class="container">
+
+
+<ul class="chunk_nav">
+    <li class="index"><a href="./index.html">easybook test book #1</a></li>
+
+    <li class="nav">
+        <div class="previous">
+                            <a href="./chapter-1.html"><span>&larr;</span> Previous</a>
+                    </div>
+
+        <div class="next">
+                            <a href="./chapter-3.html">Next <span>&rarr;</span></a>
+                    </div>
+    </li>
+</ul>
+
 
 <h1 id="chapter-2"><span>Chapter 2</span> Publishing your second book</h1>
 
-<ul id="item_toc">
-            <li>
+<ul id="chunk_toc">
+            <li class="level-1">
             <span></span>
             <a href="#publishing-your-second-book">Publishing your second book</a>
         </li>
-                <li>
+                <li class="level-2">
             <span>2.1</span>
             <a href="#content-types">Content types</a>
         </li>
-                <li>
+                <li class="level-2">
             <span>2.2</span>
             <a href="#editions">Editions</a>
         </li>
-                <li>
+                <li class="level-2">
             <span>2.3</span>
             <a href="#themes">Themes</a>
         </li>
@@ -372,16 +388,18 @@
 <p>If you want to change the titles instead of the labels, follow the same steps but create a file called <code>titles.en.yml</code> instead of <code>labels.en.yml</code>. If your book isn't written in English, replace <code>en</code> for the code of the other language (e.g. <code>labels.es.yml</code> for Spanish labels).</p>
 
 
-<ul id="nav">
-    <li class="previous">
-                    <a href="./chapter-1.html"><span>&larr;</span> Previous</a>
-            </li>
+<ul class="chunk_nav">
+    <li class="index"><a href="./index.html">easybook test book #1</a></li>
 
-    <li class="index"><a href="./index.html"><span>&uarr;</span> Index</a></li>
+    <li class="nav">
+        <div class="previous">
+                            <a href="./chapter-1.html"><span>&larr;</span> Previous</a>
+                    </div>
 
-    <li class="next">
-                    <a href="./chapter-3.html">Next <span>&rarr;</span></a>
-            </li>
+        <div class="next">
+                            <a href="./chapter-3.html">Next <span>&rarr;</span></a>
+                    </div>
+    </li>
 </ul>
 
 

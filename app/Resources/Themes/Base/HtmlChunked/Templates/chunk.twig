@@ -1,0 +1,48 @@
+{% extends 'layout.twig' %}
+
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block body %}
+{% set navigation %}
+<ul class="chunk_nav">
+    <li class="index"><a href="./index.html">{{ book.title }}</a></li>
+
+    <li class="nav">
+        <div class="previous">
+            {% if previous %}
+                <a href="./{{ previous }}.html"><span>&larr;</span> {{ app.getLabel('previous') }}</a>
+            {% else %}
+                <span>&larr;</span> {{ app.getLabel('previous') }}
+            {% endif %}
+        </div>
+
+        <div class="next">
+            {% if next %}
+                <a href="./{{ next }}.html">{{ app.getLabel('next') }} <span>&rarr;</span></a>
+            {% else %}
+                {{ app.getLabel('next') }} <span>&rarr;</span>
+            {% endif %}
+        </div>
+    </li>
+</ul>
+{% endset %}
+
+{{ navigation }}
+
+<h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
+
+<ul id="chunk_toc">
+{% for entry in item.toc %}
+    {% if entry.level <= edition.toc.deep %}
+        <li class="level-{{ entry.level }}">
+            <span>{{ entry.level != 1 ? entry.label : '' }}</span>
+            <a href="#{{ entry.slug }}">{{ entry.title }}</a>
+        </li>
+    {% endif %}
+{% endfor %}
+</ul>
+
+{{ item.content }}
+
+{{ navigation }}
+{% endblock %}

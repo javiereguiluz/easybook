@@ -1,0 +1,24 @@
+<div class="item item:lot">
+
+<h1>{{ item.title }}</h1>
+
+<ul>
+{% for item in app.get('publishing.list.tables') %}
+    {% if item|length > 0 %}
+        {% for entry in item %}
+            {% if entry.item.caption is empty %}
+                <li><a href="#{{ entry.item.slug }}">
+                    <span>{{ app.getLabel('table', entry) }}</span>
+                </a></li>
+            {% else %}
+                <li><a href="#{{ entry.item.slug }}">
+                    <span>{{ entry.element.number }}.{{ entry.item.number }}</span>
+                    {{ entry.item.caption }}
+                </a></li>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+</ul>
+
+</div>

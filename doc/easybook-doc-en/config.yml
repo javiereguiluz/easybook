@@ -5,7 +5,7 @@ book:
     language:         en
     publication_date: ~
 
-    generator: { name: easybook, version: 4.2 }
+    generator: { name: easybook, version: 4.4 }
 
     contents:
         - { element: cover }
@@ -20,6 +20,7 @@ book:
             include_styles: true
             highlight_code: true
             labels:         ['appendix', 'chapter', 'figure']
+            theme:          clean
             toc:
                 deep:       1
                 elements:   ["appendix", "chapter"]
@@ -36,6 +37,7 @@ book:
                 inner:      30mm
                 outter:     20mm
             page_size:      A4
+            theme:          clean
             toc:
                 deep:       2
                 elements:   ["appendix", "chapter"]
@@ -46,6 +48,7 @@ book:
             include_styles: true
             highlight_code: true
             labels:         ['appendix', 'chapter', 'figure']
+            theme:          clean
             toc:
                 deep:       2
                 elements:   ["appendix", "chapter"]

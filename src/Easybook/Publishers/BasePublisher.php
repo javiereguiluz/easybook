@@ -77,20 +77,16 @@ class BasePublisher
                 $item['config']['format'] = pathinfo($contentFile, PATHINFO_EXTENSION);
             }
             else {
-                $path = $this->app['publishing.dir.app_theme'].'/Contents/';
-                $template = $contentConfig['element'].'.md.twig';
-
-                // if easybook theme defines a default content for this element (`cover`, `license`, `title`)
-                if (file_exists($path.'/'.$template)) {
-                    $this->app->set('twig.path', $path);
-                    $item['original'] = $this->app->render($template);
+                // look for a default content defined by easybook for this element
+                // e.g. `cover.md.twig`, `license.md.twig`, `title.md.twig`
+                try {
+                    $contentFile = $contentConfig['element'].'.md.twig';
+                    $item['original'] = $this->app->renderThemeContent($contentFile);
                     $item['config']['format']  = 'md';
-
-                    // reset twig path variable to not interfere with further renderings
-                    $this->app->set('twig.path', null);
                 }
-                // the element doesn't define its content and there is no easybook default content
-                else {
+                // if Twig throws a Twig_Error_Loader exception, there is no default content
+                catch (\Twig_Error_Loader $e)
+                {
                     $item['original'] = '';
                     $item['config']['format']  = 'md';
                 }

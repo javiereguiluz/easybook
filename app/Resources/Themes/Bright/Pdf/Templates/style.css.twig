@@ -1,0 +1,749 @@
+{% extends 'style_common.css.twig' %}
+
+{% block base %}
+/* Custom fonts
+   ========================================================================= */
+
+/* Alte Haas Grotesk : http://www.dafont.com/alte-haas-grotesk.font */
+@font-face {
+    font-family: alte-haas-grotesk;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Alte_Haas_Grotesk/AlteHaasGroteskRegular.ttf")
+}
+
+@font-face {
+    font-family: alte-haas-grotesk;
+    font-style: normal;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Alte_Haas_Grotesk/AlteHaasGroteskBold.ttf")
+}
+
+/* Neuton : http://www.fontsquirrel.com/fonts/neuton */
+@font-face {
+    font-family: neuton;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Neuton/Neuton-Regular.ttf")
+}
+
+@font-face {
+    font-family: neuton;
+    font-style: normal;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Neuton/Neuton-Bold.ttf")
+}
+
+@font-face {
+    font-family: neuton;
+    font-style: italic;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Neuton/Neuton-Italic.ttf")
+}
+
+@font-face {
+    font-family: neuton;
+    font-style: italic;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Neuton/Neuton-Italic.ttf")
+}
+
+/* Open Sans : http://www.google.com/webfonts/specimen/Open+Sans */
+@font-face {
+    font-family: open-sans;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-Regular.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: normal;
+    font-weight: 600;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-Semibold.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: normal;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-Bold.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: italic;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-Italic.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: italic;
+    font-weight: 600;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-SemiboldItalic.ttf")
+}
+
+@font-face {
+    font-family: open-sans;
+    font-style: italic;
+    font-weight: 700;
+    src: url("{{ resources_dir }}/Fonts/Open_Sans/OpenSans-BoldItalic.ttf")
+}
+
+/* Inconsolata : http://www.google.com/webfonts/specimen/Inconsolata */
+@font-face {
+    font-family: inconsolata;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/Fonts/Inconsolata/Inconsolata.ttf")
+}
+
+/* Base styles
+   ========================================================================= */
+
+body {
+    background: #FFF;
+    color: {{ color_black }};
+    font: 14pt/1.2 neuton, serif;
+}
+
+/* --- links --------------------------------------------------------------- */
+a {
+    border-bottom: 1px solid #EFEFEF;
+    color: {{ color_black }};
+    text-decoration: none;
+}
+a::after {
+    border: none;
+    color: {{ color_gray }};
+    content: " (" attr(href) ") ";
+    font-style: normal;
+}
+a:contains("www")::after,
+a:contains("http://")::after,
+a:contains("https://")::after  {
+    border: none;
+    content: "";
+}
+
+/* --- headings ------------------------------------------------------------ */
+h1, h2, h3, h4, h5, h6 {
+    font-family: open-sans, sans-serif;
+    font-weight: 600;
+    letter-spacing: -.5pt;
+    line-height: 1;
+    margin: 12pt 0 3pt;
+}
+
+h1 { font-size: 28pt; }
+h2 { font-size: 18pt; }
+h3 { font-size: 14px; }
+h4 { font-size: 14pt; }
+h5 { font-size: 14pt; }
+h6 { font-size: 14pt; }
+
+h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+    margin-top: 4pt;
+}
+
+/* --- paragraphs ---------------------------------------------------------- */
+p {
+    text-align: justify;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    hyphens: auto;
+    hyphenate-patterns: url("{{ resources_dir }}/Dictionaries/hyph_{{ book.language }}.dic");
+}
+
+/* --- lists --------------------------------------------------------------- */
+ul, ol {
+    list-style-type: disc;
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ul li, ol li {
+    margin: .5em 0;
+}
+
+/* --- images -------------------------------------------------------------- */
+img {
+    max-width: 100%;
+}
+
+.figure {
+    margin: 1em 0;
+}
+.figure .caption {
+    margin: 0;
+}
+
+/* --- tables -------------------------------------------------------------- */
+div.table {
+    width: 100%;
+}
+table {
+    margin-bottom: 1em;
+    width: 100% !important;
+}
+table, th, td, tbody {
+    border: 1px solid {{ color_silver }};
+}
+table th, table td {
+    padding: .5em;
+    line-height: 1.2;
+    text-align: left;
+}
+table th {
+    font: 700 10pt open-sans, sans-serif;
+    vertical-align: bottom;
+}
+table td {
+    vertical-align: top;
+}
+table tbody + tbody {
+    border-top-width: 2px;
+}
+table p, table ul, table ol, table code {
+    font-size: 12pt;
+}
+
+/* --- code and code listings ---------------------------------------------- */
+code, pre {
+    font-family: inconsolata, monospace;
+    font-size: 90%;
+}
+
+pre {
+    background-color: transparent;
+    border-left: 1px solid {{ color_silver }};
+    line-height: 1.4;
+    margin: 0 0 1em;
+    padding: 0 0 0 1em;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+pre code {
+    background-color: transparent;
+    border: none;
+    color: {{ color_black }};
+    padding: 0;
+}
+
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+    font-weight: normal;
+}
+
+div.cli pre {
+    padding: .5em;
+}
+
+/* --- footnotes ----------------------------------------------------------- */
+.fn {
+    display: prince-footnote;
+    counter-increment: footnote;
+    font-size: 9pt !important;
+}
+.item\:chapter h1, .item\:appendix h1 {
+    counter-reset: footnote;
+}
+
+.fn::footnote-call {
+    content: "[" counter(footnote) "]";
+    font: bold 8pt open-sans, sans-serif;
+    vertical-align: super;
+    line-height: none;
+}
+.fn::footnote-marker {
+    content: "[" counter(footnote) "]";
+    font: bold 9pt open-sans, sans-serif;
+    padding: 0 4pt 0 8pt;
+}
+
+@page {
+    @footnotes {
+        border-top: thin solid {{ color_black }};
+        margin-top: 6pt;
+        padding: 6pt 0 0 12pt;
+    }
+}
+{% endblock %}
+
+{% block layout %}
+/* Layout
+   ========================================================================= */
+@page {
+    size: {{ edition.page_size }};
+}
+
+{% if edition.two_sided %}
+@page:right {
+    margin: {{ edition.margin.top|default('25mm') }} {{ edition.margin.outter|default('20mm') }} {{ edition.margin.bottom|default('25mm') }} {{ edition.margin.inner|default('30mm') }};
+
+    @top-left {
+
+        color: {{ color_gray }};
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: baseline;
+    }
+
+    @top-right {
+
+        color: {{ color_gray }};
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: baseline;
+    }
+
+    @bottom-right {
+        font: bold 12pt open-sans, sans-serif;
+        padding-top: 11pt;
+        vertical-align: top;
+    }
+
+    @bottom-left {
+    }
+}
+
+@page:left {
+    margin: {{ edition.margin.top|default('25mm') }} {{ edition.margin.inner|default('30mm') }} {{ edition.margin.bottom|default('25mm') }} {{ edition.margin.outter|default('20mm') }};
+
+    @top-left {
+
+        color: {{ color_gray }};
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: baseline;
+    }
+
+    @top-right {
+
+        color: {{ color_gray }};
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: baseline;
+    }
+
+    @bottom-left {
+        font: bold 12pt open-sans, sans-serif;
+        padding-top: 11pt;
+        vertical-align: top;
+    }
+
+    @bottom-right {
+    }
+}
+{% else %}
+@page {
+    margin: {{ edition.margin.top|default('25mm') }} {{ edition.margin.outter|default('20mm') }} {{ edition.margin.bottom|default('25mm') }} {{ edition.margin.inner|default('30mm') }};
+
+    @top-left {
+
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: bottom;
+    }
+
+    @top-right {
+
+        font: 9pt open-sans, sans-serif;
+        margin-bottom: 12pt;
+        padding-bottom: 2pt;
+        vertical-align: bottom;
+    }
+
+    @bottom-right {
+        font: bold 12pt open-sans, sans-serif;
+        padding-top: 11pt;
+        vertical-align: top;
+    }
+
+    @bottom-left {
+    }
+}
+{% endif %}
+
+@page no-header-footer {
+    @top-left     { content: ''; border: none; }
+    @top-right    { content: ''; border: none; }
+    @bottom-left  { content: ''; border: none; }
+    @bottom-right { content: ''; border: none; }
+}
+
+@page no-header {
+    @top-left  { content: ''; border: none; }
+    @top-right { content: ''; border: none; }
+}
+
+@page no-footer {
+    @bottom-left  { content: ''; border: none; }
+    @bottom-right { content: ''; border: none; }
+}
+
+@page cover {
+    background: {{ color_accent }};
+    @top-left     { content: ''; border: none; }
+    @top-right    { content: ''; border: none; }
+    @bottom-left  { content: ''; border: none; }
+    @bottom-right { content: ''; border: none; }
+}
+{% endblock %}
+
+{% block book_items %}
+/* Generated content
+   ========================================================================= */
+.item\:cover h1 {
+    string-set: book_title content();
+}
+.item\:chapter h1 {
+    string-set: chapter_title content();
+}
+.item\:chapter h2 {
+    string-set: chapter_section content();
+}
+.item\:appendix h1 {
+    string-set: appendix_title content();
+}
+.item\:appendix h2 {
+    string-set: appendix_section content();
+}
+
+/* Book items
+   ========================================================================= */
+
+/* --- common -------------------------------------------------------------- */
+.item {
+    page-break-before: right;
+    page: page_normal;
+    prince-page-group: start; /* don't touch this! needed for 'page' property */
+}
+
+.item h1 {
+    color: {{ color_accent }};
+    font-size: 24pt;
+    margin-bottom: .5em;
+}
+
+/* --- blank page ---------------------------------------------------------- */
+{# Using multiple :blank selectors does not work as expected #}
+{% set page_names = ['no-header', 'no-footer', 'no-header-footer', 'page_normal', 'page_chapter', 'page_appendix'] %}
+{% for page in page_names %}
+@page {{ page }}:blank {
+    @top {
+        color: {{ color_gray }};
+        content: "{{ app.getLabel('blank') }}";
+        font-family: open-sans, sans-serif;
+        margin-top: 20em;
+    }
+}
+{% endfor %}
+
+/* --- item:cover ---------------------------------------------------------- */
+.item\:cover {
+    background: {{ color_accent }};
+    border: thick solid {{ color_accent }};
+    page: cover;
+    height: 30cm;
+}
+.item\:cover h1 {
+    color: {{ color_white }};
+    font-family: alte-haas-grotesk, sans-serif;
+    font-size: 48pt;
+    hyphens: none;
+    line-height: 1.1;
+    letter-spacing: -1pt;
+    padding: 3em 2em 0 0;
+    text-align: left;
+}
+.item\:cover h2 {
+    color: {{ lighten(color_accent, '30%') }};
+    font-family: alte-haas-grotesk, sans-serif;
+    font-size: 24pt;
+    font-weight: normal;
+    text-align: left;
+    margin-top: .5em;
+}
+
+/* --- item:title ---------------------------------------------------------- */
+.item\:title {
+    page: no-header-footer;
+}
+
+.item\:title h1,
+.item\:title h2,
+.item\:title h3 {
+    font-weight: normal;
+    text-align: center;
+}
+.item\:title h1 {
+    font-size: 28pt;
+    hyphens: none;
+    line-height: 1.1;
+    letter-spacing: -1pt;
+    margin: 5em 4em 0;
+    text-align: center;
+}
+.item\:title h2 {
+    font-size: 21pt;
+    margin-top: .5em;
+}
+.item\:title h3 {
+    font-size: 18pt;
+    font-style: italic;
+    margin-top: 1em;
+}
+
+/* --- item:edition -------------------------------------------------------- */
+.item\:edition {
+    page: no-header;
+    page-break-before: always;
+}
+
+/* --- item:license -------------------------------------------------------- */
+.item\:license {
+    page: no-header;
+}
+
+/* --- item:dedication ----------------------------------------------------- */
+.item\:dedication {
+    page: no-header;
+}
+.item\:dedication p {
+    font-size: 16pt;
+    font-style: italic;
+    margin-top: 10em;
+    text-align: right;
+}
+
+/* --- item:toc ------------------------------------------------------------ */
+.item\:toc {
+    page: no-header;
+}
+
+.item\:toc ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.item\:toc ul li,
+.item\:toc ul li a,
+.item\:toc ul li a code {
+    border: none;
+    color: inherit;
+    line-height: 1.2;
+    text-decoration: none;
+}
+.item\:toc li a::after {
+    color: inherit;
+    content: leader('. ') target-counter(attr(href), page);
+}
+.item\:toc ul li.level-1,
+.item\:toc ul li.level-1 a {
+    font-size: 16pt;
+    font-weight: bold;
+}
+.item\:toc ul li span {
+    font-weight: normal;
+    padding-right: .3em;
+}
+
+.item\:toc ul li.level-2 {
+    margin-left: 1em;
+}
+.item\:toc ul li.level-3,
+.item\:toc ul li.level-4,
+.item\:toc ul li.level-5,
+.item\:toc ul li.level-6 {
+    margin-left: 1em;
+}
+
+
+/* --- item:lot, item:lof -------------------------------------------------- */
+.item\:lof,
+.item\:lot {
+    page: no-header;
+}
+
+.item\:lof ul,
+.item\:lot ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.item\:lof ul a,
+.item\:lot ul a {
+    border: none;
+    color: inherit !important;
+    text-decoration: none;
+}
+.item\:lof a::after,
+.item\:lot a::after {
+    color: inherit;
+    content: leader('. ') target-counter(attr(href), page);
+    margin-left: .5em;
+}
+
+.item\:lof ul li,
+.item\:lot ul li {
+    margin: 0 0 .5em 0;
+}
+
+.item\:lof ul li span,
+.item\:lot ul li span {
+    padding-right: .5em;
+}
+
+/* --- item:chapter -------------------------------------------------------- */
+{% if edition.two_sided %}
+@page page_chapter:right {
+    @top-left     { content: string(book_title); }
+    @top-right    { content: string(chapter_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+
+@page page_chapter:left {
+    @top-left     { content: string(chapter_title, first); }
+    @top-right    { content: string(book_title); }
+    @bottom-right { }
+    @bottom-left  { content: counter(page); }
+}
+{% else %}
+@page page_chapter {
+    @top-left     { content: string(book_title); }
+    @top-right    { content: string(chapter_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+{% endif %}
+
+@page page_chapter:first {
+    @top       { content: '' !important; border: none; }
+    @top-left  { content: '' !important; border: none; }
+    @top-right { content: '' !important; border: none; }
+}
+
+.item\:chapter {
+    page: page_chapter;
+    prince-page-group: start; /* don't touch this! needed for 'page' property */
+}
+
+.item\:chapter a.link\:internal::after {
+    content: " ({{ app.getLabel('page') }} " target-counter(attr(href), page) ")";
+}
+
+.item\:chapter h1 { font-size: 36pt; color: {{ color_accent }}; margin: 3em 0 2em 2em; hyphens: none; text-align: right; }
+.item\:chapter h2 { font-size: 18pt; }
+.item\:chapter h3 { font-size: 18pt; }
+.item\:chapter h4 { font-size: 16pt; }
+.item\:chapter h5 { font-size: 16pt; }
+.item\:chapter h6 { font-size: 16pt; }
+
+.item\:chapter h1 + h2,
+.item\:chapter h2 + h3,
+.item\:chapter h3 + h4,
+.item\:chapter h4 + h5,
+.item\:chapter h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:chapter h1 span {
+    color: {{ color_black }};
+    display: block;
+    font-size: 21pt;
+    font-weight: normal;
+    margin-bottom: .25em;
+}
+
+/* --- item:appendix ------------------------------------------------------- */
+{% if edition.two_sided %}
+@page page_appendix:right {
+    @top-left     { content: string(book_title); }
+    @top-right    { content: string(appendix_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+
+@page page_appendix:left {
+    @top-left     { content: string(appendix_title, first); }
+    @top-right    { content: string(book_title); }
+    @bottom-right { }
+    @bottom-left  { content: counter(page); }
+}
+{% else %}
+@page page_appendix {
+    @top-left     { content: string(book_title); }
+    @top-right    { content: string(appendix_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+{% endif %}
+
+@page page_appendix:first {
+    @top       { content: '' !important; border: none; }
+    @top-left  { content: '' !important; border: none; }
+    @top-right { content: '' !important; border: none; }
+}
+
+.item\:appendix {
+    page: page_appendix;
+    prince-page-group: start; /* don't touch this! needed for 'page' property */
+}
+
+.item\:appendix a.link\:internal::after {
+    content: " ({{ app.getLabel('page') }} " target-counter(attr(href), page) ")";
+}
+
+.item\:appendix h1 { font-size: 36px; color: {{ color_accent }}; margin: 3em 0 2em 2em; hyphens: none; text-align: right; }
+.item\:appendix h2 { font-size: 24px; }
+.item\:appendix h3 { font-size: 21px; }
+.item\:appendix h4 { font-size: 16px; }
+.item\:appendix h5 { font-size: 14px; }
+.item\:appendix h6 { font-size: 14px; }
+
+.item\:appendix h1 + h2,
+.item\:appendix h2 + h3,
+.item\:appendix h3 + h4,
+.item\:appendix h4 + h5,
+.item\:appendix h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:appendix h1 span {
+    color: {{ color_black }};
+    display: block;
+    font-size: 21pt;
+    font-weight: normal;
+    margin-bottom: .25em;
+}
+
+/* --- item:part ----------------------------------------------------------- */
+.item\:part h1 {
+    font-size: 36pt;
+    margin-top: 5em;
+    padding: 1em 0;
+    text-align: left;
+}
+.item\:part h1 span {
+    color: {{ color_black }};
+    display: block;
+    font-size: 24pt;
+    font-weight: normal;
+    margin: .5em 0;
+}
+{% endblock %}

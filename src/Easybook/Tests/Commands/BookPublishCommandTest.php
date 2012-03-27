@@ -30,16 +30,16 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        // setup temp dir for generated files
-        $this->tmpDir = sys_get_temp_dir().'/easybook';
-        $this->filesystem = new Filesystem();
-        $this->filesystem->mkdir($this->tmpDir);
-
         // create the console application and add the tested command
         $app = new Application();
         $this->console = new ConsoleApplication($app);
         $this->console->add(new BookNewCommand());
         $this->console->add(new BookPublishCommand());
+
+        // setup temp dir for generated files
+        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
+        $this->filesystem = new Filesystem();
+        $this->filesystem->mkdir($this->tmpDir);
 
         // generate a sample book before testing its publication
         $command = $this->console->find('new');
@@ -112,7 +112,7 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertContains(
-            '/easybook/the-origin-of-species/Output/web',
+            '/the-origin-of-species/Output/web',
             $tester->getDisplay(),
             'The book is published in the proper directory'
         );

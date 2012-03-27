@@ -29,15 +29,15 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        // setup temp dir for generated files
-        $this->tmpDir = sys_get_temp_dir().'/easybook';
-        $this->filesystem = new Filesystem();
-        $this->filesystem->mkdir($this->tmpDir);
-
         // create the console application and add the tested command
         $app = new Application();
         $this->console = new ConsoleApplication($app);
         $this->console->add(new BookNewCommand());
+
+        // setup temp dir for generated files
+        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
+        $this->filesystem = new Filesystem();
+        $this->filesystem->mkdir($this->tmpDir);
     }
 
     public function tearDown()
@@ -89,7 +89,7 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertContains(
-            '/easybook/the-origin-of-species',
+            'the-origin-of-species',
             $tester->getDisplay(),
             'The book is generated in the proper directory'
         );
@@ -112,7 +112,7 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertRegExp(
-            '/.*\/easybook\/the-origin-of-species\s+/',
+            '/.*\/the-origin-of-species/',
             $tester->getDisplay(),
             'The name of the new book directory is correct'
         );
@@ -207,6 +207,11 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
             'title'   => 'The Origin of Species',
             '--dir'   => $this->tmpDir
         ));
+        $tester->execute(array(
+            'command' => $command->getName(),
+            'title'   => 'The Origin of Species',
+            '--dir'   => $this->tmpDir
+        ));
 
         $this->assertRegExp(
             '/.* OK .* You can start writing your book in the following directory/',
@@ -215,7 +220,7 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         );
         
         $this->assertRegExp(
-            '/.*\/easybook\/the-origin-of-species-\d{1}\s+/',
+            '/.*\/the-origin-of-species-\d{1}\s+/',
             $tester->getDisplay(),
             'The name of the second book directory is correct'
         );

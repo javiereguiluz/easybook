@@ -24,6 +24,7 @@ use Easybook\Parsers\MdParser;
 use Easybook\Util\Prince;
 use Easybook\Util\Slugger;
 use Easybook\Util\Toolkit;
+use Easybook\Util\TwigCssExtension;
 
 class Application extends \Pimple
 {
@@ -35,7 +36,7 @@ class Application extends \Pimple
         $this['app.debug']     = true;
         $this['app.charset']   = 'UTF-8';
         $this['app.name']      = 'easybook';
-        $this['app.version']   = '4.2';
+        $this['app.version']   = '4.4';
         $this['app.signature'] = "\n"
         ."                     |              |    \n"
         ." ,---.,---.,---.,   .|---.,---.,---.|__/ \n"
@@ -51,13 +52,27 @@ class Application extends \Pimple
         $this['app.dir.plugins']            = $this['app.dir.base'].'/src/Easybook/Plugins';
         $this['app.dir.translations']       = $this['app.dir.resources'].'/Translations';
         $this['app.dir.skeletons']          = $this['app.dir.resources'].'/Skeletons';
+        $this['app.dir.themes']             = $this['app.dir.resources'].'/Themes';
 
-        $this['app.dir.theme_pdf']          = $this['app.dir.resources'].'/Themes/Pdf';
-        $this['app.dir.theme_html']         = $this['app.dir.resources'].'/Themes/Html';
-        $this['app.dir.theme_html_chunked'] = $this['app.dir.resources'].'/Themes/HtmlChunked';
-        $this['app.dir.theme_epub']         = $this['app.dir.resources'].'/Themes/Epub2';
-        $this['app.dir.theme_epub2']        = $this['app.dir.resources'].'/Themes/Epub2';
-        //$this['app.dir.theme_epub3'] = $this['app.dir.resources'].'/Themes/Epub3';
+        // -- default edition options -----------------------------------------
+        // TODO: each edition type should define different values
+        $this['app.edition.defaults'] = array(
+            'format'         => 'html',
+            'highlight_code' => false,
+            'include_styles' => true,
+            'isbn'           => null,
+            'labels'         => array('appendix', 'chapter', 'figure'),
+            'margin'         => array(
+                'top'    => '25mm',
+                'bottom' => '25mm',
+                'inner'  => '30mm',
+                'outter' => '20mm'
+            ),
+            'page_size'      => 'A4',
+            'theme'          => 'clean',
+            'toc'            => array('deep' => 2, 'elements' => array('appendix', 'chapter')),
+            'two_sided'      => true
+        );
 
         // -- timer -----------------------------------------------------------
         $this['app.timer.start']  = 0.0;
@@ -164,11 +179,115 @@ class Application extends \Pimple
             'strict_variables' => $this['app.debug'],
         );
 
-        $this['twig.path'] = '';  // custom template path (rarely used/needed)
+        // the twig path used by render() function. This value is set by convenience methods
+        // (renderCustomTemplate(), renderThemeTemplate(), ...) before template rendering
+        $this['twig.path'] = '';
+
+        // twig path for custom templates (user defined templates for book/edition)
+        $this['twig.path.custom'] = $this->share(function ($app) {
+            $paths = array();
+
+            // edition custom templates
+            // <book-dir>/Resources/Templates/<edition-name>/<template-name>.twig
+            $dir = $app['publishing.dir.templates'].'/'.$app['publishing.edition'];
+            if (file_exists($dir)) {
+                $paths[] = $dir;
+            }
+
+            // edition type custom templates (epub, pdf, html, html_chunked)
+            // <book-dir>/Resources/Templates/<edition-type>/<template-name>.twig
+            $dir = $app['publishing.dir.templates'].'/'.$app->edition('format');
+            if (file_exists($dir)) {
+                $paths[] = $dir;
+            }
+
+            // book custom templates (same templates for all editions)
+            // <book-dir>/Resources/Templates/<template-name>.twig
+            $dir = $app['publishing.dir.templates'];
+            if (file_exists($dir)) {
+                $paths[] = $dir;
+            }
+
+            return $paths;
+        });
+
+        // twig path for default theme templates (easybook built-in templates)
+        $this['twig.path.theme'] = $this->share(function ($app) {
+            $paths = array();
+
+            $theme  = ucfirst($app->edition('theme'));
+            $format = Toolkit::camelize($app->edition('format'), true);
+            // TODO: fix the following hack
+            if ('Epub' == $format) {
+                $format = 'Epub2';
+            }
+
+            // default templates for the edition/book theme
+            // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
+            $dir = sprintf('%s/%s/%s/Templates', $app['app.dir.themes'], $theme, $format);
+            
+            if (file_exists($dir)) {
+                $paths[] = $dir;
+            }
+
+            // default common templates for all the editions of the same theme
+            // <easybook>/app/Resources/Themes/<theme>/Common/Templates/<template-name>.twig
+            $dir = sprintf('%s/%s/Common/Templates', $app['app.dir.themes'], $theme);
+            
+            if (file_exists($dir)) {
+                $paths[] = $dir;
+            }
+            
+            // default base theme for every edition and every book
+            // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
+            $dir = sprintf('%s/Base/%s/Templates', $app['app.dir.themes'], $format);
+            
+            if (file_exists($dir)) {
+                $paths[] = $dir;
+            }
+
+            return $paths;
+        });         
+
+        // twig path for default content templates
+        // (easybook built-in templates for contents; e.g. `license.md.twig`)
+        $this['twig.path.contents'] = $this->share(function ($app) {
+            $paths = array();
+
+            $theme  = ucfirst($app->edition('theme'));
+            $format = Toolkit::camelize($app->edition('format'), true);
+            // TODO: fix the following hack
+            if ('Epub' == $format) {
+                $format = 'Epub2';
+            }
+
+            // default content templates for the edition/book theme
+            // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Contents/<template-name>.twig
+            $dir = sprintf('%s/%s/%s/Contents', $app['app.dir.themes'], $theme, $format);
+            
+            if (file_exists($dir)) {
+                $paths[] = $dir;
+            }
+
+            // default content templates for every edition and every book
+            // <easybook>/app/Resources/Themes/Base/<edition-type>/Contents/<template-name>.twig
+            $dir = sprintf('%s/Base/%s/Contents', $app['app.dir.themes'], $format);
+
+            if (file_exists($dir)) {
+                $paths[] = $dir;
+            }
+
+            return $paths;
+        });
+
+        $this['twig.loader'] = function() use ($app) {
+            return new \Twig_Loader_Filesystem($app['twig.path']);
+        };
 
         $this['twig'] = function() use ($app) {
             $twig = new \Twig_Environment($app['twig.loader'], $app['twig.options']);
-            
+            $twig->addExtension(new TwigCssExtension());
+
             $twig->addGlobal('app', $app);
             
             if (null != $app->get('book')) {
@@ -180,43 +299,6 @@ class Application extends \Pimple
             }
             
             return $twig;
-        };
-
-        $this['twig.loader'] = function() use ($app) {
-            $paths = array();
-            
-            // path directly passed to container
-            if ('' != $app['twig.path'] and null != $app['twig.path']) {
-                $paths[] = $app['twig.path'];
-            }
-            
-            // custom templates for this edition
-            // <book-dir>/Resources/Templates/<edition-name>/<template-name>.twig
-            $customEditionTemplatesDirectory =
-                $app->get('publishing.dir.templates').'/'.$app['publishing.edition'];
-            if (file_exists($customEditionTemplatesDirectory)) {
-                $paths[] = $customEditionTemplatesDirectory;
-            }
-
-            // custom templates for the edition type (pdf, html, html_chunked)
-            // <book-dir>/Resources/Templates/<edition-type>/<template-name>.twig
-            $customEditionTypeTemplatesDirectory =
-                $app->get('publishing.dir.templates').'/'.$app->edition('format');
-            if (file_exists($customEditionTypeTemplatesDirectory)) {
-                $paths[] = $customEditionTypeTemplatesDirectory;
-            }
-
-            // custom templates for the book (same templates for all editions)
-            // <book-dir>/Resources/Templates/<template-name>.twig
-            $customBookTemplatesDirectory = $app->get('publishing.dir.templates');
-            if (file_exists($customBookTemplatesDirectory)) {
-                $paths[] = $customBookTemplatesDirectory;
-            }
-            
-            // generic easybook templates
-            $paths[] = $app['publishing.dir.app_theme'].'/Templates';
-
-            return new \Twig_Loader_Filesystem($paths);
         };
 
         // -- princeXML -------------------------------------------------------
@@ -334,26 +416,31 @@ class Application extends \Pimple
         return $array;
     }
 
-    public function extendEdition($parent)
+    public function loadEditionConfig()
     {
         $book    = $this->get('book');
         $edition = $this->get('publishing.edition');
+        $config  = $book['editions'][$edition];
 
-        if (!array_key_exists($parent, $book['editions'])) {
-            throw new \UnexpectedValueException(sprintf(
-                " ERROR: '%s' edition extends nonexistent '%s' edition"
-                ."\n\n"
-                ."Check in '%s' file \n"
-                ."that the value of 'extends' option in '%s' edition is a valid \n"
-                ."edition of the book",
-                $edition, $parent, realpath($this['publishing.dir.book'].'/config.yml'), $edition
-            ));
+        // if edition extends another edition, merge their configurations
+        if (null != $parent = $this->edition('extends')) {
+            if (!array_key_exists($parent, $book['editions'])) {
+                throw new \UnexpectedValueException(sprintf(
+                    " ERROR: '%s' edition extends nonexistent '%s' edition"
+                    ."\n\n"
+                    ."Check in '%s' file \n"
+                    ."that the value of 'extends' option in '%s' edition is a valid \n"
+                    ."edition of the book",
+                    $edition, $parent, realpath($this['publishing.dir.book'].'/config.yml'), $edition
+                ));
+            }
+
+            $parentConfig  = $book['editions'][$parent];
+            $config = Toolkit::array_deep_merge($parentConfig, $config);
         }
 
-        $editionConfig = $book['editions'][$edition];
-        $parentConfig  = $book['editions'][$parent];
-        $config = array_merge($parentConfig, $editionConfig);
-        
+        $config = Toolkit::array_deep_merge($this['app.edition.defaults'], $config);
+
         $book['editions'][$edition] = $config;
         $this->set('book', $book);
     }
@@ -403,13 +490,22 @@ class Application extends \Pimple
     /*
      * Shortcut method to render templates
      */
-    public function render($template, $variables = array(), $target = null)
+    public function render($template, $variables = array(), $targetFile = null, $path = null)
     {
         if ('.twig' == substr($template, -5)) {
+            // if the path of the templates isn't set, use all paths
+            $this['twig.path'] = $path ?: array_merge(
+                $this['twig.path.custom'], $this['twig.path.theme']
+            );
+
             $rendered = $this->get('twig')->render($template, $variables);
-            
-            if (null != $target) {
-                file_put_contents($target, $rendered);
+
+            if (null != $targetFile) {
+                if (!is_dir($dir = dirname($targetFile))) {
+                    $this->get('filesystem')->mkdir($dir);
+                }
+
+                file_put_contents($targetFile, $rendered);
             }
             
             return $rendered;
@@ -420,6 +516,24 @@ class Application extends \Pimple
                 substr($template, -5)
             ));
         }
+    }
+
+    public function renderCustomTemplate($template, $variables = array(), $target = null)
+    {
+        $path = $this['twig.path.custom'];
+        return $this->render($template, $variables, $target, $path);
+    }
+
+    public function renderThemeTemplate($template, $variables = array(), $target = null)
+    {
+        $path = $this['twig.path.theme'];
+        return $this->render($template, $variables, $target, $path);
+    }    
+
+    public function renderThemeContent($template, $variables = array(), $target = null)
+    {
+        $path = $this['twig.path.contents'];
+        return $this->render($template, $variables, $target, $path);
     }
 
     /*

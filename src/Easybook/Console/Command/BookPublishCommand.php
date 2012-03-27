@@ -166,15 +166,7 @@ EOT
         
         // add some useful values to the app configuration
         $this->app->set('publishing.edition', $edition);
-        
-        // if the edition extends another one, check that they all exist and extend
-        if (null != $parent = $this->app->edition('extends')) {
-            $this->app->extendEdition($parent);
-        }
-        
-        // add some useful values to the app configuration
-        $app_theme = $this->app['app.dir.theme_'.$this->app->edition('format')];
-        $this->app->set('publishing.dir.app_theme', $app_theme);
+        $this->app->loadEditionConfig();
         
         // all checks passed, the book can be published
         

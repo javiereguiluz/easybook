@@ -1,0 +1,8 @@
+**{{ book.title }}**
+
+**Publication date**: {{ book.publication_date|default('now')|date(app.getLabel('date_format')) }}
+
+This book was published with *{{ book.generator.name }} v{{ book.generator.version }}*,
+an open-source book publishing application developed by Javier Eguiluz
+using several [Symfony components](http://components.symfony.com) and freely available at
+[easybook-project.org](http://easybook-project.org).

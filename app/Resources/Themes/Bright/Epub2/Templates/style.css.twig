@@ -1,0 +1,288 @@
+{% extends 'style_common.css.twig' %}
+
+{% block base %}
+/* Custom fonts
+   ========================================================================= */
+/* Inconsolata : http://www.google.com/webfonts/specimen/Inconsolata */
+@font-face {
+    font-family: inconsolata;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/fonts/Inconsolata.ttf")
+}
+
+/* Base styles
+   ========================================================================= */
+
+body {
+    background: #FFF;
+    color: {{ color_black }};
+    font: 16px/1.6 "Helvetica Neue", Arial, sans-serif;
+}
+
+/* --- links --------------------------------------------------------------- */
+a, a:visited {
+    color: {{ color_blue }};
+    text-decoration: underline;
+}
+a:hover {
+    color: {{ color_accent }};
+    text-decoration: none;
+}
+
+/* --- headings ------------------------------------------------------------ */
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1;
+    margin: 1em 0 .25em 0;
+}
+
+h1 { font-size: 24px; }
+h2 { font-size: 21px; }
+h3 { font-size: 18px; }
+h4 { font-size: 14px; }
+h5 { font-size: 14px; }
+h6 { font-size: 14px; }
+
+h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+    margin-top: .25em;
+}
+
+/* --- lists --------------------------------------------------------------- */
+ul, ol {
+    list-style-type: disc;
+    margin: 1em 0 1em 2em;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ul li, ol li {
+    margin: .5em 0;
+}
+
+/* --- images -------------------------------------------------------------- */
+img {
+    max-width: {{ width_container }};
+}
+
+/* --- tables -------------------------------------------------------------- */
+table {
+    border: 1px solid {{ color_silver }};
+    margin-bottom: 1em;
+    max-width: 100%;
+    width: 100%;
+}
+
+table th, table td {
+    border-top: 1px solid {{ color_silver }};
+    padding: .5em;
+    line-height: 1.2;
+    text-align: left;
+}
+table th {
+    font-weight: bold;
+    vertical-align: bottom;
+}
+table td {
+    vertical-align: top;
+}
+table tbody + tbody {
+    border-top: 2px solid {{ color_silver }};
+}
+table th + th,
+table td + td,
+table th + td,
+table td + th {
+    border-left: 1px solid {{ color_silver }};
+}
+
+/* --- code and code listings ---------------------------------------------- */
+code, pre {
+    font-family: inconsolata, monospace;
+    font-size: 90%;
+    -webkit-border-radius: {{ width_rounded_corner }};
+    -moz-border-radius: {{ width_rounded_corner }};
+    border-radius: {{ width_rounded_corner }};
+    padding: 0 3px 2px;
+}
+
+code {
+    border: 1px solid #E1E1E8;
+    line-height: 1.6em;
+    padding: 3px 4px;
+}
+
+pre {
+    background-color: #F7F7F9;
+    border: 1px solid {{ color_silver }};
+    margin: 0 0 1em;
+    padding: .5em;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+pre code {
+    background-color: transparent;
+    border: none;
+    color: {{ color_black }};
+    padding: 0;
+}
+
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+    font-weight: normal;
+}
+{% endblock %}
+
+{% block layout %}
+/* Layout
+   ========================================================================= */
+
+.container {
+    padding: 0 2em;
+    width: auto;
+}
+{% endblock %}
+
+{% block book_items %}
+/* Book items
+   ========================================================================= */
+
+/* --- common -------------------------------------------------------------- */
+.item {
+    margin-bottom: 1em;
+}
+
+/* --- item:cover ---------------------------------------------------------- */
+.item\:cover {
+}
+.item\:cover h1 {
+    color: {{ color_accent }};
+    font-size: 72px;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    margin: 2em 0 0;
+    text-align: center;
+}
+.item\:cover h2 {
+    color: {{ color_black }};
+    font-size: 36px;
+    font-weight: normal;
+    margin-top: .5em;
+    text-align: center;
+}
+
+/* --- item:title ---------------------------------------------------------- */
+.item\:cover + .item\:title {
+    display: none;
+}
+.item\:title h1.title {
+    display: none;
+}
+.item\:title h1,
+.item\:title h2,
+.item\:title h3 {
+    font-weight: normal;
+    text-align: center;
+}
+.item\:title h1 {
+    font-size: 36px;
+    line-height: 1.1;
+    letter-spacing: -2pt;
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+.item\:title h2 {
+    font-size: 24px;
+    margin-top: .5em;
+}
+.item\:title h3 {
+    font-size: 18px;
+    font-style: italic;
+    margin-top: 1em;
+}
+
+/* --- item:dedication ----------------------------------------------------- */
+.item\:dedication {
+    padding-top: 5em;
+}
+.item\:dedication h1.title {
+    display: none;
+}
+.item\:dedication p {
+    font-style: italic;
+    text-align: center;
+}
+
+/* --- item:toc ------------------------------------------------------------ */
+.item\:toc {
+}
+
+/* --- item:lot, item:lof -------------------------------------------------- */
+.item\:lof ul,
+.item\:lot ul {
+}
+
+/* --- item:chapter -------------------------------------------------------- */
+.item\:chapter h1 { font-size: 48px; color: {{ color_accent }}; margin: 3em 0; }
+.item\:chapter h2 { font-size: 24px; }
+.item\:chapter h3 { font-size: 21px; }
+.item\:chapter h4 { font-size: 16px; }
+.item\:chapter h5 { font-size: 16px; }
+.item\:chapter h6 { font-size: 16px; }
+
+.item\:chapter h1 + h2,
+.item\:chapter h2 + h3,
+.item\:chapter h3 + h4,
+.item\:chapter h4 + h5,
+.item\:chapter h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:chapter h1 span {
+    color: {{ color_black }};
+    display: block;
+    font-size: 24px;
+    font-weight: normal;
+    margin-bottom: .25em;
+}
+
+/* --- item:appendix ------------------------------------------------------- */
+.item\:appendix h1 { font-size: 48px; color: {{ color_accent }}; margin: 3em 0; }
+.item\:appendix h2 { font-size: 24px; }
+.item\:appendix h3 { font-size: 21px; }
+.item\:appendix h4 { font-size: 16px; }
+.item\:appendix h5 { font-size: 16px; }
+.item\:appendix h6 { font-size: 16px; }
+
+.item\:appendix h1 + h2,
+.item\:appendix h2 + h3,
+.item\:appendix h3 + h4,
+.item\:appendix h4 + h5,
+.item\:appendix h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:appendix h1 span {
+    color: {{ color_black }};
+    font-weight: normal;
+}
+
+/* --- item:part ----------------------------------------------------------- */
+.item\:part {
+}
+
+.item\:part h1 {
+    color: {{ color_accent }};
+    font-size: 48px;
+    margin: 3em 0;
+}
+.item\:part h1 span {
+    color: {{ color_black }};
+    display: block;
+    font-size: 24px;
+    font-weight: normal;
+    margin-bottom: .5em;
+}
+{% endblock %}

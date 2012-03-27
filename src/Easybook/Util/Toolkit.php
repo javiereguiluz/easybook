@@ -129,4 +129,23 @@ class Toolkit
             mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
         );
     }
+
+    /**
+     * Camelizes a string: 'updated_at' -> 'updatedAt'
+     *
+     * @param string $string     A string to camelize
+     * @param bool   $upperFirst If true, the first letter is also uppercased
+     *                           'updated_at' -> 'UpdatedAt'
+     *
+     * @return string The camelized string
+     *
+     * code adapted from Symfony\Component\DependencyInjection\Container.php
+     */
+    static public function camelize($string, $upperFirst = false)
+    {
+        return preg_replace_callback('/(^|_|\.)+(.)/', function ($match) use ($upperFirst) {
+            $camelized = ('.' === $match[1] ? '_' : '').strtoupper($match[2]);
+            return $upperFirst ? ucfirst($camelized) : $camelized;
+        }, $string);
+    }
 }

@@ -1,0 +1,58 @@
+{% extends 'layout.twig' %}
+
+{% block class 'index' %}
+
+{% block body %}
+<div class="item item:cover">
+    <h1>{{ book.title }}</h1>
+    <h2>{{ book.author }}</h2>
+</div>
+
+{% if edition.toc is defined %}
+<div class="item item:toc">
+
+<h1>{{ items.toc.title }}</h1>
+
+<ul>
+{% for item in app.get('publishing.items') %}
+    {% if item.config.element in ['appendix', 'chapter'] %}
+
+        {# item has several elements in its toc #}
+        {% for entry in item.toc %}
+            {% if entry.level <= edition.toc.deep %}
+                <li class="{{ item.config.element }} level-{{ entry.level }}">
+                    <span>{{ entry.label }}</span>
+                    {% if 1 == entry.level %}
+                    <a href="./{{ item.slug }}.html">{{ item.title }}</a>
+                    {% else %}
+                    <a href="./{{ item.slug }}.html#{{ entry.slug }}">{{ entry.title }}</a>
+                    {% endif %}
+                </li>
+            {% endif %}
+        {% endfor %}
+    
+    {% elseif item.config.element in ['part'] %}
+        <li class="{{ item.config.element }} level-1">
+            <span>{{ item.label }}</span> {{ item.title }}
+        </li>
+    {% endif %}
+{% endfor %}
+</ul>
+
+</div>
+{% endif %}
+
+{% if items.edition is defined %}
+<div class="item item:edition">
+    <h1>{{ items.edition.title }}</h1>
+    {{ items.edition.content }}
+</div>
+{% endif %}
+
+{% if items.license is defined %}
+<div class="item item:license">
+    <h1>{{ items.license.title }}</h1>
+    {{ items.license.content }}
+</div>
+{% endif %}
+{% endblock %}

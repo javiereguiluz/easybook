@@ -1,0 +1,399 @@
+/*
+{{ app.get('app.signature') }}
+
+  Theme name:   Bright (vibrant and modern)
+  Author:       javier.eguiluz@gmail.com
+  Last updated: 27 / March / 2012
+*/
+
+{# Variables
+   ========================================================================= #}
+{% set color_accent = edition.theme.color|default('#C71585') %}
+{% set color_black  = '#222'    %}
+{% set color_gray   = '#777'    %}
+{% set color_silver = '#DDD'    %}
+{% set color_white  = '#F5F5F5' %}
+{% set color_blue   = '#152DC6' %}
+{% set width_container      = edition.theme.width|default('940px') %}
+{% set width_rounded_corner = '3px' %}
+
+{% block normalize %}
+/* Normalize styles
+   ========================================================================= */
+/* copied from http://github.com/necolas/normalize.css - 2012-03-06T10:21 UTC */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section,
+summary {
+    display: block;
+}
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+[hidden] {
+    display: none;
+}
+
+html {
+    font-size: 100%; /* 1 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+    -ms-text-size-adjust: 100%; /* 2 */
+}
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+body {
+    margin: 0;
+}
+
+a:focus {
+    outline: thin dotted;
+}
+
+a:hover,
+a:active {
+    outline: 0;
+}
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.75em;
+    margin: 2.33em 0;
+}
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+dfn {
+    font-style: italic;
+}
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+pre,
+code,
+kbd,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+q {
+    quotes: none;
+}
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+small {
+    font-size: 75%;
+}
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+img {
+    border: 0;
+    -ms-interpolation-mode: bicubic;
+}
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+figure {
+    margin: 0;
+}
+
+form {
+    margin: 0;
+}
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+legend {
+    border: 0;
+    padding: 0;
+    white-space: normal;
+    *margin-left: -7px;
+}
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%;
+    margin: 0;
+    vertical-align: baseline;
+    *vertical-align: middle;
+}
+
+button,
+input {
+    line-height: normal;
+}
+
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    cursor: pointer;
+    -webkit-appearance: button;
+    *overflow: visible;
+}
+
+button[disabled],
+input[disabled] {
+    cursor: default;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box;
+    padding: 0;
+    *height: 13px;
+    *width: 13px;
+}
+
+input[type="search"] {
+    -webkit-appearance: textfield;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+textarea {
+    overflow: auto;
+    vertical-align: top;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+{% endblock %}
+
+{% block base %}
+{% endblock %}
+
+{% block layout %}
+{% endblock %}
+
+{% block code_listings %}
+{% if edition.highlight_code %}
+/* Code listings
+   ========================================================================= */
+code {
+    color: {{ color_accent }};
+}
+
+div.code pre br {
+    display: none;
+}
+/* keywords */
+.kw0, .kw1, .kw2, .kw3, .kw4, .kw5, .kw6 {
+    color: #2100D5;
+}
+/* comments, .comulti = multiline comment */
+.co0, .co1, .co2, .co3, .co4, .coMULTI,
+div.html .sc-1     /* HTML comments */
+{
+    color: #007800;
+}
+/* escape chars, .es_h = escape char hard quotes */
+.es0, .es1, .es2, .es3, .es4, .es5, .es6, .es_h {
+    color: #000;
+}
+/* brackets */
+.br1, .br2 {
+    color: #000;
+}
+/* symbols '(', ')', '[', ']', '{', '}', '!', '@', '%', '&', '|', '/', */
+.sy0, .sy1 {
+    color: #000;
+}
+/* brackets */
+.br1, .br2 {
+    color: #000;
+}
+/* strings, .st_h = string hard quotes */
+.st0, .st1, .st2, .st_h {
+    color: #D90000;
+}
+/* numbers */
+.nu0 {
+    color: #2100D5;
+}
+/* methods */
+.me1, .me2 {
+    color: #000;
+}
+/* scripts */
+.sc0, .sc1, .sc2, .sc3, .sc4, .sc5 {
+    color: #000;
+}
+/* regexps */
+.re0, .re1, .re2 {
+    color: #000;
+}
+/* special code blocks */
+div.cli pre {
+    background: {{ color_black }};
+    border-color: {{ color_black }};
+    color: #FFF;
+}
+
+div.php .kw3,                 /* PHP built-in functions */
+div.html .kw3,                /* HTML tag attributes */
+div.twig .re0 .me1            /* Twig object.property (property only) */
+{
+    color: #641F9D;
+}
+div.php .re0,                  /* PHP variables */
+div.yaml .co3, div.yaml .co4,  /* YAML keys */
+div.yaml .re0,                 /* YAML underscored keys */
+div.ini .re0,                  /* INI brackets */
+div.twig .re0                  /* Twig object.property (object only) */
+{
+    color: #BC0092;
+}
+div.yaml .co2                  /* YAML directives */
+{
+    color: #D90000;
+}
+{% endif %}
+{% endblock %}
+
+{% block book_items %}
+{% endblock %}
+
+{% block responsive %}
+{% endblock %}
