@@ -50,7 +50,7 @@ class LinkPlugin implements EventSubscriberInterface
 
         preg_match_all('/<h[1-6] id="(?<slug>.*)".*<\/h[1-6]>/',
             $item['content'],
-            &$ids,
+            $ids,
             PREG_SET_ORDER
         );
 
