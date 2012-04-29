@@ -3,7 +3,7 @@
     "description": "Book publishing application",
     "keywords":    ["book", "publish", "ebook", "e-book", "documentation"],
     "homepage":    "http://easybook-project.org",
-    "version":     "4.2",
+    "version":     "4.4",
     "license":     "MIT",
     "authors": [
         {
@@ -32,7 +32,6 @@
 
         "pimple/pimple":            "dev-master",
 
-        "symfony/class-loader":     "2.1.*",
         "symfony/console":          "2.1.*",
         "symfony/event-dispatcher": "2.1.*",
         "symfony/filesystem":       "2.1.*",

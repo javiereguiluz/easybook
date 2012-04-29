@@ -10,7 +10,7 @@
  * file that was distributed with this source code.
  */
 
-require_once __DIR__.'/app/autoload.php';
+require __DIR__.'/vendor/.composer/autoload.php';
 
 use Easybook\DependencyInjection\Application;
 use Easybook\Console\ConsoleApplication;
