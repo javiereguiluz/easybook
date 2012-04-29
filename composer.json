@@ -3,7 +3,7 @@
     "description": "Book publishing application",
     "keywords":    ["book", "publish", "ebook", "e-book", "documentation"],
     "homepage":    "http://easybook-project.org",
-    "version":     "4.4",
+    "version":     "4.4.0",
     "license":     "MIT",
     "authors": [
         {

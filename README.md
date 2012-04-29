@@ -20,7 +20,7 @@ $ git clone http://github.com/javiereguiluz/easybook.git easybook
 
 # download composer and install easybook vendors
 $ cd easybook
-$ wget http://getcomposer.org/composer.phar
+$ curl -s http://getcomposer.org/installer | php
 $ php composer.phar install
 ```
 
