@@ -45,14 +45,14 @@ class Application extends \Pimple
         ."                `---'\n";
 
         // -- global directories location -------------------------------------
-        $this['app.dir.base']               = realpath(__DIR__.'/../../../');
-        $this['app.dir.cache']              = $this['app.dir.base'].'/app/Cache';
-        $this['app.dir.doc']                = $this['app.dir.base'].'/doc';
-        $this['app.dir.resources']          = $this['app.dir.base'].'/app/Resources';
-        $this['app.dir.plugins']            = $this['app.dir.base'].'/src/Easybook/Plugins';
-        $this['app.dir.translations']       = $this['app.dir.resources'].'/Translations';
-        $this['app.dir.skeletons']          = $this['app.dir.resources'].'/Skeletons';
-        $this['app.dir.themes']             = $this['app.dir.resources'].'/Themes';
+        $this['app.dir.base']         = realpath(__DIR__.'/../../../');
+        $this['app.dir.cache']        = $this['app.dir.base'].'/app/Cache';
+        $this['app.dir.doc']          = $this['app.dir.base'].'/doc';
+        $this['app.dir.resources']    = $this['app.dir.base'].'/app/Resources';
+        $this['app.dir.plugins']      = $this['app.dir.base'].'/src/Easybook/Plugins';
+        $this['app.dir.translations'] = $this['app.dir.resources'].'/Translations';
+        $this['app.dir.skeletons']    = $this['app.dir.resources'].'/Skeletons';
+        $this['app.dir.themes']       = $this['app.dir.resources'].'/Themes';
 
         // -- default edition options -----------------------------------------
         // TODO: each edition type should define different values
@@ -79,7 +79,8 @@ class Application extends \Pimple
         $this['app.timer.finish'] = 0.0;
 
         // -- publishing process variables ------------------------------------
-        $this['publishing.dir.app_theme'] = '';  # holds the app theme dir for the current edition
+        // holds the app theme dir for the current edition
+        $this['publishing.dir.app_theme'] = '';
         $this['publishing.dir.book']      = '';
         $this['publishing.dir.contents']  = '';
         $this['publishing.dir.resources'] = '';
@@ -88,11 +89,14 @@ class Application extends \Pimple
         $this['publishing.dir.output']    = '';
         $this['publishing.edition']       = '';
         $this['publishing.items']         = array();
-        // TODO: think about 'parsing_item' name. Change to 'current_item', 'active_item'?
-        $this['publishing.parsing_item']  = array();
+        // the specific item currently being parsed/modified/decorated/...
+        $this['publishing.active_item']   = array();
         $this['publishing.book.slug']     = '';
         $this['publishing.book.items']    = array();
-        $this['publishing.slugs']         = array(); // Holds all the slugs generated, to avoid repetitions
+        // holds all the generated slugs, to avoid repetitions
+        $this['publishing.slugs']         = array();
+        // holds all the internal links (used in html_chunked and epub editions)
+        $this['publishing.links']         = array();
         $this['publishing.list.images']   = array();
         $this['publishing.list.tables']   = array();
         
@@ -153,7 +157,7 @@ class Application extends \Pimple
 
         // -- parser ----------------------------------------------------------
         $this['parser'] = $this->share(function ($app) {
-            $format = strtolower($app['publishing.parsing_item']['config']['format']);
+            $format = strtolower($app['publishing.active_item']['config']['format']);
 
             // TODO: extensibility -> support several format parsers (RST, Textile, ...)
             switch ($format) {
@@ -165,7 +169,7 @@ class Application extends \Pimple
                     throw new \Exception(sprintf(
                         'Unknown "%s" format for "%s" content (easybook only supports Markdown)',
                         $format,
-                        $app['publishing.parsing_item']['config']['content']
+                        $app['publishing.active_item']['config']['content']
                     ));
             }
         });

@@ -382,7 +382,7 @@ Y ahora puedes mostrar en cada capítulo el tiempo estimado que se tarda en leer
 añadiendo `{{ item.config.time }}` en la plantilla `chapter.twig` con la que se
 decoran los capítulos.
 
-### Definiendo nuevos tipos de contenido ###
+### Definiendo nuevos tipos de contenido ### {#nuevos-tipos-de-contenido}
 
 No es algo común y casi nunca es necesario, pero puedes crear nuevos tipos de
 contenidos al margen de los 21 tipos definidos por **easybook**. Imagina que

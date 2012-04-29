@@ -1,5 +1,70 @@
 # UPGRADE guide #
 
+## Upgrade to easybook 4.4 ##
+
+### Renamed `parsing_item` to `active_item` ###
+
+Access to the specific item being parsed/decorated/transformed is no longer
+exclusive of the parsing methods. Therefore, `publishing.parsing_item` variable
+is renamed to `publishing.active_item` in `Application.php`.
+
+### Slugger ###
+
+The slugger options are now passed to the `slugify()` method instead of the
+slugger constructor. This way you can use different slugger options for the same
+book.
+
+Before:
+
+```php
+$app->get('slugger')->slugify($string1);
+
+$slugger = new Easybook\Util\Slugger($app, '-', '', false);
+$slugger->slugify($string2);
+```
+
+After:
+
+```php
+$app->get('slugger')->slugify($string1);
+$app->get('slugger')->slugify($string2, array('unique' => false));
+```
+
+Available options:
+
+```php
+'separator' => '-'  // used between words and instead of illegal characters
+'prefix'    => ''   // prefix to be appended at the beginning of the slug
+'unique'    => true // should this slug be unique across the entire book?
+```
+
+### New events ###
+
+easybook 4.4 adds two new events:
+
+  * `PRE_DECORATE`, notified just before an item is going to be decorated with
+    the appropriate template.
+  * `POST_DECORATE`, notified just after an item has been decorated with the 
+    appropriate template.
+
+### Updated `BaseEvent` event ###
+
+`BaseEvent` has been modified to include two new getter/setter methods. Now you
+don't have to create a new event class to perform basic operations on the active
+item:
+
+```php
+public function getItem()
+{
+    return $this->app['publishing.active_item'];
+}
+
+public function setItem($item)
+{
+    $this->app->set('publishing.active_item', $item);
+}
+```
+
 ## Upgrade to easybook 4.2 ##
 
 ### 1. Books can now define their own labels and titles for each edition ###

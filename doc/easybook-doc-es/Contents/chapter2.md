@@ -121,8 +121,8 @@ El contenido `part` admite la siguiente opción:
   web, la sección se muestra como un título de sección muy destacado.
 
 Los 21 tipos de contenidos de **easybook** son suficientes para publicar la
-mayoría de libros, pero si lo necesitas, el siguiente capítulo explica cómo
-crear nuevos tipos de contenido.
+mayoría de libros, pero si lo necesitas, el siguiente capítulo explica [cómo
+crear nuevos tipos de contenido](#nuevos-tipos-de-contenido).
 
 ## Ediciones ##
 

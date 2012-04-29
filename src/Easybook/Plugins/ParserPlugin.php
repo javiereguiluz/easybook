@@ -136,16 +136,5 @@ class ParserPlugin implements EventSubscriberInterface
             ));
             $event->setItem($item);
         }
-
-        // parse internal links
-        $item = $event->getItem();
-        $item['content'] = preg_replace_callback(
-            '/<a href="#(.*)"(.*)<\/a>/U',
-            function($matches) {
-                return sprintf('<a class="link:internal" href="#%s"%s</a>', $matches[1], $matches[2]);
-            },
-            $item['content']
-        );
-        $event->setItem($item);
     }
 }

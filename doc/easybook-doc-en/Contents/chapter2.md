@@ -103,7 +103,7 @@ The `part` content type also define the following option:
   as a heading.
 
 These 21 content types defined by **easybook** are enough to publish most books,
-but if you need it, the next chapter explains how to create new content types.
+but if you need it, the next chapter explains [how to create new content types](#new-content-types).
 
 ## Editions ##
 

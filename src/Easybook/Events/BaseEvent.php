@@ -21,4 +21,14 @@ class BaseEvent extends Event
     {
         $this->app = $app;
     }
+
+    public function getItem()
+    {
+        return $this->app['publishing.active_item'];
+    }
+
+    public function setItem($item)
+    {
+        $this->app->set('publishing.active_item', $item);
+    }
 }

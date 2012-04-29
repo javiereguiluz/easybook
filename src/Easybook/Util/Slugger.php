@@ -14,21 +14,22 @@ namespace Easybook\Util;
 class Slugger
 {
     private $app;
-    private $separator;
-    private $prefix;
-    private $unique;
+    private $options;
     
-    public function __construct($app, $separator = '-', $prefix = '', $unique = true)
+    public function __construct($app)
     {
         $this->app = $app;
-        $this->separator = $separator;
-        $this->prefix    = $prefix;
-        $this->unique    = $unique;
     }
     
     // adapted from http://cubiq.org/the-perfect-php-clean-url-generator
-    public function slugify($string)
+    public function slugify($string, $options = array())
     {
+        $this->options = array_merge(array(
+            'separator' => '-',  // used between words and instead of illegal characters
+            'prefix'    => '',   // prefix to be appended at the beginning of the slug
+            'unique'    => true, // should this slug be unique across the entire book?
+        ), $options);
+
         $string = strip_tags($string);
 
         if (function_exists('iconv')) {
@@ -49,20 +50,20 @@ class Slugger
         }
 
         $slug = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $slug);
-        $slug = strtolower(trim($slug, $this->separator));
-        $slug = preg_replace("/[\/_|+ -]+/", $this->separator, $slug);
+        $slug = strtolower(trim($slug, $this->options['separator']));
+        $slug = preg_replace("/[\/_|+ -]+/", $this->options['separator'], $slug);
 
-        $slug = $this->prefix.$slug;
+        $slug = $this->options['prefix'].$slug;
 
         // $slugs array must hold original slugs, without unique substring
         $slugs = $this->app->append('publishing.slugs', $slug);
 
-        if ($this->unique) {
+        if ($this->options['unique']) {
             $occurrences = array_count_values($slugs);
 
             $count = $occurrences[$slug];
             if ($count > 1) {
-                $slug .= $this->separator.(++$count);
+                $slug .= $this->options['separator'].(++$count);
             }
         }
 

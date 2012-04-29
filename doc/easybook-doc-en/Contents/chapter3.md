@@ -362,7 +362,7 @@ Add the following `time` option for `chapter` elements:
 And now you can add `{{ item.config.time }}` in `chapter.twig` template to show
 the estimated reading time for each chapter.
 
-### Defining new content types ###
+### Defining new content types ### {#new-content-types}
 
 It's uncommon and generally unneeded, but you can also define new content types
 besides the 21 types included in **easybook**. Imagine that you want to include

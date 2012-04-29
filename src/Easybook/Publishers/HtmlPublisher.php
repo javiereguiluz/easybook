@@ -13,6 +13,7 @@ namespace Easybook\Publishers;
 
 use Easybook\Parsers\MdParser;
 use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
 
 class HtmlPublisher extends BasePublisher
@@ -22,26 +23,26 @@ class HtmlPublisher extends BasePublisher
         $parsedItems = array();
 
         foreach ($this->app['publishing.items'] as $item) {
-            // filter the original item content before parsing it
-            $this->app->set('publishing.parsing_item', $item);
+            $this->app->set('publishing.active_item', $item);
 
+            // filter the original item content before parsing it
             $event = new ParseEvent($this->app);
             $this->app->dispatch(Events::PRE_PARSE, $event);
 
             // get again 'item' object because PRE_PARSE event can modify it
-            $item = $this->app->get('publishing.parsing_item');
+            $item = $this->app->get('publishing.active_item');
             $parsed = $this->app->get('parser')->parse($item['original']);
 
             $item['content'] = $parsed['content'];
             $item['toc']     = $parsed['toc'];
 
-            $this->app->set('publishing.parsing_item', $item);
+            $this->app->set('publishing.active_item', $item);
 
             $event = new ParseEvent($this->app);
             $this->app->dispatch(Events::POST_PARSE, $event);
 
             // get again 'item' object because POST_PARSE event can modify it
-            $parsedItems[] = $this->app->get('publishing.parsing_item');
+            $parsedItems[] = $this->app->get('publishing.active_item');
         }
 
         $this->app->set('publishing.items', $parsedItems);
@@ -52,11 +53,26 @@ class HtmlPublisher extends BasePublisher
         $decoratedItems = array();
 
         foreach ($this->app['publishing.items'] as $item) {
-            $item['content'] = $this->app->render($item['config']['element'].'.twig', array(
-                'item' => $item
-            ));
+            $this->app->set('publishing.active_item', $item);
 
-            $decoratedItems[] = $item;
+            // filter the original item content before decorating it
+            $event = new BaseEvent($this->app);
+            $this->app->dispatch(Events::PRE_DECORATE, $event);
+
+            // get again 'item' object because PRE_DECORATE event can modify it
+            $item = $this->app->get('publishing.active_item');
+            $item['content'] = $this->app->render(
+                $item['config']['element'].'.twig',
+                array('item' => $item)
+            );
+
+            $this->app->set('publishing.active_item', $item);
+
+            $event = new BaseEvent($this->app);
+            $this->app->dispatch(Events::POST_DECORATE, $event);
+
+            // get again 'item' object because POST_DECORATE event can modify it
+            $decoratedItems[] = $this->app->get('publishing.active_item');
         }
 
         $this->app->set('publishing.items', $decoratedItems);

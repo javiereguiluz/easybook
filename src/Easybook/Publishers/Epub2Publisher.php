@@ -13,6 +13,7 @@ namespace Easybook\Publishers;
 
 use Easybook\Parsers\MdParser;
 use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
 use Easybook\Util\Toolkit;
 
@@ -38,7 +39,25 @@ class Epub2Publisher extends HtmlPublisher
     
     public function decorateContents()
     {
-        // Do nothing
+        $decoratedItems = array();
+
+        foreach ($this->app['publishing.items'] as $item) {
+            $this->app->set('publishing.active_item', $item);
+
+            // filter the original item content before decorating it
+            $event = new BaseEvent($this->app);
+            $this->app->dispatch(Events::PRE_DECORATE, $event);
+
+            // Do nothing to decorate the item
+
+            $event = new BaseEvent($this->app);
+            $this->app->dispatch(Events::POST_DECORATE, $event);
+
+            // get again 'item' object because POST_DECORATE event can modify it
+            $decoratedItems[] = $this->app->get('publishing.active_item');
+        }
+
+        $this->app->set('publishing.items', $decoratedItems);
     }
     
     public function assembleBook()
