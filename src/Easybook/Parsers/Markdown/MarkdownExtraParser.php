@@ -667,7 +667,7 @@ class MarkdownExtraParser extends MarkdownParser {
 				[ ]*
 				(.+?)		# $2 = Header text
 				[ ]*
-				\#{1,6}	    # added by easybook -> mandatory closing #\'s (not counted)
+				\#{0,6}	    # added by easybook -> optional closing #\'s (not counted)
 				(?:[ ]+\{\#([-_:a-zA-Z0-9]+)\})? # id attribute
 				[ ]*
 				\n+
