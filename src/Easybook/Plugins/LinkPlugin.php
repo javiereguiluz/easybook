@@ -48,19 +48,13 @@ class LinkPlugin implements EventSubscriberInterface
         $item = $event->getItem();
         $links = $event->app->get('publishing.links');
 
-        preg_match_all('/<h[1-6] id="(?<slug>.*)".*<\/h[1-6]>/',
-            $item['content'],
-            $ids,
-            PREG_SET_ORDER
-        );
+        foreach ($item['toc'] as $entry) {
+            $itemSlug = $event->app->get('slugger')->slugify(trim($item['label']), array('unique' => false));
 
-        foreach ($ids as $id) {
-            $slug = $event->app->get('slugger')->slugify(trim($item['label']), array('unique' => false));
+            $relativeUrl = '#'.$entry['slug'];
+            $absoluteUrl = $itemSlug.'.html'.$relativeUrl;
             
-            $relative = '#'.$id['slug'];
-            $absolute = $slug.'.html'.$relative;
-            
-            $links[$relative] = $absolute;
+            $links[$relativeUrl] = $absoluteUrl;
         }
 
         $event->app->set('publishing.links', $links);
