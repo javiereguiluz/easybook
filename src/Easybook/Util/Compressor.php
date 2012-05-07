@@ -65,7 +65,6 @@ class Compressor
         $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/.composer/ClassLoader.php'));
         $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/.composer/autoload.php'));
         $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/.composer/autoload_namespaces.php'));
-        $this->addFile(new \SplFileInfo($this->rootDir.'/app/autoload.php'));
 
         // add resources
         $finder = new Finder();
