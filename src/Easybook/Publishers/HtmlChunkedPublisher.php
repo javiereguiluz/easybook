@@ -131,9 +131,11 @@ class HtmlChunkedPublisher extends HtmlPublisher
         );
 
         // copy book images
-        $this->app->get('filesystem')->mirror(
-            $this->app['publishing.dir.contents'].'/images',
-            $this->app['publishing.dir.output'].'/images'
-        );
+        if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {
+            $this->app->get('filesystem')->mirror(
+                $imagesDir,
+                $this->app['publishing.dir.output'].'/images'
+            );
+        }
     }
 }

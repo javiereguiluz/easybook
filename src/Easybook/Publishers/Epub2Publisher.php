@@ -146,22 +146,22 @@ class Epub2Publisher extends HtmlPublisher
         }
         
         // copy book images and prepare image data for ebook manifest
-        $images = $this->app->get('finder')->files()->in(
-            $this->app['publishing.dir.contents'].'/images'
-        );
-        
-        $i = 1;
-        foreach ($images as $image) {
-            $this->app->get('filesystem')->copy(
-                $image->getPathName(),
-                $bookTempDir.'/book/OEBPS/images/'.$image->getFileName()
-            );
+        if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {
+            $images = $this->app->get('finder')->files()->in($imagesDir);
             
-            $bookImages[] = array(
-                'id'        => 'figure-'.$i++,
-                'filePath'  => 'images/'.$image->getFileName(),
-                'mediaType' => 'image/'.pathinfo($image->getFilename(), PATHINFO_EXTENSION)
-            );
+            $i = 1;
+            foreach ($images as $image) {
+                $this->app->get('filesystem')->copy(
+                    $image->getPathName(),
+                    $bookTempDir.'/book/OEBPS/images/'.$image->getFileName()
+                );
+                
+                $bookImages[] = array(
+                    'id'        => 'figure-'.$i++,
+                    'filePath'  => 'images/'.$image->getFileName(),
+                    'mediaType' => 'image/'.pathinfo($image->getFilename(), PATHINFO_EXTENSION)
+                );
+            }
         }
 
         // look for cover images
