@@ -43,10 +43,10 @@ the path of the directory created previously):
 This means that before using **easybook** you must download and install Composer
 and then, install all the **easybook** dependencies:
 
-  [cli]
-  $ cd easybook
-  $ curl -s http://getcomposer.org/installer | php
-  $ php composer.phar install
+    [cli]
+    $ cd easybook
+    $ curl -s http://getcomposer.org/installer | php
+    $ php composer.phar install
 
 If you don't use Git, you can download **easybook** as a compressed `.zip`
 archive. It's not as cool as using Git, but it works fine. Download the

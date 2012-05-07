@@ -46,10 +46,10 @@ reemplaza `<directorio>` por la ruta del directorio creado anteriormente):
 dependencias. Por eso, antes de utilizar **easybook** debes instalar Composer y
 después, instalar todas las dependencias de **easybook**:
 
-  [cli]
-  $ cd easybook
-  $ curl -s http://getcomposer.org/installer | php
-  $ php composer.phar install
+    [cli]
+    $ cd easybook
+    $ curl -s http://getcomposer.org/installer | php
+    $ php composer.phar install
 
 Si no utilizas Git, puedes descargar **easybook** mediante un archivo
 comprimido `.zip`. No es algo tan chulo como usar Git, pero funciona igual de
