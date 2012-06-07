@@ -1,0 +1,50 @@
+# Romanian translation of the strings managed by easybook
+label:
+    appendix:
+        - 'Anexa {{ item.number }}'
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+    
+    chapter:
+        - 'Capitolul {{ item.number }}'
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+
+    figure:          'Figura {{ element.number }}.{{ item.number }}'
+    part:            'Partea {{ item.number }}'
+    table:           'Tabelul {{ element.number }}.{{ item.number }}'
+
+    acknowledgement: ''
+    afterword:       ''
+    author:          ''
+    conclusion:      ''
+    cover:           ''
+    dedication:      ''
+    edition:         ''
+    epilogue:        ''
+    foreword:        ''
+    glossary:        ''
+    introduction:    ''
+    preface:         ''
+    prologue:        ''
+    title:           ''
+    toc:             ''
+
+    # Navigation elements
+    index:           'Index'
+    next:            'Următor'
+    previous:        'Anterior'
+
+    # Special
+    date_format:     'm/d/Y'
+
+    # Other
+    by:              'dupa'
+    page:            'pagina'
+    blank:           '/n'
