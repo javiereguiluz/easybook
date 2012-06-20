@@ -37,7 +37,9 @@
         "symfony/finder":           "2.1.*",
         "symfony/yaml":             "2.1.*",
 
-        "twig/twig":                "1.6.*"
+        "twig/twig":                "1.6.*",
+        "symfony/dependency-injection": "dev-master",
+        "symfony/http-kernel": "dev-master"
     },
 
     "autoload": {
