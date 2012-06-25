@@ -7,7 +7,7 @@ label:
         - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
         - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
         - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
-    
+
     chapter:
         - 'Capitolul {{ item.number }}'
         - '{{ item.counters[0:2]|join(".") }}' # 1.1
@@ -43,6 +43,7 @@ label:
 
     # Special
     date_format:     'm/d/Y'
+    datetime_format: 'm/d/Y H:i'
 
     # Other
     by:              'dupa'
