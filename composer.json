@@ -37,7 +37,7 @@
         "symfony/finder":           "2.1.*",
         "symfony/yaml":             "2.1.*",
 
-        "twig/twig":                "1.6.*"
+        "twig/twig":                "1.8.*"
     },
 
     "autoload": {
