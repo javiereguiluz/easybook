@@ -45,6 +45,6 @@ label:
     date_format:     'm/d/Y'
 
     # Other
-    by:              'dupa'
+    by:              'de'
     page:            'pagina'
-    blank:           '/n'
+    blank:           'Această pagină a fost lăsată liberă intenționat'
