@@ -62,9 +62,10 @@ class Compressor
         $this->addFile(new \SplFileInfo($this->rootDir.'/book'));
 
         // add autoloaders
-        $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/.composer/ClassLoader.php'));
-        $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/.composer/autoload.php'));
-        $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/.composer/autoload_namespaces.php'));
+        $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/autoload.php'));
+        $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/composer/ClassLoader.php'));
+        $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/composer/autoload_classmap.php'));
+        $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/composer/autoload_namespaces.php'));
 
         // add resources
         $finder = new Finder();
