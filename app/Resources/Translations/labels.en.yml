@@ -43,6 +43,7 @@ label:
 
     # Special
     date_format:     'm/d/Y'
+    datetime_format: 'm/d/Y H:i'
 
     # Other
     by:              'by'
