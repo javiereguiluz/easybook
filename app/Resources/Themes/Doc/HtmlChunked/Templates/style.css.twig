@@ -1,0 +1,535 @@
+{% extends 'style_common.css.twig' %}
+
+{% block base %}
+/* Base styles
+   ========================================================================= */
+body {
+    color: {{ color_black }};
+    font: 16px/1.5 "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* --- links --------------------------------------------------------------- */
+a, a:visited {
+    color: {{ color_blue }};
+    text-decoration: underline;
+}
+a:hover {
+    color: {{ color_accent }} !important;
+    text-decoration: none;
+}
+
+/* --- headings ------------------------------------------------------------ */
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1;
+    margin: 1em 0 .25em 0;
+}
+
+h1 { font-size: 24px; }
+h2 { font-size: 21px; }
+h3 { font-size: 18px; }
+h4 { font-size: 14px; }
+h5 { font-size: 14px; }
+h6 { font-size: 14px; }
+
+h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+    margin-top: .25em;
+}
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+    border: inherit;
+    color: inherit;
+    font: inherit;
+}
+
+/* --- paragraphs ---------------------------------------------------------- */
+p {
+    font-size: 16px;
+    line-height: 22px;
+    margin-bottom: 16px;
+}
+blockquote p {
+  font-weight: 400;
+}
+
+/* --- lists --------------------------------------------------------------- */
+ul, ol {
+    list-style-type: disc;
+    margin: 1em 0 1em 1em;
+    padding: 0 0 0 1.5em;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ul li, ol li {
+    margin: .5em 0;
+}
+
+/* --- images -------------------------------------------------------------- */
+img {
+    max-width: {{ width_container }};
+}
+
+/* --- tables -------------------------------------------------------------- */
+table {
+    margin-bottom: 1em;
+    max-width: 100%;
+    width: 100%;
+}
+table thead {
+    border-bottom: 2px solid {{ color_gray }};
+}
+table th, table td {
+    padding: .5em;
+    line-height: 1.4;
+    text-align: left;
+}
+table th {
+    font-weight: bold;
+    vertical-align: bottom;
+}
+table td {
+    border-bottom: 1px solid {{ color_silver }};
+    vertical-align: top;
+}
+table tr:last-child td {
+    border-bottom: 0;
+}
+table thead th + th,
+table tbody th + td,
+table td + td {
+    border-left: 1px solid {{ color_silver }};
+}
+table tbody + tbody {
+    border-top: 2px solid {{ color_gray }};
+}
+
+/* --- code and code listings ---------------------------------------------- */
+code, pre {
+    font-family: Menlo, Monaco, Consolas, monospace;
+    font-size: 95%;
+    padding: 0 3px 2px;
+}
+
+code {
+    border: none;
+    color: {{ color_accent }};
+    line-height: 1.6em;
+    padding: 3px 4px;
+}
+
+pre {
+    padding: .5em;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+pre code {
+    border: none;
+    color: {{ color_black }};
+    padding: 0;
+}
+
+div.code {
+  margin: 1em 0;
+}
+div.cli pre {
+    border-left-color: {{ color_gray }};
+}
+
+{% endblock %}
+
+{% block layout %}
+/* Layout
+   ========================================================================= */
+header {
+    background: lighten({{ color_silver }}, '5%');
+    color: {{ color_black }};
+    height: 40px;
+    margin-bottom: 2em;
+}
+header a {
+    color: {{ color_gray }} !important;
+    cursor: pointer;
+    line-height: 40px;
+    padding: .2em;
+    text-decoration: none;
+}
+header a:last-child {
+    color: {{ color_gray }}; {# don't remove this CSS rule #}
+    font-weight: bold;
+}
+{% endblock %}
+
+{% block book_items %}
+/* Book items
+   ========================================================================= */
+
+/* --- common -------------------------------------------------------------- */
+.item {
+    padding-bottom: 2em;
+}
+
+.item #chunk_toc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.item #chunk_toc li {
+    line-height: 1.3;
+    margin-bottom: .6em;
+}
+.item #chunk_toc li.level-1 span {
+    font-weight: bold;
+}
+.item #chunk_toc code {
+    border: inherit;
+    color: inherit;
+    font: inherit;
+}
+
+.item .pager {
+    overflow: auto;
+    font-size: 21px;
+    margin-left: 0;
+    padding-left: 0;
+}
+.item .pager a {
+    border: none;
+    padding: 0;
+}
+.item .pager a:hover {
+    background: none;
+}
+.item .pager .previous {
+    float: left;
+    text-align: left;
+    width: 50%;
+}
+.item .pager .next {
+    float: right;
+    width: 50%;
+}
+
+/* --- item:cover ---------------------------------------------------------- */
+.item\:cover {
+    color: {{ color_black }};
+    margin-bottom: .5em;
+}
+.item\:cover h1 {
+    font-size: 48px;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-top: .5em;
+}
+.item\:cover h2 {
+    color: {{ color_gray }};
+    font-size: 24px;
+    font-weight: normal;
+    margin-top: .5em;
+}
+
+/* --- item:formats -------------------------------------------------------- */
+.item\:formats .btn-large {
+  font-size: 14px;
+  padding: .5em .75em;
+  text-decoration: none;
+  text-transform: lowercase;
+}
+.item\:formats .btn-large + .btn-large {
+  margin-left: .5em;
+}
+.item\:formats .btn-large strong {
+  display: block;
+  font-size: 21px;
+  text-transform: uppercase;
+}
+.item\:formats .item\:updated strong {
+    display: block;
+}
+
+/* --- item:updated -------------------------------------------------------- */
+.item\:updated strong {
+  display: block;
+}
+
+/* --- item:toc ------------------------------------------------------------ */
+.item\:toc {
+    margin-bottom: 2em;
+    padding-left: 0;
+}
+
+.item\:toc h1 {
+    font-size: 36px;
+    margin-bottom: .5em;
+}
+
+.item\:toc ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    -moz-column-count: 2;
+    -moz-column-gap: 3em;
+    -moz-column-rule: 1px solid {{ color_silver }};
+    -webkit-column-count: 2;
+    -webkit-column-gap: 3em;
+    -webkit-column-rule: 1px solid {{ color_silver }};
+    column-count: 2;
+    column-gap: 3em;
+    column-rule: 1px solid {{ color_silver }};
+}
+.item\:toc ul li {
+    margin-top: 0;
+}
+
+.item\:toc ul li,
+.item\:toc ul li a {
+    font-size: 16px;
+    line-height: 1.2;
+    text-decoration: none;
+}
+.item\:toc ul li a {
+    color: {{ color_blue }};
+}
+.item\:toc ul li a:hover {
+    color: {{ color_blue }} !important;
+    text-decoration: underline;
+}
+.item\:toc ul li.level-1,
+.item\:toc ul li.level-1 a {
+    ccolor: {{ color_black }};
+    font-size: 21px;
+    font-weight: bold;
+    margin-bottom: .2em;
+
+    break-inside: avoid-column; 
+    break-after: avoid-column;
+}
+.item\:toc ul li span {
+    color: {{ color_black }};
+}
+.item\:toc ul li.level-1 span {
+    font-weight: normal;
+}
+
+.item\:toc ul li.level-2 {
+    margin-left: 1em;
+}
+.item\:toc ul li.level-2 + li.level-1 {
+    margin-top: 1em;
+}
+
+.item\:toc ul li.level-3,
+.item\:toc ul li.level-4,
+.item\:toc ul li.level-5,
+.item\:toc ul li.level-6 {
+    margin-left: 3em;
+}
+
+.item\:toc code {
+    border: inherit;
+    color: inherit;
+    font: inherit;
+}
+
+/* --- item:lot, item:lof -------------------------------------------------- */
+.item\:lof ul,
+.item\:lot ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.item\:lof ul a,
+.item\:lot ul a {
+    text-decoration: none;
+}
+
+.item\:lof ul li span,
+.item\:lot ul li span {
+    padding-right: .3em;
+}
+
+/* --- item:chapter -------------------------------------------------------- */
+.item\:chapter {
+    border-bottom: 0;
+}
+
+.item\:chapter h1 { font-size: 36px; margin-top: 0; letter-spacing: -1px; }
+.item\:chapter h2 { font-size: 24px; }
+.item\:chapter h3 { font-size: 21px; }
+.item\:chapter h4 { font-size: 16px; }
+.item\:chapter h5 { font-size: 16px; }
+.item\:chapter h6 { font-size: 16px; }
+
+.item\:chapter h1 + h2,
+.item\:chapter h2 + h3,
+.item\:chapter h3 + h4,
+.item\:chapter h4 + h5,
+.item\:chapter h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:chapter h1 span,
+.item\:chapter h2 span,
+.item\:chapter h3 span,
+.item\:chapter h4 span,
+.item\:chapter h5 span,
+.item\:chapter h6 span {
+    font-weight: normal;
+}
+
+/* --- item:appendix ------------------------------------------------------- */
+.item\:appendix {
+    border-bottom: 0;
+}
+
+.item\:appendix h1 { font-size: 36px; margin-top: .5em; }
+.item\:appendix h2 { font-size: 24px; }
+.item\:appendix h3 { font-size: 21px; }
+.item\:appendix h4 { font-size: 16px; }
+.item\:appendix h5 { font-size: 14px; }
+.item\:appendix h6 { font-size: 14px; }
+
+.item\:appendix h1 + h2,
+.item\:appendix h2 + h3,
+.item\:appendix h3 + h4,
+.item\:appendix h4 + h5,
+.item\:appendix h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:appendix h1 span {
+    color: {{ color_gray }};
+    font-size: 90%;
+    font-weight: normal;
+    padding-bottom: .25em;
+}
+
+/* --- item:part ----------------------------------------------------------- */
+.item\:part {
+    border: solid {{ color_gray }};
+    border-width: medium 0;
+    padding: 0;
+}
+
+.item\:toc + .item\:part,
+.item\:lof + .item\:part,
+.item\:lot + .item\:part,
+.item\:chapter + .item\:part,
+.item\:appendix + .item\:part {
+    margin-top: -2em;
+}
+
+.item\:part h1 {
+    font-size: 48px;
+    margin: 0;
+    padding: 1em 0;
+}
+.item\:part h1 span {
+    color: {{ color_gray }};
+    font-size: 90%;
+    font-weight: normal;
+    padding-bottom: .25em;
+}
+{% endblock %}
+
+{% block responsive %}
+/* Responsive
+   ========================================================================= */
+
+/* inspired by Twitter Bootstrap */
+/* Landscape phones and down */
+@media (max-width: 480px) {
+    .item\:toc {
+        padding-left: .5em !important;
+    }
+    .item\:toc h1 {
+        display: none;
+    }
+    .item\:toc ul {
+        margin: 0 !important;
+        -moz-column-count: 1;
+        -webkit-column-count: 1;
+        column-count: 1;
+    }
+}
+ 
+/* Landscape phone to portrait tablet */
+@media (max-width: 768px) {
+    .item\:cover {
+        margin-bottom: 1em;
+        padding: 1.5em 0;
+    }
+    .item\:cover h1 {
+        font-size: 48px;
+        letter-spacing: -1px;
+        margin: 0;
+    }
+    .item\:cover h2 {
+        font-size: 24px;
+    }
+
+    .item\:toc h1 {
+        font-size: 24px;
+    }
+    .item\:toc ul {
+        -moz-column-count: 1;
+        -webkit-column-count: 1;
+    }
+
+    .item\:part h1,
+    .item\:chapter h1,
+    .item\:appendix h1 {
+        font-size: 28px;
+    }
+    
+    .item\:chapter aside {
+      display: none;
+    }
+    .item\:chapter .span9 {
+      width: auto;
+    }
+
+    .item\:chapter h2,
+    .item\:chapter h3,
+    .item\:chapter h4,
+    .item\:chapter h5,
+    .item\:chapter h6,
+    .item\:appendix h2,
+    .item\:appendix h3,
+    .item\:appendix h4,
+    .item\:appendix h5,
+    .item\:appendix h6 {
+        font-size: 24px;
+    }
+    .item\:part h1 span {
+        font-size: 28px;
+        font-weight: normal;
+        padding: 0;
+        position: static;
+    }
+    .item\:chapter h1 span,
+    .item\:appendix h1 span {
+        display: inline;
+        font-size: 28px;
+        font-weight: normal;
+    }
+}
+ 
+ /* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: {{ width_container }}) {
+}
+ 
+/* Large desktop */
+@media (min-width: 1200px) {
+}
+
+@media (max-width: {{ width_container }}) {
+    .container {
+        width: auto;
+        padding: 0 20px;
+    }
+}
+{% endblock %}

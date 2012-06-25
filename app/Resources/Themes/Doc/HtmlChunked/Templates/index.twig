@@ -1,0 +1,76 @@
+{% extends 'layout.twig' %}
+
+{% block class 'index' %}
+
+{% block body %}
+<div class="container">
+
+<header>
+    <a href="http://easybook-project.org">easybook</a>
+    /
+    <a href="http://easybook-project.org/docs">docs</a>
+    /
+    <a href="./index.html">{{ book.title }}</a>
+</header>
+
+<div class="item item:cover">
+    <h1>{{ book.title }}</h1>
+    <h2>{{ app.getLabel('by') }} {{ book.author }}</h2>
+</div>
+
+<div class="row">
+    <div class="span9">
+        <div class="item item:toc">
+        <ul>
+        {% for item in app.get('publishing.items') %}
+            {% if item.config.element in ['appendix', 'chapter'] %}
+
+                {# item has several elements in its toc #}
+                {% for entry in item.toc %}
+                    {% if entry.level <= edition.toc.deep %}
+                        <li class="{{ item.config.element }} level-{{ entry.level }}">
+                            <span>{{ entry.label }}</span>
+                            {% if 1 == entry.level %}
+                            <a href="./{{ item.slug }}.html">{{ item.title }}</a>
+                            {% else %}
+                            <a href="./{{ item.slug }}.html#{{ entry.slug }}">{{ entry.title }}</a>
+                            {% endif %}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            
+            {% elseif item.config.element in ['part'] %}
+                <li class="{{ item.config.element }} level-1">
+                    <span>{{ item.label }}</span> {{ item.title }}
+                </li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+        </div>
+    </div>
+    
+    <aside class="span3">
+        <div class="item item:formats">
+            <a class="btn btn-large" href="./../print/book.pdf">Download as <strong>PDF</strong></a>
+            <a class="btn btn-large" href="./../ebook/book.epub">Download as <strong>EPUB</strong></a>
+        </div>
+
+        <div class="item item:license">
+            <strong>{{ book.title }}</strong> is written by <strong>{{ book.author }}</strong>
+        </div>
+
+        <div class="item item:updated">
+            <strong>Last updated</strong> {{ 'now'|date(app.getLabel('datetime_format')) }}
+        </div>
+
+        <div class="item item:generator">
+            Generated with
+            <a href="http://easybook-project.org">{{ book.generator.name }}
+            {{ book.generator.version }}</a>, the easiest and fastest tool to
+            publish documentation, books, manuals and websites.
+        </div>
+    </aside>
+</div>
+
+</div>
+{% endblock %}
