@@ -112,7 +112,7 @@ class PdfPublisher extends BasePublisher
 
         // TODO: the name of the book file (book.pdf) must be configurable
         $errorMessages = array();
-        $prince->convert_file_to_file($temp, $this->app['publishing.dir.output'].'/book.pdf', &$errorMessages);
+        $prince->convert_file_to_file($temp, $this->app['publishing.dir.output'].'/book.pdf', $errorMessages);
 
         // show PDF conversion errors
         if (count($errorMessages) > 0) {
