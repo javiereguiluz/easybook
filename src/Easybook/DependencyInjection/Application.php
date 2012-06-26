@@ -424,7 +424,8 @@ class Application extends \Pimple
     {
         $book    = $this->get('book');
         $edition = $this->get('publishing.edition');
-        $config  = $book['editions'][$edition];
+        $userConfig    = $book['editions'][$edition];
+        $defaultConfig = $this['app.edition.defaults'];
 
         // if edition extends another edition, merge their configurations
         if (null != $parent = $this->edition('extends')) {
@@ -439,18 +440,18 @@ class Application extends \Pimple
                 ));
             }
 
-            $parentConfig  = $book['editions'][$parent];
-            $config = Toolkit::array_deep_merge($parentConfig, $config);
+            $parentConfig = $book['editions'][$parent];
+            $userConfig   = Toolkit::array_deep_merge($parentConfig, $userConfig);
         }
 
-        $config = Toolkit::array_deep_merge($this['app.edition.defaults'], $config);
-
+        $config = array_merge($defaultConfig, $userConfig);
         $book['editions'][$edition] = $config;
         $this->set('book', $book);
     }
 
     public function getLabel($element, $variables = array())
     {
+        // TODO: extensibility: each content should be able to override 'label' option
         $label = array_key_exists($element, $this['labels']['label'])
             ? $this['labels']['label'][$element]
             : '';

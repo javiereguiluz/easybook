@@ -9,3 +9,6 @@
   * [Matthieu Moquet](https://github.com/MattKetmo)
   * [Marijn Huizendveld](https://github.com/marijn)
   * [Ariel Ferrandini](https://github.com/aferrandini)
+  * [Ionut C Colceriu](https://github.com/ghinda)
+  * [Sebastian Szwarc](https://github.com/Behinder)
+  * [Ploum](https://github.com/ploum)

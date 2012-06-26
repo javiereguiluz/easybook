@@ -53,11 +53,9 @@ class ParserPlugin implements EventSubscriberInterface
 
         $event->setItem($item);
 
-        // add labels if the publishing edition wants labels for this element type ('label' option)
-        // TODO: extensibility: each content should be able to override 'label' option
+        // add labels
         $item = $event->getItem();
-        if (in_array($item['config']['element'], $event->app->edition('labels'))
-            && count($item['toc']) > 0) {
+        if (count($item['toc']) > 0) {
             // prepare labels
             $counters = array(
                 1 => $item['config']['number'],
@@ -67,25 +65,31 @@ class ParserPlugin implements EventSubscriberInterface
                 5 => 0,
                 6 => 0
             );
-
             foreach ($item['toc'] as $key => $entry) {
-                $level = $entry['level'];
-                if ($level > 1) {
-                    $counters[$level]++;
-                }
+                // edition config allows labels for this element type ('labels' option)
+                if (in_array($item['config']['element'], $event->app->edition('labels'))) {
+                    $level = $entry['level'];
+                    if ($level > 1) {
+                        $counters[$level]++;
+                    }
 
-                // Reset the counters for the higher heading levels
-                for ($i = $level+1; $i <= 6; $i++) {
-                    $counters[$i] = 0;
-                }
+                    // Reset the counters for the higher heading levels
+                    for ($i = $level+1; $i <= 6; $i++) {
+                        $counters[$i] = 0;
+                    }
 
-                $parameters = array_merge($item['config'], array(
-                    'counters' => $counters,
-                    'level'    => $level
-                ));
-                $label = $event->app->getLabel($item['config']['element'], array(
-                    'item' => $parameters
-                ));
+                    $parameters = array_merge($item['config'], array(
+                        'counters' => $counters,
+                        'level'    => $level
+                    ));
+                    $label = $event->app->getLabel($item['config']['element'], array(
+                        'item' => $parameters
+                    ));
+                }
+                // edition config doesn't allow labels for this element type
+                else {
+                    $label = "";
+                }
 
                 $entry['label'] = $label;
                 $item['toc'][$key] = $entry;
@@ -125,15 +129,6 @@ class ParserPlugin implements EventSubscriberInterface
             $item['title'] = $event->app->getTitle($item['config']['element']);
             $item['slug']  = $event->app->get('slugger')->slugify($item['title']);
 
-            $event->setItem($item);
-        }
-
-        // ensure that the item has a label (using the default label if necessary)
-        $item = $event->getItem();
-        if ('' == $item['label']) {
-            $item['label'] = $event->app->getLabel($item['config']['element'], array(
-                'item' => $item['config'],
-            ));
             $event->setItem($item);
         }
     }
