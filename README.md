@@ -2,47 +2,76 @@
 
 *«book publishing as easy as it should be»*
 
-**[easybook](http://easybook-project.org)** lets you easily publish books in various electronic formats (PDF, ePub and HTML). It was originally designed to publish technical programming books, but you can use **easyboook** to publish any kind of book, manual or documentation.
+**[easybook](http://easybook-project.org)** lets you easily publish books in
+various electronic formats (PDF, ePub and HTML). It was originally designed to
+publish technical programming books, but you can use **easyboook** to publish
+any kind of book, manual or documentation website.
 
 ## Installation ##
 
-Regular users **not using Git**:
+**easybook** can be installed in three different ways depending upon your needs:
 
-  1. Download [easybook.zip](https://github.com/javiereguiluz/easybook-package/blob/master/easybook.zip?raw=true) file 
-  2. Uncompress `easybook.zip` file
+  1. **ZIP** instalation: best suited for users who want to try **easybook** 
+     features as fast and easy as possible.
+  2. **Composer** installation: recommended for regular users who want to use
+     **easybook** for publishing books and documentation.
+  3. **Git** installation: only for advanced developers who want to hack and
+     modify **easybook**.
 
-Advanced users **using Git**:
+Regardless the way you install it, use **easybook** with the `book` command:
+
+```
+$ cd easybook-installation-dir
+$ ./book
+```
+
+If the last command doesn't work, try `php book` or check `book` script
+permissions.
+
+### ZIP installation ###
+
+  1. Download [easybook.zip](https://github.com/javiereguiluz/easybook-package/blob/master/easybook.zip?raw=true) file.
+  2. Uncompress `easybook.zip` file in any directory.
+
+### Composer installation ###
+
+```
+# create a directory for easybook
+$ mkdir easybook
+
+# install easybook and all its dependencies in 'easybook' directory
+$ composer create-project easybook/easybook easybook
+```
+
+This method requires that [Composer](http://getcomposer.org/) is previously
+installed on your system. Execute the following commands to install Composer
+globally:
+
+  1. ```$ curl -s http://getcomposer.org/installer | php```
+  2. ``$ sudo mv composer.phar /usr/local/bin/composer``
+
+### Git installation ###
 
 ```
 # clone easybook repository
 $ mkdir easybook
 $ git clone http://github.com/javiereguiluz/easybook.git easybook
 
-# download composer and install easybook vendors
+# download vendors and dependencies
 $ cd easybook
-$ curl -s http://getcomposer.org/installer | php
-$ php composer.phar install
+$ composer install
 ```
 
-Regardless the way you install it, use **easybook** with the `book` command:
+This method requires that [Composer](http://getcomposer.org/) is previously
+installed on your system. Execute the following commands to install Composer
+globally:
 
-```
-$ cd easybook
-$ ./book
-```
-
-If the last command doesn't work, try `php book` or check `book` script permissions.
+  1. ```$ curl -s http://getcomposer.org/installer | php```
+  2. ``$ sudo mv composer.phar /usr/local/bin/composer``
 
 ## Documentation ##
 
-**easybook** is fully documented at http://easybook-project.org/documentation/
-
-## Examples ##
-
-[easybook-examples](http://github.com/javiereguiluz/easybook-examples)
-is a repository with several examples of how to use **easybook** to
-produce advanced and high quality books. This is by far the best way
-to learn **easybook**.
+**easybook** is fully documented at http://easybook-project.org/documentation
 
 ## License ##
 
@@ -65,4 +94,3 @@ In order to generate PDF files, PrinceXML library must be installed.
 If you haven't installed it yet, you can download a fully-functional demo at: 
 
     http://www.princexml.com/download 
-
