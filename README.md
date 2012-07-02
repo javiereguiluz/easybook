@@ -15,7 +15,7 @@ any kind of book, manual or documentation website.
      features as fast and easy as possible.
   2. **Composer** installation: recommended for regular users who want to use
      **easybook** for publishing books and documentation.
-  3. **Git** installation: only for advanced developers who want to hack and
+  3. **Git** installation: reserved for advanced developers who want to hack and
      modify **easybook**.
 
 Regardless the way you install it, use **easybook** with the `book` command:
@@ -28,12 +28,12 @@ $ ./book
 If the last command doesn't work, try `php book` or check `book` script
 permissions.
 
-### ZIP installation ###
+### 1. ZIP installation ###
 
   1. Download [easybook.zip](https://github.com/javiereguiluz/easybook-package/blob/master/easybook.zip?raw=true) file.
   2. Uncompress `easybook.zip` file in any directory.
 
-### Composer installation ###
+### 2. Composer installation ###
 
 ```
 # create a directory for easybook
@@ -47,10 +47,12 @@ This method requires that [Composer](http://getcomposer.org/) is previously
 installed on your system. Execute the following commands to install Composer
 globally:
 
-  1. ```$ curl -s http://getcomposer.org/installer | php```
-  2. ``$ sudo mv composer.phar /usr/local/bin/composer``
+```
+$ curl -s http://getcomposer.org/installer | php
+$ sudo mv composer.phar /usr/local/bin/composer
+```
 
-### Git installation ###
+### 3. Git installation ###
 
 ```
 # clone easybook repository
@@ -66,8 +68,10 @@ This method requires that [Composer](http://getcomposer.org/) is previously
 installed on your system. Execute the following commands to install Composer
 globally:
 
-  1. ```$ curl -s http://getcomposer.org/installer | php```
-  2. ``$ sudo mv composer.phar /usr/local/bin/composer``
+```
+$ curl -s http://getcomposer.org/installer | php
+$ sudo mv composer.phar /usr/local/bin/composer
+```
 
 ## Documentation ##
 
