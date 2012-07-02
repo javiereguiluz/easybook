@@ -35,7 +35,7 @@ If the last command doesn't work, try `php book` or check `book` script permissi
 
 ## Documentation ##
 
-**easybook** is fully documented at http://easybook-project.org/doc/
+**easybook** is fully documented at http://easybook-project.org/documentation/
 
 ## Examples ##
 
