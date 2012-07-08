@@ -1,0 +1,13 @@
+# book with no title and no author
+book:
+    edition:          'First edition'
+    language:         en
+    publication_date: '07-07-2012'
+
+    generator: { name: easybook, version: 4.0 }
+
+    contents:
+        - { element: cover }
+
+    editions:
+        edition2:

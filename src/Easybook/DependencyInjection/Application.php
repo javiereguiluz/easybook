@@ -21,10 +21,12 @@ use Easybook\Publishers\HtmlPublisher;
 use Easybook\Publishers\HtmlChunkedPublisher;
 use Easybook\Publishers\Epub2Publisher;
 use Easybook\Parsers\MdParser;
+use Easybook\Util\Configurator;
 use Easybook\Util\Prince;
 use Easybook\Util\Slugger;
 use Easybook\Util\Toolkit;
 use Easybook\Util\TwigCssExtension;
+use Easybook\Util\Validator;
 
 class Application extends \Pimple
 {
@@ -33,7 +35,7 @@ class Application extends \Pimple
         $app = $this;
 
         // -- global generic parameters ---------------------------------------
-        $this['app.debug']     = true;
+        $this['app.debug']     = false;
         $this['app.charset']   = 'UTF-8';
         $this['app.name']      = 'easybook';
         $this['app.version']   = '4.4';
@@ -54,8 +56,23 @@ class Application extends \Pimple
         $this['app.dir.skeletons']    = $this['app.dir.resources'].'/Skeletons';
         $this['app.dir.themes']       = $this['app.dir.resources'].'/Themes';
 
+        // -- default book options -------------------------------------------
+        $this['app.book.defaults'] = array(
+            'title'            => '"Change this: Book title"',
+            'author'           => '"Change this: Author Name"',
+            'edition'          => 'First edition',
+            'language'         => 'en',
+            'publication_date' => null,
+            'generator'        => array(
+                'name'         => $this['app.name'],
+                'version'      => $this['app.version']
+            ),
+            'contents'         => array(),
+            'editions'         => array()
+        );
+
         // -- default edition options -----------------------------------------
-        // TODO: each edition type should define different values
+        // TODO: should each edition type define different default values?
         $this['app.edition.defaults'] = array(
             'format'         => 'html',
             'highlight_code' => false,
@@ -63,16 +80,24 @@ class Application extends \Pimple
             'isbn'           => null,
             'labels'         => array('appendix', 'chapter', 'figure'),
             'margin'         => array(
-                'top'    => '25mm',
-                'bottom' => '25mm',
-                'inner'  => '30mm',
-                'outter' => '20mm'
+                'top'        => '25mm',
+                'bottom'     => '25mm',
+                'inner'      => '30mm',
+                'outter'     => '20mm'
             ),
             'page_size'      => 'A4',
             'theme'          => 'clean',
-            'toc'            => array('deep' => 2, 'elements' => array('appendix', 'chapter')),
+            'toc'            => array(
+                'deep'       => 2,
+                'elements'   => array('appendix', 'chapter')
+            ),
             'two_sided'      => true
         );
+
+        // -- console ---------------------------------------------------------
+        $this['console.input']  = null;
+        $this['console.output'] = null;
+        $this['console.dialog'] = null;
 
         // -- timer -----------------------------------------------------------
         $this['app.timer.start']  = 0.0;
@@ -123,6 +148,16 @@ class Application extends \Pimple
         // -- filesystem ------------------------------------------------------
         $this['filesystem'] = $this->share(function ($app) {
             return new Filesystem();
+        });
+
+        // -- configurator ----------------------------------------------------
+        $this['configurator'] = $this->share(function ($app) {
+            return new Configurator($app);
+        });
+
+        // -- validator -------------------------------------------------------
+        $this['validator'] = $this->share(function ($app) {
+            return new Validator($app);
         });
 
         // -- publisher -------------------------------------------------------
@@ -177,7 +212,7 @@ class Application extends \Pimple
         // -- twig ------------------------------------------------------------
         $this['twig.options'] = array(
             'autoescape'       => false,
-            // 'cache'            => $app['app.dir.cache'].'/Twig,
+            // 'cache'         => $app['app.dir.cache'].'/Twig,
             'charset'          => $this['app.charset'],
             'debug'            => $this['app.debug'],
             'strict_variables' => $this['app.debug'],
@@ -420,35 +455,6 @@ class Application extends \Pimple
         return $array;
     }
 
-    public function loadEditionConfig()
-    {
-        $book    = $this->get('book');
-        $edition = $this->get('publishing.edition');
-        $userConfig    = $book['editions'][$edition];
-        $defaultConfig = $this['app.edition.defaults'];
-
-        // if edition extends another edition, merge their configurations
-        if (null != $parent = $this->edition('extends')) {
-            if (!array_key_exists($parent, $book['editions'])) {
-                throw new \UnexpectedValueException(sprintf(
-                    " ERROR: '%s' edition extends nonexistent '%s' edition"
-                    ."\n\n"
-                    ."Check in '%s' file \n"
-                    ."that the value of 'extends' option in '%s' edition is a valid \n"
-                    ."edition of the book",
-                    $edition, $parent, realpath($this['publishing.dir.book'].'/config.yml'), $edition
-                ));
-            }
-
-            $parentConfig = $book['editions'][$parent];
-            $userConfig   = Toolkit::array_deep_merge($parentConfig, $userConfig);
-        }
-
-        $config = array_merge($defaultConfig, $userConfig);
-        $book['editions'][$edition] = $config;
-        $this->set('book', $book);
-    }
-
     public function getLabel($element, $variables = array())
     {
         // TODO: extensibility: each content should be able to override 'label' option
@@ -663,7 +669,7 @@ class Application extends \Pimple
     {
         if (null == $value) {
             $book = $this->get('book');
-            return $book[$key];
+            return array_key_exists($key, $book) ? $book[$key] : null;
         }
         else {
             $book = $this->get('book');
@@ -680,7 +686,7 @@ class Application extends \Pimple
         if (null == $value) {
             $publishingEdition = $this->get('publishing.edition');
             $editions = $this->book('editions');
-            return array_key_exists($key, $editions[$publishingEdition])
+            return array_key_exists($key, $editions[$publishingEdition] ?: array())
                    ? $editions[$publishingEdition][$key]
                    : null;
         }

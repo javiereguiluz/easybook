@@ -1,0 +1,30 @@
+The <info>new</info> command generates the file and directory structure
+required by <comment>easybook</comment> books.
+
+If you don't include any parameter, the command will guide you through
+an interactive generator. You can bypass the interactive generator typing
+the title of the book after the <info>new</info> command (enclose the title with quotes):
+
+<info>$ ./book new "The Origin of Species"</info>
+
+By default, <comment>easybook</comment> uses its <info>doc/</info> directory to save the book contents.
+If you want to save them in any other directory, use the <info>--dir</info> option:
+
+<info>$ ./book new --dir=../any/other/directory</info>
+
+The value of <info>--dir</info> option is considered as the parent directory of
+the book directory. In the previous example, the book will be created in the 
+following directory:
+
+any/
+  other/
+    directory/
+      {book-slug}/
+          config.yml
+          Contents/
+              chapter1.md
+              chapter2.md
+
+You can type the title and use the <info>--dir</info> option simultaneously:
+
+<info>$ ./book new "The Origin of Species" --dir=../any/other/directory</info>

@@ -1,0 +1,16 @@
+# book overrides every default option
+book:
+    title:            'My book title'
+    author:           'Javier Eguiluz'
+    edition:          '3rd'
+    language:         'es'
+    publication_date: '07-07-2012'
+    generator:
+        name:        'easybook'
+        version:     'premium'
+
+    contents:
+        - { element: cover }
+
+    editions:
+        edition6:

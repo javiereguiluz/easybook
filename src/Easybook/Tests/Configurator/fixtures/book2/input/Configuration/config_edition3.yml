@@ -1,0 +1,9 @@
+# book only with title
+book:
+    title:  "My book title"
+
+    contents:
+        - { element: cover }
+
+    editions:
+        edition3:

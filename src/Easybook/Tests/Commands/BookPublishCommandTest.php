@@ -94,12 +94,6 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertContains(
-            'ERROR: The edition cannot be empty.',
-            $tester->getDisplay(),
-            'Interactive publisher validates wrong "edition" input'
-        );
-
-        $this->assertContains(
             'Publishing web edition of The Origin of Species book...',
             $tester->getDisplay(),
             'The book is being published'

@@ -1,0 +1,16 @@
+# book with some options overridden dynamically
+book:
+    title:            'Title set in config.yml'
+    author:           'Author set in config.yml'
+    edition:          'Second edition'
+    language:         'es'
+    publication_date: ~
+
+    contents:
+        - { element: cover }
+
+    editions:
+        edition9:
+            format:   html
+            toc:
+                deep: 1

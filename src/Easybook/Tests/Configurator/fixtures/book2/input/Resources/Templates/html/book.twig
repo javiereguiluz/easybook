@@ -1,0 +1,15 @@
+Parsed configuration options
+============================
+
+{{ _self.render_options(book) }}
+
+{% macro printable_value(value) %}
+{{- value is iterable ? "[array]" : value is sameas(true) ? 'true' : value is sameas(false) ? 'false' : value is sameas(null) ? 'null' :  value -}}
+{% endmacro %}
+
+{% macro render_options(collection, indent) %}
+{% for key, value in collection %}
+{% for i in 0..indent|default(0) %}{{ "    " }}{% endfor %}{{ key }}: {{ _self.printable_value(value) }}
+{% if value is iterable %}{{ _self.render_options(value, indent + 1) }}{% endif %}
+{% endfor %}
+{% endmacro %}

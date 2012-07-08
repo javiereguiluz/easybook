@@ -347,8 +347,8 @@ the book website? Add a new option called `framework` in some editions:
             framework: 960_gs
 
 This new option is now available in any template through the following expression:
-`{{ edition.framework }}`. Finally, you can also add new options to the contents
-of the book.  Do you want to indicate the estimated reading time in each chapter?
+`{{ edition.framework }}`. You can also add new options to the contents of the
+book.  Do you want to indicate the estimated reading time in each chapter?
 Add the following `time` option for `chapter` elements:
 
     [yaml]
@@ -361,6 +361,61 @@ Add the following `time` option for `chapter` elements:
 
 And now you can add `{{ item.config.time }}` in `chapter.twig` template to show
 the estimated reading time for each chapter.
+
+Sometimes, configuration option values can't be defined or are variables. For
+that reason, **easybook** allows you to set or override configuration
+options dynamically with the publication command since version 4.4.
+
+Add `--configuration` option to `publish` command and pass it a JSON formatted
+string with the configuration options:
+
+    [cli]
+    $ ./book publish the-origin-of-species web --configuration='{ "book": { "title": "My new title" } }'
+
+Using dynamic options you can for example define a new `buyer` option that
+stores the name of the person that bought the book. Then you can prevent or
+minimize digital piracy displaying the buyer name inside the book (use
+`{{ book.buyer }}` Twig expression in any book template):
+
+    [cli]
+    $ ./book publish the-origin-of-species print --configuration='{ "book": { "buyer": "John Smith" } }'
+
+Likewise, any edition option can be set or override dynamically:
+
+    [cli]
+    $ ./book publish the-origin-of-species web --configuration='{ "book": { "editions": { "web": { "highlight_code": true } } } }'
+
+When passing a lot of configuration options, you must be very careful with JSON
+braces and quotes. If you run the command automatically, it is easier to create
+a PHP array with all the options and then convert it to JSON with the
+``json_encode() `` function.
+
+Dynamic options are so advanced that they even allow you to define on-the-fly
+editions:
+
+    [cli]
+    $ ./book publish the-origin-of-species edition1 --configuration='{ "book": { "editions": { "edition1": { ... } } } }'
+
+Book configuration options can also use Twig expression for their values (even
+for dynamic options set by `--configuration` option):
+
+    [yaml]
+    book:
+        title:            "{{ book.author }} diary"
+        author:           "..."
+        publication_date: "{{ '+2days'|date('m/d/Y') }}"
+        # ...
+
+When publishing a book, **easybook** uses the following priority hierarchy to
+combine configuration options (the higher, the more priority):
+
+    1. Dynamic options set with `--configuration` option
+    2. Options set in `config.yml` file
+    3. Default options defined by **easybook**
+
+Configuration options related to editions also take into account the possible
+edition inheritance. If an edition inherits from another one, its options
+always override the options of its *parent* edition.
 
 ### Defining new content types ### {#new-content-types}
 

@@ -1,0 +1,11 @@
+# book with some options set via Twig expressions
+book:
+    title:              '{{ book.author }} diary'
+    author:             'Javier Eguiluz'
+    edition:            'Second edition'
+    language:           '{{ ["es", "en", "it", "fr"][0] }}'
+    generator:
+        version:        '{{ "#{ 5.2 - 0.4 } beta#{ 3 - 2 }" }}'
+
+    editions:
+        edition11:

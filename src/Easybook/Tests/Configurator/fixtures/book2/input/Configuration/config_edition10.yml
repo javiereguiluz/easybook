@@ -1,0 +1,13 @@
+# book with some options overridden dynamically and others created dynamically
+book:
+    title:              'Title set in config.yml'
+    edition:            'Second edition'
+    language:           'es'
+    generator:
+        version:        '4.8 beta1'
+
+    editions:
+        edition9:
+            format:     html
+            page_size:  A3
+            categories: ['programming', 'php']

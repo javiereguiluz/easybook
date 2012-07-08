@@ -19,8 +19,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
+
 use Easybook\DependencyInjection\Application;
-use Easybook\Console\Command\Validators;
+use Easybook\Util\Validator;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 
@@ -39,49 +40,16 @@ class BookNewCommand extends BaseCommand
                     'dir', '', InputOption::VALUE_OPTIONAL, "Path of the documentation directory"
                 ),
             ))
-            ->setHelp(<<<EOT
-The <info>new</info> command generates the file and directory structure
-required by <comment>easybook</comment> books.
-
-If you don't include any parameter, the command will guide you through
-an interactive generator. You can bypass the interactive generator typing
-the title of the book after the <info>new</info> command (enclose the title with quotes):
-
-<info>$ ./book new "The Origin of Species"</info>
-
-By default, <comment>easybook</comment> uses its <info>doc/</info> directory to save the book contents.
-If you want to save them in any other directory, use the <info>--dir</info> option:
-
-<info>$ ./book new --dir=../any/other/directory</info>
-
-The value of <info>--dir</info> option is considered as the parent directory of
-the book directory. In the previous example, the book will be created in the 
-following directory:
-
-any/
-  other/
-    directory/
-      {book-slug}/
-          config.yml
-          Contents/
-              chapter1.md
-              chapter2.md
-
-You can type the title and use the <info>--dir</info> option simultaneously:
-
-<info>$ ./book new "The Origin of Species" --dir=../any/other/directory</info>
-
-EOT
-            );
+            ->setHelp(file_get_contents(__DIR__.'/Resources/BookNewCommandHelp.txt'));
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $title = Validators::validateNonEmptyString(
+        $title = Validator::validateNonEmptyString(
             'title', $input->getArgument('title')
         );
         
-        $dir = Validators::validateDir(
+        $dir = Validator::validateDirExistsAndWritable(
             $input->getOption('dir') ?: $this->app['app.dir.doc']
         );
         
@@ -155,7 +123,7 @@ EOT
             ." (e.g. <comment>The Origin of Species</comment>)"
             ."\n > ",
             function ($title) {
-                return Validators::validateNonEmptyString('title', $title);
+                return Validator::validateNonEmptyString('title', $title);
             }
         );
         $input->setArgument('title', $title);

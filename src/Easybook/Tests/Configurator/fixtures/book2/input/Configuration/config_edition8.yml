@@ -1,0 +1,5 @@
+# book with no options defined statically but some options defined
+# dynamically from the console command
+book:
+    editions:
+        non-valid-edition:
