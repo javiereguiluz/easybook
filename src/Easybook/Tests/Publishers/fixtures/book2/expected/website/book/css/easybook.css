@@ -9,7 +9,7 @@
 
   Theme name:   Clean (simple and minimalistic)
   Author:       javier.eguiluz@gmail.com
-  Last updated: 27 / March / 2012
+  Last updated: 12 / July / 2012
 */
 
 
@@ -294,6 +294,22 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+
+/* Common classes for image alignment
+   ========================================================================= */
+.left {
+    float: left;
+    margin: 0 1em 1em 0;
+}
+.right {
+    float: right;
+    margin: 0 0 1em 1em;
+}
+.center {
+    display: block;
+    text-align: center;
+}
+
 
 /* Base styles
    ========================================================================= */

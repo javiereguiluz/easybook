@@ -10,10 +10,10 @@ book:
     contents:
         - { element: cover }
         - { element: toc   }
-        #- { element: part, number: 1, title: "Introducción muy interesante" }
         - { element: chapter, number: 1, content: chapter1.md }
         - { element: chapter, number: 2, content: chapter2.md }
         - { element: chapter, number: 3, content: chapter3.md }
+        - { element: appendix, number: A, content: referencia.md }
 
     editions:
         ebook:

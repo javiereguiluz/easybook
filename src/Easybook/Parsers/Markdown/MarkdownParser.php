@@ -722,6 +722,19 @@ class MarkdownParser {
 		$alt_text    = $matches[2];
 		$link_id     = strtolower($matches[3]);
 
+		$align = '';
+		if (' ' == substr($alt_text, 0, 1)) {
+			if (' ' == substr($alt_text, -1)) {
+				$align = 'center';
+			}
+			else {
+				$align = 'left';
+			}
+		}
+		elseif (' ' == substr($alt_text, -1)) {
+			$align = 'right';
+		}
+
 		if ($link_id == "") {
 			$link_id = strtolower($alt_text); # for shortcut links like ![this][].
 		}
@@ -736,6 +749,11 @@ class MarkdownParser {
 				$result .=  " title=\"$title\"";
 			}
 			$result .= $this->empty_element_suffix;
+
+			if ('' != $align) {
+				$result = sprintf('<div class="%s">%s</div>', $align, $result);
+			}
+
 			$result = $this->hashPart($result);
 		}
 		else {
@@ -751,14 +769,32 @@ class MarkdownParser {
 		$url			= $matches[3] == '' ? $matches[4] : $matches[3];
 		$title			=& $matches[7];
 
-		$alt_text = $this->encodeAttribute($alt_text);
+		$align = '';
+		if (' ' == substr($alt_text, 0, 1)) {
+			if (' ' == substr($alt_text, -1)) {
+				$align = 'center';
+			}
+			else {
+				$align = 'left';
+			}
+		}
+		elseif (' ' == substr($alt_text, -1)) {
+			$align = 'right';
+		}
+
+		$alt_text = $this->encodeAttribute(trim($alt_text));
 		$url = $this->encodeAttribute($url);
+
 		$result = "<img src=\"$url\" alt=\"$alt_text\"";
 		if (isset($title)) {
 			$title = $this->encodeAttribute($title);
 			$result .=  " title=\"$title\""; # $title already quoted
 		}
 		$result .= $this->empty_element_suffix;
+
+		if ('' != $align) {
+			$result = sprintf('<div class="%s">%s</div>', $align, $result);
+		}
 
 		return $this->hashPart($result);
 	}

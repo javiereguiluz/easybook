@@ -13,6 +13,7 @@ book:
         - { element: chapter, number: 1, content: chapter1.md }
         - { element: chapter, number: 2, content: chapter2.md }
         - { element: chapter, number: 3, content: chapter3.md }
+        - { element: appendix, number: A, content: reference.md }
 
     editions:
         ebook:

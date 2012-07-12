@@ -48,12 +48,19 @@ class ImagePlugin implements EventSubscriberInterface
         $elementNumber = $item['config']['number'];
         $counter = 0;
         $item['content'] = preg_replace_callback(
-            '/(?<content><img .*alt="(?<title>.*)".*\/>)/U',
+            // the regexp matches:
+            //   1. <img (...optional...) alt="..." (...optional...) />
+            //
+            //   2. <div class="(left OR center OR right)">
+            //        <img (...optional...) alt="..." (...optional...) />
+            //      </div>
+            '/(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>.*)".*\/>)(<\/div>)?(<\/p>)?/',
             function($matches) use ($event, $elementNumber, &$listOfImages, &$counter) {
                 // prepare item parameters for template and label
                 $counter++;
                 $parameters = array(
                     'item' => array(
+                        'align'   => $matches['align'],
                         'caption' => $matches['title'],
                         'content' => $matches['content'],
                         'label'   => '',
