@@ -38,7 +38,7 @@ class Application extends \Pimple
         $this['app.debug']     = false;
         $this['app.charset']   = 'UTF-8';
         $this['app.name']      = 'easybook';
-        $this['app.version']   = '4.4';
+        $this['app.version']   = '4.6';
         $this['app.signature'] = "\n"
         ."                     |              |    \n"
         ." ,---.,---.,---.,   .|---.,---.,---.|__/ \n"
