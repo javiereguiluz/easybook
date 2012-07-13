@@ -27,16 +27,15 @@ class Compressor
     private $zipFile;
     private $version;
 
-    public function __construct($zipFile = 'easybook.zip')
+    public function __construct()
     {
         $this->fileCount = 0;
         $this->filesystem = new Filesystem();
         $this->rootDir = realpath(__DIR__.'/../../../');
 
-        $this->zipFile = $zipFile;
-        if (file_exists($this->zipFile)) {
-            unlink($this->zipFile);
-        }
+        // needed to get easybook version
+        $app = new \Easybook\DependencyInjection\Application();
+        $this->version = $app['app.version'];
 
         // temp directory to copy the essential easybook files
         $this->packageDir = $this->rootDir.'/app/Cache/easybook';
@@ -46,17 +45,14 @@ class Compressor
             $this->filesystem->remove($this->packageDir);
         }
         $this->filesystem->mkdir($this->packageDir);
-
-        // get easybook version
-        $app = new \Easybook\DependencyInjection\Application();
-        $this->version = $app['app.version'];
     }
 
-    public function build()
+    public function build($zipFile = null)
     {
-        echo sprintf("\nBuilding easybook %s package\n%s\n",
-            $this->version, str_repeat('=', 80)
-        );
+        $this->zipFile = $zipFile ?: sprintf("%s/easybook-%s.zip", $this->rootDir, $this->version);
+        if (file_exists($this->zipFile)) {
+            unlink($this->zipFile);
+        }
 
         // add book script
         $this->addFile(new \SplFileInfo($this->rootDir.'/book'));
@@ -144,7 +140,7 @@ class Compressor
         $this->addFile(new \SplFileInfo($this->rootDir.'/README.md'));
 
         // compress all files into a single ZIP file
-        Toolkit::zip($this->packageDir, './'.$this->zipFile);
+        Toolkit::zip($this->packageDir, $this->zipFile);
 
         // delete temp directory
         $this->filesystem->remove($this->packageDir);
