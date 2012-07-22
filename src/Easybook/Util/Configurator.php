@@ -34,22 +34,22 @@ class Configurator
     public function resolveConfiguration()
     {
         $config = $this->app->get('book');
-        
+
         // prepare options needed to parse option values as Twig expressions
         $theApp = clone $this->app;
         $twigOptions = array(
             'book'    => $config,
             'edition' => $config['editions'][$this->app->get('publishing.edition')]
         );
-        
-        array_walk_recursive($config, function (&$value, $key) use ($theApp, $twigOptions) {            
+
+        array_walk_recursive($config, function (&$value, $key) use ($theApp, $twigOptions) {
             // this condition is needed to prevent the conversion performed by
             // Twig to some special values: true => 1, false => 0, null => (nothing)
             if (true !== $value && false !== $value && null !== $value) {
                 $value = $theApp->renderString($value, $twigOptions);
             }
         });
-        
+
         // load final book configuration into application
         $this->app->set('book', $config);
 
@@ -62,7 +62,7 @@ class Configurator
      *   1. '--configuration' option from 'publish' command
      *   2. config.yml configuration file
      *   3. easybook default options
-     *   
+     *
      * In addition, it validates the loaded options.
      */
     public function loadBookConfiguration()
@@ -91,7 +91,7 @@ class Configurator
 
         // 3. load easybook default options for books
         $defaultConfig = $this->app->get('app.book.defaults');
-    
+
         // TODO: use OptionsResolver component when it supports recursive merging
         // and allows to set options different from defaultValues.
         // $resolver = new \Symfony\Component\OptionsResolver\OptionsResolver();
@@ -123,7 +123,7 @@ class Configurator
      * Loads edition configuration taking into account edition inheritance
      * and easybook default options for editions. Options set by
      * '--configuration' are already merged by 'loadBookConfiguration()' method.
-     * 
+     *
      * In addition, it validates the loaded options.
      */
     public function loadEditionConfiguration()
@@ -148,9 +148,9 @@ class Configurator
                 ));
             }
 
-            $parentConfig = $book['editions'][$parent] ?: array();            
+            $parentConfig = $book['editions'][$parent] ?: array();
         }
-        
+
         // 3. load easybook default options for editions
         $defaultConfig = $this->app->get('app.edition.defaults');
 

@@ -17,7 +17,7 @@ use Easybook\Events\ParseEvent;
 
 class CodePlugin implements EventSubscriberInterface
 {
-    static public function getSubscribedEvents()
+    public static function getSubscribedEvents()
     {
         return array(
             Events::PRE_PARSE  => array('onItemPreParse', -500),
@@ -30,15 +30,15 @@ class CodePlugin implements EventSubscriberInterface
         $item = $event->getItem();
         // regexp copied from PHP-Markdown
         $item['original'] = preg_replace_callback('{
-				(?:\n\n|\A\n?)
-				(?<code>	       # $1 = the code block -- one or more lines, starting with a space/tab
-				    (?>
-					    [ ]{4}     # Lines must start with a tab or a tab-width of spaces
-					    .*\n+
-				    )+
-				)
-				((?=^[ ]{0,4}\S)|\Z) # Lookahead for non-space at line-start, or end of doc
-			}xm',
+                (?:\n\n|\A\n?)
+                (?<code>	       # $1 = the code block -- one or more lines, starting with a space/tab
+                    (?>
+                        [ ]{4}     # Lines must start with a tab or a tab-width of spaces
+                        .*\n+
+                    )+
+                )
+                ((?=^[ ]{0,4}\S)|\Z) # Lookahead for non-space at line-start, or end of doc
+            }xm',
             function($matches) use ($event) {
                 $code = trim($matches['code']);
 
@@ -52,6 +52,7 @@ class CodePlugin implements EventSubscriberInterface
                     }x',
                     function($matches) use (&$language) {
                         $language = trim($matches['lang']);
+
                         return $matches['code'];
                     },
                     $code
@@ -87,15 +88,15 @@ class CodePlugin implements EventSubscriberInterface
         );
         $event->setItem($item);
     }
-    
+
     public function onItemPostParse(ParseEvent $event)
     {
         $item = $event->getItem();
-        
+
         // unescape yaml-style comments that before parsing could
         // be interpreted as Markdown first-level headings
         $item['content'] = str_replace('&#35;', '#', $item['content']);
-        
+
         $event->setItem($item);
     }
 }

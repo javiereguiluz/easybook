@@ -18,7 +18,7 @@ use Easybook\Events\ParseEvent;
 
 class LinkPlugin implements EventSubscriberInterface
 {
-    static public function getSubscribedEvents()
+    public static function getSubscribedEvents()
     {
         return array(
             // priority must be lower than ParserPlugin POST_PARSE priority (-1000)
@@ -30,7 +30,7 @@ class LinkPlugin implements EventSubscriberInterface
     /*
      * Creates a lookup table for internal links (only used in html_chunked
      * and epub type editions).
-     * 
+     *
      * This table is saved in `publishing.links` and has the following structure:
      * array(
      *     '#my-internal-link-id'    => 'chapter-2.html#my-internal-link-id',
@@ -53,7 +53,7 @@ class LinkPlugin implements EventSubscriberInterface
 
             $relativeUrl = '#'.$entry['slug'];
             $absoluteUrl = $itemSlug.'.html'.$relativeUrl;
-            
+
             $links[$relativeUrl] = $absoluteUrl;
         }
 
@@ -70,12 +70,12 @@ class LinkPlugin implements EventSubscriberInterface
                 $format = $event->app->edition('format');
                 if (in_array($format, array('html_chunked', 'epub', 'epub2'))) {
                     $links = $event->app->get('publishing.links');
+
                     return sprintf(
                         '<a class="link:internal" href="%s"%s</a>',
                         $links[$matches[1]], $matches[2]
                     );
-                }
-                else {
+                } else {
                     return sprintf(
                         '<a class="link:internal" href="%s"%s</a>',
                         $matches[1], $matches[2]

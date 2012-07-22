@@ -92,6 +92,10 @@ class Compressor
             $this->addFile($file);
         }
 
+        // add command help files
+        $this->addFile(new \SplFileInfo($this->rootDir.'/src/Easybook/Console/Command/Resources/BookNewCommandHelp.txt'));
+        $this->addFile(new \SplFileInfo($this->rootDir.'/src/Easybook/Console/Command/Resources/BookPublishCommandHelp.txt'));
+
         // add core classes
         $finder = new Finder();
         $finder->files()

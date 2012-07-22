@@ -11,7 +11,6 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\Parsers\MdParser;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;

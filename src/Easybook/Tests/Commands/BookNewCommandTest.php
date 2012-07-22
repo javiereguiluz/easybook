@@ -134,26 +134,26 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         }
 
         $bookConfig = Yaml::parse($bookDir.'/config.yml');
-        
+
         // --- test basic config ----------------------------------------------
         $this->assertEquals(
             $bookConfig['book']['title'],
             'The Origin of Species',
             'The title of the new book is "The Origin of Species"'
         );
-        
+
         $this->assertEquals(
             $bookConfig['book']['author'],
             'Change this: Author Name',
             'The author of the new book is unset'
         );
-        
+
         $this->assertEquals(
             $bookConfig['book']['language'],
             'en',
             'The language of the new book is English'
         );
-        
+
         $this->assertEquals(
             $bookConfig['book']['publication_date'],
             null,
@@ -179,7 +179,7 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
             4,
             'The new book has 4 editions configured'
         );
-        
+
         $this->assertArrayHasKey(
             'ebook',
             $bookConfig['book']['editions'],
@@ -218,7 +218,7 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
             $tester->getDisplay(),
             'The second book skeleton has been generated'
         );
-        
+
         $this->assertRegExp(
             '/.*\/the-origin-of-species-\d{1}\s+/',
             $tester->getDisplay(),

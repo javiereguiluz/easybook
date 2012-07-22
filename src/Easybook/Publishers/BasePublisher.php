@@ -14,7 +14,7 @@ namespace Easybook\Publishers;
 class BasePublisher
 {
     protected $app;
-    
+
     public function __construct($app)
     {
         $this->app = $app;
@@ -47,7 +47,6 @@ class BasePublisher
         $this->app->set('publishing.dir.output', $editionOutputDir);
     }
 
-
     public function loadContents()
     {
         // TODO: extensibility -> editions can redefine book contents (to remove or reorder items)
@@ -59,7 +58,7 @@ class BasePublisher
                 // TODO: extensibility -> contents could be written in several formats simultaneously
                 // (e.g. Twig *and* Markdown)
                 $contentFile = $this->app['publishing.dir.contents'].'/'.$contentConfig['content'];
-                
+
                 // check that content file exists and is readable
                 if (!is_readable($contentFile)) {
                     throw new \RuntimeException(sprintf(
@@ -72,11 +71,10 @@ class BasePublisher
                         realpath($this->app['publishing.dir.contents']).'/'.$contentConfig['content']
                     ));
                 }
-                
+
                 $item['original'] = file_get_contents($contentFile);
                 $item['config']['format'] = pathinfo($contentFile, PATHINFO_EXTENSION);
-            }
-            else {
+            } else {
                 // look for a default content defined by easybook for this element
                 // e.g. `cover.md.twig`, `license.md.twig`, `title.md.twig`
                 try {
@@ -85,8 +83,7 @@ class BasePublisher
                     $item['config']['format']  = 'md';
                 }
                 // if Twig throws a Twig_Error_Loader exception, there is no default content
-                catch (\Twig_Error_Loader $e)
-                {
+                catch (\Twig_Error_Loader $e) {
                     $item['original'] = '';
                     $item['config']['format']  = 'md';
                 }

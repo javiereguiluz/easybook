@@ -29,24 +29,26 @@ class Toolkit
     {
         if (func_num_args() < 2) {
             trigger_error(__FUNCTION__ .' needs two or more array arguments', E_USER_WARNING);
+
             return;
         }
-        
+
         $arrays = func_get_args();
         $merged = array();
-        
+
         while ($arrays) {
             $array = array_shift($arrays);
-            
+
             if (!is_array($array)) {
                 trigger_error(__FUNCTION__ .' encountered a non array argument', E_USER_WARNING);
+
                 return;
             }
-            
+
             if (!$array) {
                 continue;
             }
-            
+
             foreach ($array as $key => $value) {
                 if (is_string($key) || $replaceNumericKeys) {
                     if (is_array($value)
@@ -58,20 +60,18 @@ class Toolkit
                             $merged[$key],
                             $value
                         );
-                    }
-                    else {
+                    } else {
                         $merged[$key] = $value;
                     }
-                }
-                else {
+                } else {
                     $merged[] = $value;
                 }
             }
         }
-        
+
         return $merged;
     }
-    
+
     /*
      * Zips a complete directory with one call:
      *     zip('/path/to/any/dir', 'compressed.zip');
@@ -83,44 +83,43 @@ class Toolkit
         if (!extension_loaded('zip') || !file_exists($source)) {
             return false;
         }
-    
+
         $zip = new \ZipArchive();
         if (!$zip->open($destination, \ZIPARCHIVE::CREATE)) {
             return false;
         }
-    
+
         $source = str_replace('\\', '/', realpath($source));
-    
+
         if (is_dir($source)) {
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator($source),
                 \RecursiveIteratorIterator::SELF_FIRST
             );
-    
+
             foreach ($files as $file) {
                 $file = str_replace('\\', '/', realpath($file));
-    
+
                 if (is_dir($file)) {
                     $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
-                }
-                elseif (is_file($file)) {
+                } elseif (is_file($file)) {
                     $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
                 }
             }
-        }
-        elseif (is_file($source)) {
+        } elseif (is_file($source)) {
             $zip->addFromString(basename($source), file_get_contents($source));
         }
-    
+
         return $zip->close();
     }
-    
+
     /*
      * Generates valid RFC 4211 compliant Universally Unique IDentifiers (UUID) version 4
      *
      * code copied from http://www.php.net/manual/en/function.uniqid.php#94959
      */
-    public static function uuid() {
+    public static function uuid()
+    {
         return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             mt_rand(0, 0xffff), mt_rand(0, 0xffff),
             mt_rand(0, 0xffff),
@@ -141,10 +140,11 @@ class Toolkit
      *
      * code adapted from Symfony\Component\DependencyInjection\Container.php
      */
-    static public function camelize($string, $upperFirst = false)
+    public static function camelize($string, $upperFirst = false)
     {
         return preg_replace_callback('/(^|_|\.)+(.)/', function ($match) use ($upperFirst) {
             $camelized = ('.' === $match[1] ? '_' : '').strtoupper($match[2]);
+
             return $upperFirst ? ucfirst($camelized) : $camelized;
         }, $string);
     }

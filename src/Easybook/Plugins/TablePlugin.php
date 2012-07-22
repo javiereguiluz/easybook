@@ -17,7 +17,7 @@ use Easybook\Events\ParseEvent;
 
 class TablePlugin implements EventSubscriberInterface
 {
-    static public function getSubscribedEvents()
+    public static function getSubscribedEvents()
     {
         return array(
             Events::POST_PARSE => array('onItemPostParse', -500),

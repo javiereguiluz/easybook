@@ -12,13 +12,10 @@
 namespace Easybook\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\DialogHelper;
-use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
 
 use Easybook\DependencyInjection\Application;
 use Easybook\Util\Validator;
@@ -42,17 +39,17 @@ class BookNewCommand extends BaseCommand
             ))
             ->setHelp(file_get_contents(__DIR__.'/Resources/BookNewCommandHelp.txt'));
     }
-    
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $title = Validator::validateNonEmptyString(
             'title', $input->getArgument('title')
         );
-        
+
         $dir = Validator::validateDirExistsAndWritable(
             $input->getOption('dir') ?: $this->app['app.dir.doc']
         );
-        
+
         // TODO: extensibility: user should be allowed to define the slug
         $slug = $this->app->get('slugger')->slugify($title);
         $bookDir = $dir.'/'.$slug;
@@ -98,24 +95,24 @@ class BookNewCommand extends BaseCommand
             ''
         ));
     }
-    
+
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $output->writeln($this->app['app.signature']);
-        
+
         $title = $input->getArgument('title');
         if (null != $title && '' != $title) {
             return;
         }
-        
+
         $output->writeln(array(
             '',
             ' Welcome to the <comment>easybook</comment> interactive book generator',
             ''
         ));
-        
+
         $dialog = $this->getHelperSet()->get('dialog');
-        
+
         // check `title` argument
         $title = $input->getArgument('title') ?: $dialog->askAndValidate(
             $output,

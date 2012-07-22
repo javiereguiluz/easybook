@@ -34,14 +34,12 @@ class ParseEvent extends BaseEvent
             $id = lcfirst(substr($method, 3));
 
             return $this->getItemProperty($id);
-        }
-        elseif ('set' == substr($method, 0, 3)) {
+        } elseif ('set' == substr($method, 0, 3)) {
             $id = lcfirst(substr($method, 3));
             $value = $arguments[0];
 
             $this->setItemProperty($id, $value);
-        }
-        else {
+        } else {
             throw new \BadMethodCallException(sprintf(
                 'Undefined "%s" method (the method name must start with either "get" or "set"',
                 $method

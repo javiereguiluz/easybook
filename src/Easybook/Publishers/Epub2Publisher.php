@@ -11,10 +11,8 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\Parsers\MdParser;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
-use Easybook\Events\ParseEvent;
 use Easybook\Util\Toolkit;
 
 class Epub2Publisher extends HtmlPublisher
@@ -33,10 +31,10 @@ class Epub2Publisher extends HtmlPublisher
             }
         }
         $this->app->book('contents', $contents);
-        
+
         parent::loadContents();
     }
-    
+
     public function decorateContents()
     {
         $decoratedItems = array();
@@ -59,12 +57,12 @@ class Epub2Publisher extends HtmlPublisher
 
         $this->app->set('publishing.items', $decoratedItems);
     }
-    
+
     public function assembleBook()
     {
         // set the edition id needed for ebook generation
         $this->app->edition('id', $this->app['publishing.id']);
-        
+
         // variables needed to hold the list of images and fonts of the book
         $bookImages = array();
         $bookFonts  = array();
@@ -73,7 +71,7 @@ class Epub2Publisher extends HtmlPublisher
         $bookTempDir = $this->app['app.dir.cache']
                        .'/'.$this->app['publishing.book.slug']
                        .'-'.$this->app['publishing.edition'];
-        
+
         $this->app->get('filesystem')->mkdir(array(
             $bookTempDir,
             $bookTempDir.'/book',
@@ -83,7 +81,7 @@ class Epub2Publisher extends HtmlPublisher
             $bookTempDir.'/book/OEBPS/images',
             $bookTempDir.'/book/OEBPS/fonts',
         ));
-        
+
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
             $this->app->renderThemeTemplate(
@@ -91,7 +89,7 @@ class Epub2Publisher extends HtmlPublisher
                 array('resources_dir' => '..'),
                 $bookTempDir.'/book/OEBPS/css/easybook.css'
             );
-            
+
             // copy book fonts and prepare font data for ebook manifest
             $this->app->get('filesystem')->copy(
                 $this->app['app.dir.resources'].'/Fonts/Inconsolata/Inconsolata.ttf',
@@ -103,7 +101,7 @@ class Epub2Publisher extends HtmlPublisher
                 'mediaType' => 'application/octet-stream'
             );
         }
-        
+
         // generate custom CSS file
         $customCss = $this->app->getCustomTemplate('style.css');
         if (file_exists($customCss)) {
@@ -113,7 +111,7 @@ class Epub2Publisher extends HtmlPublisher
                 true
             );
         }
-        
+
         // each book element will generate an HTML page
         // use automatic slugs (chapter-1, chapter-2, ...) instead of
         // semantic slugs (lorem-ipsum, dolor-sit-amet, ...)
@@ -123,9 +121,9 @@ class Epub2Publisher extends HtmlPublisher
             $pageName = array_key_exists('number', $item['config'])
                 ? $item['config']['element'].' '.$item['config']['number']
                 : $item['config']['element'];
-            
+
             $slug = $this->app->get('slugger')->slugify(trim($pageName));
-            
+
             $item['slug'] = $slug;
             // TODO: document this new item property
             $item['fileName'] = $slug.'.html';
@@ -144,18 +142,18 @@ class Epub2Publisher extends HtmlPublisher
                 $bookTempDir.'/book/OEBPS/'.$item['fileName']
             );
         }
-        
+
         // copy book images and prepare image data for ebook manifest
         if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {
             $images = $this->app->get('finder')->files()->in($imagesDir);
-            
+
             $i = 1;
             foreach ($images as $image) {
                 $this->app->get('filesystem')->copy(
                     $image->getPathName(),
                     $bookTempDir.'/book/OEBPS/images/'.$image->getFileName()
                 );
-                
+
                 $bookImages[] = array(
                     'id'        => 'figure-'.$i++,
                     'filePath'  => 'images/'.$image->getFileName(),
@@ -198,12 +196,12 @@ class Epub2Publisher extends HtmlPublisher
             ),
             $bookTempDir.'/book/OEBPS/content.opf'
         );
-                
+
         // generate NCX file
         $this->app->renderThemeTemplate('toc.ncx.twig', array(),
             $bookTempDir.'/book/OEBPS/toc.ncx'
         );
-        
+
         // generate container.xml and mimetype files
         $this->app->renderThemeTemplate('container.xml.twig', array(),
             $bookTempDir.'/book/META-INF/container.xml'
@@ -211,7 +209,7 @@ class Epub2Publisher extends HtmlPublisher
         $this->app->renderThemeTemplate('mimetype.twig', array(),
             $bookTempDir.'/book/mimetype'
         );
-        
+
         // compress book contents as ZIP file and rename to .epub
         // TODO: the name of the book file (book.epub) must be configurable
         Toolkit::zip($bookTempDir.'/book', $bookTempDir.'/book.zip');
@@ -220,8 +218,8 @@ class Epub2Publisher extends HtmlPublisher
             $this->app['publishing.dir.output'].'/book.epub',
             true
         );
-        
+
         // remove temp directory used to build the book
-        $this->app->get('filesystem')->remove($bookTempDir);    
+        $this->app->get('filesystem')->remove($bookTempDir);
     }
 }

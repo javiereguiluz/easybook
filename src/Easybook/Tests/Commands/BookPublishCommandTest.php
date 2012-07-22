@@ -20,7 +20,6 @@ use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
 
 class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
 {
@@ -80,7 +79,7 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
             $tester->getDisplay(),
             'The interactive publisher welcome message is shown'
         );
-        
+
         $this->assertContains(
             'Please, type the slug of the book (e.g. the-origin-of-species)',
             $tester->getDisplay(),
@@ -119,10 +118,10 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
     {
         list($publishedBook, $maxDuration) = $expected;
         $edition = $options['edition'];
-        
+
         $command = $this->console->find('publish');
         $tester  = new CommandTester($command);
-        
+
         $start = microtime(true);
         $tester->execute(array(
             'command' => $command->getName(),

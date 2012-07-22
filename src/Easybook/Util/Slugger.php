@@ -15,12 +15,12 @@ class Slugger
 {
     private $app;
     private $options;
-    
+
     public function __construct($app)
     {
         $this->app = $app;
     }
-    
+
     // adapted from http://cubiq.org/the-perfect-php-clean-url-generator
     public function slugify($string, $options = array())
     {
@@ -34,16 +34,14 @@ class Slugger
 
         if (function_exists('iconv')) {
             $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-        }
-        else if (function_exists('mb_convert_encoding')) {
+        } elseif (function_exists('mb_convert_encoding')) {
             $slug = mb_convert_encoding($string, 'ASCII');
-        }
-        else {
+        } else {
             // if both iconv and mb_* functions are unavailable, use a
             // simple method to remove accents
             // TODO: Is it better to just throw an exception?
             $slug = strtr(
-                utf8_decode($string), 
+                utf8_decode($string),
                 utf8_decode('ŠŒŽšœžŸ¥µÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ'),
                 'SOZsozYYuAAAAAAACEEEEIIIIDNOOOOOOUUUUYsaaaaaaaceeeeiiiionoooooouuuuyy'
             );

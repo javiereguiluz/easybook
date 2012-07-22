@@ -28,8 +28,8 @@ class TwigCssExtension extends \Twig_Extension
     }
 
     /*
-     * Returns a color which is $percent lighter than $color 
-     * 
+     * Returns a color which is $percent lighter than $color
+     *
      * @param string $color   The original color in hexadecimal format (eg. '#FFF', '#CC0000')
      * @param string $percent The percentage of "lightness" added to the original color
      *                        (eg. '10%', '50%', '66.66%'')
@@ -39,7 +39,7 @@ class TwigCssExtension extends \Twig_Extension
     public function lighten($color, $percent)
     {
         $percent = str_replace('%', '', $percent) / 100;
-        
+
         $rgb = $this->hex2rgb($color);
         $hsl = $this->rgb2hsl($rgb);
 
@@ -49,12 +49,12 @@ class TwigCssExtension extends \Twig_Extension
         $rgb = $this->hsl2rgb(array($h, $s, $l));
         $color = $this->rgb2hex($rgb);
 
-        return $color;   
+        return $color;
     }
 
     /*
-     * Returns a color which is $percent darker than $color 
-     * 
+     * Returns a color which is $percent darker than $color
+     *
      * @param string $color   The original color in hexadecimal format (eg. '#FFF', '#CC0000')
      * @param string $percent The percentage of "darkness" added to the original color
      *                        (eg. '10%', '50%', '66.66%'')
@@ -68,10 +68,10 @@ class TwigCssExtension extends \Twig_Extension
 
     /*
      * Changes the $opacity of the given $color.
-     * 
+     *
      * @param string $hex     The original color in hexadecimal format (eg. '#FFF', '#CC0000')
      * @param string $opacity The opacity of the result color (value ranges from 0.0 to 1.0)
-     * 
+     *
      */
     public function fade($hex, $opacity)
     {
@@ -146,7 +146,6 @@ class TwigCssExtension extends \Twig_Extension
         );
     }
 
-
     // -- Internal methods to convert between units ---------------------------
 
     private function hex2rgb($hex)
@@ -184,23 +183,23 @@ class TwigCssExtension extends \Twig_Extension
         $min = min($r, min($g, $b));
         $max = max($r, max($g, $b));
         $delta = $max - $min;
-        
+
         $l = ($min + $max) / 2;
         $s = 0;
-        
+
         if ($l > 0 && $l < 1) {
             $s = $delta / ($l < 0.5 ? (2 * $l) : (2 - 2 * $l));
         }
-        
+
         $h = 0;
-        
+
         if ($delta > 0) {
             if ($max == $r && $max != $g) { $h += ($g - $b) / $delta;       }
             if ($max == $g && $max != $b) { $h += (2 + ($b - $r) / $delta); }
             if ($max == $b && $max != $r) { $h += (4 + ($r - $g) / $delta); }
             $h /= 6;
         }
-        
+
         return array($h, $s, $l);
     }
 
@@ -217,6 +216,7 @@ class TwigCssExtension extends \Twig_Extension
             if ($base * 6 < 1) { return $m1 + ($m2 - $m1) * $base * 6; }
             if ($base * 2 < 1) { return $m2; }
             if ($base * 3 < 2) { return $m1 + ($m2 - $m1) * (0.66666 - $base) * 6; }
+
             return $m1;
         };
 

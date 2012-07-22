@@ -15,47 +15,46 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Easybook\DependencyInjection\Application;
 use Easybook\Console\ConsoleApplication;
-use Easybook\Console\Command\BookPublishCommand;
 use Easybook\Tests\TestCase;
 
 class BookConfigurationTest extends TestCase
 {
     private $dir;
     private $app;
-    
+
     public function setUp()
     {
         $this->app = new Application();
         $this->dir = sys_get_temp_dir().'/easybookTests';
-        
+
         parent::setUp();
     }
-    
+
     public function tearDown()
     {
         $this->app->get('filesystem')->remove($this->dir);
-        
+
         parent::tearDown();
     }
-    
+
     private function publishBookAndCheckParsedConfiguration($options)
     {
         $console = new ConsoleApplication($this->app);
-        
+
         $sourceDir = __DIR__.'/fixtures/'.$options['slug'];
         $targetDir = $this->dir.'/'.$options['slug'];
         $edition   = $options['edition'];
 
         // mirror test book contents in temp dir
         $this->app->get('filesystem')->mirror($sourceDir.'/input', $targetDir);
-        
+
         // rename config_$edition.yml to config.yml
         $this->app->get('filesystem')->copy(
             $targetDir.'/Configuration/config_'.$edition.'.yml',
             $targetDir.'/config.yml',
             true
         );
-        
+
         // publish the book
         $input = new ArrayInput(array_replace(array(
             'command' => 'publish',

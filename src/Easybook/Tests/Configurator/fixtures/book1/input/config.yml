@@ -44,7 +44,7 @@ book:
                 elements:   ["appendix", "chapter"]
             two_sided:      true
 
-        # edition with all custom configuration options        
+        # edition with all custom configuration options
         edition5:
             price:          10
             pages:          250
@@ -108,7 +108,7 @@ book:
         edition10:
             extends: edition9
 
-        # edition with all custom configuration options        
+        # edition with all custom configuration options
         edition11:
             price:          10
             pages:          250

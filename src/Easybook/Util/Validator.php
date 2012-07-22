@@ -67,7 +67,7 @@ class Validator
                 "ERROR: The slug can only contain letters, numbers and dashes (no spaces)"
             );
         }
-        
+
         return $slug;
     }
 
@@ -80,21 +80,21 @@ class Validator
         $bookDir  = $baseDir.'/'.$slug;
 
         // check that the given book already exists or ask for another slug
-        while (!file_exists($bookDir) && $attemps--) {
-            if (!$attemps) {
+        while (!file_exists($bookDir) && $attempts--) {
+            if (!$attempts) {
                 throw new \RuntimeException(sprintf(
                     " ERROR: Too many failed attempts. Check that your book is in\n"
                     ." '%s/' directory",
                     realpath($baseDir)
                 ));
             }
-            
+
             $this->app->get('console.output')->writeln(array(
                 "",
                 " <bg=red;fg=white> ERROR </> The given <info>$slug</info> slug doesn't match any book in",
                 " <comment>".realpath($baseDir)."/</comment> directory"
             ));
-            
+
             $slug = $this->app->get('console.dialog')->ask(
                 $this->app->get('console.output'),
                 array(
@@ -102,7 +102,7 @@ class Validator
                     ." > "
                 )
             );
-            
+
             $bookDir = $baseDir.'/'.$slug;
         }
 
@@ -137,7 +137,7 @@ class Validator
                 "ERROR: The edition name can only contain letters, numbers and dashes (no spaces)"
             );
         }
-        
+
         return $slug;
     }
 
@@ -180,7 +180,7 @@ class Validator
                     $edition, realpath($bookDir.'/config.yml')
                 ));
             }
-        
+
             $this->app->get('console.output')->writeln(array(
                 "",
                 " <bg=red;fg=white> ERROR </> The <info>$edition</info> edition isn't defined for "
@@ -189,7 +189,7 @@ class Validator
                 " Check that <comment>".realpath($bookDir.'/config.yml')."</comment> file",
                 " defines a <info>$edition</info> edition under the <info>editions</info> option."
             ));
-            
+
             $edition = $this->app->get('console.dialog')->ask(
                 $this->app->get('console.output'),
                 array(

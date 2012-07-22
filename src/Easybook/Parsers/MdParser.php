@@ -18,7 +18,7 @@ class MdParser extends BaseParser
     public function parse($content)
     {
         $outputFormat = $this->app->edition('format');
-        
+
         switch ($outputFormat) {
             case 'pdf':
             case 'html':
@@ -35,10 +35,11 @@ class MdParser extends BaseParser
                 ));
         }
     }
-    
+
     public function parseToHtml($content)
     {
         $parser = new MarkdownExtraParser(array(), $this->app);
+
         return $parser->transformMarkdown($content);
     }
 }

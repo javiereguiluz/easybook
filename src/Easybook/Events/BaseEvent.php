@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\Event;
 class BaseEvent extends Event
 {
     public $app;
-    
+
     public function __construct($app)
     {
         $this->app = $app;

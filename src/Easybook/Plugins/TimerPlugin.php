@@ -17,7 +17,7 @@ use Easybook\Events\BaseEvent;
 
 class TimerPlugin implements EventSubscriberInterface
 {
-    static public function getSubscribedEvents()
+    public static function getSubscribedEvents()
     {
         return array(
             Events::PRE_PUBLISH  => 'onStart',

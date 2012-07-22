@@ -17,7 +17,7 @@ use Easybook\Events\ParseEvent;
 
 class ParserPlugin implements EventSubscriberInterface
 {
-    static public function getSubscribedEvents()
+    public static function getSubscribedEvents()
     {
         return array(
             Events::POST_PARSE => array('onItemPostParse', -1000),
@@ -30,12 +30,12 @@ class ParserPlugin implements EventSubscriberInterface
         $item = $event->getItem();
         $item['content'] = str_replace('<br>', '<br/>', $item['content']);
         $event->setItem($item);
-        
+
         // strip title from the parsed content
         $item = $event->getItem();
         if (count($item['toc']) > 0) {
             $heading = $item['toc'][0];
-            
+
             // only <h1> headings can be the title of the content
             if (1 == $heading['level']) {
                 // the <h1> heading must be the first line to consider it a title
@@ -45,7 +45,7 @@ class ParserPlugin implements EventSubscriberInterface
                     '$1',
                     $item['content']
                 );
-                
+
                 $item['slug']  = $heading['slug'];
                 $item['title'] = $heading['title'];
             }
@@ -67,7 +67,7 @@ class ParserPlugin implements EventSubscriberInterface
             );
             foreach ($item['toc'] as $key => $entry) {
                 // edition config allows labels for this element type ('labels' option)
-                if (in_array($item['config']['element'], $event->app->edition('labels'))) {
+                if (in_array($item['config']['element'], $event->app->edition('labels') ?: array())) {
                     $level = $entry['level'];
                     if ($level > 1) {
                         $counters[$level]++;
@@ -85,6 +85,13 @@ class ParserPlugin implements EventSubscriberInterface
                     $label = $event->app->getLabel($item['config']['element'], array(
                         'item' => $parameters
                     ));
+/*
+                    // add a trailing whitespace if the label includes none
+                    // otherwise, there will be no space between the label and the title
+                    if (' ' != substr($label, -1)) {
+                        $label = $label.' ';
+                    }
+ */
                 }
                 // edition config doesn't allow labels for this element type
                 else {
@@ -109,11 +116,11 @@ class ParserPlugin implements EventSubscriberInterface
                 // doesn't include the title text
                 $fuzzyTitle = "/<h".$entry['level']." id=\"".$entry['slug']."\">.*<\/h".$entry['level'].">\n\n/";
 
-                $labeledTitle = sprintf("<h%s id=\"%s\">%s %s</h%s>\n\n",
+                $labeledTitle = sprintf("<h%s id=\"%s\">%s%s</h%s>\n\n",
                     $entry['level'],
                     $entry['slug'],
                     $entry['label'],
-                    $entry['title'],
+                    '' != $entry['label'] ? ' '.$entry['title'] : $entry['title'],
                     $entry['level']
                 );
 

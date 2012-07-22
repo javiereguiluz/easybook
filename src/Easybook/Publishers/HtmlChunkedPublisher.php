@@ -11,10 +11,8 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\Parsers\MdParser;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
-use Easybook\Events\ParseEvent;
 
 class HtmlChunkedPublisher extends HtmlPublisher
 {
@@ -109,8 +107,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 file_put_contents($chunkPath, $chunkContent);
 
                 $chunkNumber++;
-            }
-            elseif (in_array($element, array('license', 'edition', 'title', 'cover', 'author', 'toc'))) {
+            } elseif (in_array($element, array('license', 'edition', 'title', 'cover', 'author', 'toc'))) {
                 $indexItems[$element] = $item;
             }
 

@@ -38,7 +38,7 @@ class Application extends \Pimple
         $this['app.debug']     = false;
         $this['app.charset']   = 'UTF-8';
         $this['app.name']      = 'easybook';
-        $this['app.version']   = '4.6';
+        $this['app.version']   = '4.8-DEV';
         $this['app.signature'] = "\n"
         ."                     |              |    \n"
         ." ,---.,---.,---.,   .|---.,---.,---.|__/ \n"
@@ -124,17 +124,17 @@ class Application extends \Pimple
         $this['publishing.links']         = array();
         $this['publishing.list.images']   = array();
         $this['publishing.list.tables']   = array();
-        
+
         $this['publishing.id'] = $this->share(function ($app) {
             if (null != $isbn = $app->edition('isbn')) {
                 return array('scheme' => 'isbn', 'value' => $isbn);
             }
-            
+
             // if the book doesn't declare an ISBN, generate
             // a unique ID based on RFC 4211 UUID v4
             return array('scheme' => 'URN', 'value' => Toolkit::uuid());
         });
-        
+
         // -- event dispatcher ------------------------------------------------
         $this['dispatcher'] = $this->share(function () {
             return new EventDispatcher();
@@ -167,20 +167,20 @@ class Application extends \Pimple
             switch (strtolower($outputFormat)) {
                 case 'pdf':
                     return new PdfPublisher($app);
-                
+
                 case 'html':
                     return new HtmlPublisher($app);
-                
+
                 case 'html_chunked':
                     return new HtmlChunkedPublisher($app);
-                
+
                 case 'epub':
                 case 'epub2':
                     return new Epub2Publisher($app);
-                
+
                 //case 'epub3':
                 //    return new Epub3Publisher($app);
-                
+
                 default:
                     throw new \Exception(sprintf(
                         'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "epub2")',
@@ -200,6 +200,7 @@ class Application extends \Pimple
                 case 'mdown':
                 case 'markdown':
                     return new MdParser($app);
+
                 default:
                     throw new \Exception(sprintf(
                         'Unknown "%s" format for "%s" content (easybook only supports Markdown)',
@@ -264,7 +265,7 @@ class Application extends \Pimple
             // default templates for the edition/book theme
             // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
             $dir = sprintf('%s/%s/%s/Templates', $app['app.dir.themes'], $theme, $format);
-            
+
             if (file_exists($dir)) {
                 $paths[] = $dir;
             }
@@ -272,21 +273,21 @@ class Application extends \Pimple
             // default common templates for all the editions of the same theme
             // <easybook>/app/Resources/Themes/<theme>/Common/Templates/<template-name>.twig
             $dir = sprintf('%s/%s/Common/Templates', $app['app.dir.themes'], $theme);
-            
+
             if (file_exists($dir)) {
                 $paths[] = $dir;
             }
-            
+
             // default base theme for every edition and every book
             // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
             $dir = sprintf('%s/Base/%s/Templates', $app['app.dir.themes'], $format);
-            
+
             if (file_exists($dir)) {
                 $paths[] = $dir;
             }
 
             return $paths;
-        });         
+        });
 
         // twig path for default content templates
         // (easybook built-in templates for contents; e.g. `license.md.twig`)
@@ -303,7 +304,7 @@ class Application extends \Pimple
             // default content templates for the edition/book theme
             // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Contents/<template-name>.twig
             $dir = sprintf('%s/%s/%s/Contents', $app['app.dir.themes'], $theme, $format);
-            
+
             if (file_exists($dir)) {
                 $paths[] = $dir;
             }
@@ -328,15 +329,15 @@ class Application extends \Pimple
             $twig->addExtension(new TwigCssExtension());
 
             $twig->addGlobal('app', $app);
-            
+
             if (null != $app->get('book')) {
                 $twig->addGlobal('book', $app->get('book'));
-            
+
                 $publishingEdition = $app->get('publishing.edition');
                 $editions = $app->book('editions');
                 $twig->addGlobal('edition', $editions[$publishingEdition]);
             }
-            
+
             return $twig;
         };
 
@@ -347,7 +348,7 @@ class Application extends \Pimple
             'C:\Program Files\Prince\engine\bin\prince.exe'  # Windows
         );
 
-        $this['prince'] = $app->share(function () use($app) {
+        $this['prince'] = $app->share(function () use ($app) {
             // look for the executable file of PrinceXML
             $princePath = null;
             foreach ($app['prince.default_paths'] as $path) {
@@ -373,8 +374,7 @@ class Application extends \Pimple
                 if (file_exists($input)) {
                     $princePath = $input;
                     echo "\n";
-                }
-                else {
+                } else {
                     throw new \Exception(sprintf(
                         "We couldn't find the PrinceXML executable in the given directory (%s)", $input
                     ));
@@ -410,13 +410,14 @@ class Application extends \Pimple
             $labels = Yaml::parse(
                 $app['app.dir.translations'].'/labels.'.$app->book('language').'.yml'
             );
-            
+
             // books can define their own labels files
             if (null != $customLabelsFile = $app->getCustomLabelsFile()) {
                 $customLabels = Yaml::parse($customLabelsFile);
+
                 return Toolkit::array_deep_merge($labels, $customLabels);
             }
-            
+
             return $labels;
         });
 
@@ -425,22 +426,23 @@ class Application extends \Pimple
             $titles = Yaml::parse(
                 $app['app.dir.translations'].'/titles.'.$app->book('language').'.yml'
             );
-            
+
             // books can define their own titles files
             if (null != $customTitlesFile = $app->getCustomTitlesFile()) {
                 $customTitles = Yaml::parse($customTitlesFile);
+
                 return Toolkit::array_deep_merge($titles, $customTitles);
             }
-            
+
             return $titles;
         });
     }
-    
+
     public function get($id)
     {
         return $this->offsetGet($id);
     }
-    
+
     public function set($id, $value)
     {
         $this->offsetSet($id, $value);
@@ -455,6 +457,13 @@ class Application extends \Pimple
         return $array;
     }
 
+    /**
+     * Shortcut method to get the label of any element type.
+     *
+     * @param  string $element   The element type ('chapter', 'foreword', ...)
+     * @param  array  $variables Optional variables used to render the label
+     * @return string The label of the element or an empty string
+     */
     public function getLabel($element, $variables = array())
     {
         // TODO: extensibility: each content should be able to override 'label' option
@@ -464,12 +473,19 @@ class Application extends \Pimple
 
         // some elements (mostly chapters and appendices) have a different label for each level (h1, ..., h6)
         if (is_array($label)) {
-            $label = $label[$variables['item']['level']-1];
+            $index = $variables['item']['level']-1;
+            $label = $label[$index];
         }
-        
+
         return $this->renderString($label, $variables);
     }
 
+    /**
+     * Shortcut method to get the title of any element type.
+     *
+     * @param  string $element The element type ('chapter', 'foreword', ...)
+     * @return string The title of the element or an empty string
+     */
     public function getTitle($element)
     {
         return array_key_exists($element, $this['titles']['title'])
@@ -518,10 +534,9 @@ class Application extends \Pimple
 
                 file_put_contents($targetFile, $rendered);
             }
-            
+
             return $rendered;
-        }
-        else {
+        } else {
             throw new \Exception(sprintf(
                 'Unsupported "%s" template format (easybook only supports Twig)',
                 substr($template, -5)
@@ -532,18 +547,21 @@ class Application extends \Pimple
     public function renderCustomTemplate($template, $variables = array(), $target = null)
     {
         $path = $this['twig.path.custom'];
+
         return $this->render($template, $variables, $target, $path);
     }
 
     public function renderThemeTemplate($template, $variables = array(), $target = null)
     {
         $path = $this['twig.path.theme'];
+
         return $this->render($template, $variables, $target, $path);
-    }    
+    }
 
     public function renderThemeContent($template, $variables = array(), $target = null)
     {
         $path = $this['twig.path.contents'];
+
         return $this->render($template, $variables, $target, $path);
     }
 
@@ -567,7 +585,7 @@ class Application extends \Pimple
 
         return $this->getCustomFile($templateName, $paths);
     }
-    
+
     /*
      * It looks for custom book labels. The search order is:
      *   1. <book>/Resources/Translations/<edition-name>/labels.<book-language>.yml
@@ -584,10 +602,10 @@ class Application extends \Pimple
             $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
             $this['publishing.dir.resources'].'/Translations'
         );
-        
+
         return $this->getCustomFile($labelsFileName, $paths);
     }
-    
+
     /*
      * It looks for custom book titles. The search order is:
      *   1. <book>/Resources/Translations/<edition-name>/titles.<book-language>.yml
@@ -604,7 +622,7 @@ class Application extends \Pimple
             $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
             $this['publishing.dir.resources'].'/Translations'
         );
-        
+
         return $this->getCustomFile($titlesFileName, $paths);
     }
 
@@ -639,7 +657,7 @@ class Application extends \Pimple
                 return $path.'/'.$file;
             }
         }
-        
+
         return null;
     }
 
@@ -654,46 +672,69 @@ class Application extends \Pimple
         return $geshi->parse_code();
     }
 
-    /*
-     * Shortcut method to dispatch events
+    /**
+     * Shortcut method to dispatch events.
+     *
+     * @param string $eventName   The name of the dispatched event
+     * @param mixed  $eventObject The object that stores event data
      */
     public function dispatch($eventName, $eventObject = null)
     {
         $this->get('dispatcher')->dispatch($eventName, $eventObject);
     }
-    
-    /*
-     * Shortcut to get/set book configuration
+
+    /**
+     * Shortcut to get/set book configuration options:
+     *
+     *   // returns 'author' option value
+     *   $app->book('author');
+     *
+     *   // sets 'New author' as the value of 'author' option
+     *   $app->book('author', 'New author');
+     *
+     * @param  mixed $key      The configuration option key
+     * @param  mixed $newValue The new value of the configuration option
+     * @return mixed It only returns a value when the second argument is null
      */
-    public function book($key, $value = null)
+    public function book($key, $newValue = null)
     {
-        if (null == $value) {
+        if (null == $newValue) {
             $book = $this->get('book');
+
             return array_key_exists($key, $book) ? $book[$key] : null;
-        }
-        else {
+        } else {
             $book = $this->get('book');
-            $book[$key] = $value;
+            $book[$key] = $newValue;
             $this->set('book', $book);
         }
     }
-    
-    /*
-     * Shortcut to get/set book publishing edition configuration
+
+    /**
+     * Shortcut to get/set edition configuration options:
+     *
+     *   // returns 'page_size' option value
+     *   $app->edition('page_size');
+     *
+     *   // sets 'US-letter' as the value of 'page_size' option
+     *   $app->book('page_size', 'US-Letter');
+     *
+     * @param  mixed $key   The configuration option key
+     * @param  mixed $value The new value of the configuration option
+     * @return mixed It only returns a value when the second argument is null
      */
-    public function edition($key, $value = null)
+    public function edition($key, $newValue = null)
     {
-        if (null == $value) {
+        if (null == $newValue) {
             $publishingEdition = $this->get('publishing.edition');
             $editions = $this->book('editions');
+
             return array_key_exists($key, $editions[$publishingEdition] ?: array())
                    ? $editions[$publishingEdition][$key]
                    : null;
-        }
-        else {
+        } else {
             $book = $this->get('book');
             $publishingEdition = $this->get('publishing.edition');
-            $book['editions'][$publishingEdition][$key] = $value;
+            $book['editions'][$publishingEdition][$key] = $newValue;
             $this->set('book', $book);
         }
     }

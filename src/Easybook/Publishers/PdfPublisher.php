@@ -11,7 +11,6 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\Parsers\MdParser;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
@@ -78,7 +77,6 @@ class PdfPublisher extends BasePublisher
         $this->app->set('publishing.items', $decoratedItems);
     }
 
-    
     public function assembleBook()
     {
         // implode all the contents to create the whole book
@@ -116,7 +114,7 @@ class PdfPublisher extends BasePublisher
 
         // show PDF conversion errors
         if (count($errorMessages) > 0) {
-            foreach($errorMessages as $message) {
+            foreach ($errorMessages as $message) {
                 echo $message[0].': '.$message[2].' ('.$message[1].')'."\n";
             }
         }

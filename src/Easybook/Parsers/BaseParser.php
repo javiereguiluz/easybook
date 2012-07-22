@@ -14,7 +14,7 @@ namespace Easybook\Parsers;
 class BaseParser
 {
     protected $app;
-    
+
     public function __construct($app)
     {
         $this->app = $app;
