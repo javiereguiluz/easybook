@@ -30,10 +30,9 @@ class HtmlPublisher extends BasePublisher
 
             // get again 'item' object because PRE_PARSE event can modify it
             $item = $this->app->get('publishing.active_item');
-            $parsed = $this->app->get('parser')->parse($item['original']);
 
-            $item['content'] = $parsed['content'];
-            $item['toc']     = $parsed['toc'];
+            $item['content'] = $this->app->get('parser')->transform($item['original']);
+            $item['toc']     = $this->app->get('publishing.active_item.toc');
 
             $this->app->set('publishing.active_item', $item);
 

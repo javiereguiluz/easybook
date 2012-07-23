@@ -20,7 +20,7 @@ use Easybook\Publishers\PdfPublisher;
 use Easybook\Publishers\HtmlPublisher;
 use Easybook\Publishers\HtmlChunkedPublisher;
 use Easybook\Publishers\Epub2Publisher;
-use Easybook\Parsers\MdParser;
+use Easybook\Parsers\MarkdownParser;
 use Easybook\Util\Configurator;
 use Easybook\Util\Prince;
 use Easybook\Util\Slugger;
@@ -105,25 +105,26 @@ class Application extends \Pimple
 
         // -- publishing process variables ------------------------------------
         // holds the app theme dir for the current edition
-        $this['publishing.dir.app_theme'] = '';
-        $this['publishing.dir.book']      = '';
-        $this['publishing.dir.contents']  = '';
-        $this['publishing.dir.resources'] = '';
-        $this['publishing.dir.plugins']   = '';
-        $this['publishing.dir.templates'] = '';
-        $this['publishing.dir.output']    = '';
-        $this['publishing.edition']       = '';
-        $this['publishing.items']         = array();
+        $this['publishing.dir.app_theme']   = '';
+        $this['publishing.dir.book']        = '';
+        $this['publishing.dir.contents']    = '';
+        $this['publishing.dir.resources']   = '';
+        $this['publishing.dir.plugins']     = '';
+        $this['publishing.dir.templates']   = '';
+        $this['publishing.dir.output']      = '';
+        $this['publishing.edition']         = '';
+        $this['publishing.items']           = array();
         // the specific item currently being parsed/modified/decorated/...
-        $this['publishing.active_item']   = array();
-        $this['publishing.book.slug']     = '';
-        $this['publishing.book.items']    = array();
+        $this['publishing.active_item']     = array();
+        $this['publishing.active_item.toc'] = array();
+        $this['publishing.book.slug']       = '';
+        $this['publishing.book.items']      = array();
         // holds all the generated slugs, to avoid repetitions
-        $this['publishing.slugs']         = array();
+        $this['publishing.slugs']           = array();
         // holds all the internal links (used in html_chunked and epub editions)
-        $this['publishing.links']         = array();
-        $this['publishing.list.images']   = array();
-        $this['publishing.list.tables']   = array();
+        $this['publishing.links']           = array();
+        $this['publishing.list.images']     = array();
+        $this['publishing.list.tables']     = array();
 
         $this['publishing.id'] = $this->share(function ($app) {
             if (null != $isbn = $app->edition('isbn')) {
@@ -191,23 +192,24 @@ class Application extends \Pimple
         });
 
         // -- parser ----------------------------------------------------------
+        $this['parser.options'] = array(
+            // available syntaxes: 'original', 'php-markdown-extra', 'easybook'
+            'markdown_syntax'  => 'easybook',
+        );
+
         $this['parser'] = $this->share(function ($app) {
             $format = strtolower($app['publishing.active_item']['config']['format']);
 
-            // TODO: extensibility -> support several format parsers (RST, Textile, ...)
-            switch ($format) {
-                case 'md':
-                case 'mdown':
-                case 'markdown':
-                    return new MdParser($app);
-
-                default:
-                    throw new \Exception(sprintf(
-                        'Unknown "%s" format for "%s" content (easybook only supports Markdown)',
-                        $format,
-                        $app['publishing.active_item']['config']['content']
-                    ));
+            if (in_array($format, array('md', 'mdown', 'markdown'))) {
+                return new MarkdownParser($app);
             }
+
+            // TODO: extensibility -> support several format parsers (RST, Textile, ...)
+            throw new \Exception(sprintf(
+                'Unknown "%s" format for "%s" content (easybook only supports Markdown)',
+                $format,
+                $app['publishing.active_item']['config']['content']
+            ));
         });
 
         // -- twig ------------------------------------------------------------

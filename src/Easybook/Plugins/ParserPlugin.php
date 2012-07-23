@@ -85,13 +85,6 @@ class ParserPlugin implements EventSubscriberInterface
                     $label = $event->app->getLabel($item['config']['element'], array(
                         'item' => $parameters
                     ));
-/*
-                    // add a trailing whitespace if the label includes none
-                    // otherwise, there will be no space between the label and the title
-                    if (' ' != substr($label, -1)) {
-                        $label = $label.' ';
-                    }
- */
                 }
                 // edition config doesn't allow labels for this element type
                 else {

@@ -23,11 +23,24 @@
                     "type": "zip"
                 }
             }
+        },
+        "markdown": {
+            "type": "package",
+            "package": {
+                "name": "michelf/php-markdown",
+                "version": "1.2.5",
+                "dist": {
+                    "url":  "https://github.com/michelf/php-markdown/zipball/x1.2.5",
+                    "type": "zip"
+                }
+            }
         }
     },
 
     "require": {
         "geshi/geshi":              "1.0.*",
+
+        "michelf/php-markdown":     "1.*",
 
         "pimple/pimple":            "dev-master",
 
