@@ -18,7 +18,7 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
         return array(
                 Events::POST_PARSE => 'onItemPostParse',);
     }
-
+  
     public function onItemPostParse(ParseEvent $event)
     {
         $item = $event->getItem();

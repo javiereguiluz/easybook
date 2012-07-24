@@ -14,7 +14,7 @@ class NeedsTocPlugin implements EventSubscriberInterface
         return array(
                 Events::PRE_PUBLISH => 'onBookPrePublish');
     }
-
+  
     public function onBookPrePublish(BaseEvent $event)
     {
         $app = $event->app;
