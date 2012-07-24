@@ -19,7 +19,7 @@
                 "name": "geshi/geshi",
                 "version": "1.0.8.10",
                 "dist": {
-                    "url":  "http://sourceforge.net/projects/geshi/files/geshi/GeSHi%201.0.8.10/GeSHi-1.0.8.10.zip/download",
+                    "url":  "http://switch.dl.sourceforge.net/project/geshi/geshi/GeSHi%201.0.8.10/GeSHi-1.0.8.10.zip",
                     "type": "zip"
                 }
             }
@@ -38,9 +38,9 @@
     },
 
     "require": {
-        "geshi/geshi":              "1.0.*",
+        "geshi/geshi":              "*",
 
-        "michelf/php-markdown":     "1.*",
+        "michelf/php-markdown":     "*",
 
         "pimple/pimple":            "dev-master",
 
