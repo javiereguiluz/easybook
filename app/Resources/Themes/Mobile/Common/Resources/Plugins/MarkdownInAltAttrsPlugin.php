@@ -29,6 +29,9 @@ class MarkdownInAltAttrsPlugin implements EventSubscriberInterface
                     $parsed = $event->app->get('parser')->transform($matches[1]);
                     $newAlt = trim($parsed);
                     
+                    // remove surrounding quotes
+                    $newAlt = preg_replace('/&quot;(.*)&quot;/Ums', '$1', $newAlt);
+                    
                     // remove surrounding paragraph
                     $newAlt = preg_replace('/<p>(.*)<\/p>/Ums', '$1', $newAlt);
 
