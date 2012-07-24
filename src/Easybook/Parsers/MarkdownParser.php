@@ -104,7 +104,7 @@ class MarkdownEasybookParser extends \MarkdownExtra_Parser
         $this->app = $app;
         $this->app->set('publishing.active_item.toc', array());
 
-        parent::Markdown_Parser();
+        parent::MarkdownExtra_Parser();
     }
 
     /**
