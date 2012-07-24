@@ -40,6 +40,8 @@ label:
     index:           'Inhoudsopgave'
     next:            'Volgende'
     previous:        'Vorige'
+    toc:             'Contents'
+    top:             'Top'
 
     # Special
     date_format:     'd-m-Y'

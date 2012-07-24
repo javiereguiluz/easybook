@@ -1,0 +1,24 @@
+<!-- Start page: #home -->
+<div data-role="page" id="{{ item.slug }}" class="item:cover" data-theme="d">
+
+	<div data-role="header" data-id="header" data-theme="d">
+		<div id="logo">
+            <h1>{{ book.title }}</h1>
+            <h2>{{ book.author }}</h2>
+		</div>
+	</div>
+	<!-- /header -->
+	
+	<div data-role="content">
+		<a href="" class="showMenu" data-role="button" 
+		   data-theme="c" data-icon="grid">{{ app.getLabel('toc') }}</a>
+		   
+		    {{ item.content }}
+		
+		<a href="" class="showMenu" data-role="button" 
+		   data-theme="c" data-icon="grid">{{ app.getLabel('toc') }}</a>
+	</div>
+	<!-- /content -->		
+	
+</div>
+<!-- /page: #home -->

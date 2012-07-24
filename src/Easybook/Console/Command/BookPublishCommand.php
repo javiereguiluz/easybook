@@ -11,10 +11,13 @@
 
 namespace Easybook\Console\Command;
 
+use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Yaml;
 
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
@@ -61,14 +64,14 @@ class BookPublishCommand extends BaseCommand
 
         // validate book dir and add some useful values to the app configuration
         $bookDir = $validator->validateBookDir($slug, $dir);
-
+        
         $this->app->set('publishing.dir.book',      $bookDir);
         $this->app->set('publishing.dir.contents',  $bookDir.'/Contents');
         $this->app->set('publishing.dir.resources', $bookDir.'/Resources');
         $this->app->set('publishing.dir.plugins',   $bookDir.'/Resources/Plugins');
         $this->app->set('publishing.dir.templates', $bookDir.'/Resources/Templates');
         $this->app->set('publishing.book.slug',     $slug);
-
+        
         // load book configuration
         $configurator->loadBookConfiguration();
 
@@ -81,12 +84,17 @@ class BookPublishCommand extends BaseCommand
 
         // resolve book+edition configuration
         $configurator->resolveConfiguration();
-
+        
+        // set theme plugins dir 
+        $this->app->set('theme.dir.plugins', sprintf('%s/%s/Common/Resources/Plugins',
+                $this->app->get('app.dir.themes'),
+                ucfirst($this->app->edition('theme'))));
+                
         // all checks passed, the book can now be published
-
+        
         // register easybook and custom book plugins
         $this->registerPlugins();
-
+        
         // book publishing starts
         $this->app->dispatch(Events::PRE_PUBLISH, new BaseEvent($this->app));
         $output->writeln(array(
@@ -97,13 +105,13 @@ class BookPublishCommand extends BaseCommand
             ),
             ''
         ));
-
+        
         // 1-line magic publication!
         $this->app->get('publisher')->publishBook();
-
+        
         // book publishing finishes
         $this->app->dispatch(Events::POST_PUBLISH, new BaseEvent($this->app));
-
+        
         $output->writeln(array(
             ' <bg=green;fg=black> OK </> You can access the book in the following directory:',
             ' <comment>'.realpath($this->app['publishing.dir.output']).'</comment>',
@@ -114,26 +122,26 @@ class BookPublishCommand extends BaseCommand
             )
         ));
     }
-
+    
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $output->writeln($this->app['app.signature']);
-
+        
         $slug    = $input->getArgument('slug');
         $edition = $input->getArgument('edition');
 
         if (null != $slug && '' != $slug && null != $edition && '' != $edition) {
             return;
         }
-
+        
         $output->writeln(array(
             '',
             ' Welcome to the <comment>easybook</comment> interactive book publisher',
             ''
         ));
-
+        
         $dialog = $this->getHelperSet()->get('dialog');
-
+        
         // check 'slug' argument
         $slug = $input->getArgument('slug') ?: $dialog->askAndValidate($output,
             array(
@@ -145,7 +153,7 @@ class BookPublishCommand extends BaseCommand
             }
         );
         $input->setArgument('slug', $slug);
-
+        
         // check 'edition' argument
         $edition = $input->getArgument('edition') ?: $dialog->askAndValidate($output,
             array(

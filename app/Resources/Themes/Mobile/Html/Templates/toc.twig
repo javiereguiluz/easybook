@@ -1,0 +1,53 @@
+<!-- Start page: #{{ item.slug }} -->
+{# this toc is for the collapsible menu #}
+<div data-role="page" id="menu" class="item:toc" data-theme="a" style="width: 250px;">
+
+    <div data-role="content">
+        <ul data-role="listview">
+        {% for item in app.get('publishing.items') %}
+        
+            {# the cover page is the home page #}
+            {% if item.config.element == 'cover' %}
+                <li data-icon="false" class="{{ item.config.element }} level-1" data-theme="a">
+                    <a href="#{{ item.slug }}">
+                        <h3>{{ item.title }}</h3>
+                    </a>
+                </li>
+            
+            {# editions define the *tocable* items #}
+            {% elseif item.config.element in edition.toc.elements|default([]) %}
+        
+                {# item has several elements in its toc #}
+                {% if item.toc|length > 0 %}
+                    {% for entry in item.toc %}
+                        {% if entry.level <= edition.toc.deep %}
+                            {# only level-1 items in toc #}
+                            {% if entry.level >= 1 %}
+                                <li data-icon="false" 
+                                    class="{{ item.config.element }} level-{{ entry.level }}" 
+                                    data-theme="a">
+                                    <a href="#{{ entry.slug }}">
+                                        <h3>{{ entry.title }}</h3>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+        
+                {# empty or special item #}
+                {% else %}
+                    <li data-icon="false" class="{{ item.config.element }} level-1" data-theme="a">
+                        <a href="#{{ item.slug }}">
+                            <h3>{{ item.title }}</h3>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        </ul>
+    
+    </div>
+    <!-- /content -->
+    
+</div>
+<!-- /page: #{{ item.slug }} -->

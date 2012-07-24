@@ -14,6 +14,7 @@ namespace Easybook\Publishers;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
+use Easybook\Util\Toolkit;
 
 class HtmlPublisher extends BasePublisher
 {
@@ -44,6 +45,46 @@ class HtmlPublisher extends BasePublisher
         }
 
         $this->app->set('publishing.items', $parsedItems);
+        
+        // prepare navigation
+        $oldItems = $this->app['publishing.items'];
+        $items = array();
+        foreach ($oldItems as $key => $item) {
+            
+            /*  prev/next navigation
+             *  note that toc is not included in navigation (it is skipped both ways)
+             */
+            $prev = null;
+            $next = null;
+            
+            if ($key > 0) {
+                $prevKey = $key - 1;
+                if ('toc' == $oldItems[$prevKey]['config']['element']) { 
+                    if ($key > 1) {
+                        $prev = $oldItems[$key - 2]['slug'];
+                    }
+                } else {
+                    $prev = $oldItems[$prevKey]['slug'];
+                }
+            }
+            
+            if ($key < count($oldItems) - 1) {
+                $nextKey = $key + 1;
+                if ('toc' == $oldItems[$nextKey]['config']['element']) {
+                    if ($key < count($oldItems) - 2) {
+                        $next = $oldItems[ $key + 2]['slug'];
+                    } 
+                } else {
+                    $next = $oldItems[$nextKey]['slug'];
+                }
+            }
+            
+            $item['previous'] = $prev;
+            $item['next'] = $next;
+            $items[] = $item;
+        }
+        
+        $this->app->set('publishing.items', $items);
     }
 
     public function decorateContents()
@@ -113,5 +154,33 @@ class HtmlPublisher extends BasePublisher
                 $this->app['publishing.dir.output'].'/images'
             );
         }
-    }
+        
+        // copy theme javascripts
+        $theme = ucfirst($this->app->edition('theme'));
+        $format = Toolkit::camelize($this->app->edition('format'), true);
+        $jsDir = sprintf('%s/%s/%s/Resources/js', $this->app['app.dir.themes'], $theme, $format);
+        if (file_exists($jsDir)) {
+            $this->app->get('filesystem')->mirror(
+                    $jsDir,
+                    $this->app['publishing.dir.output'].'/js'
+            );
+        }
+
+        // copy theme images
+        $imagesDir = sprintf('%s/%s/%s/Resources/images', $this->app['app.dir.themes'], $theme, $format);
+        if (file_exists($imagesDir)) {
+            $this->app->get('filesystem')->mirror(
+                    $imagesDir,
+                    $this->app['publishing.dir.output'].'/images'
+            );
+        }
+        
+        // copy book javascripts
+        if (file_exists($jsDir = $this->app['publishing.dir.contents'].'/js')) {
+            $this->app->get('filesystem')->mirror(
+                    $jsDir,
+                    $this->app['publishing.dir.output'].'/js'
+            );
+        }
+    } 
 }

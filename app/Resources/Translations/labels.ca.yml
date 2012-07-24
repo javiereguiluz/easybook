@@ -40,6 +40,8 @@ label:
     index:           'Inici'
     next:            'Següent'
     previous:        'Anterior'
+    toc:             'Contents'
+    top:             'Top'
 
     # Special
     date_format:     'd/m/Y'

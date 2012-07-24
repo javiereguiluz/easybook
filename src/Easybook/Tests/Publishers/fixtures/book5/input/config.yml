@@ -1,0 +1,28 @@
+book:
+    title:            'easybook test book #5'
+    author:           'Javier Eguiluz'
+    edition:          'First edition'
+    language:         en
+    publication_date: '20-07-2012'
+
+    generator: { name: easybook, version: 4.0 }
+
+    contents:
+        - { element: cover, content: cover.md }
+        - { element: edition }
+        - { element: toc   }
+        - { element: lof   }
+        - { element: chapter, number: 0, content: chapter0.md }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+        - { element: chapter, number: 3, content: chapter3.md }
+
+    editions:
+        mobile:
+            format:         html
+            highlight_code: true
+            include_styles: true
+            theme:          mobile
+            toc:
+                deep:       4
+                elements:   ['chapter', 'edition', 'lof']

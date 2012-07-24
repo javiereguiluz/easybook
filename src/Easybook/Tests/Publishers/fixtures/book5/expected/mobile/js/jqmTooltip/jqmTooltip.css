@@ -1,0 +1,120 @@
+/**
+ * jqmTooltip
+ * styles largely taken from Matteo Spinelli's "Add to Home" script: http://cubiq.org/add-to-home-screen
+*/
+
+/*
+ * Main container
+ *
+ */
+.jqmTooltip {
+	z-index:9999;
+	position: absolute;
+	-moz-user-select:none;
+	-webkit-user-select:none;
+	user-select:none;
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+	box-sizing:border-box;
+	font-size:13px;
+	padding:10px;
+	text-align:left;
+	font-family:helvetica;
+	background: #eeeeee;
+	background: -moz-linear-gradient(top, #ffffff 0%, #eeeeee 2%, #cccccc 98%, #a3a3a3 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(2%,#eeeeee), color-stop(98%,#cccccc), color-stop(100%,#a3a3a3)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #ffffff 0%,#eeeeee 2%,#cccccc 98%,#a3a3a3 100%);
+	background: -o-linear-gradient(top, #ffffff 0%,#eeeeee 2%,#cccccc 98%,#a3a3a3 100%);
+	background: -ms-linear-gradient(top, #ffffff 0%,#eeeeee 2%,#cccccc 98%,#a3a3a3 100%);
+	background: linear-gradient(top, #ffffff 0%,#eeeeee 2%,#cccccc 98%,#a3a3a3 100%);
+	border:1px solid #505050;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	border-radius:8px;
+	-moz-background-clip:padding-box;
+	-webkit-background-clip:padding-box;
+	background-clip:padding-box;
+	color:#333;
+	text-shadow:0 1px 0 rgba(255,255,255,0.75);
+	line-height:130%;
+	-moz-box-shadow:0 0 4px rgba(0,0,0,0.5);
+	-webkit-box-shadow:0 0 4px rgba(0,0,0,0.5);
+	box-shadow:0 0 4px rgba(0,0,0,0.5);
+}
+
+/**
+ *
+ * The balloon arrow
+ *
+ */
+.jqmTooltip .arrow {
+	position:absolute;
+	border-width:0 1px 1px 0;
+	border-style:solid;
+	border-color:#505050;
+	width:16px; height:16px;
+	left:50%;
+	margin-left:-8px;
+	-moz-box-shadow:inset -1px -1px 0 #a9a9a9;
+	-webkit-box-shadow:inset -1px -1px 0 #a9a9a9;
+	box-shadow:inset -1px -1px 0 #a9a9a9;
+	-moz-border-bottom-right-radius:2px;
+	-webkit-border-bottom-right-radius:2px;
+	border-bottom-right-radius:2px;
+}
+
+.jqmTooltip.over .arrow {
+	-moz-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	-webkit-transform:rotateZ(45deg);
+	transform: rotate(45deg);
+	background: #eee;
+	background: -moz-linear-gradient(0 0, rgba(204,204,204,0) 0%, rgba(204,204,204,0) 40%, #ccc 41%);
+	background: -webkit-gradient(linear,0 0,100% 100%,color-stop(0,rgba(204,204,204,0)),color-stop(0.4,rgba(204,204,204,0)),color-stop(0.4,#ccc)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(0 0, rgba(204,204,204,0) 0%,rgba(204,204,204,0) 40%, #ccc 40%);
+	background: -o-linear-gradient(0 0, rgba(204,204,204,0) 0%,rgba(204,204,204,0) 40%, #ccc 40%);
+	background: linear-gradient(0 0, rgba(204,204,204,0) 0%,rgba(204,204,204,0) 40%, #ccc 40%);
+	bottom:-9px; 
+}
+.jqmTooltip.under .arrow {
+	-moz-transform: rotate(225deg);
+	-o-transform: rotate(225deg);
+	-webkit-transform:rotateZ(225deg);
+	transform: rotate(225deg);
+	background: #eee;
+	background: -moz-linear-gradient(0 0, rgba(238,238,238,0) 0%, rgba(238,238,238,0) 40%, #eee 41%);
+	background: -webkit-gradient(linear,0 0,100% 100%,color-stop(0,rgba(238,238,238,0)),color-stop(0.4,rgba(238,238,238,0)),color-stop(0.4,#eee)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(0 0, rgba(238,238,238,0) 0%,rgba(238,238,238,0) 40%, #eee 41%);
+	background: -o-linear-gradient(0 0, rgba(238,238,238,0) 0%,rgba(238,238,238,0) 40%, #eee 41%);
+	background: linear-gradient(0 0, rgba(238,238,238,0) 0%,rgba(238,238,238,0) 40%, #eee 41%);
+	top:-9px;
+}
+
+/**
+ *
+ * Close button
+ *
+ */
+.jqmTooltip .close {
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+	box-sizing:border-box;
+	position:absolute;
+	right:2px;
+	top:2px;
+	width:14px;
+	height:14px; line-height:10px;
+	text-align:center;
+	text-indent:1px;
+	text-decoration:none;
+	-moz-border-radius:7px;
+	-webkit-border-radius:7px;
+	border-radius:7px;
+	background:#cecece;
+	background:rgba(0,0,0,0.12);
+	color:#707070;
+	-moz-box-shadow:0 1px 0 #fff;
+	-webkit-box-shadow:0 1px 0 #fff;
+	box-shadow:0 1px 0 #fff;
+	font-size:13px;
+}

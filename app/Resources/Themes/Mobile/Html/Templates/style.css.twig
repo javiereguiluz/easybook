@@ -1,0 +1,354 @@
+{% extends 'style_common.css.twig' %}
+
+{% block base %}
+/* Base styles
+   ========================================================================= */
+
+/* --- paragraphs ---------------------------------------------------------- */   
+.content ul {
+    padding-left: 20px;
+}
+
+.content ul.ui-listview {
+    padding-left: 0;
+}
+
+.content p + ul {
+    margin-top: 0;
+}
+
+.content p {
+    margin: .5em 0;
+}
+
+/* --- alignment ----------------------------------------------------------- */
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.figure.center img {
+    margin: 0 auto;
+    display: block;
+}
+
+.figure.left {
+    margin: .1em 1em 1em .1em;
+}
+
+.figure.right {
+    margin: .1em .1em 1em 1em;
+}
+
+/* --- misc --------------------------------------------------------------- */
+
+.clear {
+    clear: both;
+}
+
+.glossary {
+    display: none;
+}
+
+p.caption {
+    display: none;
+}
+
+blockquote {
+    border-left: 8px solid #BBBBBB;
+    padding-left: 0.5em;
+}
+
+/* --- images -------------------------------------------------------------- */
+img {
+    max-width: {{ width_container }};
+}
+
+.content .figure {
+    cursor: pointer;
+}
+
+/* --- tables -------------------------------------------------------------- */
+table {
+    margin-bottom: 1em;
+    max-width: 100%;
+}
+table thead {
+    border-bottom: 2px solid {{ color_gray }};
+}
+table th, table td {
+    padding: .5em;
+    line-height: 1.4;
+    text-align: left;
+}
+table th {
+    font-weight: bold;
+    vertical-align: bottom;
+}
+table td {
+    border-bottom: 1px solid {{ color_silver }};
+    vertical-align: top;
+}
+table tr:last-child td {
+    border-bottom: 0;
+}
+table thead th + th,
+table tbody th + td,
+table td + td {
+    border-left: 1px solid {{ color_silver }};
+}
+table tbody + tbody {
+    border-top: 2px solid {{ color_gray }};
+}
+
+/* --- code and code listings ---------------------------------------------- */
+code, pre {
+    font-family: Menlo, Monaco, Consolas, Inconsolata, monospace;
+    font-size: 90%;
+    padding: 0 3px 2px;
+}
+
+code {
+    border: 1px solid #E1E1E8;
+    line-height: 1.6em;
+    padding: 3px 4px;
+}
+
+pre {
+    border-left: 1px solid {{ color_silver }};
+    margin: 0 0 1em;
+    padding: 0 0 0 1em;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+pre code {
+    border: none;
+    color: {{ color_black }};
+    padding: 0;
+}
+
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+    font-weight: normal;
+}
+
+div.cli pre {
+    border-left-color: {{ color_gray }};
+}
+{% endblock %}
+
+{% block layout %}
+/* Layout
+   ========================================================================= */
+
+/* inspired by Twitter Bootstrap */
+.container {
+  width: {{ width_container }};
+  margin-left: auto;
+  margin-right: auto;
+  *zoom: 1;
+}
+.container:before, .container:after {
+  display: table;
+  content: "";
+}
+.container:after {
+  clear: both;
+}
+{% endblock %}
+
+{% block book_items %}
+/* Book items
+   ========================================================================= */
+
+/* --- common -------------------------------------------------------------- */
+.item {
+    border-bottom: medium solid {{ color_silver }};
+    margin-bottom: 2em;
+    padding-bottom: 2em;
+}
+
+/* --- item:cover ---------------------------------------------------------- */
+.item\:cover {
+    border-bottom: thick solid {{ color_gray }};
+    color: {{ color_black }};
+    margin-bottom: .5em;
+    padding: 0 2.5em 1.75em 0;
+}
+
+.item\:cover #logo {
+    text-align: center;
+}
+.item\:cover h1 {
+    font-size: 123%
+    letter-spacing: -1px;
+    margin: .5em;
+}
+.item\:cover h2 {
+    color: {{ color_black }};
+    font-size: 113%;
+    font-weight: normal;
+    margin: .5em;
+}
+
+/* --- item:title ---------------------------------------------------------- */
+.item\:cover + .item\:title {
+    display: none;
+}
+.item\:title h1,
+.item\:title h2,
+.item\:title h3 {
+    font-weight: normal;
+    text-align: center;
+}
+.item\:title h1 {
+    font-size: 208%;
+    line-height: 1.1;
+    letter-spacing: -2pt;
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+.item\:title h2 {
+    font-size: 139%;
+    margin-top: .5em;
+}
+.item\:title h3 {
+    font-size: 105%;
+    font-style: italic;
+    margin-top: 1em;
+}
+
+/* --- item:dedication ----------------------------------------------------- */
+.item\:dedication {
+    font-style: italic;
+    text-align: center;
+}
+
+/* --- item:toc ------------------------------------------------------------ */
+.item\:toc ul li.level-2 a {
+    padding: .1em .5em .1em 1em !important;
+}
+
+.item\:toc ul li.level-3 a {
+    padding: .1em .5em .1em 2em !important;
+}
+
+.item\:toc ul li.level-4 a {
+    padding: .1em .5em .1em 3em !important;
+}
+
+.item\:toc ul li.level-5 a {
+    padding: .1em .5em .1em 4em !important;
+}
+
+.item\:toc ul li.level-6 a {
+    padding: .1em .5em .1em 5em !important;
+}
+
+/* --- item:lot, item:lof -------------------------------------------------- */
+
+/* --- item:chapter -------------------------------------------------------- */
+.item\:chapter h1 { font-size: 180%; margin-top: .5em; }
+.item\:chapter h2 { font-size: 160%; }
+.item\:chapter h3 { font-size: 130%; }
+.item\:chapter h4 { font-size: 120%; }
+.item\:chapter h5 { font-size: 110%; }
+.item\:chapter h6 { font-size: 110%; }
+
+.item\:chapter h1 + h2,
+.item\:chapter h2 + h3,
+.item\:chapter h3 + h4,
+.item\:chapter h4 + h5,
+.item\:chapter h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:chapter h1 span {
+    color: {{ color_gray }};
+    font-size: 90%;
+    font-weight: normal;
+    padding-bottom: .25em;
+}
+
+/* --- item:appendix ------------------------------------------------------- */
+.item\:chapter h1 { font-size: 180%; margin-top: .5em; }
+.item\:chapter h2 { font-size: 160%; }
+.item\:chapter h3 { font-size: 130%; }
+.item\:chapter h4 { font-size: 120%; }
+.item\:chapter h5 { font-size: 110%; }
+.item\:chapter h6 { font-size: 110%; }
+
+.item\:appendix h1 + h2,
+.item\:appendix h2 + h3,
+.item\:appendix h3 + h4,
+.item\:appendix h4 + h5,
+.item\:appendix h5 + h6 {
+    margin-top: 1em;
+}
+
+.item\:appendix h1 span {
+    color: {{ color_gray }};
+    font-size: 90%;
+    font-weight: normal;
+    padding-bottom: .25em;
+}
+
+/* --- item:part ----------------------------------------------------------- */
+.item\:part {
+    border: solid {{ color_gray }};
+    border-width: medium 0;
+    padding: 0;
+}
+
+.item\:toc + .item\:part,
+.item\:lof + .item\:part,
+.item\:lot + .item\:part,
+.item\:chapter + .item\:part,
+.item\:appendix + .item\:part {
+    margin-top: -2em;
+}
+
+.item\:part h1 {
+    font-size: 180%;
+    margin: 0;
+    padding: 1em 0;
+}
+.item\:part h1 span {
+    color: {{ color_gray }};
+    font-size: 90%;
+    font-weight: normal;
+    padding-bottom: .25em;
+}
+
+/* --- jQueryMobile tweaks ------------------------------------------------- */
+#menu .ui-li-heading {
+    white-space: normal;
+}
+
+#menu .ui-link-inherit {
+    padding: 0.4em 0.5em;
+}
+
+.ui-header h2.ui-title {
+    font-style: italic;
+}
+
+.ui-header .ui-controlgroup.ui-btn-right {
+    top: -3px !important;
+}
+
+.ui-footer .ui-controlgroup.ui-btn-right {
+    top: 7px !important;
+}
+
+{% endblock %}
+
+{% block responsive %}
+
+/* This is not neded for mobile content */
+
+{% endblock %}

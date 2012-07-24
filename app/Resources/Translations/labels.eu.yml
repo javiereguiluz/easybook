@@ -40,6 +40,8 @@ label:
     index:           'Indizea'
     next:            'Hurrengoa'
     previous:        'Aurrekoa'
+    toc:             'Contents'
+    top:             'Top'
 
     # Special
     date_format:     'Y/m/d'

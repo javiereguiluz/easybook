@@ -1,0 +1,14 @@
+<!-- Start page: #{{ item.slug }} -->
+<div data-role="page" id="{{ item.slug }}"  class="item:{{ item.config.element }}" data-theme="d">
+
+    {% include '_header.twig' %}
+    
+	<div data-role="content" class="content"> 
+	    {{ item.content }}
+    </div>
+	<!-- /content -->
+
+    {% include '_footer.twig' %}
+        
+</div>
+<!-- /page: #{{ item.slug }} -->

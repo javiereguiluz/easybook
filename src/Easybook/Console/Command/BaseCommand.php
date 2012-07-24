@@ -44,6 +44,11 @@ class BaseCommand extends Command
         // register easybook plugins
         $this->registerEventSubscribers($this->app['app.dir.plugins'], 'Easybook\\Plugins');
 
+        // register (optional) custom theme plugins (only if publishing a boook)
+        if ($this->app->get('publishing.dir.book')) {
+            $this->registerEventSubscribers($this->app['theme.dir.plugins']);
+        }
+        
         // register (optional) custom book plugins
         $this->registerEventSubscribers($this->app['publishing.dir.plugins']);
     }
