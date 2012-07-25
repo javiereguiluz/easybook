@@ -396,7 +396,7 @@ class Application extends \Pimple
 
         // -- code syntax highlighter -----------------------------------------
         $this['geshi'] = function () use ($app) {
-            require_once __DIR__.'/../../../vendor/geshi/geshi/geshi.php';
+            require_once $this['app.dir.base'].'/vendor/easybook/geshi/geshi.php';
 
             $geshi = new \GeSHi();
             $geshi->enable_classes(); // this must be the first method (see Geshi doc)

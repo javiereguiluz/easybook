@@ -12,35 +12,10 @@
         }
     ],
 
-    "repositories": {
-        "geshi": {
-            "type": "package",
-            "package": {
-                "name": "geshi/geshi",
-                "version": "1.0.8.10",
-                "dist": {
-                    "url":  "http://switch.dl.sourceforge.net/project/geshi/geshi/GeSHi%201.0.8.10/GeSHi-1.0.8.10.zip",
-                    "type": "zip"
-                }
-            }
-        },
-        "markdown": {
-            "type": "package",
-            "package": {
-                "name": "michelf/php-markdown",
-                "version": "1.2.5",
-                "dist": {
-                    "url":  "https://github.com/michelf/php-markdown/zipball/x1.2.5",
-                    "type": "zip"
-                }
-            }
-        }
-    },
-
     "require": {
-        "geshi/geshi":              "*",
+        "dflydev/markdown":         "dev-master",
 
-        "michelf/php-markdown":     "*",
+        "easybook/geshi":           "*",
 
         "pimple/pimple":            "dev-master",
 
