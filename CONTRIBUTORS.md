@@ -11,4 +11,6 @@
   * [Ariel Ferrandini](https://github.com/aferrandini)
   * [Ionut C Colceriu](https://github.com/ghinda)
   * [Sebastian Szwarc](https://github.com/Behinder)
-  * [Ploum](https://github.com/ploum)
+  * [Lionel Dricot](https://github.com/ploum)
+  * [Adán Lobato](https://github.com/adanlobato)
+  * [Miguel Angel Gabriel](https://github.com/magabriel)

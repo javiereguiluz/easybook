@@ -13,11 +13,8 @@ namespace Easybook\Parsers;
 
 use Easybook\Parsers\ParserInterface;
 use Easybook\DependencyInjection\Application;
-
-// Unfortunately, PHP Markdown Extra doesn't use namespaces
-if (!class_exists('\MarkdownExtra_Parser')) {
-    require_once realpath(__DIR__.'/../../..').'/vendor/michelf/php-markdown/markdown.php';
-}
+use dflydev\markdown\MarkdownParser as OriginalMarkdownParser;
+use dflydev\markdown\MarkdownExtraParser as ExtraMarkdownParser;
 
 /**
  * This class implements a full-featured Markdown parser.
@@ -41,7 +38,6 @@ class MarkdownParser implements ParserInterface
     public function transform($content, $outputFormat = 'html')
     {
         $supportedFormats = array('epub', 'epub2', 'epub3', 'html', 'html_chunked', 'pdf');
-        $syntax = $this->app['parser.options']['markdown_syntax'];
 
         if (!in_array($outputFormat, $supportedFormats)) {
             throw new \Exception(sprintf('No markdown parser available for "%s" format',
@@ -49,6 +45,8 @@ class MarkdownParser implements ParserInterface
             ));
         }
 
+        $syntax = $this->app['parser.options']['markdown_syntax'];
+        
         return $this->transformToHtml($content, $syntax);
     }
 
@@ -56,7 +54,7 @@ class MarkdownParser implements ParserInterface
      * Transforms Markdown input to HTML output.
      * 
      * @param  string $content The original content to be parsed
-     * @param  string $syntax  The Markdown syntax to use (basic, PHP Extra, easybook, ...)
+     * @param  string $syntax  The Markdown syntax to use (original, PHP Extra, easybook, ...)
      * @return string          The parsed HTML output
      */
     private function transformToHtml($content, $syntax)
@@ -71,15 +69,15 @@ class MarkdownParser implements ParserInterface
 
         switch ($syntax) {
             case 'original':
-                $parser = new \Markdown_Parser();
+                $parser = new OriginalMarkdownParser();
                 break;
 
             case 'php-markdown-extra':
-                $parser = new \MarkdownExtra_Parser();
+                $parser = new ExtraMarkdownParser();
                 break;
 
             case 'easybook':
-                $parser = new MarkdownEasybookParser($this->app);
+                $parser = new EasybookMarkdownParser($this->app);
                 break;
         }
 
@@ -95,7 +93,7 @@ class MarkdownParser implements ParserInterface
  * In addition, it overrides some PHP Markdown Extra methods to improve
  * performance.
  */
-class MarkdownEasybookParser extends \MarkdownExtra_Parser
+class EasybookMarkdownParser extends ExtraMarkdownParser
 {
     private $app;
 
@@ -104,7 +102,7 @@ class MarkdownEasybookParser extends \MarkdownExtra_Parser
         $this->app = $app;
         $this->app->set('publishing.active_item.toc', array());
 
-        parent::MarkdownExtra_Parser();
+        parent::__construct();
     }
 
     /**
