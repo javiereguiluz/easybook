@@ -299,7 +299,7 @@ table {
    ========================================================================= */
 
 /* --- paragraphs ---------------------------------------------------------- */   
-.content ul {
+.content ul, .content ol {
     padding-left: 20px;
 }
 
@@ -307,7 +307,7 @@ table {
     padding-left: 0;
 }
 
-.content p + ul {
+.content p + ul, .content p + ol {
     margin-top: 0;
 }
 

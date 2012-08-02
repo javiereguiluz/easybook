@@ -23,7 +23,11 @@ This page shows the new features of the **mobile** edition and **Mobile** theme.
       to publish any kind of book, manual or documentation.
       
       >This paragraph contains the test words: entity, entities, book, books, publish. 
-
+      
+      > It also works in lists:
+      > * Entity, entities.
+      > * Book, books, publish.
+      
 * **Clickable images with tooltips.**
   
       Clicking on the following image will show a tooltip. 
@@ -33,7 +37,7 @@ This page shows the new features of the **mobile** edition and **Mobile** theme.
       Clicking on the following image will show another tooltip.
     
       ![Originally it was designed to publish technical programming books, but you can use **easyboook** to publish any kind of book, manual or documentation.](twig.png) 
-   
+
 <div markdown="1" class="glossary">
 Publish
 : This is the definition of the word **publish**.
@@ -43,4 +47,8 @@ Book[s]
 
 Entit[y|ies]
 : This is the definition of the word **entity**. Please note that it is also applied to **entities**.
+
+features
+: This is just a test of a term inside a plain paragraph.
+
 </div>

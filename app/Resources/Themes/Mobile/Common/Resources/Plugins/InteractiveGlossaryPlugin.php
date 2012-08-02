@@ -18,7 +18,7 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
         return array(
                 Events::POST_PARSE => 'onItemPostParse',);
     }
-  
+
     public function onItemPostParse(ParseEvent $event)
     {
         $item = $event->getItem();
@@ -63,7 +63,7 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
                 }
             }
         }
-
+        
         return $definitions;
     }
 
@@ -78,7 +78,7 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
         $newDefs = array();
 
         $regExp = '/';
-        $regExp .= '(?<root>\w*)'; // root of the word
+        $regExp .= '(?<root>[\w\s]*)'; // root of the term (can contain in-between spaces)
         $regExp .= '(\['; // opening square bracket
         $regExp .= '(?<suffixes>.+)'; // suffixes
         $regExp .= '\])?'; // closing square bracket
@@ -105,7 +105,7 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
 
             }
         }
-
+        
         return $newDefs;
     }
 
@@ -140,16 +140,16 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
 
         // save existing alt attributes before modifying anything
         $listOfAlts = array();
-        
+
         // replace all the contents of alt attributes with a placeholder
         $item = preg_replace_callback('/alt="(.*)"/Ums',
-            function ($matches) use (&$listOfAlts)
+                                      function ($matches) use (&$listOfAlts)
             {
                 $placeHolder = '@' . count($listOfAlts) . '@';
                 $listOfAlts[$placeHolder] = $matches[1];
                 return sprintf('alt="%s"', $placeHolder);
-            }, $item);            
-            
+            }, $item);
+
         // replace all the defined terms with a link with title="description"
         $listOfDescriptions = array();
         foreach ($definitions as $term => $description) {
@@ -158,20 +158,34 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
             $placeHolder = '#' . count($listOfDescriptions) . '#';
             $listOfDescriptions[$placeHolder] = $description;
 
-            $item = preg_replace_callback('/<p>(.*)<\/p>/Ums',
+            // regexp to replace into. 
+            // note that the tag is the first capture group.
+            $patterns = array(
+                    '/<(p)>(.*)<\/p>/Ums',
+                    '/<(li)>(.*)<\/li>/Ums'
+                    );
+
+            $item = preg_replace_callback($patterns,
                                           function ($matches) use ($term, $description,
                                           $placeHolder)
                 {
+                    // extract what to replace
+                    $tag = $matches[1];
+                    $tagContent = $matches[2];
+                    
+                    // construct the regexp to replace inside the tag content
                     $regExp = '/';
-                    $regExp .= '(\W)'; // previous delimiter
+                    $regExp .= '(^|\W)'; // previous delimiter or start of string
                     $regExp .= '(' . $term . ')'; // the term to replace
                     $regExp .= '(\W)'; // following delimiter
                     $regExp .= '/ui'; // unicode, case-insensitive
 
+                    // do the replacement of terms inside the tag contents
                     $repl = sprintf('<a href="#" class="tooltip" title="%s">$2</a>', $placeHolder);
-                    $par = preg_replace($regExp, '$1' . $repl . '$3', $matches[1]);
+                    $par = preg_replace($regExp, '$1' . $repl . '$3', $tagContent);
 
-                    return '<p>' . $par . '</p>';
+                    // reconstruct the original tag
+                    return sprintf('<%s>%s</%s>', $tag, $par, $tag);
                 }, $item);
         }
 
@@ -184,7 +198,7 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
         foreach ($listOfAlts as $key => $value) {
             $item = preg_replace('/' . $key . '/Ums', $value, $item);
         }
-        
+
         // replace each ocurrence of the description placeholders with the corresponding description
         foreach ($listOfDescriptions as $key => $value) {
             $item = preg_replace('/' . $key . '/Ums', $value, $item);
