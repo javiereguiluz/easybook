@@ -22,9 +22,10 @@ This page shows the new features of the **mobile** edition and **Mobile** theme.
       Originally it was designed to publish technical programming books, but you can use **easyboook** 
       to publish any kind of book, manual or documentation.
       
-      >This paragraph contains the test words: entity, entities, book, books, publish. 
+      >This paragraph contains the test words: symfony, entity, entities, book, books, publish. 
       
       > It also works in lists:
+      > * Symfony
       > * Entity, entities.
       > * Book, books, publish.
       
@@ -50,5 +51,8 @@ Entit[y|ies]
 
 features
 : This is just a test of a term inside a plain paragraph.
+
+Symfony
+: This term must not be replaced inside image name, title or alt.
 
 </div>
