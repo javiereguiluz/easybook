@@ -63,7 +63,7 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
                 }
             }
         }
-        
+
         return $definitions;
     }
 
@@ -105,7 +105,7 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
 
             }
         }
-        
+
         return $newDefs;
     }
 
@@ -120,35 +120,17 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
     {
         /* To avoid problems when the term appears also inside the description,
          * we made the replacement in 4 steps:
-         * 1.- Save all the existing title and alt attributes (i.e. in images).
-         * 2.- Replace all terms with an <a> tag with a placeholder in the title attribute.
-         * 3.- Replace all previously existing title and alt placeholders with the saved value. 
+         * 1.- Save all the existing src, title and alt attributes (i.e. in images).
+         * 2.- Replace all terms found in item with an <a> tag with a placeholder inside the title attribute.
+         * 3.- Replace back all previously saved placeholders with the saved value. 
          * 4.- Replace all newly-assigned link title placeholders with the corresponding definition.
          */ 
 
-        // save existing title attributes before modifying anything 
-        $listOfTitles = array();
-
-        // replace all the contents of title attributes with a placeholder
-        $item = preg_replace_callback('/title="(.*)"/Ums',
-                                      function ($matches) use (&$listOfTitles)
-            {
-                $placeHolder = '@' . count($listOfTitles) . '@';
-                $listOfTitles[$placeHolder] = $matches[1];
-                return sprintf('title="%s"', $placeHolder);
-            }, $item);
-
-        // save existing alt attributes before modifying anything
-        $listOfAlts = array();
-
-        // replace all the contents of alt attributes with a placeholder
-        $item = preg_replace_callback('/alt="(.*)"/Ums',
-                                      function ($matches) use (&$listOfAlts)
-            {
-                $placeHolder = '@' . count($listOfAlts) . '@';
-                $listOfAlts[$placeHolder] = $matches[1];
-                return sprintf('alt="%s"', $placeHolder);
-            }, $item);
+        // save existing values of attributes before modifying anything 
+        $list = $this->saveAttributes(array(
+                     'title',
+                     'alt',
+                     'src'), $item);
 
         // replace all the defined terms with a link with title="description"
         $listOfDescriptions = array();
@@ -162,8 +144,7 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
             // note that the tag is the first capture group.
             $patterns = array(
                     '/<(p)>(.*)<\/p>/Ums',
-                    '/<(li)>(.*)<\/li>/Ums'
-                    );
+                    '/<(li)>(.*)<\/li>/Ums');
 
             $item = preg_replace_callback($patterns,
                                           function ($matches) use ($term, $description,
@@ -172,12 +153,12 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
                     // extract what to replace
                     $tag = $matches[1];
                     $tagContent = $matches[2];
-                    
+
                     // construct the regexp to replace inside the tag content
                     $regExp = '/';
                     $regExp .= '(^|\W)'; // previous delimiter or start of string
                     $regExp .= '(' . $term . ')'; // the term to replace
-                    $regExp .= '(\W)'; // following delimiter
+                    $regExp .= '(\W|$)'; // following delimiter or end of string
                     $regExp .= '/ui'; // unicode, case-insensitive
 
                     // do the replacement of terms inside the tag contents
@@ -189,18 +170,53 @@ class InteractiveGlossaryPlugin implements EventSubscriberInterface
                 }, $item);
         }
 
-        // replace each ocurrence of the title placeholders with the corresponding title
-        foreach ($listOfTitles as $key => $value) {
-            $item = preg_replace('/' . $key . '/Ums', $value, $item);
-        }
-
-        // replace each ocurrence of the alt placeholders with the corresponding alternative text
-        foreach ($listOfAlts as $key => $value) {
-            $item = preg_replace('/' . $key . '/Ums', $value, $item);
-        }
+        // replace back each ocurrence of the saved placeholders with the corresponding value
+        $item = $this->restoreFromList($list, $item);
 
         // replace each ocurrence of the description placeholders with the corresponding description
-        foreach ($listOfDescriptions as $key => $value) {
+        $item = $this->restoreFromList($listOfDescriptions, $item);
+
+        return $item;
+    }
+
+    /**
+     * Replace the contents of the atributes in item by a placeholder.  
+     * 
+     * @param array $attribute The attributes to save
+     * @param string &$item The item text to modify 
+     * @return array $list of placeholders and original values
+     */
+    protected function saveAttributes(array $attribute, &$item)
+    {
+        $list = array();
+
+        // replace all the contents of the attribute with a placeholder
+        $regex = sprintf('/(%s)="(.*)"/Ums', implode('|', $attribute));
+
+        $item = preg_replace_callback($regex,
+                                      function ($matches) use (&$list, $attribute)
+            {
+                $attr = $matches[1];
+                $value = $matches[2];
+
+                $placeHolder = '@' . $attr . count($list) . '@';
+                $list[$placeHolder] = $value;
+                return sprintf('%s="%s"', $attr, $placeHolder);
+            }, $item);
+
+        return $list;
+    }
+
+    /**
+     * Restore all attributes from the list of placeholders into item
+     * 
+     * @param array $list of placeholders and its values
+     * @param string $item to replace into
+     * @return string $item with replacements
+     */
+    protected function restoreFromList(array $list, $item)
+    {
+        foreach ($list as $key => $value) {
             $item = preg_replace('/' . $key . '/Ums', $value, $item);
         }
 
