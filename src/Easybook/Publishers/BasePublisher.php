@@ -72,8 +72,31 @@ class BasePublisher
                     ));
                 }
 
-                $item['original'] = file_get_contents($contentFile);
-                $item['config']['format'] = pathinfo($contentFile, PATHINFO_EXTENSION);
+                // TODO: document the following change:
+                // contents can now be defined with Twig and a markup language
+
+                // if the element content uses Twig (such as *.md.twig), parse
+                // the Twig template before parsing the Markdown contents
+                if ('.twig' == substr($contentFile, -5)) {
+                    try {
+                        $item['original'] = $this->app->renderString(file_get_contents($contentFile));
+                    } catch (\Twig_Error_Loader $e) {
+                        // if there is a Twig parsing error, notify the user but don't
+                        // stop the book publication
+                        echo sprintf(
+                            " [WARNING] There was an error while parsing the \"%s\" element\n",
+                            $contentFile
+                        );
+                    }
+                // if the element content only uses Markdown (*.md), load
+                // directly its contents in the $item 'original' property
+                } else {
+                    $item['original'] = file_get_contents($contentFile);
+                }
+
+                // for now, easybook only supports markdown
+                // $item['config']['format'] = pathinfo($contentFile, PATHINFO_EXTENSION);
+                $item['config']['format'] = 'md';
             } else {
                 // look for a default content defined by easybook for this element
                 // e.g. `cover.md.twig`, `license.md.twig`, `title.md.twig`
