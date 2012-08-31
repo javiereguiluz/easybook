@@ -495,9 +495,17 @@ class Application extends \Pimple
             : '';
     }
 
-    public function renderString($string, $variables)
+    public function renderString($string, $variables = array())
     {
         $twig = new \Twig_Environment(new \Twig_Loader_String(), $this->get('twig.options'));
+
+        if (null != $this->get('book')) {
+            $twig->addGlobal('book', $this->get('book'));
+
+            $publishingEdition = $this->get('publishing.edition');
+            $editions = $this->book('editions');
+            $twig->addGlobal('edition', $editions[$publishingEdition]);
+        }
 
         return $twig->render($string, $variables);
     }
@@ -540,8 +548,8 @@ class Application extends \Pimple
             return $rendered;
         } else {
             throw new \Exception(sprintf(
-                'Unsupported "%s" template format (easybook only supports Twig)',
-                substr($template, -5)
+                'Unsupported format for "%s" template (easybook only supports Twig)',
+                $template
             ));
         }
     }
