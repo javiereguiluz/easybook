@@ -79,13 +79,24 @@ class Validator
         $attempts = 6;
         $bookDir  = $baseDir.'/'.$slug;
 
+        $isInteractive = $this->app->get('console.input')->isInteractive();
+        if (!$isInteractive && !file_exists($bookDir)) {
+            throw new \RuntimeException(sprintf(
+                "ERROR: The directory of the book cannot be found.\n"
+                ." Check that '%s' directory \n"
+                ." has a folder named as the book slug ('%s')",
+                $baseDir, $slug
+            ));
+        }
+
         // check that the given book already exists or ask for another slug
         while (!file_exists($bookDir) && $attempts--) {
             if (!$attempts) {
-                throw new \RuntimeException(sprintf(
-                    " ERROR: Too many failed attempts. Check that your book is in\n"
-                    ." '%s/' directory",
-                    realpath($baseDir)
+                throw new \InvalidArgumentException(sprintf(
+                    "ERROR: Too many failed attempts of getting the book directory.\n"
+                    ." Check that '%s' directory \n"
+                    ." has a folder named as the book slug ('%s')",
+                    $baseDir, $slug
                 ));
             }
 
@@ -167,6 +178,15 @@ class Validator
                 ."\n"
                 ." '%s'",
                 realpath($this->app->get('publishing.dir.book').'/config.yml')
+            ));
+        }
+
+        $isInteractive = $this->app->get('console.input')->isInteractive();
+        if (!$isInteractive && !array_key_exists($edition, $this->app->book('editions'))) {
+            throw new \RuntimeException(sprintf(
+                "ERROR: The '%s' edition isn't defined for\n"
+                ."'%s' book.",
+                $edition, $this->app->book('title')
             ));
         }
 
