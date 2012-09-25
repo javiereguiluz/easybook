@@ -510,20 +510,6 @@ class Application extends \Pimple
         return $twig->render($string, $variables);
     }
 
-    // copied from http://github.com/sensio/SensioGeneratorBundle/blob/master/Generator/Generator.php
-    public function renderFile($originDir, $template, $target, $parameters)
-    {
-        if (!is_dir(dirname($target))) {
-            mkdir(dirname($target), 0777, true);
-        }
-
-        $twig = new \Twig_Environment(
-            new \Twig_Loader_Filesystem($originDir),
-            $this->get('twig.options')
-        );
-        file_put_contents($target, $twig->render($template, $parameters));
-    }
-
     /*
      * Shortcut method to render templates
      */

@@ -11,8 +11,10 @@
 
 namespace Easybook\Util;
 
-// Class copied from http://www.princexml.com/download/wrappers/
-// Copyright (c) 2002 – 2011 YesLogic Pty. Ltd.
+/*
+ * @see http://www.princexml.com/download/wrappers/
+ * Copyright (c) 2002 – 2011 YesLogic Pty. Ltd.
+ */
 class Prince
 {
     private $exePath;
@@ -30,53 +32,53 @@ class Prince
 
     public function __construct($exePath)
     {
-	$this->exePath = $exePath;
-	$this->styleSheets = '';
-	$this->isHTML = false;
-	$this->baseURL = '';
-	$this->doXInclude = true;
-	$this->httpUser = '';
-	$this->httpPassword = '';
-	$this->logFile = '';
-	$this->embedFonts = true;
-	$this->compress = true;
-	$this->encrypt = false;
-	$this->encryptInfo = '';
+        $this->exePath = $exePath;
+        $this->styleSheets = '';
+        $this->isHTML = false;
+        $this->baseURL = '';
+        $this->doXInclude = true;
+        $this->httpUser = '';
+        $this->httpPassword = '';
+        $this->logFile = '';
+        $this->embedFonts = true;
+        $this->compress = true;
+        $this->encrypt = false;
+        $this->encryptInfo = '';
     }
 
     // Add a CSS style sheet that will be applied to each document.
     // cssPath: The filename of the CSS style sheet.
     public function addStyleSheet($cssPath)
     {
-	$this->styleSheets .= '-s "' . $cssPath . '" ';
+        $this->styleSheets .= '-s "' . $cssPath . '" ';
     }
 
     // Clear all of the CSS style sheets.
     public function clearStyleSheets()
     {
-	$this->styleSheets = '';
+        $this->styleSheets = '';
     }
 
     // Specify whether documents should be parsed as HTML or XML/XHTML.
     // html: True if all documents should be treated as HTML.
     public function setHTML($html)
     {
-	$this->isHTML = $html;
+        $this->isHTML = $html;
     }
 
     // Specify a file that Prince should use to log error/warning messages.
     // logFile: The filename that Prince should use to log error/warning
-    //	    messages, or '' to disable logging.
+    //        messages, or '' to disable logging.
     public function setLog($logFile)
     {
-	$this->logFile = $logFile;
+        $this->logFile = $logFile;
     }
 
     // Specify the base URL of the input document.
     // baseURL: The base URL or path of the input document, or ''.
     public function setBaseURL($baseURL)
     {
-	$this->baseURL = $baseURL;
+        $this->baseURL = $baseURL;
     }
 
     // Specify whether XML Inclusions (XInclude) processing should be applied
@@ -85,21 +87,21 @@ class Prince
     // xinclude: False to disable XInclude processing.
     public function setXInclude($xinclude)
     {
-	$this->doXInclude = $xinclude;
+        $this->doXInclude = $xinclude;
     }
 
     // Specify a username to use when fetching remote resources over HTTP.
     // user: The username to use for basic HTTP authentication.
     public function setHttpUser($user)
     {
-	$this->httpUser = $user;
+        $this->httpUser = $user;
     }
 
     // Specify a password to use when fetching remote resources over HTTP.
     // password: The password to use for basic HTTP authentication.
     public function setHttpPassword($password)
     {
-	$this->httpPassword = $password;
+        $this->httpPassword = $password;
     }
 
     // Specify whether fonts should be embedded in the output PDF file. Fonts
@@ -107,7 +109,7 @@ class Prince
     // embedFonts: False to disable PDF font embedding.
     public function setEmbedFonts($embedFonts)
     {
-	$this->embedFonts = $embedFonts;
+        $this->embedFonts = $embedFonts;
     }
 
     // Specify whether compression should be applied to the output PDF file.
@@ -115,7 +117,7 @@ class Prince
     // compress: False to disable PDF compression.
     public function setCompress($compress)
     {
-	$this->compress = $compress;
+        $this->compress = $compress;
     }
 
     // Specify whether encryption should be applied to the output PDF file.
@@ -123,7 +125,7 @@ class Prince
     // encrypt: True to enable PDF encryption.
     public function setEncrypt($encrypt)
     {
-	$this->encrypt = $encrypt;
+        $this->encrypt = $encrypt;
     }
 
     // Set the parameters used for PDF encryption. Calling this method will
@@ -135,46 +137,36 @@ class Prince
     // disallowModify: True to disallow modification of the PDF file.
     // disallowCopy: True to disallow copying from the PDF file.
     // disallowAnnotate: True to disallow annotation of the PDF file.
-    public function setEncryptInfo($keyBits,
-				   $userPassword,
-				   $ownerPassword,
-				   $disallowPrint = false,
-				   $disallowModify = false,
-				   $disallowCopy = false,
-				   $disallowAnnotate = false)
+    public function setEncryptInfo($keyBits, $userPassword, $ownerPassword, $disallowPrint = false, $disallowModify = false, $disallowCopy = false, $disallowAnnotate = false)
     {
-	if ($keyBits != 40 && $keyBits != 128)
-	{
-	    throw new Exception("Invalid value for keyBits: $keyBits" .
-		" (must be 40 or 128)");
-	}
+        if ($keyBits != 40 && $keyBits != 128)
+        {
+            throw new Exception("Invalid value for keyBits: $keyBits" .
+            " (must be 40 or 128)");
+        }
 
-	$this->encrypt = true;
+        $this->encrypt = true;
 
         $this->encryptInfo =
-		' --key-bits ' . $keyBits .
-                ' --user-password="' . $userPassword .
-                '" --owner-password="' . $ownerPassword . '" ';
+            ' --key-bits ' . $keyBits .
+            ' --user-password="' . $userPassword .'"' .
+            ' --owner-password="' . $ownerPassword . '" ';
 
-        if ($disallowPrint)
-	{
+        if ($disallowPrint) {
             $this->encryptInfo .= '--disallow-print ';
-	}
+        }
 
-        if ($disallowModify)
-	{
+        if ($disallowModify) {
             $this->encryptInfo .= '--disallow-modify ';
-	}
+        }
 
-        if ($disallowCopy)
-	{
+        if ($disallowCopy) {
             $this->encryptInfo .= '--disallow-copy ';
-	}
+        }
 
-        if ($disallowAnnotate)
-	{
+        if ($disallowAnnotate) {
             $this->encryptInfo .= '--disallow-annotate ';
-	}
+        }
     }
 
     // Convert an XML or HTML file to a PDF file.
@@ -185,10 +177,10 @@ class Prince
     // Returns true if a PDF file was generated successfully.
     public function convert_file($xmlPath, &$msgs = array())
     {
-	$pathAndArgs = $this->getCommandLine();
-	$pathAndArgs .= '"' . $xmlPath . '"';
+        $pathAndArgs = $this->getCommandLine();
+        $pathAndArgs .= '"' . $xmlPath . '"';
 
-	return $this->convert_internal_file_to_file($pathAndArgs, $msgs);
+        return $this->convert_internal_file_to_file($pathAndArgs, $msgs);
     }
 
     // Convert an XML or HTML file to a PDF file.
@@ -198,8 +190,8 @@ class Prince
     // Returns true if a PDF file was generated successfully.
     public function convert_file_to_file($xmlPath, $pdfPath, &$msgs = array())
     {
-	$pathAndArgs = $this->getCommandLine();
-	$pathAndArgs .= '"' . $xmlPath . '" "' . $pdfPath . '"';
+        $pathAndArgs = $this->getCommandLine();
+        $pathAndArgs .= '"' . $xmlPath . '" "' . $pdfPath . '"';
 
         return $this->convert_internal_file_to_file($pathAndArgs, $msgs);
     }
@@ -210,8 +202,8 @@ class Prince
     // Returns true if a PDF file was generated successfully.
     public function convert_string_to_passthru($xmlString)
     {
-	$pathAndArgs = $this->getCommandLine();
-	$pathAndArgs .= '--silent -';
+        $pathAndArgs = $this->getCommandLine();
+        $pathAndArgs .= '--silent -';
 
         return $this->convert_internal_string_to_passthru($pathAndArgs, $xmlString);
     }
@@ -223,8 +215,8 @@ class Prince
     // Returns true if a PDF file was generated successfully.
     public function convert_string_to_file($xmlString, $pdfPath, &$msgs = array())
     {
-	$pathAndArgs = $this->getCommandLine();
-	$pathAndArgs .= ' - -o "' . $pdfPath . '"';
+        $pathAndArgs = $this->getCommandLine();
+        $pathAndArgs .= ' - -o "' . $pdfPath . '"';
 
         return $this->convert_internal_string_to_file($pathAndArgs, $xmlString, $msgs);
     }
@@ -232,194 +224,157 @@ class Prince
     // Old name for backwards compatibility
     public function convert1($xmlPath, &$msgs = array())
     {
-	return $this->convert_file($xmlPath, $msgs);
+        return $this->convert_file($xmlPath, $msgs);
     }
 
     // Old name for backwards compatibility
     public function convert2($xmlPath, $pdfPath, &$msgs = array())
     {
-	return $this->convert_file_to_file($xmlPath, $pdfPath, $msgs);
+        return $this->convert_file_to_file($xmlPath, $pdfPath, $msgs);
     }
 
     // Old name for backwards compatibility
     public function convert3($xmlString)
     {
-	return $this->convert_string_to_passthru($xmlString);
+        return $this->convert_string_to_passthru($xmlString);
     }
 
     private function getCommandLine()
     {
-	$cmdline = $this->exePath . ' --server ' . $this->styleSheets;
+        $cmdline = $this->exePath . ' --server ' . $this->styleSheets;
 
-	if ($this->isHTML)
-	{
-	    $cmdline .= '--input=html ';
-	}
+        if ($this->isHTML) {
+        $cmdline .= '--input=html ';
+        }
 
-	if ($this->baseURL != '')
-	{
-	    $cmdline .= '--baseurl="' . $this->baseURL . '" ';
-	}
+        if ($this->baseURL != '') {
+            $cmdline .= '--baseurl="' . $this->baseURL . '" ';
+        }
 
-	if ($this->doXInclude == false)
-	{
-	    $cmdline .= '--no-xinclude ';
-	}
+        if ($this->doXInclude == false) {
+            $cmdline .= '--no-xinclude ';
+        }
 
-	if ($this->httpUser != '')
-	{
-	    $cmdline .= '--http-user="' . $this->httpUser . '" ';
-	}
+        if ($this->httpUser != '') {
+            $cmdline .= '--http-user="' . $this->httpUser . '" ';
+        }
 
-	if ($this->httpPassword != '')
-	{
-	    $cmdline .= '--http-password="' . $this->httpPassword . '" ';
-	}
+        if ($this->httpPassword != '') {
+            $cmdline .= '--http-password="' . $this->httpPassword . '" ';
+        }
 
-	if ($this->logFile != '')
-	{
-	    $cmdline .= '--log="' . $this->logFile . '" ';
-	}
+        if ($this->logFile != '') {
+            $cmdline .= '--log="' . $this->logFile . '" ';
+        }
 
-	if ($this->embedFonts == false)
-	{
-	    $cmdline .= '--no-embed-fonts ';
-	}
+        if ($this->embedFonts == false) {
+            $cmdline .= '--no-embed-fonts ';
+        }
 
-	if ($this->compress == false)
-	{
-	    $cmdline .= '--no-compress ';
-	}
+        if ($this->compress == false) {
+            $cmdline .= '--no-compress ';
+        }
 
-	if ($this->encrypt)
-	{
-	    $cmdline .= '--encrypt ' . $this->encryptInfo;
-	}
+        if ($this->encrypt) {
+            $cmdline .= '--encrypt ' . $this->encryptInfo;
+        }
 
-	return $cmdline;
+        return $cmdline;
     }
 
     private function convert_internal_file_to_file($pathAndArgs, &$msgs)
     {
-	$descriptorspec = array(
-				0 => array("pipe", "r"),
-				1 => array("pipe", "w"),
-				2 => array("pipe", "w")
-				);
+        $descriptorspec = array(
+            0 => array("pipe", "r"),
+            1 => array("pipe", "w"),
+            2 => array("pipe", "w")
+        );
 
-	$process = proc_open($pathAndArgs, $descriptorspec, $pipes);
+        $process = proc_open($pathAndArgs, $descriptorspec, $pipes);
 
-	if (is_resource($process))
-	{
-	    $result = $this->readMessages($pipes[2], $msgs);
+        if (is_resource($process)) {
+            $result = $this->readMessages($pipes[2], $msgs);
+            fclose($pipes[0]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            proc_close($process);
 
-	    fclose($pipes[0]);
-	    fclose($pipes[1]);
-	    fclose($pipes[2]);
+            return $result == 'success';
+        }
 
-	    proc_close($process);
-
-	    return ($result == 'success');
-	}
-	else
-	{
-	    throw new Exception("Failed to execute $pathAndArgs");
-	}
+        throw new Exception("Failed to execute $pathAndArgs");
     }
 
     private function convert_internal_string_to_file($pathAndArgs, $xmlString, &$msgs)
     {
-	$descriptorspec = array(
-			    0 => array("pipe", "r"),
-			    1 => array("pipe", "w"),
-			    2 => array("pipe", "w")
-			    );
+        $descriptorspec = array(
+            0 => array("pipe", "r"),
+            1 => array("pipe", "w"),
+            2 => array("pipe", "w")
+        );
 
-	$process = proc_open($pathAndArgs, $descriptorspec, $pipes);
+        $process = proc_open($pathAndArgs, $descriptorspec, $pipes);
 
-	if (is_resource($process))
-	{
-	    fwrite($pipes[0], $xmlString);
-	    fclose($pipes[0]);
-	    fclose($pipes[1]);
+        if (is_resource($process)) {
+            fwrite($pipes[0], $xmlString);
+            fclose($pipes[0]);
+            fclose($pipes[1]);
+            $result = $this->readMessages($pipes[2], $msgs);
+            fclose($pipes[2]);
+            proc_close($process);
 
-	    $result = $this->readMessages($pipes[2], $msgs);
+            return $result == 'success';
+        }
 
-	    fclose($pipes[2]);
-
-	    proc_close($process);
-
-	    return ($result == 'success');
-	}
-	else
-	{
-	    throw new Exception("Failed to execute $pathAndArgs");
-	}
+        throw new Exception("Failed to execute $pathAndArgs");
     }
 
     private function convert_internal_string_to_passthru($pathAndArgs, $xmlString)
     {
-	$descriptorspec = array(
-			    0 => array("pipe", "r"),
-			    1 => array("pipe", "w"),
-			    2 => array("pipe", "w")
-			    );
+        $descriptorspec = array(
+            0 => array("pipe", "r"),
+            1 => array("pipe", "w"),
+            2 => array("pipe", "w")
+        );
 
-	$process = proc_open($pathAndArgs, $descriptorspec, $pipes);
+        $process = proc_open($pathAndArgs, $descriptorspec, $pipes);
+        if (is_resource($process)) {
+            fwrite($pipes[0], $xmlString);
+            fclose($pipes[0]);
+            fpassthru($pipes[1]);
+            fclose($pipes[1]);
+            $result = $this->readMessages($pipes[2], $msgs);
+            fclose($pipes[2]);
+            proc_close($process);
 
-	if (is_resource($process))
-	{
-	    fwrite($pipes[0], $xmlString);
-	    fclose($pipes[0]);
-	    fpassthru($pipes[1]);
-	    fclose($pipes[1]);
+            return ($result == 'success');
+        }
 
-	    $result = $this->readMessages($pipes[2], $msgs);
-
-	    fclose($pipes[2]);
-
-	    proc_close($process);
-
-	    return ($result == 'success');
-	}
-	else
-	{
-	    throw new Exception("Failed to execute $pathAndArgs");
-	}
+        throw new Exception("Failed to execute $pathAndArgs");
     }
 
     private function readMessages($pipe, &$msgs)
     {
-	while (!feof($pipe))
-	{
-	    $line = fgets($pipe);
+        while (!feof($pipe)) {
+            $line = fgets($pipe);
+            if ($line != false) {
+                $msgtag = substr($line, 0, 4);
+                $msgbody = rtrim(substr($line, 4));
+                if ($msgtag == 'fin|') {
 
-	    if ($line != false)
-	    {
-		$msgtag = substr($line, 0, 4);
-		$msgbody = rtrim(substr($line, 4));
+                    return $msgbody;
+                }
 
-		if ($msgtag == 'fin|')
-		{
-		    return $msgbody;
-		}
-		else if ($msgtag == 'msg|')
-		{
-		    $msg = explode('|', $msgbody, 4);
+                if ($msgtag == 'msg|') {
+                    $msg = explode('|', $msgbody, 4);
+                    // $msg[0] = 'err' | 'wrn' | 'inf'
+                    // $msg[1] = filename / line number
+                    // $msg[2] = message text, trailing newline stripped
+                    $msgs[] = $msg;
+                }
+            }
+        }
 
-		    // $msg[0] = 'err' | 'wrn' | 'inf'
-		    // $msg[1] = filename / line number
-		    // $msg[2] = message text, trailing newline stripped
-
-		    $msgs[] = $msg;
-		}
-		else
-		{
-		    // ignore other messages
-		}
-	    }
-	}
-
-	return '';
+        return '';
     }
 }

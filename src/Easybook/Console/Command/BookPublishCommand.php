@@ -122,7 +122,7 @@ class BookPublishCommand extends BaseCommand
         $slug    = $input->getArgument('slug');
         $edition = $input->getArgument('edition');
 
-        if (null != $slug && '' != $slug && null != $edition && '' != $edition) {
+        if (!empty($slug) && !empty($edition)) {
             return;
         }
 
