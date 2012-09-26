@@ -229,22 +229,7 @@ class Application extends \Pimple
                 $format = 'Epub2';
             }
 
-            $loader = new \Twig_Loader_Filesystem('.');
-
-            $userTemplatePaths = array(
-                // <book-dir>/Resources/Templates/<edition-name>/<template-name>.twig
-                sprintf('%s/%s', $app['publishing.dir.templates'], $app['publishing.edition']),
-                // <book-dir>/Resources/Templates/<edition-type>/<template-name>.twig
-                sprintf('%s/%s', $app['publishing.dir.templates'], $format),
-                // <book-dir>/Resources/Templates/<template-name>.twig
-                $app['publishing.dir.templates']
-            );
-
-            foreach ($userTemplatePaths as $path) {
-                if (file_exists($path)) {
-                    $loader->addPath($path);
-                }
-            }
+            $loader = new \Twig_Loader_Filesystem($app['app.dir.themes']);
 
             $themeTemplatePaths = array(
                 // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
@@ -259,8 +244,23 @@ class Application extends \Pimple
                 if (file_exists($path)) {
                     // the path is added twice because Twig doesn't support
                     // setting multiple namespaces for a single path
-                    $loader->addPath($path);
-                    $loader->addPath($path, 'theme');
+                    $loader->prependPath($path);
+                    $loader->prependPath($path, 'theme');
+                }
+            }
+
+            $userTemplatePaths = array(
+                // <book-dir>/Resources/Templates/<edition-name>/<template-name>.twig
+                sprintf('%s/%s', $app['publishing.dir.templates'], $app['publishing.edition']),
+                // <book-dir>/Resources/Templates/<edition-type>/<template-name>.twig
+                sprintf('%s/%s', $app['publishing.dir.templates'], $format),
+                // <book-dir>/Resources/Templates/<template-name>.twig
+                $app['publishing.dir.templates']
+            );
+
+            foreach ($userTemplatePaths as $path) {
+                if (file_exists($path)) {
+                    $loader->prependPath($path);
                 }
             }
 
@@ -273,7 +273,7 @@ class Application extends \Pimple
 
             foreach ($defaultContentPaths as $path) {
                 if (file_exists($path)) {
-                    $loader->addPath($path, 'content');
+                    $loader->prependPath($path, 'content');
                 }
             }
 
