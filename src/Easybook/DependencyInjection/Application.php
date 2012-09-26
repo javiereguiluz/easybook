@@ -350,8 +350,6 @@ class Application extends \Pimple
 
         // -- code syntax highlighter -----------------------------------------
         $this['geshi'] = function () use ($app) {
-            require_once $app['app.dir.base'].'/vendor/easybook/geshi/geshi.php';
-
             $geshi = new \GeSHi();
             $geshi->enable_classes(); // this must be the first method (see Geshi doc)
             $geshi->set_encoding($app['app.charset']);
