@@ -5,12 +5,11 @@ $(document).ready(function() {
 
     // Initialize tooltips for links.
     // Attribute "title" is used as text.
-    $('a[title]').jqmTooltip({
-        'position' : 'autoUnder'
-    });
+    //$('a[title]').makePopUp();
 
     // Initialize tooltips for images.
-    // Attribute 'alt' is used as text. 
+    // Attribute 'alt' is used as text.
+    /*
     $('img[alt]').each(function(index) {
         if (this.alt.trim() != '') {
             $(this).jqmTooltip({
@@ -19,6 +18,7 @@ $(document).ready(function() {
             });
         }
     });
+    */
 
     // Make anchor links actually work
     $('ul[data-role="listview"] a').click(function(e) {
@@ -124,8 +124,66 @@ var menu = {
         }
 };
 
-// force JQm to enhance the menu (toc) page
-$(document).bind("pageinit", function(){
-    $.mobile.loadPage("#menu");
+$(document).bind("pagebeforecreate", function(){
+    // Init popups
+    $('a[title]').makePopUp();
+    
+    // Initialize tooltips for images.
+    // Attribute 'alt' is used as text.
+    $('img[alt]').makePopUp();
 });
 
+$(document).bind("pageinit", function(){
+    // force JQm to enhance the menu (toc) page
+    $.mobile.loadPage("#menu");
+    
+});
+
+// Plugin to create poppus out of regular links
+(function ($) {
+
+    $.fn.makePopUp = function (options) {
+
+        return this.each(function (index) {
+            
+            var $this = $(this);
+
+            var $link = $this;
+            var tagType = $this[0].tagName.toLowerCase();
+            if (tagType != 'a') {
+                // Applying a popup to non-link, so surround it with a link
+                $link = $('<a href="#">');
+                $link.attr('title', $this.attr('title'));
+                $link.attr('alt', $this.attr('alt'));
+                $this.removeAttr('title');
+                $this.removeAttr('alt');
+                $this.wrapAll($link);
+                $link = $this.parent();
+            }
+                
+            // Extract text and remove title attribute
+            var text = $link.attr('title');
+            if (!text) {
+                text = $link.attr('alt');
+            }
+            
+            $link.removeAttr('title');
+            
+            // Crate unique id
+            var id = 'popup-'+tagType+'-'+index;
+                
+            // Add data-rel attribute and href to link
+            $link.attr('data-rel', 'popup');
+            $link.attr('href', '#'+id);
+            
+            // Create div with popup text
+            var divPopUp = $('<div data-role="popup">');
+            divPopUp.html('<p>'+text+'</p>')
+                .attr('id', id)
+                .attr('data-theme', 'e');
+            
+            // Add to page
+            $this.parents('[data-role="page"]').append(divPopUp);
+        });
+    };
+})(jQuery);
