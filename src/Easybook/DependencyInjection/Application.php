@@ -232,12 +232,12 @@ class Application extends \Pimple
             $loader = new \Twig_Loader_Filesystem($app['app.dir.themes']);
 
             $themeTemplatePaths = array(
-                // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
-                sprintf('%s/%s/%s/Templates', $app['app.dir.themes'], $theme, $format),
+                // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
+                sprintf('%s/Base/%s/Templates', $app['app.dir.themes'], $format),
                 // <easybook>/app/Resources/Themes/<theme>/Common/Templates/<template-name>.twig
                 sprintf('%s/%s/Common/Templates', $app['app.dir.themes'], $theme),
-                // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
-                sprintf('%s/Base/%s/Templates', $app['app.dir.themes'], $format)
+                // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
+                sprintf('%s/%s/%s/Templates', $app['app.dir.themes'], $theme, $format),
             );
 
             foreach ($themeTemplatePaths as $path) {
@@ -250,12 +250,12 @@ class Application extends \Pimple
             }
 
             $userTemplatePaths = array(
+                // <book-dir>/Resources/Templates/<template-name>.twig
+                $app['publishing.dir.templates'],
+                // <book-dir>/Resources/Templates/<edition-type>/<template-name>.twig
+                sprintf('%s/%s', $app['publishing.dir.templates'], strtolower($format)),
                 // <book-dir>/Resources/Templates/<edition-name>/<template-name>.twig
                 sprintf('%s/%s', $app['publishing.dir.templates'], $app['publishing.edition']),
-                // <book-dir>/Resources/Templates/<edition-type>/<template-name>.twig
-                sprintf('%s/%s', $app['publishing.dir.templates'], $format),
-                // <book-dir>/Resources/Templates/<template-name>.twig
-                $app['publishing.dir.templates']
             );
 
             foreach ($userTemplatePaths as $path) {
@@ -265,10 +265,10 @@ class Application extends \Pimple
             }
 
             $defaultContentPaths = array(
+                // <easybook>/app/Resources/Themes/Base/<edition-type>/Contents/<template-name>.twig
+                sprintf('%s/Base/%s/Contents', $app['app.dir.themes'], $format),
                 // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Contents/<template-name>.twig
                 sprintf('%s/%s/%s/Contents', $app['app.dir.themes'], $theme, $format),
-                // <easybook>/app/Resources/Themes/Base/<edition-type>/Contents/<template-name>.twig
-                sprintf('%s/Base/%s/Contents', $app['app.dir.themes'], $format)
             );
 
             foreach ($defaultContentPaths as $path) {
