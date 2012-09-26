@@ -11,21 +11,21 @@
 
 namespace Easybook\Tests\Commands;
 
-use Easybook\DependencyInjection\Application;
-use Easybook\Console\ConsoleApplication;
-use Easybook\Console\Command\BookNewCommand;
-use Easybook\Console\Command\BookPublishCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Filesystem\Filesystem;
+use Easybook\DependencyInjection\Application;
+use Easybook\Console\ConsoleApplication;
+use Easybook\Console\Command\BookNewCommand;
+use Easybook\Console\Command\BookPublishCommand;
 
 class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
 {
+    protected $console;
     protected $filesystem;
     protected $tmpDir;
-    protected $console;
 
     public function setUp()
     {
