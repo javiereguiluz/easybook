@@ -1,5 +1,7 @@
 # Contributors #
 
+Developers that helped **easybook** with promotion, ideas, code or bug reports.
+
 (in cronological order)
 
   * [Javier Eguiluz](https://github.com/javiereguiluz)
@@ -14,3 +16,7 @@
   * [Lionel Dricot](https://github.com/ploum)
   * [Adán Lobato](https://github.com/adanlobato)
   * [Miguel Angel Gabriel](https://github.com/magabriel)
+  * [Andrew Smith](https://github.com/silentworks)
+  * [Huho Hamon](https://github.com/hhamon)
+  * [Fabien Potencier](https://github.com/fabpot)
+  * [Henrik Bjørnskov](https://github.com/henrikbjorn)

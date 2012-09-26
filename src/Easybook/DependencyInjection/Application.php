@@ -74,24 +74,25 @@ class Application extends \Pimple
         // -- default edition options -----------------------------------------
         // TODO: should each edition type define different default values?
         $this['app.edition.defaults'] = array(
-            'format'         => 'html',
-            'highlight_code' => false,
-            'include_styles' => true,
-            'isbn'           => null,
-            'labels'         => array('appendix', 'chapter', 'figure'),
-            'margin'         => array(
-                'top'        => '25mm',
-                'bottom'     => '25mm',
-                'inner'      => '30mm',
-                'outter'     => '20mm'
+            'format'          => 'html',
+            'highlight_cache' => false,
+            'highlight_code'  => false,
+            'include_styles'  => true,
+            'isbn'            => null,
+            'labels'          => array('appendix', 'chapter', 'figure'),
+            'margin'          => array(
+                'top'         => '25mm',
+                'bottom'      => '25mm',
+                'inner'       => '30mm',
+                'outter'      => '20mm'
             ),
-            'page_size'      => 'A4',
-            'theme'          => 'clean',
-            'toc'            => array(
-                'deep'       => 2,
-                'elements'   => array('appendix', 'chapter')
+            'page_size'       => 'A4',
+            'theme'           => 'clean',
+            'toc'             => array(
+                'deep'        => 2,
+                'elements'    => array('appendix', 'chapter')
             ),
-            'two_sided'      => true
+            'two_sided'       => true
         );
 
         // -- console ---------------------------------------------------------
@@ -601,15 +602,46 @@ class Application extends \Pimple
         return null;
     }
 
+    /**
+     * Highlights the given code according to the specified programming language.
+     *
+     * @param  string $code     The source code to be highlighted
+     * @param  string $language The name of the programming language used in the code
+     * @return string           The highlighted code
+     */
     public function highlight($code, $language = 'code')
     {
+        // check if the code exists in the cache
+        if ($this->edition('highlight_cache')) {
+            // inspired by Twig_Environment -> getCacheFileName()
+            // see https://github.com/fabpot/Twig/blob/master/lib/Twig/Environment.php
+            $hash = md5($language.$code);
+            $cacheDir = $this->get('app.dir.cache').'/GeSHi/'.substr($hash, 0, 2).'/'.substr($hash, 2, 2);
+            $cacheFilename = $cacheDir.'/'.substr($hash, 4).'.txt';
+
+            if (file_exists($cacheFilename)) {
+                return file_get_contents($cacheFilename);
+            }
+        }
+
+        // highlight the code useing GeSHi library
         $geshi = $this->get('geshi');
         if ('html' == $language) { $language = 'html5'; }
 
         $geshi->set_source($code);
         $geshi->set_language($language);
+        $highlightedCode = $geshi->parse_code();
 
-        return $geshi->parse_code();
+        // save the highlighted code in the cache
+        if ($this->edition('highlight_cache')) {
+            $this->get('filesystem')->mkdir($cacheDir);
+
+            if (false === @file_put_contents($cacheFilename, $highlightedCode)) {
+                throw new \RuntimeException(sprintf("ERROR: Failed to write cache file \n'%s'.", $cacheFilename));
+            }
+        }
+
+        return $highlightedCode;
     }
 
     /**

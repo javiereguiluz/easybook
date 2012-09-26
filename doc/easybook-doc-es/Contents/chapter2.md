@@ -139,41 +139,44 @@ llamadas `ebook`, `print`, `web` y `website` con las siguientes opciones:
         # ...
         editions:
             ebook:
-                format:         epub
-                highlight_code: false
-                include_styles: true
-                labels:         ['appendix', 'chapter']  # labels also available for: "figure", "table"
+                format:          epub
+                highlight_cache: false
+                highlight_code:  false
+                include_styles:  true
+                labels:          ['appendix', 'chapter']  # labels also available for: "figure", "table"
                 toc:
-                    deep:       1
-                    elements:   ["appendix", "chapter", "part"]
+                    deep:        1
+                    elements:    ["appendix", "chapter", "part"]
 
             print:
-                format:         pdf
-                isbn:           ~
-                labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
+                format:          pdf
+                include_styles:  true
+                isbn:            ~
+                labels:          ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 margin:
-                    top:        25mm
-                    bottom:     25mm
-                    inner:      30mm
-                    outter:     20mm
-                page_size:      A4
+                    top:         25mm
+                    bottom:      25mm
+                    inner:       30mm
+                    outter:      20mm
+                page_size:       A4
                 toc:
-                    deep:       2
-                    elements:   ['appendix', 'chapter']
-                two_sided:      true
+                    deep:        2
+                    elements:    ["appendix", "chapter"]
+                two_sided:       true
 
             web:
-                format:         html
-                highlight_code: true
-                include_styles: true
-                labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
+                format:          html
+                highlight_cache: false
+                highlight_code:  true
+                include_styles:  true
+                labels:          ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 toc:
-                    deep:       2
-                    elements:   ['appendix', 'chapter']
+                    deep:        2
+                    elements:    ["appendix", "chapter"]
 
             website:
-                extends:        web
-                format:         html_chunked
+                extends:         web
+                format:          html_chunked
 
 El nombre de las ediciones debe ser único para un mismo libro y no puede
 contener espacios en blanco. Este mismo nombre se utiliza como subdirectorio
@@ -191,8 +194,14 @@ opción `format`:
 Cada tipo de edición define sus propias opciones de configuración. Los tipos
 `epub`, `html` y `html_chunked` disponen de las mismas opciones:
 
-  * `highligh_code`, si vale `true` se colorea la sintaxis de los listados de
-  código del libro (esta opción todavía no se tiene en cuenta).
+  * `highlight_cache`, esta opción sólo es útil para los libros técnicos sobre
+    programación. Si vale `true`, se guardan en una cache todos los listados de
+    código coloreados. Esto reduce enormemente el tiempo necesario para publicar
+    el libro. Por defecto vale `false` porque sólo es útil para libros muy
+    complejos que se publican muy habitualmente.
+  * `highlight_code`, esta opción sólo es útil para los libros técnicos sobre
+    programación. Si vale `true` se colorea la sintaxis de los listados de
+    código del libro.
   * `include_styles`, si vale `true` se aplican los estilos CSS por defecto de
   **easybook**.
   * `labels`, indica los tipos de elementos para los que se añaden etiquetas en

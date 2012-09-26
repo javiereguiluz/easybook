@@ -104,7 +104,7 @@ instalada, debes ejecutar el comando `version` a través del *script* `book`:
     `---'`---^`---'`---|`---'`---'`---'`   `
                    `---'
 
-    easybook installed version: 4.2
+    easybook installed version: 4.8
 
 ## Creando el libro ##
 

@@ -17,43 +17,46 @@ book:
 
     editions:
         ebook:
-            format:         epub
-            include_styles: true
-            highlight_code: true
-            labels:         ['appendix', 'chapter', 'figure']
-            theme:          clean
+            format:          epub
+            include_styles:  true
+            highlight_cache: true
+            highlight_code:  true
+            labels:          ['appendix', 'chapter', 'figure']
+            theme:           clean
             toc:
-                deep:       1
-                elements:   ["appendix", "chapter"]
+                deep:        1
+                elements:    ["appendix", "chapter"]
 
         print:
-            format:         pdf
-            highlight_code: true
-            isbn:           ~
-            include_styles: true
-            labels:         ['appendix', 'chapter', 'figure']
+            format:          pdf
+            highlight_cache: true
+            highlight_code:  true
+            isbn:            ~
+            include_styles:  true
+            labels:          ['appendix', 'chapter', 'figure']
             margin:
-                top:        25mm
-                bottom:     25mm
-                inner:      30mm
-                outter:     20mm
-            page_size:      A4
-            theme:          clean
+                top:         25mm
+                bottom:      25mm
+                inner:       30mm
+                outter:      20mm
+            page_size:       A4
+            theme:           clean
             toc:
-                deep:       2
-                elements:   ["appendix", "chapter"]
-            two_sided:      true
+                deep:        2
+                elements:    ["appendix", "chapter"]
+            two_sided:       true
 
         web:
-            format:         html
-            include_styles: true
-            highlight_code: true
-            labels:         ['appendix', 'chapter', 'figure']
-            theme:          clean
+            format:          html
+            include_styles:  true
+            highlight_cache: true
+            highlight_code:  true
+            labels:          ['appendix', 'chapter', 'figure']
+            theme:           clean
             toc:
-                deep:       2
-                elements:   ["appendix", "chapter"]
+                deep:        2
+                elements:    ["appendix", "chapter"]
 
         website:
-            extends:        web
-            format:         html_chunked
+            extends:         web
+            format:          html_chunked
