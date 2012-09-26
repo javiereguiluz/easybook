@@ -158,6 +158,44 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testNonInteractionInvalidBookAndEdition()
+    {
+        $command = $this->console->find('publish');
+        $tester  = new CommandTester($command);
+
+        $tester->execute(array(
+            'command' => $command->getName(),
+            'slug'    => uniqid('non_existent_book_'),
+            'edition' => uniqid('non_existent_edition_'),
+            '--dir'   => $this->tmpDir,
+            '--no-interaction' => true
+        ), array(
+            'interactive' => false
+        ));
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testNonInteractionInvalidEdition()
+    {
+        $command = $this->console->find('publish');
+        $tester  = new CommandTester($command);
+
+        $tester->execute(array(
+            'command' => $command->getName(),
+            'slug'    => 'the-origin-of-species',
+            'edition' => uniqid('non_existent_edition_'),
+            '--dir'   => $this->tmpDir,
+            '--no-interaction' => true
+        ), array(
+            'interactive' => false
+        ));
+    }
+
     // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
     protected function getInputStream($input)
     {
