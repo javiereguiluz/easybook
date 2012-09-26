@@ -26,7 +26,7 @@
         "symfony/process":          "2.1.*",
         "symfony/yaml":             "2.1.*",
 
-        "twig/twig":                "1.8.*"
+        "twig/twig":                "1.*"
     },
 
     "autoload": {

@@ -84,9 +84,9 @@ class Epub2Publisher extends HtmlPublisher
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
-            $this->app->renderThemeTemplate(
-                'style.css.twig',
-                array('resources_dir' => '..'),
+            $this->app->render('@theme/style.css.twig', array(
+                    'resources_dir' => '..'
+                ),
                 $bookTempDir.'/book/OEBPS/css/easybook.css'
             );
 
@@ -135,7 +135,7 @@ class Epub2Publisher extends HtmlPublisher
         // generate one HTML page for every book item
         $items = array();
         foreach ($this->app['publishing.items'] as $item) {
-            $this->app->renderThemeTemplate('chunk.twig', array(
+            $this->app->render('@theme/chunk.twig', array(
                     'item'           => $item,
                     'has_custom_css' => file_exists($customCss),
                 ),
@@ -181,14 +181,14 @@ class Epub2Publisher extends HtmlPublisher
         }
 
         // generate book cover
-        $this->app->renderThemeTemplate('cover.twig', array(
+        $this->app->render('@theme/cover.twig', array(
                 'cover' => $cover
             ),
             $bookTempDir.'/book/OEBPS/titlepage.html'
         );
 
         // generate OPF file
-        $this->app->renderThemeTemplate('content.opf.twig', array(
+        $this->app->render('@theme/content.opf.twig', array(
                 'cover'          => $cover,
                 'has_custom_css' => file_exists($customCss),
                 'fonts'          => $bookFonts,
@@ -198,15 +198,15 @@ class Epub2Publisher extends HtmlPublisher
         );
 
         // generate NCX file
-        $this->app->renderThemeTemplate('toc.ncx.twig', array(),
+        $this->app->render('@theme/toc.ncx.twig', array(),
             $bookTempDir.'/book/OEBPS/toc.ncx'
         );
 
         // generate container.xml and mimetype files
-        $this->app->renderThemeTemplate('container.xml.twig', array(),
+        $this->app->render('@theme/container.xml.twig', array(),
             $bookTempDir.'/book/META-INF/container.xml'
         );
-        $this->app->renderThemeTemplate('mimetype.twig', array(),
+        $this->app->render('@theme/mimetype.twig', array(),
             $bookTempDir.'/book/mimetype'
         );
 

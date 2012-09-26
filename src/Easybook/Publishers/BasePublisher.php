@@ -102,7 +102,7 @@ class BasePublisher
                 // e.g. `cover.md.twig`, `license.md.twig`, `title.md.twig`
                 try {
                     $contentFile = $contentConfig['element'].'.md.twig';
-                    $item['original'] = $this->app->renderThemeContent($contentFile);
+                    $item['original'] = $this->app->render('@content/'.$contentFile);
                     $item['config']['format']  = 'md';
                 }
                 // if Twig throws a Twig_Error_Loader exception, there is no default content
