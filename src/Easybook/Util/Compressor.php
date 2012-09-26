@@ -157,7 +157,12 @@ class Compressor
     private function addFile($file, $verbose = true)
     {
         $this->fileCount++;
-        if ($verbose) { echo '.'; if (0 == $this->fileCount % 80) { echo "\n"; } }
+        if ($verbose) {
+            echo '.';
+            if (0 == $this->fileCount % 80) {
+                echo "\n";
+            }
+        }
 
         $relativePath = str_replace(
             dirname(dirname(dirname(__DIR__))).DIRECTORY_SEPARATOR,
