@@ -29,13 +29,10 @@ class BookPublishCommand extends BaseCommand
             ->setDescription('Publishes an edition of a book')
             ->setDefinition(array(
                 new InputArgument(
-                    'slug', InputArgument::REQUIRED, "Book slug (no spaces allowed)"
-                ),
-                new InputArgument(
                     'edition', InputArgument::REQUIRED, "Edition to be published"
                 ),
                 new InputOption(
-                    'dir', '', InputOption::VALUE_OPTIONAL, "Path of the documentation directory"
+                    'dir', getcwd(), InputOption::VALUE_OPTIONAL, "Path of the documentation directory"
                 ),
                 new InputOption(
                     'configuration', '', InputOption::VALUE_OPTIONAL, "Additional book configuration options"
@@ -46,10 +43,8 @@ class BookPublishCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $slug    = $input->getArgument('slug');
         $edition = $input->getArgument('edition');
-        $dir     = $input->getOption('dir') ?: $this->app['app.dir.doc'];
-
+        $dir     = $input->getOption('dir') ?: getcwd();
         $dialog  = $this->getHelperSet()->get('dialog');
 
         $this->app->set('console.input', $input);
@@ -60,14 +55,14 @@ class BookPublishCommand extends BaseCommand
         $validator    = $this->app->get('validator');
 
         // validate book dir and add some useful values to the app configuration
-        $bookDir = $validator->validateBookDir($slug, $dir);
+        $bookDir = $validator->validateBookDir($dir);
 
         $this->app->set('publishing.dir.book',      $bookDir);
         $this->app->set('publishing.dir.contents',  $bookDir.'/Contents');
         $this->app->set('publishing.dir.resources', $bookDir.'/Resources');
         $this->app->set('publishing.dir.plugins',   $bookDir.'/Resources/Plugins');
         $this->app->set('publishing.dir.templates', $bookDir.'/Resources/Templates');
-        $this->app->set('publishing.book.slug',     $slug);
+        $this->app->set('publishing.book.slug',     current(explode(DIRECTORY_SEPARATOR, $dir)));
 
         // load book configuration
         $configurator->loadBookConfiguration();
@@ -119,10 +114,9 @@ class BookPublishCommand extends BaseCommand
     {
         $output->writeln($this->app['app.signature']);
 
-        $slug    = $input->getArgument('slug');
         $edition = $input->getArgument('edition');
 
-        if (null != $slug && '' != $slug && null != $edition && '' != $edition) {
+        if ( null != $edition && '' != $edition) {
             return;
         }
 
@@ -133,18 +127,6 @@ class BookPublishCommand extends BaseCommand
         ));
 
         $dialog = $this->getHelperSet()->get('dialog');
-
-        // check 'slug' argument
-        $slug = $input->getArgument('slug') ?: $dialog->askAndValidate($output,
-            array(
-                " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n",
-                " > "
-            ),
-            function ($slug) {
-                return Validator::validateBookSlug($slug);
-            }
-        );
-        $input->setArgument('slug', $slug);
 
         // check 'edition' argument
         $edition = $input->getArgument('edition') ?: $dialog->askAndValidate($output,
