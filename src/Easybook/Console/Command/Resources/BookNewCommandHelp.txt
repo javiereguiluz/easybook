@@ -7,8 +7,8 @@ the title of the book after the <info>new</info> command (enclose the title with
 
 <info>$ ./book new "The Origin of Species"</info>
 
-By default, <comment>easybook</comment> uses its <info>doc/</info> directory to save the book contents.
-If you want to save them in any other directory, use the <info>--dir</info> option:
+By default, <comment>easybook</comment> uses the <info>current working directory/</info> 
+to save the book contents. If you want to save them in any other directory, use the <info>--dir</info> option:
 
 <info>$ ./book new --dir=../any/other/directory</info>
 

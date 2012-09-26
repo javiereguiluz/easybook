@@ -10,7 +10,14 @@
  * file that was distributed with this source code.
  */
 
-require __DIR__.'/vendor/autoload.php';
+if (is_dir($dir = __DIR__.'/vendor')) {
+    require $dir . '/autoload.php'; 
+} elseif (is_dir($dir = __DIR__ . '/../../../vendor')) {
+    require $dir . '/autoload.php';
+} else {
+    echo 'You must set up the project dependencies, run the following command: "php composer.phar install"';
+    die(1);
+}
 
 use Easybook\DependencyInjection\Application;
 use Easybook\Console\ConsoleApplication;
