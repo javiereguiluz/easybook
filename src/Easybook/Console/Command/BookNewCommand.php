@@ -47,7 +47,7 @@ class BookNewCommand extends BaseCommand
         );
 
         $dir = Validator::validateDirExistsAndWritable(
-            $input->getOption('dir') ?: $this->app['app.dir.doc']
+            $input->getOption('dir') ?: getcwd()
         );
 
         // TODO: extensibility: user should be allowed to define the slug

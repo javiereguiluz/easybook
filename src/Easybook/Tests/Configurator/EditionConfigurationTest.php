@@ -49,10 +49,13 @@ class EditionConfigurationTest extends TestCase
         $this->app->get('filesystem')->mirror($sourceDir.'/input', $targetDir);
 
         // publish the book
-        $input = new ArrayInput(array_replace(array(
-            'command' => 'publish',
-            '--dir'   => $this->dir
-        ), $options));
+        $input = new ArrayInput(array_filter(array(
+            'command'         => 'publish',
+            '--dir'           => $targetDir,
+            '--configuration' => isset($options['--configuration']) ? $options['--configuration'] : null,
+            'edition'         => $edition,
+        )));
+
         $console->find('publish')->run($input, new NullOutput());
 
         $this->assertFileEquals(

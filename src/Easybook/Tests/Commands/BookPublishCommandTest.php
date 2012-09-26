@@ -48,6 +48,8 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
             'title'   => 'The Origin of Species',
             '--dir'   => $this->tmpDir
         ));
+
+        $this->tmpBookDir = $this->tmpDir . '/the-origin-of-species';
     }
 
     public function tearDown()
@@ -62,14 +64,15 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         // prepare the data that will be input interactively
         // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
         $dialog = new DialogHelper();
-        $dialog->setInputStream($this->getInputStream("\n\nthe-origin-of-species\n\n\nweb\n"));
+        $dialog->setInputStream($this->getInputStream("\n\nweb\n"));
+
         $helper = new HelperSet(array(new FormatterHelper(), $dialog));
         $command->setHelperSet($helper);
 
         $tester  = new CommandTester($command);
         $tester->execute(array(
             'command' => $command->getName(),
-            '--dir'   => $this->tmpDir
+            '--dir'   => $this->tmpBookDir
         ), array(
             'interactive' => true
         ));
@@ -78,18 +81,6 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
             'Welcome to the easybook interactive book publisher',
             $tester->getDisplay(),
             'The interactive publisher welcome message is shown'
-        );
-
-        $this->assertContains(
-            'Please, type the slug of the book (e.g. the-origin-of-species)',
-            $tester->getDisplay(),
-            'The interactive generator asks for the title of the book'
-        );
-
-        $this->assertContains(
-            'ERROR: The slug can only contain letters, numbers and dashes (no spaces)',
-            $tester->getDisplay(),
-            'Interactive publisher validates wrong "slug" input'
         );
 
         $this->assertContains(
@@ -125,9 +116,8 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         $start = microtime(true);
         $tester->execute(array(
             'command' => $command->getName(),
-            'slug'    => 'the-origin-of-species',
             'edition' => $edition,
-            '--dir'   => $this->tmpDir
+            '--dir'   => $this->tmpBookDir
         ));
         $finish = microtime(true);
 

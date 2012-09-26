@@ -66,9 +66,8 @@ class PublisherTest extends TestCase
                 // publish each book edition
                 $input = new ArrayInput(array(
                     'command' => 'publish',
-                    'slug'    => $slug,
                     'edition' => $editionName,
-                    '--dir'   => $this->dir
+                    '--dir'   => $this->dir . '/' . $slug,
                 ));
                 $console->find('publish')->run($input, new NullOutput());
 

@@ -56,10 +56,13 @@ class BookConfigurationTest extends TestCase
         );
 
         // publish the book
-        $input = new ArrayInput(array_replace(array(
-            'command' => 'publish',
-            '--dir'   => $this->dir
-        ), $options));
+        $input = new ArrayInput(array_filter(array(
+            'command'         => 'publish',
+            'edition'         => $options['edition'],
+            '--dir'           => $targetDir,
+            '--configuration' => isset($options['--configuration']) ? $options['--configuration'] : null,
+        )));
+
         $console->find('publish')->run($input, new NullOutput());
 
         $this->assertFileEquals(

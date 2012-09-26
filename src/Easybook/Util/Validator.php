@@ -74,18 +74,16 @@ class Validator
     /**
      * Validates that the book represented by the given $slug exists in $dir directory.
      */
-    public function validateBookDir($slug, $baseDir)
+    public function validateBookDir($bookDir)
     {
         $attempts = 6;
-        $bookDir  = $baseDir.'/'.$slug;
-
         $isInteractive = $this->app->get('console.input')->isInteractive();
+
         if (!$isInteractive && !file_exists($bookDir)) {
             throw new \RuntimeException(sprintf(
                 "ERROR: The directory of the book cannot be found.\n"
-                ." Check that '%s' directory \n"
-                ." has a folder named as the book slug ('%s')",
-                $baseDir, $slug
+                ." Check that the '%s' directory exists. \n",
+                $bookDir
             ));
         }
 
@@ -93,28 +91,24 @@ class Validator
         while (!file_exists($bookDir) && $attempts--) {
             if (!$attempts) {
                 throw new \InvalidArgumentException(sprintf(
-                    "ERROR: Too many failed attempts of getting the book directory.\n"
-                    ." Check that '%s' directory \n"
-                    ." has a folder named as the book slug ('%s')",
-                    $baseDir, $slug
+                    "ERROR: The directory of the book cannot be found.\n"
+                    ." Check that the '%s' directory exists. \n",
+                    $bookDir
                 ));
             }
 
             $this->app->get('console.output')->writeln(array(
                 "",
-                " <bg=red;fg=white> ERROR </> The given <info>$slug</info> slug doesn't match any book in",
-                " <comment>".realpath($baseDir)."/</comment> directory"
+                " <bg=red;fg=white> ERROR </> The given <info>$bookDir</info> directory doesn't exists."
             ));
 
-            $slug = $this->app->get('console.dialog')->ask(
+            $bookDir = $this->app->get('console.dialog')->ask(
                 $this->app->get('console.output'),
                 array(
-                    "\n Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n"
+                    "\n Please, type the <info>directory</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n"
                     ." > "
                 )
             );
-
-            $bookDir = $baseDir.'/'.$slug;
         }
 
         return $bookDir;
