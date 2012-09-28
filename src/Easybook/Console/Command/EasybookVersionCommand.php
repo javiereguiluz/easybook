@@ -33,7 +33,7 @@ class EasybookVersionCommand extends BaseCommand
             '',
             $this->app['app.signature'],
             ' <info>easybook</info> installed version: '
-            .'<comment>'.$this->app['app.version'].'</comment>',
+            .'<comment>'.$this->app->getVersion().'</comment>',
             '',
         ));
     }
