@@ -45,7 +45,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $tester->run(array('command' => 'version'));
 
         $this->assertRegExp(
-            sprintf('/easybook installed version: %s/', preg_quote($this->app['app.version'])),
+            sprintf('/easybook installed version: %s/', preg_quote($this->app->getVersion())),
             $tester->getDisplay(),
             'The "version" command shows the version of the application'
         );

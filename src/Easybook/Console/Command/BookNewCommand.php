@@ -64,7 +64,7 @@ class BookNewCommand extends BaseCommand
         $generator->setConfiguration(array(
             'generator' => array(
                 'name'    => $this->app['app.name'],
-                'version' => $this->app['app.version']
+                'version' => $this->app->getVersion(),
             ),
             'title' => $title,
         ));
