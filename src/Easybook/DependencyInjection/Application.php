@@ -30,6 +30,8 @@ use Easybook\Util\Validator;
 
 class Application extends \Pimple
 {
+    const VERSION = '4.8-DEV';
+
     public function __construct()
     {
         $app = $this;
@@ -38,7 +40,6 @@ class Application extends \Pimple
         $this['app.debug']     = false;
         $this['app.charset']   = 'UTF-8';
         $this['app.name']      = 'easybook';
-        $this['app.version']   = '4.8-DEV';
         $this['app.signature'] = "\n"
         ."                     |              |    \n"
         ." ,---.,---.,---.,   .|---.,---.,---.|__/ \n"
@@ -65,7 +66,7 @@ class Application extends \Pimple
             'publication_date' => null,
             'generator'        => array(
                 'name'         => $this['app.name'],
-                'version'      => $this['app.version']
+                'version'      => $this->getVersion(),
             ),
             'contents'         => array(),
             'editions'         => array()
@@ -391,6 +392,11 @@ class Application extends \Pimple
 
             return $titles;
         });
+    }
+
+    public final function getVersion()
+    {
+        return static::VERSION;
     }
 
     public function get($id)
