@@ -30,6 +30,8 @@ use Easybook\Util\Validator;
 
 class Application extends \Pimple
 {
+    const VERSION = '4.8-DEV';
+
     public function __construct()
     {
         $app = $this;
@@ -394,7 +396,7 @@ class Application extends \Pimple
 
     public final function getVersion()
     {
-        return '4.8-DEV';
+        return static::VERSION;
     }
 
     public function get($id)
