@@ -109,8 +109,8 @@ class BookPublishCommand extends BaseCommand
             ' <comment>'.realpath($this->app['publishing.dir.output']).'</comment>',
             '',
             sprintf(
-                " The publishing process took <info>%.1f seconds</info>\n",
-                $this->app['app.timer.finish'] - $this->app['app.timer.start']
+                " The publishing process took <info>%s seconds</info>\n",
+                number_format($this->app['app.timer.finish'] - $this->app['app.timer.start'], 1)
             )
         ));
     }
