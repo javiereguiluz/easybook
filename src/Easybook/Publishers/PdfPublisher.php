@@ -92,9 +92,9 @@ class PdfPublisher extends BasePublisher
         // Prepare and add stylesheets before PDF conversion
         if ($this->app->edition('include_styles')) {
             $defaultStyles = tempnam(sys_get_temp_dir(), 'easybook_style_');
-            $this->app->renderThemeTemplate(
-                'style.css.twig',
-                array('resources_dir' => $this->app['app.dir.resources'].'/'),
+            $this->app->render('@theme/style.css.twig', array(
+                    'resources_dir' => $this->app['app.dir.resources'].'/'
+                ),
                 $defaultStyles
             );
 

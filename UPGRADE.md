@@ -1,5 +1,28 @@
 # UPGRADE guide #
 
+## Upgrade to easybook 4.8 ##
+
+### Introduced a new highlight cache ###
+
+If you write technical books about any programming language, you can now reduce
+book publishing time very significantly. **easybook** now supports `highlight_cache`
+option for any book edition:
+
+```yaml
+book:
+    # ...
+
+    print:
+        format: pdf
+        highlight_cache: true
+        highlight_code:  true
+        # ...
+```
+
+If `true`, this option forces **easybook** to store in the cache any highlighted
+code listing. Benchmarks are very promising: publishing a 700-page PDF book with
+thousands of highlighted code lines went from 60 seconds to 4 seconds.
+
 ## Upgrade to easybook 4.4 ##
 
 ### Renamed `parsing_item` to `active_item` ###

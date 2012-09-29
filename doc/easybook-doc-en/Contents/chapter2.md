@@ -120,42 +120,44 @@ default, the books created with the `new` command have four editions named
         # ...
         editions:
             ebook:
-                format:         epub
-                highlight_code: false
-                include_styles: true
-                labels:         ['appendix', 'chapter']  # labels also available for: "figure", "table"
+                format:          epub
+                highlight_cache: false
+                highlight_code:  false
+                include_styles:  true
+                labels:          ['appendix', 'chapter']  # labels also available for: "figure", "table"
                 toc:
-                    deep:       1
-                    elements:   ["appendix", "chapter", "part"]
+                    deep:        1
+                    elements:    ["appendix", "chapter", "part"]
 
             print:
-                format:         pdf
-                include_styles: true
-                isbn:           ~
-                labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
+                format:          pdf
+                include_styles:  true
+                isbn:            ~
+                labels:          ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 margin:
-                    top:        25mm
-                    bottom:     25mm
-                    inner:      30mm
-                    outter:     20mm
-                page_size:      A4
+                    top:         25mm
+                    bottom:      25mm
+                    inner:       30mm
+                    outter:      20mm
+                page_size:       A4
                 toc:
-                    deep:       2
-                    elements:   ["appendix", "chapter"]
-                two_sided:      true
+                    deep:        2
+                    elements:    ["appendix", "chapter"]
+                two_sided:       true
 
             web:
-                format:         html
-                highlight_code: true
-                include_styles: true
-                labels:         ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
+                format:          html
+                highlight_cache: false
+                highlight_code:  true
+                include_styles:  true
+                labels:          ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
                 toc:
-                    deep:       2
-                    elements:   ["appendix", "chapter"]
+                    deep:        2
+                    elements:    ["appendix", "chapter"]
 
             website:
-                extends:        web
-                format:         html_chunked
+                extends:         web
+                format:          html_chunked
 
 The name of each edition must be unique for the same book and cannot contain
 spaces.  The edition name is used as the subdirectory inside `Output/` directory
@@ -173,8 +175,12 @@ Editions can modify the aspect of the published book through several
 configuration options. The `epub`, `html` and `html_chunked` edition types share
 the same options:
 
-  * `highligh_code`, if `true` the syntax of the code listings is highlighted
-  (this option is a placeholder and it doesn't work for the momment).
+  * `highlight_cache`, this option is only useful for technical books that include
+     source code. If `true`, all the highlighted code listings will be cached
+     to boost book publishing performance. By default this cache is disabled
+     because it's only appropriate for complex books that are generated regularly.
+  * `highlight_code`, this option is only useful for technical books that include
+     source code. If `true`, the syntax of the code listings is highlighted.
   * `include_styles`, if `true` **easybook** default CSS styles are applied.
   * `labels`, indicates the content types for which **easybook** will add labels
   to their section headings. By default labels are only added to headings of

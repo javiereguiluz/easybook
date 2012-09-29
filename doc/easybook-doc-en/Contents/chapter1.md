@@ -99,7 +99,7 @@ command. If you need to know for example the installed version, just run the
     `---'`---^`---'`---|`---'`---'`---'`   `
                    `---'
 
-    easybook installed version: 4.2
+    easybook installed version: 4.8
 
 ## Creating the book ##
 

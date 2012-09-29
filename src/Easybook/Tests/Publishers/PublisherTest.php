@@ -13,6 +13,7 @@ namespace Easybook\Tests\Publishers;
 
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 use Easybook\DependencyInjection\Application;
 use Easybook\Console\ConsoleApplication;
@@ -20,20 +21,25 @@ use Easybook\Tests\TestCase;
 
 class PublisherTest extends TestCase
 {
-    private $dir;
-    private $app;
+    protected $app;
+    protected $filesystem;
+    protected $tmpDir;
 
     public function setUp()
     {
         $this->app = new Application();
-        $this->dir = sys_get_temp_dir().'/easybookTests';
+
+        // setup temp dir for generated files
+        $this->tmpDir = $this->app['app.dir.cache'].'/'.uniqid('phpunit_', true);
+        $this->filesystem = new Filesystem();
+        $this->filesystem->mkdir($this->tmpDir);
 
         parent::setUp();
     }
 
     public function tearDown()
     {
-        $this->app->get('filesystem')->remove($this->dir);
+        $this->filesystem->remove($this->tmpDir);
 
         parent::tearDown();
     }
@@ -54,13 +60,13 @@ class PublisherTest extends TestCase
             $slug = $book->getFileName();
 
             // mirror test book contents in temp dir
-            $this->app->get('filesystem')->mirror(
+            $this->filesystem->mirror(
                 __DIR__.'/fixtures/'.$slug.'/input',
-                $this->dir.'/'.$slug
+                $this->tmpDir.'/'.$slug
             );
 
             // look for and publish all the book editions
-            $bookConfig = Yaml::parse($this->dir.'/'.$slug.'/config.yml');
+            $bookConfig = Yaml::parse($this->tmpDir.'/'.$slug.'/config.yml');
             $editions = $bookConfig['book']['editions'];
             foreach ($editions as $editionName => $editionConfig) {
                 // publish each book edition
@@ -68,7 +74,7 @@ class PublisherTest extends TestCase
                     'command' => 'publish',
                     'slug'    => $slug,
                     'edition' => $editionName,
-                    '--dir'   => $this->dir
+                    '--dir'   => $this->tmpDir
                 ));
                 $console->find('publish')->run($input, new NullOutput());
 
@@ -76,7 +82,7 @@ class PublisherTest extends TestCase
                 $generatedFiles = $this->app->get('finder')
                     ->files()
                     ->notName('.gitignore')
-                    ->in($this->dir.'/'.$slug.'/Output/'.$editionName)
+                    ->in($this->tmpDir.'/'.$slug.'/Output/'.$editionName)
                 ;
                 foreach ($generatedFiles as $file) {
                     $this->assertFileEquals(
@@ -94,7 +100,7 @@ class PublisherTest extends TestCase
                 ;
                 foreach ($expectedFiles as $file) {
                     $this->assertFileExists(
-                            $this->dir.'/'.$slug.'/Output/'.$editionName.'/'.$file->getRelativePathname(),
+                            $this->tmpDir.'/'.$slug.'/Output/'.$editionName.'/'.$file->getRelativePathname(),
                             sprintf("'%s' unexpected file generated", $file->getPathname())
                     );
                 }

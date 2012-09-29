@@ -13,26 +13,32 @@ namespace Easybook\Tests\Configurator;
 
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Filesystem\Filesystem;
 use Easybook\DependencyInjection\Application;
 use Easybook\Console\ConsoleApplication;
 use Easybook\Tests\TestCase;
 
 class BookConfigurationTest extends TestCase
 {
-    private $dir;
-    private $app;
+    protected $app;
+    protected $filesystem;
+    protected $tmpDir;
 
     public function setUp()
     {
         $this->app = new Application();
-        $this->dir = sys_get_temp_dir().'/easybookTests';
+
+        // setup temp dir for generated files
+        $this->tmpDir = $this->app['app.dir.cache'].'/'.uniqid('phpunit_', true);
+        $this->filesystem = new Filesystem();
+        $this->filesystem->mkdir($this->tmpDir);
 
         parent::setUp();
     }
 
     public function tearDown()
     {
-        $this->app->get('filesystem')->remove($this->dir);
+        $this->filesystem->remove($this->tmpDir);
 
         parent::tearDown();
     }
@@ -42,14 +48,14 @@ class BookConfigurationTest extends TestCase
         $console = new ConsoleApplication($this->app);
 
         $sourceDir = __DIR__.'/fixtures/'.$options['slug'];
-        $targetDir = $this->dir.'/'.$options['slug'];
+        $targetDir = $this->tmpDir.'/'.$options['slug'];
         $edition   = $options['edition'];
 
         // mirror test book contents in temp dir
-        $this->app->get('filesystem')->mirror($sourceDir.'/input', $targetDir);
+        $this->filesystem->mirror($sourceDir.'/input', $targetDir);
 
         // rename config_$edition.yml to config.yml
-        $this->app->get('filesystem')->copy(
+        $this->filesystem->copy(
             $targetDir.'/Configuration/config_'.$edition.'.yml',
             $targetDir.'/config.yml',
             true
@@ -58,7 +64,7 @@ class BookConfigurationTest extends TestCase
         // publish the book
         $input = new ArrayInput(array_replace(array(
             'command' => 'publish',
-            '--dir'   => $this->dir
+            '--dir'   => $this->tmpDir
         ), $options));
         $console->find('publish')->run($input, new NullOutput());
 

@@ -73,10 +73,20 @@ class Toolkit
     }
 
     /*
-     * Zips a complete directory with one call:
+     * It zips files and/or directories recursively using ZIP extension.
+     * Code copied from http://stackoverflow.com/a/1334949
+     *
+     * @param  string $source      The file/directory path to compress
+     * @param  string $destination The path of the generated ZIP file
+     */
+    /*
+     * Zips recursively a complete directory with one call (using PHP ZIP extension):
      *     zip('/path/to/any/dir', 'compressed.zip');
      *
-     * copied from http://stackoverflow.com/a/1334949
+     * Code copied from http://stackoverflow.com/a/1334949
+     *
+     * @param  string $source       The directory with the files to compress
+     * @param  string $destination  The path of the generated ZIP file
      */
     public static function zip($source, $destination)
     {

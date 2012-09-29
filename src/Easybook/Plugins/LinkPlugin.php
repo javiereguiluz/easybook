@@ -49,7 +49,13 @@ class LinkPlugin implements EventSubscriberInterface
         $links = $event->app->get('publishing.links');
 
         foreach ($item['toc'] as $entry) {
-            $itemSlug = $event->app->get('slugger')->slugify(trim($item['label']), array('unique' => false));
+            if ('html_chunked' == $format) {
+                $itemSlug = $event->app->get('slugger')->slugify(trim($item['label']), array('unique' => false));
+            } elseif (in_array($format, array('epub', 'epub2'))) {
+                $itemSlug = array_key_exists('number', $item['config'])
+                    ? $item['config']['element'].'-'.$item['config']['number']
+                    : $item['config']['element'];
+            }
 
             $relativeUrl = '#'.$entry['slug'];
             $absoluteUrl = $itemSlug.'.html'.$relativeUrl;
@@ -72,7 +78,7 @@ class LinkPlugin implements EventSubscriberInterface
                     $links = $event->app->get('publishing.links');
 
                     return sprintf(
-                        '<a class="link:internal" href="%s"%s</a>',
+                        '<a class="link:internal" href="./%s"%s</a>',
                         $links[$matches[1]], $matches[2]
                     );
                 } else {

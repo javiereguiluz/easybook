@@ -35,7 +35,7 @@ class ConsoleApplication extends SymfonyConsoleApplication
     {
         $this->app = $app;
 
-        parent::__construct('easybook', $this->app['app.version']);
+        parent::__construct('easybook', $this->app->getVersion());
 
         $this->add(new BookNewCommand());
         $this->add(new BookPublishCommand());

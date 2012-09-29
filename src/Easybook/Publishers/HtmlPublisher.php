@@ -121,8 +121,8 @@ class HtmlPublisher extends BasePublisher
     {
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
-            $this->app->renderThemeTemplate(
-                'style.css.twig',
+            $this->app->render(
+                '@theme/style.css.twig',
                 array('resources_dir' => $this->app['app.dir.resources'].'/'),
                 $this->app['publishing.dir.output'].'/css/easybook.css'
             );
