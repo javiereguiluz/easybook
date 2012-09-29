@@ -15,6 +15,8 @@ namespace Easybook\Util;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
+use Easybook\DependencyInjection\Application;
+
 /**
  * Compresses easybook essential files into a single ZIP file
  */
@@ -34,8 +36,8 @@ class Compressor
         $this->rootDir = realpath(__DIR__.'/../../../');
 
         // needed to get easybook version
-        $app = new \Easybook\DependencyInjection\Application();
-        $this->version = $app['app.version'];
+        $app = new Application();
+        $this->version = $app->getVersion();
 
         // temp directory to copy the essential easybook files
         $this->packageDir = $this->rootDir.'/app/Cache/easybook';
@@ -157,7 +159,12 @@ class Compressor
     private function addFile($file, $verbose = true)
     {
         $this->fileCount++;
-        if ($verbose) { echo '.'; if (0 == $this->fileCount % 80) { echo "\n"; } }
+        if ($verbose) {
+            echo '.';
+            if (0 == $this->fileCount % 80) {
+                echo "\n";
+            }
+        }
 
         $relativePath = str_replace(
             dirname(dirname(dirname(__DIR__))).DIRECTORY_SEPARATOR,
