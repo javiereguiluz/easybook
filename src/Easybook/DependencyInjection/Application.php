@@ -30,7 +30,7 @@ use Easybook\Util\Validator;
 
 class Application extends \Pimple
 {
-    const VERSION = '4.8-DEV';
+    const VERSION = '4.8';
 
     public function __construct()
     {
