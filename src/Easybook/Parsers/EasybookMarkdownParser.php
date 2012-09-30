@@ -31,6 +31,10 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         $this->app = $app;
         $this->app->set('publishing.active_item.toc', array());
 
+        $this->span_gamut += array(
+            "doPageBreaks" => 20
+        );
+
         parent::__construct();
     }
 
@@ -242,5 +246,18 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         }
 
         return $this->hashPart($result);
+    }
+
+    /**
+     * easybook supports the following formats to force page breaks: 
+     *   {pagebreak}   (the format used by leanpub)
+     *   <!--BREAK-->  (the format used by marked)
+     */
+    function doPageBreaks($text) {
+        return str_replace(
+            '{pagebreak}',
+            $this->hashBlock('<br class="page-break" />')."\n",
+            $text
+        );
     }
 }

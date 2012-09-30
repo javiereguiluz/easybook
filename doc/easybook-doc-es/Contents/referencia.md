@@ -99,6 +99,8 @@ interno de la [librería GeSHi](http://qbnz.com/highlighter/).
 
 ### Alineación de imágenes ###
 
+(Añadido en easybook 4.8)
+
 Los libros normalmente alinean/flotan las imágenes a la derecha/izquierda de los
 contenidos, pero Markdown no incluye ninguna sintaxis para definir la alineación
 de las imágenes:
@@ -151,3 +153,21 @@ imágenes:
     ![ Imagen de prueba ][1]
 
     [1]: figura1.png
+
+### Saltos de página ###
+
+(Añadido en easybook 5.0)
+
+Los libros pueden forzar saltos de línea dentro de cualquier contenido añadiendo
+una de las dos siguientes etiquetas especiales:
+
+    <!--BREAK-->
+    {pagebreak}
+
+La primera etiqueta usa la misma sintaxis que LeanPub y la segunda usa la sintaxis
+de Marked. Ten en cuenta que las etiquetas deben escribirse tal y como se muestra
+anteriormente, sin añadir ningún espacio en blanco.
+
+Puedes mezclar estas dos etiquetas en un mismo contenido y puedes colocarlas en
+cualquier lugar (dentro de una tabla, dentro de una lista, dentro de un título
+de sección, etc.)
