@@ -171,3 +171,44 @@ anteriormente, sin añadir ningún espacio en blanco.
 Puedes mezclar estas dos etiquetas en un mismo contenido y puedes colocarlas en
 cualquier lugar (dentro de una tabla, dentro de una lista, dentro de un título
 de sección, etc.)
+
+### Notas y avisos ###
+
+(Añadido en easybook 5.0)
+
+**easybook** permite incluir notas, avisos, trucos, notas al margen, etc. Su
+sintaxis se basa en la de LEanPub y Marked y es muy similar a los *blockquotes*:
+
+    > Esto es una cita o "blockquote"
+    > Nada especial
+
+    A> Esto es una nota al margen (en inglés, "aside")
+    A> Puedes usar **otras etiquetas especiales** aquí dentro
+    A>
+    A> > incluso puedes
+    A> > incluir
+    A> > citas o blockquotes
+    A>
+    A> Y listas:
+    A>
+    A>   * Item 1
+    A>   * Item 2
+    A>   * Item 3
+
+    N> Esto es una nota normal
+    N> ...
+
+    T> Esto es un truco
+    T> ...
+
+    E> Esto es un mensaje de error
+    E> ...
+
+    I> Esto es simplemente un mensaje de información
+    I> ...
+
+    Q> Esto es una pregunta
+    Q> ...
+
+    D> Esto es una discusión
+    D> ...

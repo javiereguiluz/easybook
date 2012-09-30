@@ -32,7 +32,11 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         $this->app->set('publishing.active_item.toc', array());
 
         $this->span_gamut += array(
-            "doPageBreaks" => 20
+            'doPageBreaks' => 20
+        );
+
+        $this->block_gamut += array(
+            'doAdmonitions' => 55
         );
 
         parent::__construct();
@@ -253,10 +257,73 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      *   {pagebreak}   (the format used by leanpub)
      *   <!--BREAK-->  (the format used by marked)
      */
-    function doPageBreaks($text) {
+    public function doPageBreaks($text)
+    {
         return str_replace(
             '{pagebreak}',
             $this->hashBlock('<br class="page-break" />')."\n",
+            $text
+        );
+    }
+
+    /**
+     * easybook supports several kinds of admonitions. Their syntax si very
+     * similar to blockquotes and its based on LeanPub and Marked:
+     *
+     * Asides / Sidebars:
+     *   A> ...
+     *   A> ...
+     *
+     * Notes:
+     *   N> ...
+     *   N> ...
+     *
+     * Similar syntax for warnings (W>), tips (T>), errors (E>), information (I>)
+     * questions (Q>) and discussions (D>).
+     */
+    public function doAdmonitions($text)
+    {
+        $admonitions = array(
+            'A' => 'aside',
+            'N' => 'note',
+            'W' => 'warning',
+            'T' => 'tip',
+            'E' => 'error',
+            'I' => 'information',
+            'Q' => 'question',
+            'D' => 'discussion'
+        );
+
+        $parent = $this;
+
+        return preg_replace_callback('/
+            (
+                (?>^[ ]*([ANWTEIQD])>[ ]?.+\n)+
+            )
+            /xm',
+            function($matches) use ($parent, $admonitions) {
+                $content = $matches[1];
+                # trim one level of quoting - trim whitespace-only lines
+                $content = preg_replace('/^[ ]*([ANWTEIQD])>[ ]?|^[ ]+$/m', '', $content);
+                $content = $parent->runBlockGamut($content); # recurse
+
+                $content = preg_replace('/^/m', "  ", $content);
+                # These leading spaces cause problem with <pre> content,
+                # so we need to fix that:
+                $content = preg_replace_callback(
+                    '{(\s*<pre>.+?</pre>)}sx',
+                    function($submatches) {
+                        $pre = $submatches[1];
+                        $pre = preg_replace('/^  /m', '', $pre);
+                        return $pre;
+                    },
+                    $content
+                );
+
+                $type = $admonitions[trim($matches[2])];
+
+                return "\n". $parent->hashBlock("<div class=\"admonition $type\">\n$content\n</div>")."\n\n";
+            },
             $text
         );
     }

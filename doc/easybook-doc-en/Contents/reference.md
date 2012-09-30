@@ -161,3 +161,44 @@ whitespace.
 
 You can mix the two tags in the same content and you can place them anywhere
 (inside a table, inside a list, inside a heading, etc.)
+
+### Admonitions ###
+
+(Added in easybook 5.0)
+
+**easybook** supports several kinds of admonitions. The syntax is based on
+LeanPub and Marked and it's very similar to blockquotes:
+
+    > This is a regular bloquote
+    > Nothing special here
+
+    A> This is a sidebar or aside
+    A> You can use **any markup** inside
+    A>
+    A> > even
+    A> > nested
+    A> > blockquotes
+    A>
+    A> And lists:
+    A>
+    A>   * Item 1
+    A>   * Item 2
+    A>   * Item 3
+
+    N> This is a note
+    N> ...
+
+    T> This is a tip
+    T> ...
+
+    E> This is an error message
+    E> ...
+
+    I> This is just an information
+    I> ...
+
+    Q> This is a question
+    Q> ...
+
+    D> This is a discussion
+    D> ...
