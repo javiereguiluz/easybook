@@ -253,7 +253,8 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
     }
 
     /**
-     * easybook supports the following formats to force page breaks: 
+     * easybook supports the following formats to force page breaks:
+     *
      *   {pagebreak}   (the format used by leanpub)
      *   <!--BREAK-->  (the format used by marked)
      */
@@ -267,8 +268,8 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
     }
 
     /**
-     * easybook supports several kinds of admonitions. Their syntax si very
-     * similar to blockquotes and its based on LeanPub and Marked:
+     * easybook supports several kinds of admonitions. Their syntax is very
+     * similar to blockquotes and it's based on LeanPub and Marked:
      *
      * Asides / Sidebars:
      *   A> ...

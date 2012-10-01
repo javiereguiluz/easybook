@@ -177,7 +177,7 @@ de sección, etc.)
 (Añadido en easybook 5.0)
 
 **easybook** permite incluir notas, avisos, trucos, notas al margen, etc. Su
-sintaxis se basa en la de LEanPub y Marked y es muy similar a los *blockquotes*:
+sintaxis se basa en la de LeanPub y Marked y es muy similar a los *blockquotes*:
 
     > Esto es una cita o "blockquote"
     > Nada especial
