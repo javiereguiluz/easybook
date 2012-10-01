@@ -72,6 +72,7 @@ $(function(){
     // show or hide menu
     $("a.showMenu").click(function(){
         menu.toggle();
+        $.mobile.silentScroll(0);
         return false;
     });
 
