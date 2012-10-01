@@ -46,6 +46,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
         // TODO: the name of the chunked book directory (book/) must be configurable
         $this->app->set('publishing.dir.output', $this->app['publishing.dir.output'].'/book');
+        $this->app->get('filesystem')->mkdir($this->app['publishing.dir.output']);
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
