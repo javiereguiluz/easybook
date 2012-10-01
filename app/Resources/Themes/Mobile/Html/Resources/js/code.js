@@ -3,23 +3,6 @@
  */
 $(document).ready(function() {
 
-    // Initialize tooltips for links.
-    // Attribute "title" is used as text.
-    //$('a[title]').makePopUp();
-
-    // Initialize tooltips for images.
-    // Attribute 'alt' is used as text.
-    /*
-    $('img[alt]').each(function(index) {
-        if (this.alt.trim() != '') {
-            $(this).jqmTooltip({
-                'position' : 'autoUnder',
-                'text' : this.alt
-            });
-        }
-    });
-    */
-
     // Make anchor links actually work
     $('ul[data-role="listview"] a').click(function(e) {
         // Extract the hash in the target. 
