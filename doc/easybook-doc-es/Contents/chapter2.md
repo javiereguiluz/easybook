@@ -361,7 +361,7 @@ Observa por ejemplo la plantilla utilizada para decorar cada capítulo de un
 libro PDF:
 
     [twig]
-    <div class="page:chapter new-page">
+    <div class="item chapter">
 
     <h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
 

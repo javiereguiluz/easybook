@@ -225,6 +225,10 @@ class Application extends \Pimple
 
         $this['twig.loader'] = $app->share(function() use ($app) {
             $theme  = ucfirst($app->edition('theme'));
+            
+            // TODO: remove this hack when other themes are completed
+            $theme = 'clean';
+
             $format = Toolkit::camelize($app->edition('format'), true);
             // TODO: fix the following hack
             if ('Epub' == $format) {
@@ -233,23 +237,18 @@ class Application extends \Pimple
 
             $loader = new \Twig_Loader_Filesystem($app['app.dir.themes']);
 
-            $themeTemplatePaths = array(
-                // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
-                sprintf('%s/Base/%s/Templates', $app['app.dir.themes'], $format),
-                // <easybook>/app/Resources/Themes/<theme>/Common/Templates/<template-name>.twig
-                sprintf('%s/%s/Common/Templates', $app['app.dir.themes'], $theme),
-                // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
-                sprintf('%s/%s/%s/Templates', $app['app.dir.themes'], $theme, $format),
-            );
+            // Base theme (common styles per edition type)
+            // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
+            $baseThemeDir = sprintf('%s/Base/%s/Templates', $app['app.dir.themes'], $format);
+            $loader->addPath($baseThemeDir);
+            $loader->addPath($baseThemeDir, 'theme');
+            $loader->addPath($baseThemeDir, 'theme_base');
 
-            foreach ($themeTemplatePaths as $path) {
-                if (file_exists($path)) {
-                    // the path is added twice because Twig doesn't support
-                    // setting multiple namespaces for a single path
-                    $loader->prependPath($path);
-                    $loader->prependPath($path, 'theme');
-                }
-            }
+            // Book theme (configured per edition in 'config.yml')
+            // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
+            $bookThemeDir = sprintf('%s/%s/%s/Templates', $app['app.dir.themes'], $theme, $format);
+            $loader->prependPath($bookThemeDir);
+            $loader->prependPath($bookThemeDir, 'theme');
 
             $userTemplatePaths = array(
                 // <book-dir>/Resources/Templates/<template-name>.twig

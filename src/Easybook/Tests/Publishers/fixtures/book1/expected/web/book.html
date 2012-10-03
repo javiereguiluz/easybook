@@ -12,76 +12,19 @@
 
 </head>
 
-<body><div class="container">
+<body>
 
-    <div class="item item:cover">
-
-<h1>easybook test book #1</h1>
-
-<h2>Javier Eguiluz</h2>
-
-</div>
-    <div class="item item:toc">
-
-<h1>Table of contents</h1>
-
-<ul>
-                        
-                                                                <li class="chapter level-1">
-                        <span>Chapter 1</span> <a href="#publishing-your-first-book">Publishing your first book</a>
-                    </li>
-                                                                <li class="chapter level-2">
-                        <span>1.1</span> <a href="#downloading-easybook">Downloading easybook</a>
-                    </li>
-                                                                                            <li class="chapter level-2">
-                        <span>1.2</span> <a href="#creating-the-book">Creating the book</a>
-                    </li>
-                                                                <li class="chapter level-2">
-                        <span>1.3</span> <a href="#writing-the-book">Writing the book</a>
-                    </li>
-                                                                <li class="chapter level-2">
-                        <span>1.4</span> <a href="#publishing-the-book">Publishing the book</a>
-                    </li>
-                                                                <li class="chapter level-2">
-                        <span>1.5</span> <a href="#book-configuration-options">Book configuration options</a>
-                    </li>
-                            
-                            
-                                                                <li class="chapter level-1">
-                        <span>Chapter 2</span> <a href="#publishing-your-second-book">Publishing your second book</a>
-                    </li>
-                                                                <li class="chapter level-2">
-                        <span>2.1</span> <a href="#content-types">Content types</a>
-                    </li>
-                                                                <li class="chapter level-2">
-                        <span>2.2</span> <a href="#editions">Editions</a>
-                    </li>
-                                                                <li class="chapter level-2">
-                        <span>2.3</span> <a href="#themes">Themes</a>
-                    </li>
-                                                                                                                                                                                                                                                                                        
-                            
-                                                                <li class="chapter level-1">
-                        <span>Chapter 3</span> <a href="#publishing-your-third-book">Publishing your third book</a>
-                    </li>
-                                                                <li class="chapter level-2">
-                        <span>3.1</span> <a href="#creating-your-own-theme">Creating your own theme</a>
-                    </li>
-                                                                                                                        <li class="chapter level-2">
-                        <span>3.2</span> <a href="#plugins">Plugins</a>
-                    </li>
-                                                                <li class="chapter level-2">
-                        <span>3.3</span> <a href="#advanced-features">Advanced features</a>
-                    </li>
-                                                                                                                                            
-                    </ul>
-
-</div>
-    <div class="item item:chapter">
-
-<h1 id="publishing-your-first-book"><span>Chapter 1</span> Publishing your first book</h1>
-
-<p><strong>easybook</strong> is an application that lets you easily publish books in various electronic formats. Originally it was designed to publish technical programming books, but you can use <strong>easyboook</strong> to publish any kind of book, manual or documentation.</p>
+<div class="container">
+<div class="row">
+    <div class="span12">
+    <div class="item cover">
+    <h1>easybook test book #1</h1>
+    <h2>Javier Eguiluz</h2>
+</div>    </div>
+    <div class="span9">
+        <div class="item chapter">
+    <h1 id="publishing-your-first-book"><span>Chapter 1</span> Publishing your first book</h1>
+    <p><strong>easybook</strong> is an application that lets you easily publish books in various electronic formats. Originally it was designed to publish technical programming books, but you can use <strong>easyboook</strong> to publish any kind of book, manual or documentation.</p>
 
 <div class="figure" id="figure-1-1">
     <img src="images/placeholder.png" alt="Lorem ipsum dolor sit amet" />
@@ -377,13 +320,10 @@ easybook installed version: 4.0</pre>
 <li><code>publication_date</code>,  the date of publication of the book. The default value is <code>~</code>, meaning no publication date. In this case, <strong>easybook</strong> will automatically set the date to the day on which the book is published. If you set a date, enter it in the <code>month-day-year</code> format. for example: <code>11-23-2012</code>.</li>
 </ul>
 
-
 </div>
-    <div class="item item:chapter">
-
-<h1 id="publishing-your-second-book"><span>Chapter 2</span> Publishing your second book</h1>
-
-<p>In the previous chapter, you learned how to create a basic book and publish it with <strong>easybook</strong>. However, we didn't mention any of the more advanced features. This chapter explains all the available content types, how to master book editions and how to tweak its appearance using templates.</p>
+        <div class="item chapter">
+    <h1 id="publishing-your-second-book"><span>Chapter 2</span> Publishing your second book</h1>
+    <p>In the previous chapter, you learned how to create a basic book and publish it with <strong>easybook</strong>. However, we didn't mention any of the more advanced features. This chapter explains all the available content types, how to master book editions and how to tweak its appearance using templates.</p>
 
 <h2 id="content-types">2.1 Content types</h2>
 
@@ -719,13 +659,10 @@ easybook installed version: 4.0</pre>
 
 <p>If you want to change the titles instead of the labels, follow the same steps but create a file called <code>titles.en.yml</code> instead of <code>labels.en.yml</code>. If your book isn't written in English, replace <code>en</code> for the code of the other language (e.g. <code>labels.es.yml</code> for Spanish labels).</p>
 
-
 </div>
-    <div class="item item:chapter">
-
-<h1 id="publishing-your-third-book"><span>Chapter 3</span> Publishing your third book</h1>
-
-<h2 id="creating-your-own-theme">3.1 Creating your own theme</h2>
+        <div class="item chapter">
+    <h1 id="publishing-your-third-book"><span>Chapter 3</span> Publishing your third book</h1>
+    <h2 id="creating-your-own-theme">3.1 Creating your own theme</h2>
 
 <p><strong>easybook</strong> themes make your books look beautiful by default. However, your books should define their own styles to fine-tune its appearance. To do this, create a directory called <code>Resources</code> within the directory of the book and inside it, create another directory called <code>Templates</code>.</p>
 
@@ -997,8 +934,61 @@ $ ./book publish the-origin-of-species print --dir=&quot;/Users/javier/books&quo
 
 <p>After converting all contents to the desired format (usually HTML) they are decorated using Twig templates (<code>decorateContents()</code>). Finally, the <code>assembleBook()</code> method is responsible for creating the published book. This is the most unique method of the <em>publishers</em>, as sometimes it has to create a PDF file, sometimes just an HTML file and other times it must create an entire website with many HTML pages.</p>
 
+</div>
+    </div>
+    <div class="span3">
+    <div class="item toc">
 
+<h1>Table of contents</h1>
+
+<ul class="unstyled">
+            <li class="chapter level-1">
+            <span>Chapter 1</span> <a href="#publishing-your-first-book">Publishing your first book</a>
+        </li>
+            <li class="chapter level-2">
+            <span>1.1</span> <a href="#downloading-easybook">Downloading easybook</a>
+        </li>
+            <li class="chapter level-2">
+            <span>1.2</span> <a href="#creating-the-book">Creating the book</a>
+        </li>
+            <li class="chapter level-2">
+            <span>1.3</span> <a href="#writing-the-book">Writing the book</a>
+        </li>
+            <li class="chapter level-2">
+            <span>1.4</span> <a href="#publishing-the-book">Publishing the book</a>
+        </li>
+            <li class="chapter level-2">
+            <span>1.5</span> <a href="#book-configuration-options">Book configuration options</a>
+        </li>
+                <li class="chapter level-1">
+            <span>Chapter 2</span> <a href="#publishing-your-second-book">Publishing your second book</a>
+        </li>
+            <li class="chapter level-2">
+            <span>2.1</span> <a href="#content-types">Content types</a>
+        </li>
+            <li class="chapter level-2">
+            <span>2.2</span> <a href="#editions">Editions</a>
+        </li>
+            <li class="chapter level-2">
+            <span>2.3</span> <a href="#themes">Themes</a>
+        </li>
+                <li class="chapter level-1">
+            <span>Chapter 3</span> <a href="#publishing-your-third-book">Publishing your third book</a>
+        </li>
+            <li class="chapter level-2">
+            <span>3.1</span> <a href="#creating-your-own-theme">Creating your own theme</a>
+        </li>
+            <li class="chapter level-2">
+            <span>3.2</span> <a href="#plugins">Plugins</a>
+        </li>
+            <li class="chapter level-2">
+            <span>3.3</span> <a href="#advanced-features">Advanced features</a>
+        </li>
+    </ul>
+
+</div>    </div>
+</div>
 </div>
 
-</div></body>
+</body>
 </html>

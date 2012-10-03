@@ -12,34 +12,23 @@
 
 </head>
 
-<body class="item item:appendix"><div class="container">
+<body class="item appendix">
+<div class="container">
+<div class="menu">
+    <div class="row">
+        <h1 class="span9"><a href="./index.html">easybook test book #3</a></h1>
+        <p class="span3">
+                        <a href="./chapter-2.html"><span>&larr;</span> Previous</a>
+                        
+                        <a class="disabled" href="#">Next <span>&rarr;</span></a>
+                    </p>
+    </div>
+</div>
 
-
-<ul class="chunk_nav">
-    <li class="index"><a href="./index.html">easybook test book #3</a></li>
-
-    <li class="nav">
-        <div class="previous">
-                            <a href="./chapter-2.html"><span>&larr;</span> Previous</a>
-                    </div>
-
-        <div class="next">
-                            Next <span>&rarr;</span>
-                    </div>
-    </li>
-</ul>
-
-
-<h1 id="appendix-a"><span>Appendix A</span> Publishing your third book</h1>
-
-<ul id="chunk_toc">
-            <li class="level-1">
-            <span></span>
-            <a href="#publishing-your-third-book">Publishing your third book</a>
-        </li>
-                                        </ul>
-
-<h2 id="creating-your-own-theme">A.1 Creating your own theme</h2>
+<div class="row">
+    <div class="span9">
+        <h1 id="appendix-a"><span>Appendix A</span> Publishing your third book</h1>
+        <h2 id="creating-your-own-theme">A.1 Creating your own theme</h2>
 
 <p><strong>easybook</strong> themes make your books look beautiful by default. However, your books should define their own styles to fine-tune its appearance. To do this, create a directory called <code>Resources</code> within the directory of the book and inside it, create another directory called <code>Templates</code>.</p>
 
@@ -311,21 +300,21 @@ $ ./book publish the-origin-of-species print --dir=&quot;/Users/javier/books&quo
 
 <p>After converting all contents to the desired format (usually HTML) they are decorated using Twig templates (<code>decorateContents()</code>). Finally, the <code>assembleBook()</code> method is responsible for creating the published book. This is the most unique method of the <em>publishers</em>, as sometimes it has to create a PDF file, sometimes just an HTML file and other times it must create an entire website with many HTML pages.</p>
 
+    </div>
 
-<ul class="chunk_nav">
-    <li class="index"><a href="./index.html">easybook test book #3</a></li>
+    <div class="span3">
+        <div class="item local_toc">
+            <h3>** TaBLe oF CoNTeNTS **</h3>
 
-    <li class="nav">
-        <div class="previous">
-                            <a href="./chapter-2.html"><span>&larr;</span> Previous</a>
-                    </div>
-
-        <div class="next">
-                            Next <span>&rarr;</span>
-                    </div>
-    </li>
-</ul>
-
-
-</div></body>
+            <ul class="unstyled">
+                                                <li class="level-1">
+                        <span></span>
+                        <a href="#publishing-your-third-book">Publishing your third book</a>
+                    </li>
+                                                                                                                                                                                                                                                                                                    </ul>
+        </div>
+    </div>
+</div>
+</div>
+</body>
 </html>

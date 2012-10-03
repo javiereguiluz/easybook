@@ -17,9 +17,9 @@
 {% endif %}
 </head>
 
-<body class="{% block class %}item {{ 'item:' ~ item.config.element }}{% endblock %}"><div class="container">
-
+<body class="{% block class %}item {{ item.config.element }}{% endblock %}">
+<div class="container">
 {% block body %}{% endblock %}
-
-</div></body>
+</div>
+</body>
 </html>

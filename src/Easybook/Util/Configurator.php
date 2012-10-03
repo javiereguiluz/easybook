@@ -73,8 +73,8 @@ class Configurator
         // 1. load options from '--configuration' command option
         // $ ./book publish my-book my-edition --configuration='{ "book": { "title": "My new title" } }'
         $commandConfig = array('book' => array());
-        if (null != $configuration = $this->app->get('console.input')->getOption('configuration')) {
-            $commandConfig = json_decode($configuration, true);
+        if ($this->app->get('console.input')->hasOption('configuration')) {
+            $commandConfig = json_decode($this->app->get('console.input')->getOption('configuration'), true);
         }
 
         // 2. load options from 'config.yml' file
@@ -108,8 +108,8 @@ class Configurator
         // merge and resolve configuration options
         $config = array_replace_recursive(
             $defaultConfig,
-            $fileConfig['book'] ?: array(),
-            $commandConfig['book']
+            $fileConfig['book']    ?: array(),
+            $commandConfig['book'] ?: array()
         );
 
         // validate book configuration

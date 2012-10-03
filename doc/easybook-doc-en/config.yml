@@ -5,7 +5,7 @@ book:
     language:         en
     publication_date: ~
 
-    generator: { name: easybook, version: 4.4 }
+    generator: { name: easybook, version: 5.0 }
 
     contents:
         - { element: cover }
@@ -20,7 +20,7 @@ book:
             format:          epub
             include_styles:  true
             highlight_cache: true
-            highlight_code:  true
+            highlight_code:  false
             labels:          ['appendix', 'chapter', 'figure']
             theme:           clean
             toc:
@@ -60,3 +60,14 @@ book:
         website:
             extends:         web
             format:          html_chunked
+
+        easybook-project.org:
+            format:          html_chunked
+            include_styles:  false
+            highlight_cache: false
+            highlight_code:  true
+            labels:          ['appendix', 'chapter', 'figure']
+            theme:           clean
+            toc:
+                deep:        2
+                elements:    ["appendix", "chapter"]

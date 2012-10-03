@@ -1,0 +1,48 @@
+{% extends 'layout.twig' %}
+
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block body %}
+<div class="menu">
+    <div class="row">
+        <h1 class="span9"><a href="./index.html">{{ book.title }}</a></h1>
+        <p class="span3">
+            {% if previous %}
+            <a href="./{{ previous }}.html"><span>&larr;</span> {{ app.getLabel('previous') }}</a>
+            {% else %}
+            <a class="disabled" href="#"><span>&larr;</span> {{ app.getLabel('previous') }}</a>
+            {% endif %}
+            
+            {% if next %}
+            <a href="./{{ next }}.html">{{ app.getLabel('next') }} <span>&rarr;</span></a>
+            {% else %}
+            <a class="disabled" href="#">{{ app.getLabel('next') }} <span>&rarr;</span></a>
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span9">
+        <h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
+        {{ item.content }}
+    </div>
+
+    <div class="span3">
+        <div class="item local_toc">
+            <h3>{{ app.getTitle('toc') }}</h3>
+
+            <ul class="unstyled">
+            {% for entry in item.toc %}
+                {% if entry.level <= edition.toc.deep %}
+                    <li class="level-{{ entry.level }}">
+                        <span>{{ entry.level != 1 ? entry.label : '' }}</span>
+                        <a href="#{{ entry.slug }}">{{ entry.title }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

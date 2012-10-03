@@ -52,6 +52,12 @@ You can add leading and trailing pipes to table rows:
     | Content Cell  | Content Cell  |
     | Content Cell  | Content Cell  |
 
+
+| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
+
 The contents of the cells can be aligned adding a `:` character on the side
 where you want contents aligned. In the following example, the contents of the
 first column will be left-aligned and the contents of the second column will be
