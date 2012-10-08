@@ -1,5 +1,5 @@
 /*
-* jQuery Mobile Framework Git Build: SHA1: ce06297f5caebeafa243e0a72efc422700292cca <> Date: Fri Sep 21 09:37:21 2012 -0700
+* jQuery Mobile Framework Git Build: SHA1: b49cc06499abf8f987cf90f35349cfac0918c939 <> Date: Tue Oct 2 11:22:34 2012 -0700
 * http://jquerymobile.com
 *
 * Copyright 2012 jQuery Foundation and other contributors
@@ -1177,18 +1177,14 @@ div.ui-mobile-viewport { overflow-x: hidden; }
 	opacity: 0;
 }
 .in {
-	-webkit-animation-fill-mode: both;
 	-webkit-animation-timing-function: ease-out;
 	-webkit-animation-duration: 350ms;
-	-moz-animation-fill-mode: both;
 	-moz-animation-timing-function: ease-out;
 	-moz-animation-duration: 350ms;
 }
 .out {
-	-webkit-animation-fill-mode: both;
 	-webkit-animation-timing-function: ease-in;
 	-webkit-animation-duration: 225ms;
-	-moz-animation-fill-mode: both;
 	-moz-animation-timing-function: ease-in;
 	-moz-animation-duration: 225ms;
 }

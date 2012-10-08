@@ -1,5 +1,5 @@
 /*
-* jQuery Mobile Framework Git Build: SHA1: ce06297f5caebeafa243e0a72efc422700292cca <> Date: Fri Sep 21 09:37:21 2012 -0700
+* jQuery Mobile Framework Git Build: SHA1: b49cc06499abf8f987cf90f35349cfac0918c939 <> Date: Tue Oct 2 11:22:34 2012 -0700
 * http://jquerymobile.com
 *
 * Copyright 2012 jQuery Foundation and other contributors
@@ -29,7 +29,7 @@
 	$.mobile = $.extend( {}, {
 
 		// Version of the jQuery Mobile Framework
-		version: "1.2.0-rc.2",
+		version: "1.2.0",
 
 		// Namespace used framework-wide for data-attrs. Default is no namespace
 		ns: "",
@@ -2859,9 +2859,16 @@ $.mobile.getMaxScrollForTransition = $.mobile.getMaxScrollForTransition || defau
 			// browsers that auto	decode it. All references to location.href should be
 			// replaced with a call to this method so that it can be dealt with properly here
 			getLocation: function( url ) {
-				var uri = url ? this.parseUrl( url ) : this.parseUrl( location.href );
+				var uri = url ? this.parseUrl( url ) : location,
+					hash = this.parseUrl( url || location.href ).hash;
 
-				return uri.protocol + "//" + uri.host + uri.pathname + uri.search + uri.hash;
+				// mimic the browser with an empty string when the hash is empty
+				hash = hash === "#" ? "" : hash;
+
+				// Make sure to parse the url or the location object for the hash because using location.hash
+				// is autodecoded in firefox, the rest of the url should be from the object (location unless
+				// we're testing) to avoid the inclusion of the authority
+				return uri.protocol + "//" + uri.host + uri.pathname + uri.search + hash;
 			},
 
 			parseLocation: function() {
