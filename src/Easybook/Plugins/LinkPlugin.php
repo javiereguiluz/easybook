@@ -78,12 +78,12 @@ class LinkPlugin implements EventSubscriberInterface
                     $links = $event->app->get('publishing.links');
 
                     return sprintf(
-                        '<a class="link:internal" href="./%s"%s</a>',
+                        '<a class="internal" href="./%s"%s</a>',
                         $links[$matches[1]], $matches[2]
                     );
                 } else {
                     return sprintf(
-                        '<a class="link:internal" href="%s"%s</a>',
+                        '<a class="internal" href="%s"%s</a>',
                         $matches[1], $matches[2]
                     );
                 }

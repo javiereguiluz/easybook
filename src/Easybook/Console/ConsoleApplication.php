@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 use Easybook\Console\Command\BookNewCommand;
 use Easybook\Console\Command\BookPublishCommand;
+use Easybook\Console\Command\BookCustomizeCommand;
 use Easybook\Console\Command\EasybookVersionCommand;
 
 use Easybook\DependencyInjection\Application;
@@ -39,6 +40,7 @@ class ConsoleApplication extends SymfonyConsoleApplication
 
         $this->add(new BookNewCommand());
         $this->add(new BookPublishCommand());
+        $this->add(new BookCustomizeCommand());
         $this->add(new EasybookVersionCommand());
 
         $this->definition = new InputDefinition(array(

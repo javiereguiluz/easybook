@@ -330,7 +330,7 @@ can access all the default templates in the `Templates/` directory of the theme.
 See for example the template used to decorate each chapter of a PDF book:
 
     [twig]
-    <div class="page:chapter new-page">
+    <div class="item chapter">
 
     <h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
 

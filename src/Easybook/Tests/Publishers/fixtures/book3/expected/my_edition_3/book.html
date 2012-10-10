@@ -11,8 +11,11 @@
 
 </head>
 
-<body><div class="container">
+<body>
 
+<div class="container">
+<div class="row">
+    <div class="span12">
     <div class="page:cover new-page">
     <h2>JAVIER EGUILUZ</h2>
     <hr/>
@@ -31,8 +34,9 @@
         toc elements   : chapter, chapter
     </pre>
 </div>
-
-    <div class="page:chapter">
+    </div>
+    <div class="span9">
+        <div class="page:chapter">
     <h1><strong>Chapter 1</strong> Publishing your first book (<a href="publishing-your-first-book">&sect;</a>)</h1>
     <div><p><strong>easybook</strong> is an application that lets you easily publish books in various electronic formats. Originally it was designed to publish technical programming books, but you can use <strong>easyboook</strong> to publish any kind of book, manual or documentation.</p>
 
@@ -325,7 +329,7 @@ easybook installed version: 4.0</pre>
 </div>
 </div>
 
-    <div class="page:chapter">
+        <div class="page:chapter">
     <h1><strong>Chapter 2</strong> Publishing your second book (<a href="publishing-your-second-book">&sect;</a>)</h1>
     <div><p>In the previous chapter, you learned how to create a basic book and publish it with <strong>easybook</strong>. However, we didn't mention any of the more advanced features. This chapter explains all the available content types, how to master book editions and how to tweak its appearance using templates.</p>
 
@@ -665,11 +669,9 @@ easybook installed version: 4.0</pre>
 </div>
 </div>
 
-    <div class="item item:appendix">
-
-<h1 id="publishing-your-third-book"><span>Appendix A</span> Publishing your third book</h1>
-
-<h2 id="creating-your-own-theme">A.1 Creating your own theme</h2>
+        <div class="item appendix">
+    <h1 id="publishing-your-third-book"><span>Appendix A</span> Publishing your third book</h1>
+    <h2 id="creating-your-own-theme">A.1 Creating your own theme</h2>
 
 <p><strong>easybook</strong> themes make your books look beautiful by default. However, your books should define their own styles to fine-tune its appearance. To do this, create a directory called <code>Resources</code> within the directory of the book and inside it, create another directory called <code>Templates</code>.</p>
 
@@ -941,11 +943,12 @@ $ ./book publish the-origin-of-species print --dir=&quot;/Users/javier/books&quo
 
 <p>After converting all contents to the desired format (usually HTML) they are decorated using Twig templates (<code>decorateContents()</code>). Finally, the <code>assembleBook()</code> method is responsible for creating the published book. This is the most unique method of the <em>publishers</em>, as sometimes it has to create a PDF file, sometimes just an HTML file and other times it must create an entire website with many HTML pages.</p>
 
-
 </div>
+    </div>
+    <div class="span3">
     <div class="page:toc new-page">
 
-<h1>Table of contents</h1>
+<h1></h1>
 
 <ol>
                         
@@ -961,7 +964,9 @@ $ ./book publish the-origin-of-species print --dir=&quot;/Users/javier/books&quo
                             </ol>
 
 </div>
+    </div>
+</div>
+</div>
 
-
-</div></body>
+</body>
 </html>

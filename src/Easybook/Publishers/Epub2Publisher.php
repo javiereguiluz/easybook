@@ -89,17 +89,6 @@ class Epub2Publisher extends HtmlPublisher
                 ),
                 $bookTempDir.'/book/OEBPS/css/easybook.css'
             );
-
-            // copy book fonts and prepare font data for ebook manifest
-            $this->app->get('filesystem')->copy(
-                $this->app['app.dir.resources'].'/Fonts/Inconsolata/Inconsolata.ttf',
-                $bookTempDir.'/book/OEBPS/fonts/Inconsolata.ttf'
-            );
-            $bookFonts[] = array(
-                'id'        => 'font-1',
-                'filePath'  => 'fonts/Inconsolata.ttf',
-                'mediaType' => 'application/octet-stream'
-            );
         }
 
         // generate custom CSS file

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="{{ book.language }}">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="{{ book.author }}" />
+    <meta name="date" content="{{ book.publication_date|default('now')|date(app.getLabel('date_format')) }}"/>
+    <meta name="generator" content="{{ book.generator.name }} {{ book.generator.version }}"/>
+
+    <title>{{ book.title }}</title>
+
+{% if edition.include_styles %}
+    <link rel="stylesheet" href="./css/easybook.css" />
+{% endif %}
+
+{% if has_custom_css|default(false) %}
+    <link rel="stylesheet" href="./css/styles.css" />
+{% endif %}
+</head>
+
+<body>
+
+<div class="container">
+<div class="row">
+    <div class="span12">
+    {% include 'cover.twig' %}
+    </div>
+    <div class="span9">
+{% for item in items if item.config.element not in ['cover', 'toc'] %}
+        {{ item.content }}
+{% endfor %}
+    </div>
+    <div class="span3">
+    {% include 'toc.twig' %}
+    </div>
+</div>
+</div>
+
+</body>
+</html>

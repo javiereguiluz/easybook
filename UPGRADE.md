@@ -1,5 +1,41 @@
 # UPGRADE guide #
 
+## Upgrade to easybook 5.0 ##
+
+### Custom CSS styles ###
+
+Themes and templates have been greatly improved. If you have designed a custom
+CSS for books created with previous versions of **easybook** you must change
+some selectors. This is a one-time and easy-to-do change:
+
+```css
+/* your current CSS */
+.item\:cover    { ... }
+.item\:chapter  { ... }
+.item\:appendix { ... }
+...
+
+/* change the previous selectors with the following */
+.item.cover    { ... }
+.item.chapter  { ... }
+.item.appendix { ... }
+...
+```
+
+### Customize books ###
+
+**easybook** now includes a command to easily generate the needed CSS to customize
+the book design. Execute the command passing to it the slug of the book and the
+name of the edition to customize:
+
+```
+$ ./book customize the-origin-of-species ebook
+```
+
+If the command executes successfully, the following CSS will be created:
+
+  <easybook-dir>/doc/the-origin-of-species/Resources/Templates/ebook/style.css
+
 ## Upgrade to easybook 4.8 ##
 
 ### Introduced a new highlight cache ###

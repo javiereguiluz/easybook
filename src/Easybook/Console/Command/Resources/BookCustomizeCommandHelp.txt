@@ -1,0 +1,29 @@
+The <info>customize</info> command eases the customization of the book design.
+
+This command generates the needed CSS stylesheet to customize the design of the
+given edition of the book. You can use this stylesheet as a guide to generate
+the final CSS applied to your edition.
+
+If you don't include any parameter, the command will guide you through an
+interactive publisher. You can bypass the interactive publisher typing the
+slug of the book and the name of the edition after the <info>customize</info> command:
+
+<info>$ ./book customize the-origin-of-species print</info>
+
+By default, <comment>easybook</comment> looks for the book contents in its <info>doc/</info> directory.
+If your book is in another directory, use the <info>--dir</info> option:
+
+<info>$ ./book customize the-origin-of-species print --dir=../any/other/directory</info>
+
+The value of <info>--dir</info> option is considered as the parent directory of
+the book directory. In the previous example, the book must be in the
+following directory:
+
+any/
+  other/
+    directory/
+      the-origin-of-species/
+          config.yml
+          Contents/
+              chapter1.md
+              chapter2.md

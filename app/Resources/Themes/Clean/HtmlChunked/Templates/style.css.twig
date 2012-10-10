@@ -1,279 +1,103 @@
-{% extends 'style_common.css.twig' %}
+{% extends '@theme_base/style.css.twig' %}
 
-{% block base %}
+{% block theme_name        'clean' %}
+{% block theme_description 'simple and minimalistic' %}
+{% block theme_updated_at  '2/october/2012' %}
+
+{# ==========================================================================
+   @typography
+   ========================================================================== #}
+{% block body %}
 {{ parent() }}
 
-/* Base styles
-   ========================================================================= */
-
 body {
-    background: #FFF;
-    color: {{ color_black }};
-    font: 16px/1.6 "Helvetica Neue", Arial, sans-serif;
-}
-
-/* --- links --------------------------------------------------------------- */
-a, a:visited {
-    color: {{ color_blue }};
-    text-decoration: underline;
-}
-a:hover {
-    text-decoration: none;
-}
-
-/* --- headings ------------------------------------------------------------ */
-h1, h2, h3, h4, h5, h6 {
-    line-height: 1;
-    margin: 1em 0 .25em 0;
-}
-
-h1 { font-size: 24px; }
-h2 { font-size: 21px; }
-h3 { font-size: 18px; }
-h4 { font-size: 14px; }
-h5 { font-size: 14px; }
-h6 { font-size: 14px; }
-
-h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
-    margin-top: .25em;
-}
-
-/* --- lists --------------------------------------------------------------- */
-ul, ol {
-    list-style-type: disc;
-    margin: 1em 0 1em 1em;
-    padding: 0 0 0 1.5em;
-}
-
-ol {
-    list-style-type: decimal;
-}
-
-ul li, ol li {
-    margin: .5em 0;
-}
-
-/* --- images -------------------------------------------------------------- */
-img {
-    max-width: {{ width_container }};
-}
-
-/* --- tables -------------------------------------------------------------- */
-table {
-    margin-bottom: 1em;
-    max-width: 100%;
-    width: 100%;
-}
-table thead {
-    border-bottom: 2px solid {{ color_gray }};
-}
-table th, table td {
-    padding: .5em;
-    line-height: 1.4;
-    text-align: left;
-}
-table th {
-    font-weight: bold;
-    vertical-align: bottom;
-}
-table td {
-    border-bottom: 1px solid {{ color_silver }};
-    vertical-align: top;
-}
-table tr:last-child td {
-    border-bottom: 0;
-}
-table thead th + th,
-table tbody th + td,
-table td + td {
-    border-left: 1px solid {{ color_silver }};
-}
-table tbody + tbody {
-    border-top: 2px solid {{ color_gray }};
-}
-
-/* --- code and code listings ---------------------------------------------- */
-code, pre {
-    font-family: Menlo, Monaco, Consolas, Inconsolata, monospace;
-    font-size: 90%;
-    padding: 0 3px 2px;
-}
-
-code {
-    border: 1px solid #E1E1E8;
-    line-height: 1.6em;
-    padding: 3px 4px;
-}
-
-pre {
-    border-left: 1px solid {{ color_silver }};
-    margin: 0 0 1em;
-    padding: 0 0 0 1em;
-    white-space: pre;
-    white-space: pre-wrap;
-    word-break: break-all;
-}
-
-pre code {
-    border: none;
-    color: {{ color_black }};
-    padding: 0;
-}
-
-h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
-    font-weight: normal;
-}
-
-div.cli pre {
-    border-left-color: {{ color_gray }};
+    margin: 0;
 }
 {% endblock %}
 
-{% block layout %}
-/* Layout
-   ========================================================================= */
+{# ==========================================================================
+   @navigation
+   ========================================================================== #}
+{% block menu %}
+{{ parent() }}
 
-/* inspired by Twitter Bootstrap */
-.container {
-  width: {{ width_container }};
-  margin-left: auto;
-  margin-right: auto;
-  *zoom: 1;
-}
-.container:before, .container:after {
-  display: table;
-  content: "";
-}
-.container:after {
-  clear: both;
-}
-{% endblock %}
-
-{% block book_items %}
-/* Book items
-   ========================================================================= */
-
-/* --- common -------------------------------------------------------------- */
-.item {
-    border-bottom: medium solid {{ color_silver }};
-    margin-bottom: 2em;
-    padding-bottom: 2em;
-}
-
-.item #chunk_toc {
-    border: solid {{ color_gray }};
-    border-width: 2px 0;
-    float: right;
-    list-style: none;
-    margin: 1em 0 1em 1em;
-    padding: .5em 0;
-    max-width: {{ css_divide(width_container, 4) }};
-}
-.item #chunk_toc li span {
-    padding-right: .25em;
-}
-.item #chunk_toc .level-1 {
-    display: none;
-}
-
-.item .chunk_nav {
+.item .menu {
     background: {{ color_black }};
     color: {{ color_gray }};
-    height: 40px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    margin-bottom: 1em;
+    min-height: 50px;
 }
-.item .chunk_nav li {
-    float: left;
-    line-height: 40px;
-    margin: 0;
-}
-.item .chunk_nav a {
+
+.item .menu a {
     color: {{ color_white }};
-    padding: .5em;
+    font-weight: 400;
+    line-height: 50px;
     text-decoration: none;
 }
-.item .chunk_nav a:hover {
+.item .menu a.disabled {
+    color: {{ color_gray }} !important;
+}
+.item .menu a:hover {
     text-decoration: underline;
 }
-.item .chunk_nav .nav {
-    float: right;
-}
-.item .chunk_nav .index {
-    font-weight: bold;
-}
-.item .chunk_nav .nav .previous,
-.item .chunk_nav .nav .next {
-    float: left;
-    padding: 0 .5em 0 0;
-}
 
-/* --- item:cover ---------------------------------------------------------- */
-.item\:cover {
-    border-bottom: thick solid {{ color_gray }};
-    color: {{ color_black }};
-    margin-bottom: .5em;
-    padding: 2.5em 2.5em 1.75em 0;
-}
-.item\:cover h1 {
-    font-size: 72px;
-    line-height: 1.1;
-    letter-spacing: -2px;
-    margin: 2em 2em 0 0;
-}
-.item\:cover h2 {
-    color: {{ color_gray }};
-    font-size: 36px;
-    font-weight: normal;
-    margin-top: .5em;
-}
-
-/* --- item:title ---------------------------------------------------------- */
-.item\:cover + .item\:title {
-    display: none;
-}
-.item\:title h1,
-.item\:title h2,
-.item\:title h3 {
-    font-weight: normal;
-    text-align: center;
-}
-.item\:title h1 {
-    font-size: 36px;
-    line-height: 1.1;
-    letter-spacing: -2pt;
-    margin-top: 1em;
+.item .menu h1 {
     margin-bottom: 0;
 }
-.item\:title h2 {
-    font-size: 24px;
+.item .menu h1 a {
+    display: block;
+    font-size: 21px;
+    padding-left: .5em;
+}
+.item .menu p {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+.item .menu p a {
+    margin: 0 .75em 0;
+}
+
+{% endblock %}
+
+{# ==========================================================================
+   @items
+   ========================================================================== #}
+{% block cover %}
+{{ parent() }}
+
+.item.cover {
+    border-bottom: thick solid {{ color_silver }};
+    color: {{ color_black }};
+    margin-bottom: 1.5em;
+    padding: 5em 200px 1.75em 0;
+}
+.item.cover h1 {
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin: 0;
+}
+.item.cover h2 {
+    color: {{ color_gray }};
+    font-size: 28px;
+    font-weight: normal;
     margin-top: .5em;
 }
-.item\:title h3 {
-    font-size: 18px;
-    font-style: italic;
-    margin-top: 1em;
-}
+{% endblock %}
 
-/* --- item:dedication ----------------------------------------------------- */
-.item\:dedication {
-    font-style: italic;
-    text-align: center;
-}
-
-/* --- item:toc ------------------------------------------------------------ */
-.item\:toc {
+{% block toc %}
+{{ parent() }}
+.item.toc {
     margin-bottom: 2em;
     padding-left: 0;
 }
 
-.item\:toc h1 {
+.item.toc h1 {
     font-size: 36px;
     margin-bottom: .5em;
 }
 
-.item\:toc ul {
+.item.toc ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -285,250 +109,321 @@ div.cli pre {
     -webkit-column-rule: 1px solid {{ color_silver }};
 }
 
-.item\:toc ul li,
-.item\:toc ul li a {
+.item.toc ul li,
+.item.toc ul li a {
     font-size: 16px;
     line-height: 1.2;
     text-decoration: none;
 }
-.item\:toc ul li a {
+.item.toc ul li a {
     color: {{ color_blue }};
 }
-.item\:toc ul li a:hover {
+.item.toc ul li a:hover {
     color: {{ color_blue }} !important;
     text-decoration: underline;
 }
-.item\:toc ul li.level-1,
-.item\:toc ul li.level-1 a {
+.item.toc ul li.level-1,
+.item.toc ul li.level-1 a {
     color: {{ color_black }};
     font-size: 21px;
     font-weight: bold;
 }
-.item\:toc ul li span {
+.item.toc ul li span {
     color: {{ color_gray }};
     padding-right: .3em;
 }
-.item\:toc ul li.level-1 span {
+.item.toc ul li.level-1 span {
     font-weight: normal;
 }
 
-.item\:toc ul li.level-2 {
+.item.toc ul li.level-2 {
     margin-left: 1em;
 }
-.item\:toc ul li.level-3,
-.item\:toc ul li.level-4,
-.item\:toc ul li.level-5,
-.item\:toc ul li.level-6 {
+.item.toc ul li.level-3,
+.item.toc ul li.level-4,
+.item.toc ul li.level-5,
+.item.toc ul li.level-6 {
     margin-left: 3em;
 }
 
-/* --- item:lot, item:lof -------------------------------------------------- */
-.item\:lof ul,
-.item\:lot ul {
+{# local navigation TOC for each chapter, appendix, ... #}
+.item .local_toc {
+    border: none;
+}
+
+.item .local_toc h3 {
+    color: {{ color_gray }};
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.item .local_toc ul {
+    padding: 0;
+}
+
+.item .local_toc ul li {
+    font-size: 14px;
+}
+
+.item .local_toc ul li span {
+    font-weight: bold;
+}
+
+.item .local_toc ul li a {
+    text-decoration: none;
+}
+
+.item .local_toc ul li a:hover {
+    text-decoration: underline;
+}
+
+.item .local_toc ul li.level-1 {
+    border-top: 1px solid {{ color_silver }};
+    margin-top: .5em;
+    padding-top: .5em;
+}
+.item .local_toc h3 + ul li.level-1:first-child {
+    border-top: 0;
+    padding: 0;
+}
+{% endblock %}
+
+{% block title %}
+.item.title {
+    display: none;
+}
+{% endblock %}
+
+{% block dedication %}
+{{ parent() }}
+
+.item.dedication {
+    font-style: italic;
+    text-align: center;
+}
+{% endblock %}
+
+{% block lof %}
+{{ parent() }}
+
+.item.lof ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
-.item\:lof ul a,
-.item\:lot ul a {
+.item.lof ul a {
     text-decoration: none;
 }
 
-.item\:lof ul li span,
-.item\:lot ul li span {
+.item.lof ul li span {
     padding-right: .3em;
 }
+{% endblock %}
 
-/* --- item:chapter -------------------------------------------------------- */
-.item\:chapter {
-    border-bottom: 0;
+{% block lot %}
+{{ parent() }}
+
+.item.lot ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
-.item\:chapter h1 { font-size: 36px; margin-top: .5em; }
-.item\:chapter h2 { font-size: 24px; }
-.item\:chapter h3 { font-size: 21px; }
-.item\:chapter h4 { font-size: 16px; }
-.item\:chapter h5 { font-size: 14px; }
-.item\:chapter h6 { font-size: 14px; }
-
-.item\:chapter h1 + h2,
-.item\:chapter h2 + h3,
-.item\:chapter h3 + h4,
-.item\:chapter h4 + h5,
-.item\:chapter h5 + h6 {
-    margin-top: 1em;
+.item.lot ul a {
+    text-decoration: none;
 }
 
-.item\:chapter h1 span {
-    color: {{ color_gray }};
-    font-size: 90%;
-    font-weight: normal;
-    padding-bottom: .25em;
+.item.lot ul li span {
+    padding-right: .3em;
 }
+{% endblock %}
 
-/* --- item:appendix ------------------------------------------------------- */
-.item\:appendix {
-    border-bottom: 0;
-}
+{% block part %}
+{{ parent() }}
 
-.item\:appendix h1 { font-size: 36px; margin-top: .5em; }
-.item\:appendix h2 { font-size: 24px; }
-.item\:appendix h3 { font-size: 21px; }
-.item\:appendix h4 { font-size: 16px; }
-.item\:appendix h5 { font-size: 14px; }
-.item\:appendix h6 { font-size: 14px; }
-
-.item\:appendix h1 + h2,
-.item\:appendix h2 + h3,
-.item\:appendix h3 + h4,
-.item\:appendix h4 + h5,
-.item\:appendix h5 + h6 {
-    margin-top: 1em;
-}
-
-.item\:appendix h1 span {
-    color: {{ color_gray }};
-    font-size: 90%;
-    font-weight: normal;
-    padding-bottom: .25em;
-}
-
-/* --- item:part ----------------------------------------------------------- */
-.item\:part {
+.item.part {
     border: solid {{ color_gray }};
     border-width: medium 0;
     padding: 0;
 }
 
-.item\:toc + .item\:part,
-.item\:lof + .item\:part,
-.item\:lot + .item\:part,
-.item\:chapter + .item\:part,
-.item\:appendix + .item\:part {
+.item + .item.part {
     margin-top: -2em;
 }
 
-.item\:part h1 {
-    font-size: 48px;
+.item.part h1 {
+    font-size: 36px;
     margin: 0;
     padding: 1em 0;
+    text-align: center;
 }
-.item\:part h1 span {
+.item.part h1 span {
     color: {{ color_gray }};
-    font-size: 90%;
+    font-size: 80%;
     font-weight: normal;
     padding-bottom: .25em;
 }
 {% endblock %}
 
-{% block responsive %}
-/* Responsive
-   ========================================================================= */
+{% block chapter %}
+{{ parent() }}
 
-/* inspired by Twitter Bootstrap */
-/* Landscape phones and down */
-@media (max-width: 480px) {
-    .item\:toc {
-        padding-left: .5em !important;
-    }
-    .item\:toc h1 {
-        display: none;
-    }
-    .item\:toc ul {
-        margin: 0 !important;
-        -moz-column-count: 1;
-        -webkit-column-count: 1;
-    }
-
-    .item .chunk_nav .index {
-        display: none;
-    }
-    .item .chunk_nav .nav {
-        float: none;
-    }
-    .item .chunk_nav .nav .previous {
-        float: left;
-    }
-    .item .chunk_nav .nav .next {
-        float: right;
-    }
-}
- 
-/* Landscape phone to portrait tablet */
-@media (max-width: 768px) {
-    .item\:cover {
-        margin-bottom: 1em;
-        padding: 1.5em 0;
-    }
-    .item\:cover h1 {
-        font-size: 48px;
-        letter-spacing: -1px;
-        margin: 0;
-    }
-    .item\:cover h2 {
-        font-size: 24px;
-    }
-
-    .item\:toc h1 {
-        font-size: 24px;
-    }
-    .item\:toc ul {
-        -moz-column-count: 1;
-        -webkit-column-count: 1;
-    }
-
-    .item #chunk_toc {
-        border: none;
-        float: none;
-        margin: .5em 0;
-        padding: 0;
-        max-width: 100%;
-    }
-
-    .item\:part h1,
-    .item\:chapter h1,
-    .item\:appendix h1 {
-        font-size: 28px;
-    }
-    .item\:chapter h2,
-    .item\:chapter h3,
-    .item\:chapter h4,
-    .item\:chapter h5,
-    .item\:chapter h6,
-    .item\:appendix h2,
-    .item\:appendix h3,
-    .item\:appendix h4,
-    .item\:appendix h5,
-    .item\:appendix h6 {
-        font-size: 24px;
-    }
-    .item\:part h1 span {
-        font-size: 28px;
-        font-weight: normal;
-        padding: 0;
-        position: static;
-    }
-    .item\:chapter h1 span,
-    .item\:appendix h1 span {
-        display: inline;
-        font-size: 28px;
-        font-weight: normal;
-    }
-}
- 
- /* Portrait tablet to landscape and desktop */
-@media (min-width: 768px) and (max-width: {{ width_container }}) {
-}
- 
-/* Large desktop */
-@media (min-width: 1200px) {
+.item.chapter h1 {
+    font-size: 28px;
+    margin-top: 0;
 }
 
-@media (max-width: {{ width_container }}) {
-    .container {
-        width: auto;
-        padding: 0 20px;
-    }
+.item.chapter h1 span {
+    display: block;
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 1.5;
+}
+{% endblock %}
+
+{% block appendix %}
+{{ parent() }}
+
+.item.appendix h1 {
+    font-size: 28px;
+    margin-top: 0;
+}
+
+.item.appendix h1 span {
+    display: block;
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 1.5;
+}
+{% endblock %}
+
+{# ==========================================================================
+   @responsive
+   ========================================================================== #}
+{% block tablets %}
+{{ parent() }}
+
+body {
+    font-size: 15px;
+}
+
+.item.cover h1 {
+    font-size: 48px;
+}
+.item.cover h2 {
+    font-size: 21px;
+}
+
+.item.toc h3 {
+    font-size: 16px;
+}
+.item.toc ul li.level-1, .item.toc ul li.level-1 a {
+    font-size: 18px;
+}
+.item.toc ul li, .item.toc ul li a {
+    font-size: 14px;
+}
+.item.toc li.level-1 span {
+    display: block;
+    font-size: 90%;
+}
+
+.item .menu p a {
+    margin: 0 .3em 0;
+}
+{% endblock %}
+
+{% block tablets_and_phones %}
+{{ parent() }}
+
+.item.cover {
+    padding-right: 1em;
+}
+
+.item.cover h1 {
+    font-size: 36px;
+    letter-spacing: 0;
+}
+.item.cover h2 {
+    font-size: 21px;
+}
+
+.item.toc ul li.level-1, .item.toc ul li.level-1 a {
+    font-size: 16px;
+}
+.item.toc ul li, .item.toc ul li a {
+    font-size: 13px;
+}
+.item.toc li.level-1 span {
+    display: block;
+    font-size: 90%;
+}
+
+.item .menu h1 {
+    float: left;
+    margin-left: 20px;
+    width: auto;
+}
+.item .menu h1 a {
+    padding-left: 0;
+}
+.item .menu p {
+    float: right;
+    width: auto;
+}
+.item .menu p a {
+    margin: 0 .3em 0;
+}
+{% endblock %}
+
+{% block phones %}
+{{ parent() }}
+
+body {
+    font-size: 14px;
+}
+
+h1 { font-size: 21px !important; } h1 span { font-size: inherit !important; }
+h2 { font-size: 18px !important; }
+h3 { font-size: 16px !important; }
+h4 { font-size: 16px !important; }
+h5 { font-size: 16px !important; }
+h6 { font-size: 16px !important; }
+
+.item.cover h1 {
+    font-size: 28px !important;
+}
+.item.cover h2 {
+    font-size: 18px !important;
+}
+
+.item.toc {
+    padding-left: .5em !important;
+}
+.item.toc h1 {
+    display: none;
+}
+.item.toc ul {
+    margin: 0 !important;
+    -moz-column-count: 1;
+    -webkit-column-count: 1;
+}
+
+.item .local_toc {
+    display: none;
+}
+
+.item .menu h1 {
+    display: none;
+}
+.item .menu p {
+    width: 100%;
+}
+.item .menu p a:first-child {
+    float: left;
+}
+.item .menu p a:last-child {
+    float: right;
 }
 {% endblock %}

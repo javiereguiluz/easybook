@@ -108,6 +108,20 @@ directorio:
   3. `<libro>/Resources/Templates/style.css`,  para aplicar los mismos estilos
   a todas las ediciones.
 
+No es necesario que crees estos archivos CSS a mano, ya que **easybook** incluye 
+un comando llamado `customize` que genera la hoja de estilos adecuada para cada
+edición:
+
+    [cli]
+    $ ./book customize el-origen-de-las-especies ebook
+
+    OK: You can now customize the book design with the following stylesheet:
+    <easybook-dir>/doc/the-origin-of-species/Resources/Templates/ebook/style.css
+
+Esta hoja de estilos CSS es diferente para cada tipo de edición (`html`, `pdf`,
+`epub`) e incluye comentarios de ayuda que facilitan la personalización del
+aspecto del libro.
+
 ### Portada del libro ###
 
 **easybook** genera una portada por defecto para todos los tipos de ediciones.
