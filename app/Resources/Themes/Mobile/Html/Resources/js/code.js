@@ -33,27 +33,34 @@ $(document).ready(function() {
  * Show fixed toolbar after changing to a page and hide it after a while
  */
 $(document).bind("pagechange", function(){
-    $.mobile.activePage.children("[data-position='fixed']").fixedtoolbar('show');
+    var $footer = $.mobile.activePage.children("[data-role='footer'][data-position='fixed']");
+    $footer.fixedtoolbar('show');
     setTimeout(
-            function(){
-                $.mobile.activePage.children("[data-position='fixed']").fixedtoolbar('hide');
+            function(args){
+                args.$footer.fixedtoolbar('hide');
             },
-            3000);
+            3000, 
+            {'$footer': $footer});
 });
 
 /*
  * Show fixed toolbar when scrolling, but only if not was already visible
  */
 $(document).bind("scrollstart", function(){
-    var wasShowing = $.mobile.activePage.children("[data-position='fixed']").hasClass('in');
-    $.mobile.activePage.children("[data-position='fixed']").fixedtoolbar('show');
+    if (!$.mobile.activePage) {
+        return;
+    }
+    var $footer = $.mobile.activePage.children("[data-role='footer'][data-position='fixed']");
+    var wasShowing = $footer.hasClass('in');
+    $footer.fixedtoolbar('show');
     setTimeout(
-            function(){
-                if (!wasShowing) {
-                    $.mobile.activePage.children("[data-position='fixed']").fixedtoolbar('hide');
+            function(args){
+                if (!args.wasShowing) {
+                    args.$footer.fixedtoolbar('hide');
                 }
             },
-            3000);
+            3000, 
+            {'$footer': $footer, 'wasShowing' : wasShowing});
 });
 
 /*

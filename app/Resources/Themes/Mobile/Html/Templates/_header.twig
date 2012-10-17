@@ -1,10 +1,9 @@
-<div data-role="header" data-theme="d" data-id="header">
+<div data-role="header" data-theme="d" data-id="header" data-position="fixed" data-tap-toggle="false">
 
-    <a href="" class="showMenu" data-role="button" 
+    <a href="" class="showMenu" data-role="button" data-iconpos="notext"
            data-theme="c" data-icon="grid">{{ app.getLabel('toc') }}</a>
 
     <h1>{{ book.title }}</h1>
-	<h2>{{ item.title }}</h2>
 	
     <div data-role="controlgroup" data-type="horizontal" class="ui-bar ui-btn-right">
         <a href="#{{ item.previous }}" data-theme="c" 
