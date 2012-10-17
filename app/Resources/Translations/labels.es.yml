@@ -40,6 +40,8 @@ label:
     index:           'Inicio'
     next:            'Siguiente'
     previous:        'Anterior'
+    toc:             'Índice'
+    top:             'Ir arriba'
 
     # Special
     date_format:     'd/m/Y'

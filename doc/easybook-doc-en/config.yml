@@ -71,3 +71,15 @@ book:
             toc:
                 deep:        2
                 elements:    ["appendix", "chapter"]
+
+        mobile:
+            format:          html
+            include_styles:  true            
+            highlight_cache: true
+            highlight_code:  true
+            labels:          ['chapter']
+            theme:           mobile
+            toc: 
+                deep:        2
+                elements:    ['appendix', 'chapter']    
+                            

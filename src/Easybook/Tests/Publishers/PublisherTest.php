@@ -91,6 +91,19 @@ class PublisherTest extends TestCase
                         sprintf("'%s' file not properly generated", $file->getPathname())
                     );
                 }
+                
+                // assert that no unexpected files are generated
+                $expectedFiles = $this->app->get('finder')
+                ->files()
+                ->notName('.gitignore')
+                ->in(__DIR__.'/fixtures/'.$slug.'/expected/'.$editionName)
+                ;
+                foreach ($expectedFiles as $file) {
+                    $this->assertFileExists(
+                            $this->tmpDir.'/'.$slug.'/Output/'.$editionName.'/'.$file->getRelativePathname(),
+                            sprintf("'%s' unexpected file generated", $file->getPathname())
+                    );
+                }
 
                 // assert than book publication took less than 5 seconds
                 $this->assertLessThan(

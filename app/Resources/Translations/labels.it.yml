@@ -40,6 +40,8 @@ label:
     index:           'Partenza'
     next:            'Avanti'
     previous:        'Indietro'
+    toc:             'Contents'
+    top:             'Top'
 
     # Special
     date_format:     'd/m/Y'

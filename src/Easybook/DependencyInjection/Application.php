@@ -227,7 +227,7 @@ class Application extends \Pimple
             $theme  = ucfirst($app->edition('theme'));
             
             // TODO: remove this hack when other themes are completed
-            $theme = 'Clean';
+            //$theme = 'Clean';
 
             $format = Toolkit::camelize($app->edition('format'), true);
             // TODO: fix the following hack

@@ -1,0 +1,25 @@
+<div data-role="footer" data-theme="d" data-position="fixed" data-id="footer">
+       
+    <div data-role="navbar">
+		<ul>
+		    <li>
+		        <a href="javascript:void(0)" class="showMenu" data-role="button" data-theme="c" 
+                    data-icon="grid">{{ app.getLabel('toc') }}</a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" class="toTop" data-role="button" data-theme="c" 
+                        data-icon="arrow-u">{{ app.getLabel('top') }}</a>
+            </li>
+			<li>
+                <a href="#{{ item.previous }}" data-role="button" data-theme="c" 
+                    data-icon="arrow-l" class="{{ item.previous ? '' : 'ui-disabled' }}">{{ app.getLabel('previous') }}</a>
+            </li>
+            <li>
+                <a href="#{{ item.next }}" data-role="button" data-theme="c"
+                    data-icon="arrow-r" class="{{ item.next ? '' : 'ui-disabled' }}">{{ app.getLabel('next') }}</a>
+            </li>
+		</ul>
+	</div><!-- /navbar -->
+	
+</div>
+<!-- /footer -->

@@ -1,0 +1,35 @@
+<!-- Start page: #{{ item.slug }} -->
+<div data-role="page" id="{{ item.slug }}"  class="item:{{ item.config.element }}" data-theme="d">
+
+    {% include '_header.twig' %}
+    
+	<div data-role="content" class="content"> 
+        <ul data-role="listview">
+        {% for item in app.get('publishing.list.tables') %}
+            {% if item|length > 0 %}
+                {% for entry in item %}
+                    {% if entry.item.caption is empty %}
+                        <li data-theme="a">
+                            <a href="#{{ entry.item.slug }}" class="anchor-link">
+                                {{ app.getLabel('table', entry) }}
+                            </a>
+                        </li>                        
+                    {% else %}                        
+                        <li data-theme="a">
+                            <a href="#{{ entry.item.slug }}" class="anchor-link">
+                                <h3>{{ entry.element.number }}.{{ entry.item.number }}</h3>
+                                <p>{{ entry.item.caption }}</p>
+                            </a>
+                        </li>  
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+	<!-- /content -->
+
+    {% include '_footer.twig' %}
+        
+</div>
+<!-- /page: #{{ item.slug }} -->

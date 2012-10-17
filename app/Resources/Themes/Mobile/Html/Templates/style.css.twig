@@ -1,0 +1,57 @@
+{% extends '@theme_base/style.css.twig' %}
+
+{% block theme_name        'mobile' %}
+{% block theme_description 'interactive for mobile devices (based on theme "clean")' %}
+{% block theme_author      'magabriel@gmail.com' %}
+{% block theme_updated_at  '8/october/2012' %}
+
+{% block paragraphs %}
+{{ parent() }}
+
+.content p {
+    margin: .5em 0;
+}
+{% endblock %}
+
+{% block lists %}
+{{ parent() }}
+
+.content ul, .content ol {
+    padding-left: 20px;
+}
+
+.content ul.ui-listview {
+    padding-left: 0;
+}
+
+.content p + ul, .content p + ol {
+    margin-top: 0;
+}
+{% endblock %}
+
+{% block misc %}
+{{ parent() }}
+
+/* Hide glossary because we use the interactive version */
+.glossary {
+    display: none;
+}
+
+/* --- jQueryMobile tweaks ------------------------------------------------- */
+#menu .ui-li-heading {
+    white-space: normal;
+}
+
+#menu .ui-link-inherit {
+    padding: 0.4em 0.5em;
+}
+
+.ui-header h2.ui-title {
+    font-style: italic;
+}
+
+.ui-footer .ui-controlgroup.ui-btn-right {
+    top: 7px !important;
+}
+
+{% endblock %}
