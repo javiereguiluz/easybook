@@ -26,7 +26,7 @@
         <item id="stylesheet" href="css/easybook.css" media-type="text/css" />
 {% endif %}
 {% if has_custom_css %}
-        <item id="stylesheet" href="css/styles.css" media-type="text/css" />
+        <item id="stylesheet-custom" href="css/styles.css" media-type="text/css" />
 {% endif %}
 {% for image in images %}
         <item id="{{ image.id }}" href="{{ image.filePath }}" media-type="{{ image.mediaType }}" />
@@ -49,6 +49,9 @@
 
     <guide>
         <reference href="titlepage.html" type="cover" title="Cover"/>
+        {% if use_html_toc %}
+        <reference href="toc.html" type="toc" title="Table of contents"/>
+        {% endif %}
     </guide>
 
 </package>
