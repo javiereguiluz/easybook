@@ -124,6 +124,7 @@ default, the books created with the `new` command have four editions named
                 highlight_cache: false
                 highlight_code:  false
                 include_styles:  true
+                use_html_toc:    false
                 labels:          ['appendix', 'chapter']  # labels also available for: "figure", "table"
                 toc:
                     deep:        1
@@ -173,7 +174,7 @@ need, but all must belong to one of the following four types defined by the
 
 Editions can modify the aspect of the published book through several
 configuration options. The `epub`, `html` and `html_chunked` edition types share
-the same options:
+several options:
 
   * `highlight_cache`, this option is only useful for technical books that include
      source code. If `true`, all the highlighted code listings will be cached
@@ -196,6 +197,19 @@ the same options:
     `<h5>` and `<h6>` headings).
     * `elements`, the type of elements included in the TOC (by default, only
     `appendix`, `chapter` and `part` are included).
+
+The `epub` edition type can define an additional `toc` option:
+
+ * `use_html_toc`, allows the inclusion of an html table of contents in the ebook.
+    This is a table of contents that appears to the reader as a page with links 
+    to navigate directly to each TOC element in the book, and is different from the 
+    navigational TOC shown by the reading application or device when the 
+    corresponding option is selected. Normally epub ebooks do not include
+    this type of TOC, although in some cases it may be necessary (i.e. when the 
+    epub file will be later converted to mobi format for Amazon Kindle, 
+    it must include this kind of TOC to comply with [Kindle Publishing Guidelines][kpg]).
+  
+[kpg]: http://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf      
 
 The `pdf` editions can define even more options:
 

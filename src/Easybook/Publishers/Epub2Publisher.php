@@ -19,11 +19,17 @@ class Epub2Publisher extends HtmlPublisher
 {
     public function loadContents()
     {
-        // 'toc' content type makes no sense in epub books
+        // 'toc' content type usually makes no sense in epub books (see below)
         // 'cover' is a very special content for epub books
-        $excludedElements = array('cover', 'toc', 'lot', 'lof');
+        $excludedElements = array('cover', 'lot', 'lof');
 
-        // strip 'toc' and 'cover' elements before loading book contents
+        // some epub books may want to define an html toc (i.e. if being converted to kindle format
+        // as recommended by Kindle Publishing Guidelines)
+        if (!$this->app->edition('use_html_toc')) {
+            $excludedElements[] = 'toc';
+        }
+        
+        // strip excluded elements before loading book contents
         $contents = array();
         foreach ($this->app->book('contents') as $content) {
             if (!in_array($content['element'], $excludedElements)) {
@@ -124,12 +130,21 @@ class Epub2Publisher extends HtmlPublisher
         // generate one HTML page for every book item
         $items = array();
         foreach ($this->app['publishing.items'] as $item) {
-            $this->app->render('@theme/chunk.twig', array(
-                    'item'           => $item,
-                    'has_custom_css' => file_exists($customCss),
-                ),
-                $bookTempDir.'/book/OEBPS/'.$item['fileName']
-            );
+            if ('toc' == $item['config']['element']) {
+                $this->app->render('@theme/toc.twig', array(
+                        'item'           => $item,
+                        'has_custom_css' => file_exists($customCss),
+                    ),
+                    $bookTempDir.'/book/OEBPS/toc.html'
+                );
+            } else {
+                $this->app->render('@theme/chunk.twig', array(
+                        'item'           => $item,
+                        'has_custom_css' => file_exists($customCss),
+                    ),
+                    $bookTempDir.'/book/OEBPS/'.$item['fileName']
+                );
+            }
         }
 
         // copy book images and prepare image data for ebook manifest
@@ -181,7 +196,8 @@ class Epub2Publisher extends HtmlPublisher
                 'cover'          => $cover,
                 'has_custom_css' => file_exists($customCss),
                 'fonts'          => $bookFonts,
-                'images'         => $bookImages
+                'images'         => $bookImages,
+                'use_html_toc'   => $this->app->edition('use_html_toc')
             ),
             $bookTempDir.'/book/OEBPS/content.opf'
         );
@@ -190,7 +206,7 @@ class Epub2Publisher extends HtmlPublisher
         $this->app->render('@theme/toc.ncx.twig', array(),
             $bookTempDir.'/book/OEBPS/toc.ncx'
         );
-
+        
         // generate container.xml and mimetype files
         $this->app->render('@theme/container.xml.twig', array(),
             $bookTempDir.'/book/META-INF/container.xml'

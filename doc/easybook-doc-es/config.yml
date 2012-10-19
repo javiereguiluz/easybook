@@ -21,6 +21,7 @@ book:
             include_styles:  true
             highlight_cache: true
             highlight_code:  true
+            use_html_toc:    false
             labels:          ['appendix', 'chapter', 'figure']
             theme:           clean
             toc:
@@ -71,3 +72,4 @@ book:
             toc:
                 deep:        2
                 elements:    ["appendix", "chapter"]
+
