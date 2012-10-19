@@ -100,6 +100,7 @@ class Toolkit
         }
 
         $source = str_replace('\\', '/', realpath($source));
+        $parent = pathinfo($source, PATHINFO_DIRNAME);
 
         if (is_dir($source)) {
             $files = new \RecursiveIteratorIterator(
@@ -111,7 +112,9 @@ class Toolkit
                 $file = str_replace('\\', '/', realpath($file));
 
                 if (is_dir($file)) {
-                    $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+                    if ($file != $parent) {
+                        $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+                    }
                 } elseif (is_file($file)) {
                     $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
                 }
