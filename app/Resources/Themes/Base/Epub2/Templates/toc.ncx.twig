@@ -20,10 +20,13 @@
  
     <navMap>
 {% for item in app.get('publishing.items') %}
+        {# editions define the *tocable* items #}
+        {% if item.config.element in edition.toc.elements|default([]) %}
         <navPoint class="chapter" id="{{ item.slug }}" playOrder="{{ loop.index }}">
             <navLabel><text>{{ '' != item.label ? item.label ~ ' ' ~ item.title : item.title }}</text></navLabel>
             <content src="{{ item.fileName }}" />
         </navPoint>
+        {% endif %}
 {% endfor %}
     </navMap>
  
