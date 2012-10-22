@@ -151,6 +151,38 @@ Image alignment is also possible when using the alternative image syntax:
 
     [1]: figure1.png
 
+### Decorative images ###
+
+(Added in easybook 5.0)
+
+**easybook** makes really easy defining images that will be treated as book 
+illustrations (_figures_) and automatically labeled and numbered. The `label` 
+configuration option defines whether all the images in the book are to be 
+treated as illustrations, but it has one drawback: it applies to all of the
+images, so when set to `true` you cannot include other purely decorative 
+images (for example, a graphical separator for paragraphs or sections).
+
+The following syntax makes possible defining this type of decorative images:
+ 
+    [code]
+    ![*](image1.png)
+
+That is: just defining '*' as the image title tells **easybook** that the image 
+is not to be treated as an illustration but a normal image (i.e. it will not 
+have caption nor will be included in the table of figures, and it will be 
+embedded into the normal text flow instead of being assigned a block format).
+
+All other image options also work, so the following examples are still valid: 
+
+    [code]
+    ![ *](image1.png)
+    
+    ![ * ](image1.png)
+    
+    ![ * ][1]
+
+    [1]: image1.png
+
 ### Page breaks ###
 
 (Added in easybook 5.0)
