@@ -14,7 +14,13 @@
                 {% for entry in item.toc %}
                     {% if entry.level <= edition.toc.deep %}
                         <div class="{{ item.config.element }} level-{{ entry.level }}">
-                            <a href="{{ item.fileName }}#{{ entry.level == 1 ? item.slug : entry.slug }}"><span>{{ entry.label }}</span> - {{ entry.title }}</a>
+                            <a href="{{ item.fileName }}#{{ entry.level == 1 ? item.slug : entry.slug }}">
+                                {% if '' != entry.label %}
+                                    <span>{{ entry.label }}</span> - {{ entry.title }}
+                                {% else %}
+                                    {{ entry.title }}
+                                {% endif %}                                
+                            </a>
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -22,7 +28,13 @@
             {# empty or special item (anything different from 'chapter' and 'appendix' #}
             {% else %}
                 <div class="{{ item.config.element }} level-1">
-                    <a href="{{ item.fileName }}#{{ item.slug }}"><span>{{ item.label }}</span> - {{ item.title }}</a>
+                    <a href="{{ item.fileName }}#{{ item.slug }}">
+                        {% if '' != item.label %}
+                            <span>{{ item.label }}</span> - {{ item.title }}
+                        {% else %}
+                            {{ item.title }}
+                        {% endif %}
+                    </a>
                 </div>
             {% endif %}
         {% endif %}
