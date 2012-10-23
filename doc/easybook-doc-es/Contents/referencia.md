@@ -154,6 +154,40 @@ imágenes:
 
     [1]: figura1.png
 
+### Imágenes decorativas ###
+
+(Añadido en easybook 5.0)
+
+**easybook** permite definir fácilmente imágenes que serán tratadas como 
+ilustraciones del libro y numeradas automáticamente. Mediante las opciones de 
+configuración es posible elegir que todas las imágenes del libro se traten o no
+como ilustraciones, aunque esto tiene un inconveniente: si se configura la 
+autonumeración de imágenes, todas ellas serán tratadas como ilustraciones, por lo
+que no se podrán incluir otro tipo de imágenes meramente decorativas (por ejemplo,
+un gráfico separador de párrafos o secciones).
+
+Mediante la siguiente sintaxis es posible definir este tipo de imágenes decorativas:
+ 
+    [code]
+    ![*](imagen1.png)
+    
+Es decir, basta con indicar '*' como título para que la imagen no sea tratada como 
+ilustración sino como una imagen normal (es decir, no tiene título, no se incluye 
+en la tabla de ilustraciones y es incluida en el flujo normal del texto en lugar 
+de recibir formato de bloque). 
+
+El resto de opciones para la inclusión de imágenes siguen funcionando, por lo que
+los siguientes ejemplos siguen siendo válidos:
+
+    [code]
+    ![ *](imagen1.png)
+    
+    ![ * ](imagen1.png)
+    
+    ![ * ][1]
+
+    [1]: imagen1.png
+    
 ### Saltos de página ###
 
 (Añadido en easybook 5.0)
