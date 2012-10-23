@@ -72,15 +72,18 @@ class ImagePlugin implements EventSubscriberInterface
                     )
                 );
 
-                // the publishing edition wants to label figures/images
-                if (in_array('figure', $event->app->edition('labels'))) {
-                    $label = $event->app->getLabel('figure', $parameters);
-                    $parameters['item']['label'] = $label;
+                // '*' in title means normal image instead of figure
+                if ('*' != $matches['title']) {
+                    // the publishing edition wants to label figures/images
+                    if (in_array('figure', $event->app->edition('labels'))) {
+                        $label = $event->app->getLabel('figure', $parameters);
+                        $parameters['item']['label'] = $label;
+                    }
+    
+                    // add image datails to list-of-images
+                    $listOfImages[] = $parameters;
                 }
-
-                // add image datails to list-of-images
-                $listOfImages[] = $parameters;
-
+                    
                 return $event->app->render('figure.twig', $parameters);
             },
             $item['content']
