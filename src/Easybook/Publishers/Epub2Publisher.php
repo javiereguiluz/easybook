@@ -63,6 +63,11 @@ class Epub2Publisher extends HtmlPublisher
         // set the edition id needed for ebook generation
         $this->app->edition('id', $this->app['publishing.id']);
 
+        // refresh global Twig variable 'edition' to allow templates to pick 'edition.id' value
+        $publishingEdition = $this->app['publishing.edition'];
+        $editions = $this->app->book('editions');
+        $this->app->get('twig')->addGlobal('edition', $editions[$publishingEdition]);
+        
         // variables needed to hold the list of images and fonts of the book
         $bookImages = array();
         $bookFonts  = array();
