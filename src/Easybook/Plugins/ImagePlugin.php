@@ -54,7 +54,7 @@ class ImagePlugin implements EventSubscriberInterface
             //   2. <div class="(left OR center OR right)">
             //        <img (...optional...) alt="..." (...optional...) />
             //      </div>
-            '/(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>.*)".*\/>)(<\/div>)?(<\/p>)?/',
+            '/(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>[^"]*)".*\/>)(<\/div>)?(<\/p>)?/',
             function($matches) use ($event, $elementNumber, &$listOfImages, &$counter) {
                 // prepare item parameters for template and label
                 $counter++;
