@@ -9,11 +9,11 @@
     <title>{% block title %}{% endblock %} {{ '' != block('title') ? '|' : '' }} {{ book.title }}</title>
 
 {% if edition.include_styles %}
-    <link rel="stylesheet" href="./css/easybook.css" />
+    <link rel="stylesheet" href="{{ 2 == item.level ? '..' : '.' }}/css/easybook.css" />
 {% endif %}
 
 {% if has_custom_css|default(false) %}
-    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="{{ 2 == item.level ? '..' : '.' }}/css/styles.css" />
 {% endif %}
 </head>
 

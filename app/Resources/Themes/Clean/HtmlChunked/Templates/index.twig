@@ -10,31 +10,26 @@
 
 {% if edition.toc is defined %}
 <div class="item toc">
-
-<ul class="unstyled">
-{% for item in app.get('publishing.items') %}
-    {% if item.config.element in ['appendix', 'chapter'] %}
-
-        {# item has several elements in its toc #}
-        {% for entry in item.toc if entry.level <= edition.toc.deep %}
-            <li class="{{ item.config.element }} level-{{ entry.level }}">
-                <span>{{ entry.label }}</span>
-                {% if 1 == entry.level %}
-                <a href="./{{ item.slug }}.html">{{ item.title }}</a>
+    <ul class="unstyled">
+    {% for tocItem in toc if tocItem.level <= edition.toc.deep %}
+        <li class="{{ tocItem.config.element|default('') }} level-{{ tocItem.level }}">
+            <span>{{ tocItem.label }}</span>
+            {% if 1 == edition.chunk_level %}
+                {% if 1 == tocItem.level %}
+                <a href="./{{ tocItem.slug }}.html">{{ tocItem.title }}</a>
                 {% else %}
-                <a href="./{{ item.slug }}.html#{{ entry.slug }}">{{ entry.title }}</a>
+                <a href="./{{ tocItem.parent.slug }}.html#{{ tocItem.slug }}">{{ tocItem.title }}</a>
                 {% endif %}
-            </li>
-        {% endfor %}
-    
-    {% elseif item.config.element in ['part'] %}
-        <li class="{{ item.config.element }} level-1">
-            <span>{{ item.label }}</span> {{ item.title }}
+            {% elseif 2 == edition.chunk_level %}
+                {% if 1 == tocItem.level %}
+                <a href="./{{ tocItem.slug }}.html">{{ tocItem.title }}</a>
+                {% else %}
+                <a href="./{{ tocItem.parent.slug }}/{{ tocItem.slug }}.html">{{ tocItem.title }}</a>
+                {% endif %}
+            {% endif %}
         </li>
-    {% endif %}
-{% endfor %}
-</ul>
-
+    {% endfor %}
+    </ul>
 </div>
 {% endif %}
 

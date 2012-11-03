@@ -76,6 +76,7 @@ class Application extends \Pimple
         // TODO: should each edition type define different default values?
         $this['app.edition.defaults'] = array(
             'format'          => 'html',
+            'chunk_level'     => 1,     // used only for html_chunked format
             'highlight_cache' => false,
             'highlight_code'  => false,
             'include_styles'  => true,

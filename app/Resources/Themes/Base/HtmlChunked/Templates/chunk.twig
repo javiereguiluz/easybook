@@ -5,12 +5,12 @@
 {% block body %}
 {% set navigation %}
 <ul class="chunk_nav">
-    <li class="index"><a href="./index.html">{{ book.title }}</a></li>
+    <li class="index"><a href="{{ 2 == item.level ? '..' : '.' }}/index.html">{{ book.title }}</a></li>
 
     <li class="nav">
         <div class="previous">
             {% if previous %}
-                <a href="./{{ previous }}.html"><span>&larr;</span> {{ app.getLabel('previous') }}</a>
+                <a href="{{ previous.url }}"><span>&larr;</span> {{ app.getLabel('previous') }}</a>
             {% else %}
                 <span>&larr;</span> {{ app.getLabel('previous') }}
             {% endif %}
@@ -18,7 +18,7 @@
 
         <div class="next">
             {% if next %}
-                <a href="./{{ next }}.html">{{ app.getLabel('next') }} <span>&rarr;</span></a>
+                <a href="{{ next.url }}">{{ app.getLabel('next') }} <span>&rarr;</span></a>
             {% else %}
                 {{ app.getLabel('next') }} <span>&rarr;</span>
             {% endif %}
@@ -32,14 +32,33 @@
 <h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
 
 <ul id="chunk_toc">
-{% for entry in item.toc %}
-    {% if entry.level <= edition.toc.deep %}
-        <li class="level-{{ entry.level }}">
-            <span>{{ entry.level != 1 ? entry.label : '' }}</span>
-            <a href="#{{ entry.slug }}">{{ entry.title }}</a>
+{% if 1 == edition.chunk_level %}
+    {% for tocItem in item.toc if tocItem.level <= edition.toc.deep %}
+        <li class="level-{{ tocItem.level }}">
+            <span>{{ tocItem.level != 1 ? tocItem.label : '' }}</span>
+            <a href="#{{ tocItem.slug }}">{{ tocItem.title }}</a>
         </li>
-    {% endif %}
-{% endfor %}
+    {% endfor %}
+{% elseif 2 == edition.chunk_level %}
+    {# in the following code, the 'default()' condition takes into account that
+       level-1 items don't have a parent item#}
+    {% for tocItem in toc if tocItem.level <= edition.chunk_level|default(edition.toc.deep) 
+       and tocItem.parent.slug|default(tocItem.slug) == item.parent.slug|default(item.slug) %}
+        {% if 1 == item.level and 1 == tocItem.level %}
+            {% set toc_item_url = './' ~ tocItem.slug ~ '.html' %}
+        {% elseif 1 == item.level and 2 == tocItem.level %}
+            {% set toc_item_url = './' ~ item.slug ~ '/' ~ tocItem.slug ~ '.html' %}
+        {% elseif 2 == item.level and 1 == tocItem.level %}
+            {% set toc_item_url = '../' ~ tocItem.slug ~ '.html' %}
+        {% elseif 2 == item.level and 2 == tocItem.level %}
+            {% set toc_item_url = './' ~ tocItem.slug ~ '.html' %}
+        {% endif %}
+        <li class="level-{{ tocItem.level }}">
+            <span>{{ tocItem.label }}</span>
+            <a href="{{ toc_item_url }}">{{ tocItem.title }}</a>
+        </li>
+    {% endfor %}
+{% endif %}
 </ul>
 
 {{ item.content }}
