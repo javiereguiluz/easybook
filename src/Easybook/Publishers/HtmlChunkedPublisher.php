@@ -76,7 +76,14 @@ class HtmlChunkedPublisher extends HtmlPublisher
             $element = $item['config']['element'];
 
             if (in_array($element, $elementsGeneratingPages)) {
-                $this->chunkItem($item, $toc, file_exists($customCss), $this->app->edition('chunk_level'));
+                $chunkToc = $this->chunkItem($item, $toc, file_exists($customCss), $this->app->edition('chunk_level'));
+
+                // chunk_level = 2 usually results in several book sections merged
+                // into others. To take this into account in the book index page,
+                // use the generated chunk toc instead of the regular book toc
+                if (2 == $this->app->edition('chunk_level')) {
+                    $toc = $chunkToc;
+                }
             } elseif (in_array($element, array('license', 'edition', 'title', 'cover', 'author', 'toc'))) {
                 // some special book items, such as the license or the author information,
                 // are always reserved for the index page, instead of showing them in
@@ -85,7 +92,6 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 $indexItems[$element] = $item;
             }
         }
-
         // generate index page
         file_put_contents(
             $this->app['publishing.dir.output'].'/index.html',
@@ -135,47 +141,27 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
         $this->app->set('publishing.items', $items);
 
-        // chunk level = 1 means that only <h1> sections generate HTML pages
-        // TOC is just the original list of book items
-        if (11111 == $this->app->edition('chunk_level')) {
-            foreach ($this->app['publishing.items'] as $item) {
-                if (in_array($item['config']['element'], $elementsGeneratingPages)) {
-                    $item['level'] = 1;
-                    $flattenToc[]  = $item;
-                }
-            }
+        foreach ($this->app['publishing.items'] as $item) {
+            if (in_array($item['config']['element'], $elementsGeneratingPages)) {
+                foreach ($item['toc'] as $chunk) {
+                    if (1 == $chunk['level']) {
+                        $parentChunk = $chunk;
+                        $chunk['parent'] = null;
 
-            return $flattenToc;
-        }
-
-        // chunk level = 2 means that both <h1> and <h2> sections generate HTML pages
-        // TOC must also take into account the level-2 items of each chapter/appendix
-        if (true || 2 == $this->app->edition('chunk_level')) {
-            foreach ($this->app['publishing.items'] as $item) {
-                if (in_array($item['config']['element'], $elementsGeneratingPages)) {
-                    foreach ($item['toc'] as $chunk) {
-                        if (1 == $chunk['level']) {
-                            $parentChunk = $chunk;
-                            $chunk['parent'] = null;
-
-                            // the 'config' information is needed in the template
-                            // to show the number of each chapter/appendix instead
-                            // of its label
-                            $chunk['config'] = $item['config'];
-                        } elseif (2 == $chunk['level']) {
-                            $chunk['parent'] = $parentChunk;
-                        }
-
-                        $flattenToc[] = $chunk;
+                        // the 'config' information is needed in the template
+                        // to show the number of each chapter/appendix instead
+                        // of its label
+                        $chunk['config'] = $item['config'];
+                    } elseif (2 == $chunk['level']) {
+                        $chunk['parent'] = $parentChunk;
                     }
+
+                    $flattenToc[] = $chunk;
                 }
             }
-
-            return $flattenToc;
         }
 
-        throw new \Exception("[ERROR] Unsupported chunk level\n\n"
-        ." easybook only supports the following chunk levels: 1 and 2");
+        return $flattenToc;
     }
 
     /**
@@ -191,6 +177,8 @@ class HtmlChunkedPublisher extends HtmlPublisher
      * @param  integer  $level        The chunk level of the book:
      *                                  * 1 means each <h1> section generates an HTML page
      *                                  * 2 means each <h1> and <h2> sections generate an HTML page
+     * @return  array   $toc          The toc of the chunk (it may be different than the input $toc
+     *                                because some sections are automatically merged)
      */
     private function chunkItem($item, $toc, $hasCustomCss, $level = 1)
     {
@@ -231,7 +219,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
             file_put_contents($chunkPath, $chunkContent);
 
-            return;
+            return $toc;
         }
 
         // $level = 2 means that each <h1> and <h2> sections generate an HTML page
@@ -294,7 +282,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
             //     Lorem ...
             //
             //
-            //   However, if the chapter is as follows: 
+            //   However, if the chapter is as follows:
             //
             //   <h1>1. Lorem ipsum</h2>
             //   Lorem ...
@@ -436,5 +424,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 file_put_contents($chunkPath, $chunkContent);
             }
         }
+
+        return $toc;
     }
 }
