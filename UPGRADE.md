@@ -36,6 +36,27 @@ If the command executes successfully, the following CSS will be created:
 
   <easybook-dir>/doc/the-origin-of-species/Resources/Templates/ebook/style.css
 
+### New `images_base_dir` option ###
+
+**easybook** now allows to set the base directory for web images. The default
+value (`images/`) maintains the backwards compatibility.
+
+This setting is useful for web books embedded in websites. If you want for
+example to serve book images from the `/images/books/book1/assets/` directory,
+add the `images_base_dir` option to the apropriate edition:
+
+```yml
+# config.yml
+book:
+    # ...
+
+    editions:
+        website:
+            format:          html_chunked
+            images_base_dir: /images/books/book1/assets/
+            # ...
+```
+
 ## Upgrade to easybook 4.8 ##
 
 ### Introduced a new highlight cache ###

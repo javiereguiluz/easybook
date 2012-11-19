@@ -30,11 +30,9 @@ class ImagePlugin implements EventSubscriberInterface
         $item = $event->getItem();
         $item['content'] = preg_replace_callback(
             '/<img src="(.*)"(.*) \/>/U',
-            function($matches) {
+            function ($matches) use ($event) {
                 $uri = $matches[1];
-                if ('images/' != substr($uri, 0, 7)) {
-                    $uri = 'images/'.$uri;
-                }
+                $uri = rtrim($event->app->edition('images_base_dir'), '/\\').'/'.$uri;
 
                 return sprintf('<img src="%s"%s />', $uri, $matches[2]);
             },

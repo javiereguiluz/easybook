@@ -79,6 +79,7 @@ class Application extends \Pimple
             'chunk_level'     => 1,     // used only for html_chunked format
             'highlight_cache' => false,
             'highlight_code'  => false,
+            'images_base_dir' => 'images/',
             'include_styles'  => true,
             'isbn'            => null,
             'labels'          => array('appendix', 'chapter', 'figure'),
