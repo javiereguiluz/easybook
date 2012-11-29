@@ -92,6 +92,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 $indexItems[$element] = $item;
             }
         }
+
         // generate index page
         file_put_contents(
             $this->app['publishing.dir.output'].'/index.html',
@@ -118,7 +119,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
      */
     private function flattenToc()
     {
-        $flattenToc = array();
+        $flattenedToc = array();
 
         // TODO: the elements that generate a page should be configurable
         // Elements not included in this array (such as license, title, and author)
@@ -139,29 +140,48 @@ class HtmlChunkedPublisher extends HtmlPublisher
             $items[] = $item;
         }
 
-        $this->app->set('publishing.items', $items);
+        // calculate the absolute URL of each book chunk and generate the flattened TOC
+        $bookSlug = $this->app->get('publishing.book.slug');
+        $previousItems = $items;
+        $items = array();
+        foreach ($previousItems as $item) {
+            $itemToc = array();
+            foreach ($item['toc'] as $chunk) {
+                if (array_key_exists('level', $chunk) && 1 == $chunk['level']) {
+                    // set the absolute URL of the chunk
+                    $chunk['url'] = sprintf('/%s/%s.html', $bookSlug, $chunk['slug']);
 
-        foreach ($this->app['publishing.items'] as $item) {
-            if (in_array($item['config']['element'], $elementsGeneratingPages)) {
-                foreach ($item['toc'] as $chunk) {
-                    if (1 == $chunk['level']) {
-                        $parentChunk = $chunk;
-                        $chunk['parent'] = null;
+                    $chunk['parent'] = null;
+                    $parentChunk = $chunk;
 
-                        // the 'config' information is needed in the template
-                        // to show the number of each chapter/appendix instead
-                        // of its label
-                        $chunk['config'] = $item['config'];
-                    } elseif (2 == $chunk['level']) {
-                        $chunk['parent'] = $parentChunk;
+                    // item 'config' information may come handy in the templates
+                    $chunk['config'] = $item['config'];
+                } elseif (array_key_exists('level', $chunk) && 2 == $chunk['level']) {
+                    // set the absolute URL of the chunk
+                    if (1 == $this->app->edition('chunk_level')) {
+                        $chunk['url'] = sprintf('/%s/%s.html#%s', $bookSlug, $parentChunk['slug'], $chunk['slug']);
+                    } elseif (2 == $this->app->edition('chunk_level')) {
+                        $chunk['url'] = sprintf('/%s/%s/%s.html', $bookSlug, $parentChunk['slug'], $chunk['slug']);
                     }
 
-                    $flattenToc[] = $chunk;
+                    $chunk['parent'] = $parentChunk;
+                }
+
+                $itemToc[] = $chunk;
+
+                // only some book elements generate chunked HTML pages
+                if (in_array($item['config']['element'], $elementsGeneratingPages)) {
+                    $flattenedToc[] = $chunk;
                 }
             }
+
+            $item['toc'] = $itemToc;
+            $items[] = $item;
         }
 
-        return $flattenToc;
+        $this->app->set('publishing.items', $items);
+
+        return $flattenedToc;
     }
 
     /**
@@ -204,10 +224,17 @@ class HtmlChunkedPublisher extends HtmlPublisher
             }
 
             // calculate the URL of the previous and next items
-            $previous = array_key_exists($position-1, $toc) ? $toc[$position-1] : array('slug' => 'index');
-            $previous['url'] = sprintf('./%s.html', $previous['slug']);
-            $next = array_key_exists($position+1, $toc) ? $toc[$position+1] : null;
-            if (null != $next) { $next['url'] = sprintf('./%s.html', $next['slug']); }
+            $previous = array_key_exists($position-1, $toc)
+                ? $toc[$position-1]
+                : array(
+                    'level' => 1,
+                    'slug'  => 'index',
+                    'url'   => sprintf('/%s/index.html', $this->app->get('publishing.book.slug'))
+                );
+
+            $next = array_key_exists($position+1, $toc)
+                ? $toc[$position+1]
+                : null;
 
             $chunkContent = $this->app->render('chunk.twig', array(
                 'item'     => $item,
@@ -370,23 +397,18 @@ class HtmlChunkedPublisher extends HtmlPublisher
                     $chunkDirectory = $this->app['publishing.dir.output'].'/'.$itemChunk['slug'];
                     $chunkPath = $this->app['publishing.dir.output'].'/'.$itemChunk['slug'].'.html';
 
-                    // calculate the URL of the previous and next items
+                    // get the previous and next items
                     $previous = array_key_exists($position-1, $toc)
                         ? $toc[$position-1]
-                        : array('level' => 1, 'slug' => 'index');
+                        : array(
+                            'level' => 1,
+                            'slug'  => 'index',
+                            'url'   => sprintf('/%s/index.html', $this->app->get('publishing.book.slug'))
+                        );
 
-                    if (1 == $previous['level']) {
-                        $previous['url'] = sprintf('./%s.html', $previous['slug']);
-                    } elseif (2 == $previous['level']) {
-                        $previous['url'] = sprintf('./%s/%s.html', $previous['parent']['slug'], $previous['slug']);
-                    }
-
-                    $next = array_key_exists($position+1, $toc) ? $toc[$position+1] : null;
-                    if (null != $next && 1 == $next['level']) {
-                        $next['url'] = sprintf('./%s.html', $next['slug']);
-                    } elseif (null != $next && 2 == $next['level']) {
-                        $next['url'] = sprintf('./%s/%s.html', $parentChunk['slug'], $next['slug']);
-                    }
+                    $next = array_key_exists($position+1, $toc)
+                        ? $toc[$position+1]
+                        : null;
                 }
                 elseif (2 == $itemChunk['level']) {
                     if (!file_exists($chunkDirectory)) {
@@ -395,22 +417,18 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
                     $chunkPath = $chunkDirectory.'/'.$itemChunk['slug'].'.html';
 
-                    // calculate the URL of the previous and next items
+                    // get the previous and next items
                     $previous = array_key_exists($position-1, $toc)
                         ? $toc[$position-1]
-                        : array('level' => 1, 'slug' => null, 'url' => './index.html');
-                    if (1 == $previous['level']) {
-                        $previous['url'] = sprintf('../%s.html', $previous['slug']);
-                    } elseif (2 == $previous['level']) {
-                        $previous['url'] = sprintf('../%s/%s.html', $parentChunk['slug'], $previous['slug']);
-                    }
+                        : array(
+                            'level' => 1,
+                            'slug'  => 'index',
+                            'url'   => sprintf('/%s/index.html', $this->app->get('publishing.book.slug'))
+                        );
 
-                    $next = array_key_exists($position+1, $toc) ? $toc[$position+1] : null;
-                    if (null != $next && 1 == $next['level']) {
-                        $next['url'] = sprintf('../%s.html', $next['slug']);
-                    } elseif (null != $next && 2 == $next['level']) {
-                        $next['url'] = sprintf('../%s/%s.html', $parentChunk['slug'], $next['slug']);
-                    }
+                    $next = array_key_exists($position+1, $toc)
+                        ? $toc[$position+1]
+                        : null;
                 }
 
                 $chunkContent = $this->app->render('chunk.twig', array(
