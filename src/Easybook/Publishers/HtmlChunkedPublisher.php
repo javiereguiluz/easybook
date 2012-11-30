@@ -69,7 +69,6 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 true
             );
         }
-
         // generate chunks for chapters and appendices
         $toc = $this->flattenToc();
         foreach ($this->app['publishing.items'] as $item) {
@@ -133,7 +132,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         // chapter-1.html instead of introduction-to-lorem-ipsum.html
         $items = array();
         foreach ($this->app['publishing.items'] as $item) {
-            $newSlug = $this->app->get('slugger')->slugify(trim($item['label']), array('unique' => false));
+            $newSlug = $this->app->get('slugger')->slugify(trim($item['label']), null, null, false);
             $item['slug'] = $newSlug;
             $item['toc'][0]['slug'] = $newSlug;
 

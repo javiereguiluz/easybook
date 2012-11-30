@@ -14,21 +14,34 @@ namespace Easybook\Util;
 class Slugger
 {
     private $app;
-    private $options;
+    private $separator;
+    private $prefix;
+    private $unique;
 
     public function __construct($app)
     {
         $this->app = $app;
+
+        $this->separator = $app['slugger.options']['separator'];
+        $this->prefix    = $app['slugger.options']['prefix'];
+        $this->unique    = $app['slugger.options']['unique'];
     }
 
-    // adapted from http://cubiq.org/the-perfect-php-clean-url-generator
-    public function slugify($string, $options = array())
+    /**
+     * Transforms the original string in a web-safe slug.
+     * Code adapted from http://cubiq.org/the-perfect-php-clean-url-generator
+     *
+     * @param  string  $string    The string to slug
+     * @param  string  $separator Used between words and instead of illegal characters
+     * @param  string  $prefix    Prefix to be appended at the beginning of the slug
+     * @param  boolean $unique    Should this slug be unique across the entire book?
+     * @return string             The generated slug
+     */
+    public function slugify($string, $separator = null, $prefix = null, $unique = null)
     {
-        $this->options = array_merge(array(
-            'separator' => '-',  // used between words and instead of illegal characters
-            'prefix'    => '',   // prefix to be appended at the beginning of the slug
-            'unique'    => true, // should this slug be unique across the entire book?
-        ), $options);
+        $this->separator = null === $separator ? $this->separator : $separator;
+        $this->prefix    = null === $prefix    ? $this->prefix    : $prefix;
+        $this->unique    = null === $unique    ? $this->unique    : $unique;
 
         $string = strip_tags($string);
         $string = $this->transliterate($string);
@@ -52,20 +65,20 @@ class Slugger
         }
 
         $slug = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $slug);
-        $slug = strtolower(trim($slug, $this->options['separator']));
-        $slug = preg_replace("/[\/_|+ -]+/", $this->options['separator'], $slug);
+        $slug = strtolower(trim($slug, $this->separator));
+        $slug = preg_replace("/[\/_|+ -]+/", $this->separator, $slug);
 
-        $slug = $this->options['prefix'].$slug;
+        $slug = $this->prefix.$slug;
 
         // $slugs array must hold original slugs, without unique substring
         $slugs = $this->app->append('publishing.slugs', $slug);
 
-        if ($this->options['unique']) {
+        if ($this->unique) {
             $occurrences = array_count_values($slugs);
 
             $count = $occurrences[$slug];
             if ($count > 1) {
-                $slug .= $this->options['separator'].(++$count);
+                $slug .= $this->separator.(++$count);
             }
         }
 

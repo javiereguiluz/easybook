@@ -347,6 +347,12 @@ class Application extends \Pimple
         });
 
         // -- slugger ---------------------------------------------------------
+        $this['slugger.options'] = array(
+            'separator' => '-',  // used between words and instead of illegal characters
+            'prefix'    => '',   // prefix to be appended at the beginning of the slug
+            'unique'    => true, // should this slug be unique across the entire book?
+        );
+
         $this['slugger'] = $app->share(function () use ($app) {
             return new Slugger($app);
         });
