@@ -124,7 +124,7 @@ class Epub2Publisher extends HtmlPublisher
         // generate one HTML page for every book item
         $items = array();
         foreach ($this->app['publishing.items'] as $item) {
-            $this->app->render('@theme/chunk.twig', array(
+            $this->app->render('chunk.twig', array(
                     'item'           => $item,
                     'has_custom_css' => file_exists($customCss),
                 ),
@@ -170,14 +170,14 @@ class Epub2Publisher extends HtmlPublisher
         }
 
         // generate book cover
-        $this->app->render('@theme/cover.twig', array(
+        $this->app->render('cover.twig', array(
                 'cover' => $cover
             ),
             $bookTempDir.'/book/OEBPS/titlepage.html'
         );
 
         // generate OPF file
-        $this->app->render('@theme/content.opf.twig', array(
+        $this->app->render('content.opf.twig', array(
                 'cover'          => $cover,
                 'has_custom_css' => file_exists($customCss),
                 'fonts'          => $bookFonts,
@@ -187,15 +187,15 @@ class Epub2Publisher extends HtmlPublisher
         );
 
         // generate NCX file
-        $this->app->render('@theme/toc.ncx.twig', array(),
+        $this->app->render('toc.ncx.twig', array(),
             $bookTempDir.'/book/OEBPS/toc.ncx'
         );
 
         // generate container.xml and mimetype files
-        $this->app->render('@theme/container.xml.twig', array(),
+        $this->app->render('container.xml.twig', array(),
             $bookTempDir.'/book/META-INF/container.xml'
         );
-        $this->app->render('@theme/mimetype.twig', array(),
+        $this->app->render('mimetype.twig', array(),
             $bookTempDir.'/book/mimetype'
         );
 
