@@ -475,6 +475,8 @@ class Application extends \Pimple
     {
         $twig = new \Twig_Environment(new \Twig_Loader_String(), $this->get('twig.options'));
 
+        $twig->addGlobal('app', $this);
+
         if (null != $this->get('book')) {
             $twig->addGlobal('book', $this->get('book'));
 
