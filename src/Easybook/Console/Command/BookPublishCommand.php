@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Process\Process;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Util\Validator;
@@ -87,6 +87,9 @@ class BookPublishCommand extends BaseCommand
         // register easybook and custom book plugins
         $this->registerPlugins();
 
+        // execute the 'before_publish' scripts
+        $this->runScripts($this->app->edition('before_publish'));
+
         // book publishing starts
         $this->app->dispatch(Events::PRE_PUBLISH, new BaseEvent($this->app));
         $output->writeln(array(
@@ -104,6 +107,9 @@ class BookPublishCommand extends BaseCommand
         // book publishing finishes
         $this->app->dispatch(Events::POST_PUBLISH, new BaseEvent($this->app));
 
+        // execute the 'after_publish' scripts
+        $this->runScripts($this->app->edition('after_publish'));
+
         $output->writeln(array(
             ' <bg=green;fg=black> OK </> You can access the book in the following directory:',
             ' <comment>'.realpath($this->app['publishing.dir.output']).'</comment>',
@@ -113,6 +119,47 @@ class BookPublishCommand extends BaseCommand
                 number_format($this->app['app.timer.finish'] - $this->app['app.timer.start'], 1)
             )
         ));
+    }
+
+    /**
+     * Run the given scripts before/after the book publication.
+     *
+     * @param  array|string $scripts The list of scripts to be executed
+     *
+     * @return void
+     *
+     * @throws RuntimeException if any script execution produces an error.
+     */
+    private function runScripts($scripts)
+    {
+        if (null == $scripts) {
+            return;
+        }
+
+        if (is_array($scripts)) {
+            foreach ($scripts as $script) {
+                $this->runScripts($script);
+            }
+
+            return;
+        }
+
+        $process = new Process(
+            $this->app->renderString($scripts),
+            $this->app->get('publishing.dir.book')
+        );
+        $process->run();
+
+        if ($process->isSuccessful()) {
+            echo $process->getOutput();
+        } else {
+            throw new \RuntimeException(sprintf(
+                "There was an error executing the following script: \n"
+                ."  %s\n\n"
+                ."  %s\n",
+                $scripts, $process->getErrorOutput()
+            ));
+        }
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)
