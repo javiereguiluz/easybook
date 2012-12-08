@@ -71,6 +71,8 @@ class HtmlChunkedPublisher extends HtmlPublisher
         }
         // generate chunks for chapters and appendices
         $toc = $this->flattenToc();
+        $this->app->set('publishing.book.toc', $toc);
+
         foreach ($this->app['publishing.items'] as $item) {
             $element = $item['config']['element'];
 
@@ -130,9 +132,11 @@ class HtmlChunkedPublisher extends HtmlPublisher
         // slugs. easybook follows the much more usual practice of naming them
         // using their labels. Therefore, chapter 1 page will be named
         // chapter-1.html instead of introduction-to-lorem-ipsum.html
+        // The only exception happens when the book has disabled labels. Then,
+        // the item slug is used.
         $items = array();
         foreach ($this->app['publishing.items'] as $item) {
-            $newSlug = $this->app->get('slugger')->slugify(trim($item['label']), null, null, false);
+            $newSlug = $this->app->get('slugger')->slugify(trim($item['label'] ?: $item['slug']), null, null, false);
             $item['slug'] = $newSlug;
             $item['toc'][0]['slug'] = $newSlug;
 
@@ -374,18 +378,21 @@ class HtmlChunkedPublisher extends HtmlPublisher
                     $itemChunk['parent'] = $parentChunk;
                 }
 
-                // filter the flatten TOC to only consider level 1 elements
+                // filter the flatten TOC to only consider level 1 and 2 elements
                 $toc = array_filter($toc, function ($element) {
-                    return 1 == $element['level'] || 2 == $element['level'];
+                    return 1 === $element['level'] || 2 === $element['level'];
                 });
                 // needed to recreate sequential numeric keys lost when
                 // filtering the original TOC
                 $toc = array_values($toc);
 
+                // update the book TOC with this new filtered TOC
+                $this->app->set('publishing.book.toc', $toc);
+
                 // look for this item in the flatten TOC (to get 'next' and 'previous' items)
                 $position = -1;
                 foreach ($toc as $i => $entry) {
-                    if ($itemChunk['slug'] == $entry['slug']) {
+                    if (array_key_exists('url', $itemChunk) && $itemChunk['url'] == $entry['url']) {
                         $position = $i;
                         break;
                     }
