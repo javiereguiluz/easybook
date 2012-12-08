@@ -123,6 +123,8 @@ class Application extends \Pimple
         $this['publishing.active_item.toc'] = array();
         $this['publishing.book.slug']       = '';
         $this['publishing.book.items']      = array();
+        // the real TOC used to generate the book (needed for html_chunked editions)
+        $this['publishing.book.toc']        = array();
         // holds all the generated slugs, to avoid repetitions
         $this['publishing.slugs']           = array();
         // holds all the internal links (used in html_chunked and epub editions)
