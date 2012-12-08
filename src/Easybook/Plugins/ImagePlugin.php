@@ -32,7 +32,7 @@ class ImagePlugin implements EventSubscriberInterface
             '/<img src="(.*)"(.*) \/>/U',
             function ($matches) use ($event) {
                 $uri = $matches[1];
-                $uri = rtrim($event->app->edition('images_base_dir'), '/\\').'/'.$uri;
+                $uri = $event->app->edition('images_base_dir').$uri;
 
                 return sprintf('<img src="%s"%s />', $uri, $matches[2]);
             },
