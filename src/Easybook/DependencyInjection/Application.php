@@ -76,8 +76,10 @@ class Application extends \Pimple
         // TODO: should each edition type define different default values?
         $this['app.edition.defaults'] = array(
             'format'          => 'html',
+            'chunk_level'     => 1,     // used only for html_chunked format
             'highlight_cache' => false,
             'highlight_code'  => false,
+            'images_base_dir' => 'images/',
             'include_styles'  => true,
             'isbn'            => null,
             'labels'          => array('appendix', 'chapter', 'figure'),
@@ -121,6 +123,8 @@ class Application extends \Pimple
         $this['publishing.active_item.toc'] = array();
         $this['publishing.book.slug']       = '';
         $this['publishing.book.items']      = array();
+        // the real TOC used to generate the book (needed for html_chunked editions)
+        $this['publishing.book.toc']        = array();
         // holds all the generated slugs, to avoid repetitions
         $this['publishing.slugs']           = array();
         // holds all the internal links (used in html_chunked and epub editions)
@@ -345,6 +349,12 @@ class Application extends \Pimple
         });
 
         // -- slugger ---------------------------------------------------------
+        $this['slugger.options'] = array(
+            'separator' => '-',  // used between words and instead of illegal characters
+            'prefix'    => '',   // prefix to be appended at the beginning of the slug
+            'unique'    => true, // should this slug be unique across the entire book?
+        );
+
         $this['slugger'] = $app->share(function () use ($app) {
             return new Slugger($app);
         });
@@ -464,6 +474,8 @@ class Application extends \Pimple
     public function renderString($string, $variables = array())
     {
         $twig = new \Twig_Environment(new \Twig_Loader_String(), $this->get('twig.options'));
+
+        $twig->addGlobal('app', $this);
 
         if (null != $this->get('book')) {
             $twig->addGlobal('book', $this->get('book'));

@@ -1,3 +1,8 @@
+{% if item.caption == '*' %}
+<span class="image{{ item.align ? ' '~item.align : '' }}">
+    {{ item.content|replace( {'alt="*"': ''} ) }}    
+</span>
+{% else %}
 <div class="figure{{ item.align ? ' '~item.align : '' }}" id="{{ item.slug }}">
     {{ item.content }}
 
@@ -5,3 +10,4 @@
     <p class="caption"><strong>{{ item.label }}</strong> {{ item.caption }}</p>
 {% endif %}
 </div>
+{% endif %}

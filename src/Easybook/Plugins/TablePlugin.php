@@ -50,7 +50,7 @@ class TablePlugin implements EventSubscriberInterface
                 );
 
                 // the publishing edition wants to label tables
-                if (in_array('table', $event->app->edition('labels'))) {
+                if (in_array('table', $event->app->edition('labels') ?: array())) {
                     $label = $event->app->getLabel('table', $parameters);
                     $parameters['item']['label'] = $label;
                 }
