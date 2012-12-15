@@ -111,11 +111,10 @@ class Epub2Publisher extends HtmlPublisher
                 ? $item['config']['element'].' '.$item['config']['number']
                 : $item['config']['element'];
 
-            $slug = $this->app->get('slugger')->slugify(trim($pageName));
+            $fileName = $this->app->get('slugger')->slugify(trim($pageName));
 
-            $item['slug'] = $slug;
             // TODO: document this new item property
-            $item['fileName'] = $slug.'.html';
+            $item['fileName'] = $fileName.'.html';
             $items[] = $item;
         }
         // update `publishing items` with the new slug value
