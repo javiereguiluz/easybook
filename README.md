@@ -36,8 +36,6 @@ permissions.
 ### 2. Composer installation ###
 
 ```
-# create a directory for easybook
-$ mkdir easybook
 
 # install easybook and all its dependencies in 'easybook' directory
 $ composer create-project easybook/easybook easybook
