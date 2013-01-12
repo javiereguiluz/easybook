@@ -30,27 +30,31 @@ class CodePlugin implements EventSubscriberInterface
         $item = $event->getItem();
         // regexp copied from PHP-Markdown
         $item['original'] = preg_replace_callback('{
-                (?:\n\n|\A\n?)
-                (?<code>	       # $1 = the code block -- one or more lines, starting with a space/tab
-                    (?>
-                        [ ]{4}     # Lines must start with a tab or a tab-width of spaces
-                        .*\n+
-                    )+
+                (?:\n(?<indent>(?:[ ]{4})*)\n|\A\n?)
+                (?<code>                    # $1 = the code block -- one or more lines, starting with a space/tab
+                    (?:(?>
+                        ^\g{indent}[ ]{4}   # Lines must start with a tab or a tab-width of spaces
+                        .*\n
+                    ))*
+                    (?:(?>
+                        ^\g{indent}[ ]{4}   # Lines must start with a tab or a tab-width of spaces
+                        .*
+                    ))
                 )
-                ((?=^[ ]{0,4}\S)|\Z) # Lookahead for non-space at line-start, or end of doc
             }xm',
-            function($matches) use ($event) {
-                $code = trim($matches['code']);
+            function ($matches) use ($event) {
+                $code = $matches['code'];
+                $indent = $matches['indent'];
 
                 // outdent codeblock
-                $code = preg_replace('/^(\t|[ ]{1,4})/m', '', $code);
+                $code = preg_replace('/^(' . $indent . '[ ]{4})/m', '', $code);
 
                 // if present, strip code language declaration ([php], [js], ...)
                 $language = 'code';
                 $code = preg_replace_callback('{
                         ^\[(?<lang>.*)\]\n(?<code>.*)
                     }x',
-                    function($matches) use (&$language) {
+                    function ($matches) use (&$language) {
                         $language = trim($matches['lang']);
 
                         return $matches['code'];
@@ -61,20 +65,19 @@ class CodePlugin implements EventSubscriberInterface
                 // highlight code if the edition wants to
                 if ($event->app->edition('highlight_code')) {
                     $code = $event->app->highlight($code, $language);
-                }
-                // escape code to show it instead of interpreting it
+                } // escape code to show it instead of interpreting it
                 else {
                     // yaml-style comments could be interpreted as Markdown headings
                     // replace any starting # character by its HTML entity (&#35;)
                     $code = '<pre>'
-                            .preg_replace('/^# (.*)/', "&#35; $1", htmlspecialchars($code))
-                            .'</pre>';
+                        . preg_replace('/^# (.*)/', "&#35; $1", htmlspecialchars($code))
+                        . '</pre>';
                 }
 
                 // the publishing edition wants to label codeblocks
                 // TODO
 
-                return $event->app->render('code.twig', array(
+                $code = $event->app->render('code.twig', array(
                     'item' => array(
                         'content'  => $code,
                         'language' => $language,
@@ -82,6 +85,9 @@ class CodePlugin implements EventSubscriberInterface
                         'slug'     => ''
                     )
                 ));
+
+                // indent code block
+                return "\n$indent\n$indent" . str_replace("\n", "\n" . $indent, $code);
 
             },
             $item['original']
