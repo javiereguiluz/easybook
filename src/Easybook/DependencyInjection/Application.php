@@ -95,7 +95,8 @@ class Application extends \Pimple
                 'deep'        => 2,
                 'elements'    => array('appendix', 'chapter')
             ),
-            'two_sided'       => true
+            'two_sided'       => true,
+            'use_html_toc'    => false
         );
 
         // -- console ---------------------------------------------------------
