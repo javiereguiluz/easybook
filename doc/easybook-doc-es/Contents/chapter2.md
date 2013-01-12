@@ -143,6 +143,7 @@ llamadas `ebook`, `print`, `web` y `website` con las siguientes opciones:
                 highlight_cache: false
                 highlight_code:  false
                 include_styles:  true
+                use_html_toc:    false
                 labels:          ['appendix', 'chapter']  # labels also available for: "figure", "table"
                 toc:
                     deep:        1
@@ -192,7 +193,7 @@ opción `format`:
   directorio llamado `book`
 
 Cada tipo de edición define sus propias opciones de configuración. Los tipos
-`epub`, `html` y `html_chunked` disponen de las mismas opciones:
+`epub`, `html` y `html_chunked` tienen las mismas opciones comunes:
 
   * `highlight_cache`, esta opción sólo es útil para los libros técnicos sobre
     programación. Si vale `true`, se guardan en una cache todos los listados de
@@ -220,6 +221,20 @@ Cada tipo de edición define sus propias opciones de configuración. Los tipos
     * `elements`, indica el tipo de contenidos que se incluyen en el índice
     (por defecto sólo se muestran, si las hay, las secciones y los títulos de
     apéndices y capítulos).
+
+El tipo `epub`, además, tiene la opción siguiente dentro de `toc`:
+
+  * `use_html_toc`, permite incluir un índice de contenidos html en el ebook.
+  Se trata de un índice de contenidos que se presenta al lector como una página
+  con enlaces para navegar directamente a cada elemento, y es distinta del índice
+  de contenidos que presenta el programa o dispositivo de lectura al elegir la
+  opción correspondiente. Normalmente los ebooks en formato epub no incluyen 
+  este tipo de índice, aunque en algún caso puede ser necesario (por ejemplo,
+  si el epub se va a convertir a formato mobi para Amazon Kindle, es necesario
+  que incluya este tipo de índice de contenidos para cumplir con las 
+  [Directrices de Publicación para Kindle][kpg]).
+  
+[kpg]: http://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf  
 
 Por su parte, el tipo de edición `pdf` dispone de las siguientes opciones:
 

@@ -27,3 +27,18 @@ book:
         website:
             extends:        web
             format:         html_chunked
+
+        ebook:
+            format:         epub
+            labels:         ['appendix', 'chapter', 'figure', 'table']
+            toc:
+                deep:       2
+                elements:   ["appendix", "chapter"]
+
+        ebook-with-html-toc:
+            format:         epub
+            use_html_toc:   true
+            labels:         ['appendix', 'chapter', 'figure', 'table']
+            toc:
+                deep:       2
+                elements:   ["appendix", "chapter"]
