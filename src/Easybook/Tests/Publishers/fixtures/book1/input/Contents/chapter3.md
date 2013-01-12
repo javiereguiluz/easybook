@@ -61,7 +61,7 @@ Technically, plugins are based on the subscribers defined by the event dispatche
     use Symfony\Component\EventDispatcher\EventSubscriberInterface;
     use Easybook\Events\EasybookEvents as Events;
     use Easybook\Events\BaseEvent;
-
+    
     class TimerPlugin implements EventSubscriberInterface
     {
         static public function getSubscribedEvents()
@@ -71,12 +71,12 @@ Technically, plugins are based on the subscribers defined by the event dispatche
                 Events::POST_PUBLISH => 'onFinish',
             );
         }
-
+    
         public function onStart(BaseEvent $event)
         {
             $event->app->set('app.timer.start', microtime(true));
         }
-
+    
         public function onFinish(BaseEvent $event)
         {
             $event->app->set('app.timer.finish', microtime(true));
@@ -99,12 +99,12 @@ The methods that are executed in response to events receive as first parameter a
 
 You can access any property and service application through the event object using `$event-> app`, as shown below:
 
-        // ...
-        
-        public function onStart(BaseEvent $event)
-        {
-            $event->app->set('app.timer.start', microtime(true));
-        }
+    // ...
+    
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime(true));
+    }
 
 If you want to add plugins to your own book, create a directory called `Plugins` inside the `Resources` directory of your book (create the latter one if it doesn't exist). Then add as many PHP classes as you want, but make their name always end in `Plugin.php`. Do not add any namespace to your plugin classes.
 
@@ -114,7 +114,7 @@ The following example shows a plugin that modifies the contents of the book befo
     use Symfony\Component\EventDispatcher\EventSubscriberInterface;
     use Easybook\Events\EasybookEvents as Events;
     use Easybook\Events\ParseEvent;
-
+    
     class BrandingPlugin implements EventSubscriberInterface
     {
         static public function getSubscribedEvents()

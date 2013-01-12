@@ -78,7 +78,7 @@ Editions are defined under the `editions` options in `config.yml` file. By defau
                 toc:
                     deep:       2
                     elements:   ["appendix", "chapter"]
-
+    
             web:
                 format:         html
                 auto_label:     true
@@ -138,7 +138,7 @@ Imagine for example you want to publish one PDF book with three slightly differe
                 toc:
                     deep:     2
                     elements: ['appendix', 'chapter']
-
+    
             draft:
                 extends:      print
                 two_sided:    true

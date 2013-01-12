@@ -2,6 +2,8 @@
 
 **easybook** is an application that lets you easily publish books in various electronic formats. Originally it was designed to publish technical programming books, but you can use **easyboook** to publish any kind of book, manual or documentation.
 
+![Lorem ipsum dolor sit amet](placeholder.png)
+
 Before using **easybook** check that you have installed and configured PHP 5.3.2 or higher on your computer. If you do not understand the previous sentence, ask advice from a computer savvy friend and send him the link to this page. You can check your installed PHP version executing the following command on the console:
 
     php -v
@@ -40,10 +42,10 @@ If everything is fine, **easybook** should welcome you with the following messag
     |---',---|`---.|   ||   ||   ||   ||  \ 
     `---'`---^`---'`---|`---'`---'`---'`   `
                    `---'
-
+    
     easybook is the easiest and fastest tool to generate
     technical documentation, books, manuals and websites.
-
+    
     Available commands:
       help      Displays help for a command
       list      Lists commands
@@ -56,14 +58,14 @@ If you find any issue running `./book` script, try running it as `php book`. If 
 The `./book` script is the unique *entry point* for every **easybook** command. If you need to know for example the installed version, just run the `version` command through `book` script:
 
     $ ./book version
-
-
+    
+    
                         |              |    
     ,---.,---.,---.,   .|---.,---.,---.|__/ 
     |---',---|`---.|   ||   ||   ||   ||  \ 
     `---'`---^`---'`---|`---'`---'`---'`   `
                    `---'
-
+    
     easybook installed version: 4.0
 
 ## Creating the book ##
@@ -215,9 +217,9 @@ In the previous sections we've mentioned the `author` configuration option. In f
         edition:          "First edition"
         language:         en
         publication_date: ~
-
+    
         generator: { name: easybook, version: 4.0 }
-
+    
         contents:
             # available element types: acknowledgement, appendix, author, chapter,
             # cover, dedication, edition, license, part, title, toc
@@ -225,7 +227,7 @@ In the previous sections we've mentioned the `author` configuration option. In f
             - { element: toc   }
             - { element: chapter, number: 1, content: chapter1.md }
             - { element: chapter, number: 2, content: chapter2.md }
-
+    
         editions:
             print:
                 # (this is a complex option, we'll see it later)

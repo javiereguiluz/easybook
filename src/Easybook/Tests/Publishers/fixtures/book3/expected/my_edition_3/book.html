@@ -40,6 +40,13 @@
     <h1><strong>Chapter 1</strong> Publishing your first book (<a href="publishing-your-first-book">&sect;</a>)</h1>
     <div><p><strong>easybook</strong> is an application that lets you easily publish books in various electronic formats. Originally it was designed to publish technical programming books, but you can use <strong>easyboook</strong> to publish any kind of book, manual or documentation.</p>
 
+<div class="figure" id="figure-1-1">
+    <img src="images/placeholder.png" alt="Lorem ipsum dolor sit amet" />
+
+    <p class="caption"><strong>Figure 1.1</strong> Lorem ipsum dolor sit amet</p>
+</div>
+
+
 <p>Before using <strong>easybook</strong> check that you have installed and configured PHP 5.3.2 or higher on your computer. If you do not understand the previous sentence, ask advice from a computer savvy friend and send him the link to this page. You can check your installed PHP version executing the following command on the console:</p>
 
 <div class="code code">
@@ -84,7 +91,7 @@
 <p>If everything is fine, <strong>easybook</strong> should welcome you with the following message:</p>
 
 <div class="code code">
-<pre>|              |    
+<pre>                    |              |    
 ,---.,---.,---.,   .|---.,---.,---.|__/ 
 |---',---|`---.|   ||   ||   ||   ||  \ 
 `---'`---^`---'`---|`---'`---'`---'`   `
@@ -428,9 +435,11 @@ easybook installed version: 4.0</pre>
             include_styles: true
             toc:
                 deep:       2
-                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]
+                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]</pre>
+</div>
 
-        website:
+<div class="code code">
+<pre>        website:
             extends:        web
             format:         html_chunked</pre>
 </div>
@@ -499,9 +508,11 @@ easybook installed version: 4.0</pre>
                 top:      15mm
                 bottom:   15mm
                 inner:    20mm
-                outter:   10mm
+                outter:   10mm</pre>
+</div>
 
-        lulu:
+<div class="code code">
+<pre>        lulu:
             extends:      print
             two_sided:    true</pre>
 </div>
@@ -560,13 +571,19 @@ easybook installed version: 4.0</pre>
 <p>See for example the template used to decorate each chapter of a PDF book:</p>
 
 <div class="code code">
-<pre>&lt;div class=&quot;page:chapter new-page&quot;&gt;
+<pre>&lt;div class=&quot;page:chapter new-page&quot;&gt;</pre>
+</div>
 
-&lt;h1 id=&quot;{{ item.slug }}&quot;&gt;&lt;span&gt;{{ item.label }}&lt;/span&gt; {{ item.title }}&lt;/h1&gt;
+<div class="code code">
+<pre>&lt;h1 id=&quot;{{ item.slug }}&quot;&gt;&lt;span&gt;{{ item.label }}&lt;/span&gt; {{ item.title }}&lt;/h1&gt;</pre>
+</div>
 
-{{ item.content }}
+<div class="code code">
+<pre>{{ item.content }}</pre>
+</div>
 
-&lt;/div&gt;</pre>
+<div class="code code">
+<pre>&lt;/div&gt;</pre>
 </div>
 
 <p>The data of the content being decorated are accessible through a special variable called <code>item</code>, which holds the following properties:</p>
@@ -783,11 +800,11 @@ class TimerPlugin implements EventSubscriberInterface
 
 <div class="code code">
 <pre>// ...
-    
-    public function onStart(BaseEvent $event)
-    {
-        $event-&gt;app-&gt;set('app.timer.start', microtime(true));
-    }</pre>
+
+public function onStart(BaseEvent $event)
+{
+    $event-&gt;app-&gt;set('app.timer.start', microtime(true));
+}</pre>
 </div>
 
 <p>If you want to add plugins to your own book, create a directory called <code>Plugins</code> inside the <code>Resources</code> directory of your book (create the latter one if it doesn't exist). Then add as many PHP classes as you want, but make their name always end in <code>Plugin.php</code>. Do not add any namespace to your plugin classes.</p>

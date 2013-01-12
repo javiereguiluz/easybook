@@ -141,10 +141,10 @@ class TimerPlugin implements EventSubscriberInterface
 <div class="code code">
 <pre class="code">// ...
 &nbsp;
-    public function onStart(BaseEvent $event)
-    {
-        $event-&gt;app-&gt;set('app.timer.start', microtime(true));
-    }</pre>
+public function onStart(BaseEvent $event)
+{
+    $event-&gt;app-&gt;set('app.timer.start', microtime(true));
+}</pre>
 </div>
 
 <p>If you want to add plugins to your own book, create a directory called <code>Plugins</code> inside the <code>Resources</code> directory of your book (create the latter one if it doesn't exist). Then add as many PHP classes as you want, but make their name always end in <code>Plugin.php</code>. Do not add any namespace to your plugin classes.</p>

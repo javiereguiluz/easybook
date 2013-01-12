@@ -125,9 +125,11 @@
             include_styles: true
             toc:
                 deep:       2
-                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]
-&nbsp;
-        website:
+                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]</pre>
+</div>
+
+<div class="code code">
+<pre class="code">        website:
             extends:        web
             format:         html_chunked</pre>
 </div>
@@ -196,9 +198,11 @@
                 top:      15mm
                 bottom:   15mm
                 inner:    20mm
-                outter:   10mm
-&nbsp;
-        lulu:
+                outter:   10mm</pre>
+</div>
+
+<div class="code code">
+<pre class="code">        lulu:
             extends:      print
             two_sided:    true</pre>
 </div>
@@ -257,13 +261,19 @@
 <p>See for example the template used to decorate each chapter of a PDF book:</p>
 
 <div class="code code">
-<pre class="code">&lt;div class=&quot;page:chapter new-page&quot;&gt;
-&nbsp;
-&lt;h1 id=&quot;{{ item.slug }}&quot;&gt;&lt;span&gt;{{ item.label }}&lt;/span&gt; {{ item.title }}&lt;/h1&gt;
-&nbsp;
-{{ item.content }}
-&nbsp;
-&lt;/div&gt;</pre>
+<pre class="code">&lt;div class=&quot;page:chapter new-page&quot;&gt;</pre>
+</div>
+
+<div class="code code">
+<pre class="code">&lt;h1 id=&quot;{{ item.slug }}&quot;&gt;&lt;span&gt;{{ item.label }}&lt;/span&gt; {{ item.title }}&lt;/h1&gt;</pre>
+</div>
+
+<div class="code code">
+<pre class="code">{{ item.content }}</pre>
+</div>
+
+<div class="code code">
+<pre class="code">&lt;/div&gt;</pre>
 </div>
 
 <p>The data of the content being decorated are accessible through a special variable called <code>item</code>, which holds the following properties:</p>
