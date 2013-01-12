@@ -815,7 +815,9 @@ div.twig .kw2         /* filters */
 .item.toc ul li.level-6 {
 }
 
-/* ebook toc is defined using divs as recommended by Kindle Publishing Guidelines */
+/* ebook toc is defined using divs as recommended by Kindle Publishing Guidelines
+    @see http://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf
+*/
 .item.toc div.level-1 {
     margin-left: 1em;
 }
