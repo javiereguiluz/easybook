@@ -411,5 +411,26 @@ div.container {
 {% block toc %}
 /* @toc
    -------------------------------------------------------------------------- */
+/* ebook toc is defined using divs as recommended by Kindle Publishing Guidelines
+   @see http://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf
+*/
+.item.toc div.level-1 {
+    margin-left: 1em;
+}
+.item.toc div.level-2 {
+    margin-left: 2em;
+}
+.item.toc div.level-3 {
+    margin-left: 3em;
+}
+.item.toc div.level-4 {
+    margin-left: 4em;
+}
+.item.toc div.level-5 {
+    margin-left: 5em;
+}
+.item.toc div.level-6 {
+    margin-left: 6em;
+}
 {% endblock %}
 {% endblock %}
