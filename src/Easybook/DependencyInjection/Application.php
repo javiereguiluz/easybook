@@ -133,14 +133,19 @@ class Application extends \Pimple
         $this['publishing.list.images']     = array();
         $this['publishing.list.tables']     = array();
 
-        $this['publishing.id'] = $this->share(function ($app) {
+        $this['publishing.edition.id'] = $this->share(function ($app) {
             if (null != $isbn = $app->edition('isbn')) {
                 return array('scheme' => 'isbn', 'value' => $isbn);
             }
 
-            // if the book doesn't declare an ISBN, generate
-            // a unique ID based on RFC 4211 UUID v4
+            // for ISBN-less books, generate a unique RFC 4211 UUID v4 ID
             return array('scheme' => 'URN', 'value' => Toolkit::uuid());
+        });
+        // maintained for backwards compatibility
+        $this['publishing.id'] = $this->share(function ($app) {
+            trigger_error('The "publishing.id" option is deprecated since version 5.0 and will be removed in the future. Use "publishing.edition.id" instead.', E_USER_DEPRECATED);
+
+            return $app['publishing.edition.id'];
         });
 
         // -- event dispatcher ------------------------------------------------

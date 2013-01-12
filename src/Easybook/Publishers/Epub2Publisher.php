@@ -66,9 +66,6 @@ class Epub2Publisher extends HtmlPublisher
 
     public function assembleBook()
     {
-        // set the edition id needed for ebook generation
-        $this->app->edition('id', $this->app['publishing.id']);
-
         // variables needed to hold the list of images and fonts of the book
         $bookImages = array();
         $bookFonts  = array();
