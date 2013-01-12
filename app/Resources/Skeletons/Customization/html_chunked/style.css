@@ -39,15 +39,15 @@
    @items ................ book content items
         @common (common styles for every book item)
         @acknowledgement   @afterword    @appendix        @author      @chapter
-        @conclusion        @conver       @dedication      @edition     @epilogue
+        @conclusion        @cover        @dedication      @edition     @epilogue
         @foreword          @glossary     @introduction    @license     @lof
         @lot               @part         @preface         @prologue    @title
         @toc
    @responsive ........... adapt the styles for different devices
      @retina ............. width: 1600px and up (large desktops)
-     @tablets ............ width: from 768px to 979px (potrait and landscape tablets)
+     @tablets ............ width: from 768px to 979px (portrait and landscape tablets)
      @tablets_and_phones . width: from 481px to 767px (landscape phones & portrait tablets)
-     @phones ............. width: 480px and below (landscape and protrait phones)
+     @phones ............. width: 480px and below (landscape and portrait phones)
 */
 
 /* ==========================================================================
