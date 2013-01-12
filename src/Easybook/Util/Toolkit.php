@@ -125,6 +125,30 @@ class Toolkit
 
         return $zip->close();
     }
+    
+    /*
+     * Unzips a ZIP file
+     * 
+     * @param  string $file
+     * @param  string $destination directory to unzip into
+     * @return boolean success
+     */
+    public static function unzip($file, $destination)
+    {
+        $zip = new \ZipArchive;
+        
+        $file = str_replace('\\', '/', realpath($file));
+        
+        if (!$zip->open($file)) {
+            return false;
+        }
+        
+        if (!$zip->extractTo($destination)) {
+            return false;
+        } 
+
+        return $zip->close();
+    }
 
     /*
      * Generates valid RFC 4211 compliant Universally Unique IDentifiers (UUID) version 4

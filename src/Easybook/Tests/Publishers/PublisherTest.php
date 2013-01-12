@@ -11,6 +11,8 @@
 
 namespace Easybook\Tests\Publishers;
 
+use Easybook\Util\Toolkit;
+
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Filesystem\Filesystem;
@@ -85,13 +87,48 @@ class PublisherTest extends TestCase
                     ->in($this->tmpDir.'/'.$slug.'/Output/'.$editionName)
                 ;
                 foreach ($generatedFiles as $file) {
-                    $this->assertFileEquals(
-                        __DIR__.'/fixtures/'.$slug.'/expected/'.$editionName.'/'.$file->getRelativePathname(),
-                        $file->getPathname(),
-                        sprintf("'%s' file not properly generated", $file->getPathname())
-                    );
+                    if ('epub' == $file->getExtension()) {
+                        // unzip both files to compare its contents
+                        $workDir = $this->tmpDir.'/'.$slug.'/unzip/'.$editionName;
+                        $generated = $workDir.'/generated';
+                        $expected = $workDir.'/expected';
+                        
+                        Toolkit::unzip($file->getRealPath(), $generated);
+                        Toolkit::unzip(__DIR__.'/fixtures/'.$slug.'/expected/'.
+                                    $editionName.'/'.$file->getRelativePathname(), $expected);
+                        
+                        // assert that generated files are exactly the same as expected
+                        $genFiles = $this->app->get('finder')
+                            ->files()
+                            ->notName('.gitignore')
+                            ->in($generated);
+                        
+                        foreach ($genFiles as $genFile) {
+                            $this->assertFileEquals(
+                                    $expected.'/'.$genFile->getRelativePathname(),
+                                    $genFile->getPathname(),
+                                    sprintf("'%s' file (into ZIP file '%s') not properly generated", 
+                                            $genFile->getRelativePathname(), $file->getPathName())
+                            );
+                        }
+                        
+                        // assert that all required files are generated
+                        $this->checkForMissingFiles($expected,$generated);
+                        
+                    } else {
+                        $this->assertFileEquals(
+                            __DIR__.'/fixtures/'.$slug.'/expected/'.$editionName.'/'.$file->getRelativePathname(),
+                            $file->getPathname(),
+                            sprintf("'%s' file not properly generated", $file->getPathname())
+                        );
+                    }
                 }
 
+                // assert that all required files are generated
+                $this->checkForMissingFiles(
+                        __DIR__.'/fixtures/'.$slug.'/expected/'.$editionName, 
+                        $this->tmpDir.'/'.$slug.'/Output/'.$editionName);
+                
                 // assert than book publication took less than 5 seconds
                 $this->assertLessThan(
                     5,
@@ -103,6 +140,24 @@ class PublisherTest extends TestCase
                 $this->app = new Application();
                 $console = new ConsoleApplication($this->app);
             }
+        }
+    }
+
+    /*
+     * Assert that all expected files were generated
+     */
+    protected function checkForMissingFiles($dirExpected, $dirGenerated)
+    {
+        $expectedFiles = $this->app->get('finder')
+            ->files()
+            ->notName('.gitignore')
+            ->in($dirExpected);
+        
+        foreach ($expectedFiles as $file) {
+            $this->assertFileExists(
+                    $dirGenerated.'/'.$file->getRelativePathname(),
+                    sprintf("'%s' file has not been generated", $file->getPathname())
+            );
         }
     }
 }
