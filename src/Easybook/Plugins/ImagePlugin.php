@@ -55,15 +55,14 @@ class ImagePlugin implements EventSubscriberInterface
             '/(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>.*)".*\/>)(<\/div>)?(<\/p>)?/',
             function($matches) use ($event, $elementNumber, &$listOfImages, &$counter) {
                 // prepare item parameters for template and label
-                $counter++;
                 $parameters = array(
                     'item' => array(
                         'align'   => $matches['align'],
                         'caption' => $matches['title'],
                         'content' => $matches['content'],
                         'label'   => '',
-                        'number'  => $counter,
-                        'slug'    => $event->app->get('slugger')->slugify('Figure '.$elementNumber.'-'.$counter)
+                        'number'  => null,
+                        'slug'    => ''
                     ),
                     'element' => array(
                         'number' => $elementNumber
@@ -72,6 +71,10 @@ class ImagePlugin implements EventSubscriberInterface
 
                 // '*' in title means normal image instead of figure
                 if ('*' != $matches['title']) {
+                    $counter++;
+                    $parameters['item']['number'] = $counter;
+                    $parameters['item']['slug'] = $event->app->get('slugger')->slugify('Figure '.$elementNumber.'-'.$counter);
+                    
                     // the publishing edition wants to label figures/images
                     if (in_array('figure', $event->app->edition('labels'))) {
                         $label = $event->app->getLabel('figure', $parameters);
@@ -86,7 +89,7 @@ class ImagePlugin implements EventSubscriberInterface
             },
             $item['content']
         );
-
+                
         $event->app->append('publishing.list.images', $listOfImages);
 
         $event->setItem($item);
