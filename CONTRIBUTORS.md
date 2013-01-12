@@ -21,3 +21,4 @@ Developers that helped **easybook** with promotion, ideas, code or bug reports.
   * [Huho Hamon](https://github.com/hhamon)
   * [Fabien Potencier](https://github.com/fabpot)
   * [Henrik Bjørnskov](https://github.com/henrikbjorn)
+  * [Daniel González](https://github.com/desarrolla2)
