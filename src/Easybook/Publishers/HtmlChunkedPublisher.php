@@ -152,7 +152,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
             foreach ($item['toc'] as $chunk) {
                 if (array_key_exists('level', $chunk) && 1 == $chunk['level']) {
                     // set the absolute URL of the chunk
-                    $chunk['url'] = sprintf('/%s/%s.html', $bookSlug, $chunk['slug']);
+                    $chunk['url'] = sprintf('%s.html', $chunk['slug']); //表示是主目录，比如第一章
 
                     $chunk['parent'] = null;
                     $parentChunk = $chunk;
@@ -162,7 +162,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 } elseif (array_key_exists('level', $chunk) && 2 == $chunk['level']) {
                     // set the absolute URL of the chunk
                     if (1 == $this->app->edition('chunk_level')) {
-                        $chunk['url'] = sprintf('/%s/%s.html#%s', $bookSlug, $parentChunk['slug'], $chunk['slug']);
+                        $chunk['url'] = sprintf('%s.html#%s', $parentChunk['slug'], $chunk['slug']);
                     } elseif (2 == $this->app->edition('chunk_level')) {
                         $chunk['url'] = sprintf('/%s/%s/%s.html', $bookSlug, $parentChunk['slug'], $chunk['slug']);
                     }
