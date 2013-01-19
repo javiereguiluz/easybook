@@ -152,7 +152,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
             foreach ($item['toc'] as $chunk) {
                 if (array_key_exists('level', $chunk) && 1 == $chunk['level']) {
                     // set the absolute URL of the chunk
-                    $chunk['url'] = sprintf('/%s/%s.html', $bookSlug, $chunk['slug']);
+                    $chunk['url'] = sprintf('%s.html', $chunk['slug']);
 
                     $chunk['parent'] = null;
                     $parentChunk = $chunk;
@@ -162,9 +162,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 } elseif (array_key_exists('level', $chunk) && 2 == $chunk['level']) {
                     // set the absolute URL of the chunk
                     if (1 == $this->app->edition('chunk_level')) {
-                        $chunk['url'] = sprintf('/%s/%s.html#%s', $bookSlug, $parentChunk['slug'], $chunk['slug']);
+                        $chunk['url'] = sprintf('%s.html#%s', $parentChunk['slug'], $chunk['slug']);
                     } elseif (2 == $this->app->edition('chunk_level')) {
-                        $chunk['url'] = sprintf('/%s/%s/%s.html', $bookSlug, $parentChunk['slug'], $chunk['slug']);
+                        $chunk['url'] = sprintf('%s/%s.html', $parentChunk['slug'], $chunk['slug']);
                     }
 
                     $chunk['parent'] = $parentChunk;
@@ -232,7 +232,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 : array(
                     'level' => 1,
                     'slug'  => 'index',
-                    'url'   => sprintf('/%s/index.html', $this->app->get('publishing.book.slug'))
+                    'url'   => 'index.html'
                 );
 
             $next = array_key_exists($position+1, $toc)
@@ -409,7 +409,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                         : array(
                             'level' => 1,
                             'slug'  => 'index',
-                            'url'   => sprintf('/%s/index.html', $this->app->get('publishing.book.slug'))
+                            'url'   => 'index.html'
                         );
 
                     $next = array_key_exists($position+1, $toc)
@@ -429,7 +429,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                         : array(
                             'level' => 1,
                             'slug'  => 'index',
-                            'url'   => sprintf('/%s/index.html', $this->app->get('publishing.book.slug'))
+                            'url'   => 'index.html'
                         );
 
                     $next = array_key_exists($position+1, $toc)

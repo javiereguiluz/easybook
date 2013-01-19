@@ -3,20 +3,21 @@
 {% block title %}{{ item.title }}{% endblock %}
 
 {% block body %}
+{% set urlBasePath = 2 == item.level ? '..' : '.' %}
 {% set navigation %}
 <ul class="chunk_nav">
-    <li class="index"><a href="{{ 2 == item.level ? '..' : '.' }}/index.html">{{ book.title }}</a></li>
+    <li class="index"><a href="{{ urlBasePath }}/index.html">{{ book.title }}</a></li>
 
     <li class="nav">
         <div class="previous">
             {% if previous %}
-                <a href="{{ previous.url }}"><span>&larr;</span> {{ app.getLabel('previous') }}</a>
+                <a href="{{ urlBasePath }}/{{ previous.url }}"><span>&larr;</span> {{ app.getLabel('previous') }}</a>
             {% endif %}
         </div>
 
         <div class="next">
             {% if next %}
-                <a href="{{ next.url }}">{{ app.getLabel('next') }} <span>&rarr;</span></a>
+                <a href="{{ urlBasePath }}/{{ next.url }}">{{ app.getLabel('next') }} <span>&rarr;</span></a>
             {% endif %}
         </div>
     </li>
@@ -42,7 +43,7 @@
        and tocItem.parent.slug|default(tocItem.slug) == item.parent.slug|default(item.slug) %}
         <li class="level-{{ tocItem.level }}">
             <span>{{ tocItem.label }}</span>
-            <a href="{{ tocItem.url }}">{{ tocItem.title }}</a>
+            <a href="{{ urlBasePath }}/{{ tocItem.url }}">{{ tocItem.title }}</a>
         </li>
     {% endfor %}
 {% endif %}

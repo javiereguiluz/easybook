@@ -11,11 +11,13 @@
 
 namespace Easybook\Publishers;
 
+use Easybook\DependencyInjection\Application;
+
 class BasePublisher
 {
     protected $app;
 
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
         $this->prepareOutputDir();

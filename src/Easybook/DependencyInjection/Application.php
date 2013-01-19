@@ -15,7 +15,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
-
 use Easybook\Publishers\PdfPublisher;
 use Easybook\Publishers\HtmlPublisher;
 use Easybook\Publishers\HtmlChunkedPublisher;
