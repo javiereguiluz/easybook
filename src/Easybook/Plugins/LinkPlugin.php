@@ -29,7 +29,7 @@ class LinkPlugin implements EventSubscriberInterface
 
     /*
      * Creates a lookup table for internal links (only used in html_chunked
-     * and epub type editions).
+     * and epub editions).
      *
      * This table is saved in `publishing.links` and has the following structure:
      * array(
@@ -50,8 +50,7 @@ class LinkPlugin implements EventSubscriberInterface
 
         foreach ($item['toc'] as $entry) {
             if ('html_chunked' == $format) {
-                $itemSlug = '/'.$event->app->get('publishing.book.slug').'/'.
-                            $event->app->get('slugger')->slugify(trim($item['label']), null, null, false);
+                $itemSlug = $event->app->get('slugger')->slugify(trim($item['label']), null, null, false);
             } elseif (in_array($format, array('epub', 'epub2'))) {
                 $itemSlug = array_key_exists('number', $item['config'])
                     ? $item['config']['element'].'-'.$item['config']['number']
@@ -86,9 +85,11 @@ class LinkPlugin implements EventSubscriberInterface
                 elseif (in_array($format, array('html_chunked'))) {
                     $links = $event->app->get('publishing.links');
 
+                    $urlBasePath = 2 == $event->app->edition('chunk_level') ? '../' : './';
+
                     return sprintf(
-                        '<a class="internal" href="%s"%s</a>',
-                        $links[$matches[1]], $matches[2]
+                        '<a class="internal" href="%s%s"%s</a>',
+                        $urlBasePath, $links[$matches[1]], $matches[2]
                     );
                 } else {
                     return sprintf(
