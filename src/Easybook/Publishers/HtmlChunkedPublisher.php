@@ -276,7 +276,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                         // extract the slug of this chunk from its <h2> heading
                         preg_match('/<h2.*id="(?<slug>.*)".*<\/h2>/', $chunk, $match);
 
-                        if (array_key_exists('slug', $match) && $match['slug'] == $itemChunk['slug']) {
+                        if (array_key_exists('slug', $match) && $match['slug'] == $itemChunk['slug'] && 2 == $itemChunk['level']) {
                             $itemChunk['html_title'] = $allChunks[$j];
                             $itemChunk['content'] = $allChunks[$j+1];
 
