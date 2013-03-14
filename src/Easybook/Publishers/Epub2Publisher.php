@@ -126,20 +126,23 @@ class Epub2Publisher extends HtmlPublisher
         // generate one HTML page for every book item
         $items = array();
         foreach ($this->app['publishing.items'] as $item) {
-            if ('toc' == $item['config']['element']) {
-                $this->app->render('toc.twig', array(
-                        'item'           => $item,
-                        'has_custom_css' => file_exists($customCss),
-                    ),
-                    $bookTempDir.'/book/OEBPS/toc.html'
+            try {
+                // try first to render the specific template for each content
+                // type, if it exists (e.g. toc.twig, chapter.twig, etc.)
+                $parameters = array(
+                    'item'           => $item,
+                    'has_custom_css' => file_exists($customCss),
                 );
-            } else {
-                $this->app->render('chunk.twig', array(
-                        'item'           => $item,
-                        'has_custom_css' => file_exists($customCss),
-                    ),
-                    $bookTempDir.'/book/OEBPS/'.$item['fileName']
+                $renderedTemplatePath = $bookTempDir.'/book/OEBPS/'.$item['fileName'];
+
+                $this->app->render(
+                    $item['config']['element'].'.twig',
+                    $parameters,
+                    $renderedTemplatePath
                 );
+            } catch (\Twig_Error_Loader $e) {
+                // use the generic chunk.twig template to render the content
+                $this->app->render('chunk.twig', $parameters, $renderedTemplatePath);
             }
         }
 
