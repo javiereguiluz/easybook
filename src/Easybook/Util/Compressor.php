@@ -14,7 +14,6 @@ namespace Easybook\Util;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-
 use Easybook\DependencyInjection\Application;
 
 /**

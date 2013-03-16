@@ -11,6 +11,8 @@
 
 namespace Easybook\Util;
 
+use Easybook\DependencyInjection\Application;
+
 /**
  * Groups several validators used across the application.
  */
@@ -18,7 +20,7 @@ class Validator
 {
     private $app;
 
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }

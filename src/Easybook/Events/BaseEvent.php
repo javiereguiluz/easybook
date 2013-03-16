@@ -12,19 +12,20 @@
 namespace Easybook\Events;
 
 use Symfony\Component\EventDispatcher\Event;
+use Easybook\DependencyInjection\Application;
 
 class BaseEvent extends Event
 {
     public $app;
 
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }
 
     public function getItem()
     {
-        return $this->app['publishing.active_item'];
+        return $this->app->get('publishing.active_item');
     }
 
     public function setItem($item)

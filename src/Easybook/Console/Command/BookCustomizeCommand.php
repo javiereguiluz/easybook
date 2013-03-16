@@ -15,9 +15,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use Easybook\Events\EasybookEvents as Events;
-use Easybook\Events\BaseEvent;
 use Easybook\Util\Validator;
 
 class BookCustomizeCommand extends BaseCommand

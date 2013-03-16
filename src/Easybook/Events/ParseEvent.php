@@ -17,7 +17,7 @@ class ParseEvent extends BaseEvent
 {
     public function getItem()
     {
-        return $this->app['publishing.active_item'];
+        return $this->app->get('publishing.active_item');
     }
 
     public function setItem($item)

@@ -15,12 +15,10 @@ use Symfony\Component\Console\Application as SymfonyConsoleApplication;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
-
 use Easybook\Console\Command\BookNewCommand;
 use Easybook\Console\Command\BookPublishCommand;
 use Easybook\Console\Command\BookCustomizeCommand;
 use Easybook\Console\Command\EasybookVersionCommand;
-
 use Easybook\DependencyInjection\Application;
 
 class ConsoleApplication extends SymfonyConsoleApplication
@@ -32,7 +30,7 @@ class ConsoleApplication extends SymfonyConsoleApplication
         return $this->app;
     }
 
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
 

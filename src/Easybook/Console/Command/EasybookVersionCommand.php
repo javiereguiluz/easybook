@@ -14,8 +14,6 @@ namespace Easybook\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Easybook\DependencyInjection\Application;
-
 class EasybookVersionCommand extends BaseCommand
 {
     protected function configure()

@@ -12,6 +12,7 @@
 namespace Easybook\Util;
 
 use Symfony\Component\Yaml\Yaml;
+use Easybook\DependencyInjection\Application;
 
 /**
  * Resolves book configuration by merging all the different configuration
@@ -21,7 +22,7 @@ class Configurator
 {
     private $app;
 
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }
