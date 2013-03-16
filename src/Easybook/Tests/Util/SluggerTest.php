@@ -148,7 +148,7 @@ class SluggerTest extends TestCase
             // Edge cases
             array(
                 'ŠŒŽšœžŸ¥µ ÀÁÂÃÄÅÆ ÇÈÉÊËÌÍÎÏÐ ÑÒÓÔÕÖØ ÙÚÛÜ Ýß àáâãäåæ çèéêëìíîïð ñòóôõöø ùúûüýÿ',
-                'soezsoezyyenu-aaaaaaae-ceeeeiiiid-noooooo-uuuu-yss-aaaaaaae-ceeeeiiiid-noooooo-uuuuyy'
+                'soezsoezyu-aaaaaaae-ceeeeiiiid-noooooo-uuuu-yss-aaaaaaae-ceeeeiiiid-noooooo-uuuuyy'
             ),
             array(
                 '"·$%&/()=?¿¡!<>,;.:-_{}*+^',

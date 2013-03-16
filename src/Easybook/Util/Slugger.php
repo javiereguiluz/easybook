@@ -72,7 +72,6 @@ class Slugger
         } elseif (function_exists('mb_convert_encoding')) {
             return mb_convert_encoding($string, 'ASCII');
         } else {
-            return $this->mappedTransliterator($string);
             // if both iconv and mb_* functions are unavailable, use a
             // simple method to remove accents
 
