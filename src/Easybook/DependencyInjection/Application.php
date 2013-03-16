@@ -306,41 +306,16 @@ class Application extends \Pimple
         });
 
         // -- princeXML -------------------------------------------------------
-        $this['prince.default_paths'] = array(
-            '/usr/local/bin/prince',                         # Mac OS X
-            '/usr/bin/prince',                               # Linux
-            'C:\Program Files\Prince\engine\bin\prince.exe'  # Windows
-        );
-
+        $this['prince.path'] = null;
         $this['prince'] = $app->share(function () use ($app) {
-            // look for the executable file of PrinceXML
-            $princePath = null;
-            foreach ($app['prince.default_paths'] as $path) {
-                if (file_exists($path)) {
-                    $princePath = $path;
-                    break;
-                }
-            }
-
+            $princePath = $app['prince.path'] ?: $this->findPrinceXmlExecutable();
+            // ask the user about the location of the executable
             if (null == $princePath) {
-                echo sprintf(" In order to generate PDF files, PrinceXML library must be installed. \n\n"
-                    ." We couldn't find PrinceXML executable in any of the following directories: \n"
-                    ."   -> %s \n\n"
-                    ." If you haven't installed it yet, you can download a fully-functional demo at: \n"
-                    ." %s \n\n"
-                    ." If you have installed in a custom directory, please type its full absolute path:\n > ",
-                    implode($app['prince.default_paths'], "\n   -> "),
-                    'http://www.princexml.com/download'
-                );
+                $princePath = $this->askForPrinceXMLExecutablePath();
 
-                $input = trim(fgets(STDIN));
-
-                if (file_exists($input)) {
-                    $princePath = $input;
-                    echo "\n";
-                } else {
-                    throw new \Exception(sprintf(
-                        "We couldn't find the PrinceXML executable in the given directory (%s)", $input
+                if (!file_exists($princePath)) {
+                    throw new \RuntimeException(sprintf(
+                         "We couldn't find the PrinceXML executable in the given directory (%s)", $princePath
                     ));
                 }
             }
@@ -775,5 +750,59 @@ class Application extends \Pimple
             $book['editions'][$publishingEdition][$key] = $newValue;
             $this->set('book', $book);
         }
+    }
+
+    /**
+     * Looks for the executable of the PrinceXML library.
+     *
+     * @return string The absolute path of the executable
+     */
+    protected function findPrinceXmlExecutable()
+    {
+        $foundPath = null;
+
+        // the common installation dirs for PrinceXML in several OS
+        $defaultPaths = array(
+            '/usr/local/bin/prince',                         # Mac OS X
+            '/usr/bin/prince',                               # Linux
+            'C:\Program Files\Prince\engine\bin\prince.exe'  # Windows
+        );
+
+        foreach ($defaultPaths as $path) {
+            if (file_exists($path)) {
+                $foundPath = $path;
+                break;
+            }
+        }
+
+        return $foundPath;
+    }
+
+    protected function askForPrinceXMLExecutablePath()
+    {
+        // the common installation dirs for PrinceXML in several OS
+        $defaultPaths = array(
+            '/usr/local/bin/prince',                         # Mac OS X
+            '/usr/bin/prince',                               # Linux
+            'C:\Program Files\Prince\engine\bin\prince.exe'  # Windows
+        );
+
+        $this->get('console.output')->write(sprintf(
+            " In order to generate PDF files, PrinceXML library must be installed. \n\n"
+            ." We couldn't find PrinceXML executable in any of the following directories: \n"
+            ."   -> %s \n\n"
+            ." If you haven't installed it yet, you can download a fully-functional demo at: \n"
+            ." %s \n\n"
+            ." If you have installed in a custom directory, please type its full absolute path:\n > ",
+            implode($defaultPaths, "\n   -> "),
+            'http://www.princexml.com/download'
+        ));
+
+        $userGivenPath = trim(fgets(STDIN));
+
+        // output a newline for aesthetic reasons
+        $this->get('console.output')->write("\n");
+
+        return $userGivenPath;
     }
 }

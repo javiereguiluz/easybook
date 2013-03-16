@@ -16,15 +16,52 @@ use Easybook\DependencyInjection\Application;
 
 class ApplicationTest extends TestCase
 {
-    protected $app;
-
-    public function setUp()
+    public function testFindPrinceXmlExecutableWithConfiguredPath()
     {
-        $this->app = new Application();
+        $app = new Application();
+
+        $app->set('prince.path', '/foo');
+        $prince = $app->get('prince');
+
+        $this->assertEquals('/foo', $prince->getExePath());
+    }
+
+    public function testFindPrinceXmlExecutableWithGuessedPath()
+    {
+        $app = $this->getMock('Easybook\DependencyInjection\Application', array('findPrinceXmlExecutable'));
+
+        $app->expects($this->any())
+            ->method('findPrinceXmlExecutable')
+            ->will($this->returnValue('/path/to/the/price/executable'));
+
+        $prince = $app->get('prince');
+
+        $this->assertEquals('/path/to/the/price/executable', $prince->getExePath());
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testFindPrinceXmlExecutableWithInexistentPath()
+    {
+        $app = $this->getMock('Easybook\DependencyInjection\Application',
+            array('findPrinceXmlExecutable', 'askForPrinceXMLExecutablePath'));
+
+        $app->expects($this->any())
+            ->method('findPrinceXmlExecutable')
+            ->will($this->returnValue(null));
+
+        $app->expects($this->any())
+            ->method('askForPrinceXMLExecutablePath')
+            ->will($this->returnValue(uniqid('this-path-does-not-exist')));
+
+        $prince = $app->get('prince');
     }
 
     public function testSlugify()
     {
+        $app = new Application();
+
         // don't use a dataProvider because it interferes with the slug generation
         $slugs = array(
             array('Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet'),
@@ -43,12 +80,14 @@ class ApplicationTest extends TestCase
             $string = $slug[0];
             $expectedSlug = $slug[1];
 
-            $this->assertEquals($expectedSlug, $this->app->slugify($string));
+            $this->assertEquals($expectedSlug, $app->slugify($string));
         }
     }
 
     public function testSlugifyUniquely()
     {
+        $app = new Application();
+
         // don't use a dataProvider because it interferes with the slug generation
         $uniqueSlugs = array(
             array('Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet'),
@@ -67,7 +106,7 @@ class ApplicationTest extends TestCase
             $string = $slug[0];
             $expectedSlug = $slug[1];
 
-            $this->assertEquals($expectedSlug, $this->app->slugifyUniquely($string));
+            $this->assertEquals($expectedSlug, $app->slugifyUniquely($string));
         }
     }
 
