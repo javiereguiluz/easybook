@@ -125,8 +125,6 @@ class Application extends \Pimple
         $this['publishing.book.items']      = array();
         // the real TOC used to generate the book (needed for html_chunked editions)
         $this['publishing.book.toc']        = array();
-        // holds all the generated slugs, to avoid repetitions
-        $this['publishing.slugs']           = array();
         // holds all the internal links (used in html_chunked and epub editions)
         $this['publishing.links']           = array();
         $this['publishing.list.images']     = array();
@@ -355,13 +353,14 @@ class Application extends \Pimple
 
         // -- slugger ---------------------------------------------------------
         $this['slugger.options'] = array(
-            'separator' => '-',  // used between words and instead of illegal characters
-            'prefix'    => '',   // prefix to be appended at the beginning of the slug
-            'unique'    => true, // should this slug be unique across the entire book?
+            'separator' => '-',   // used between words and instead of illegal characters
+            'prefix'    => '',    // prefix to be appended at the beginning of the slug
         );
+        // stores all the generated slugs to ensure slug uniqueness
+        $this['slugger.generated_slugs'] = array();
 
         $this['slugger'] = $app->share(function () use ($app) {
-            return new Slugger($app);
+            return new Slugger($app['slugger.options']);
         });
 
         // -- code syntax highlighter -----------------------------------------
@@ -430,6 +429,51 @@ class Application extends \Pimple
         $this->set($id, $array);
 
         return $array;
+    }
+
+    /**
+     * Transforms the string into a web-safe slug.
+     *
+     * @param  string  $string    The string to slug
+     * @param  string  $separator Used between words and to replace illegal characters
+     * @param  string  $prefix    Prefix to be appended at the beginning of the slug
+     * @return string             The generated slug
+     */
+    public function slugify($string, $separator = null, $prefix = null)
+    {
+        $slug = $this->get('slugger')->slugify($string, $separator, $prefix);
+        $this->append('slugger.generated_slugs', $slug);
+
+        return $slug;
+    }
+
+    /**
+     * Transforms the original string into a web-safe slug. It also ensures that
+     * the generated slug is unique for the entire book (to do so, it stores
+     * every slug generated since the beginning of the script execution).
+     *
+     * @param  string  $string    The string to slug
+     * @param  string  $separator Used between words and to replace illegal characters
+     * @param  string  $prefix    Prefix to be appended at the beginning of the slug
+     * @return string             The generated slug
+     */
+    public function slugifyUniquely($string, $separator = null, $prefix = null)
+    {
+        $defaultOptions = $this->get('slugger.options');
+
+        $separator = $separator ?: $defaultOptions['separator'];
+        $prefix    = $prefix    ?: $defaultOptions['prefix'];
+
+        $slug = $this->slugify($string, $separator, $prefix);
+
+        // ensure the uniqueness of the slug
+        $occurrences = array_count_values($this->get('slugger.generated_slugs'));
+        $count = $occurrences[$slug];
+        if ($count > 1) {
+            $slug .= $separator.$count;
+        }
+
+        return $slug;
     }
 
     /**

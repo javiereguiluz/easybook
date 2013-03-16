@@ -73,7 +73,7 @@ class ImagePlugin implements EventSubscriberInterface
                 if ('*' != $matches['title']) {
                     $counter++;
                     $parameters['item']['number'] = $counter;
-                    $parameters['item']['slug'] = $event->app->get('slugger')->slugify('Figure '.$elementNumber.'-'.$counter);
+                    $parameters['item']['slug'] = $event->app->slugify('Figure '.$elementNumber.'-'.$counter);
                     
                     // the publishing edition wants to label figures/images
                     if (in_array('figure', $event->app->edition('labels'))) {

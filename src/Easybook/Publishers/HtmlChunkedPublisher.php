@@ -136,7 +136,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         // the item slug is used.
         $items = array();
         foreach ($this->app['publishing.items'] as $item) {
-            $newSlug = $this->app->get('slugger')->slugify(trim($item['label'] ?: $item['slug']), null, null, false);
+            $newSlug = $this->app->slugify(trim($item['label'] ?: $item['slug']));
             $item['slug'] = $newSlug;
             $item['toc'][0]['slug'] = $newSlug;
 

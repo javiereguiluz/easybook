@@ -140,7 +140,7 @@ class BasePublisher
 
         if ('' != $item['config']['title']) {
             $item['title'] = $item['config']['title'];
-            $item['slug']  = $this->app->get('slugger')->slugify($item['title']);
+            $item['slug']  = $this->app->slugify($item['title']);
         }
 
         return $item;

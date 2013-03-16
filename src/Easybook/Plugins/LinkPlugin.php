@@ -50,7 +50,7 @@ class LinkPlugin implements EventSubscriberInterface
 
         foreach ($item['toc'] as $entry) {
             if ('html_chunked' == $format) {
-                $itemSlug = $event->app->get('slugger')->slugify(trim($item['label']), null, null, false);
+                $itemSlug = $event->app->slugify(trim($item['label']));
             } elseif (in_array($format, array('epub', 'epub2'))) {
                 $itemSlug = array_key_exists('number', $item['config'])
                     ? $item['config']['element'].'-'.$item['config']['number']

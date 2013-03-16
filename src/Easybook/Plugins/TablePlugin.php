@@ -42,7 +42,7 @@ class TablePlugin implements EventSubscriberInterface
                         'content' => $matches['content'],
                         'label'   => '',
                         'number'  => $counter,
-                        'slug'    => $event->app->get('slugger')->slugify('Table '.$elementNumber.'-'.$counter)
+                        'slug'    => $event->app->slugify('Table '.$elementNumber.'-'.$counter)
                     ),
                     'element' => array(
                         'number' => $elementNumber

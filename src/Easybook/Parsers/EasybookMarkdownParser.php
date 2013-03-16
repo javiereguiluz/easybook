@@ -121,7 +121,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         $title = $matches[1];
         $id    = array_key_exists(2, $matches) ? $matches[2] : '';
         if ('' == $id || null == $id) {
-            $id = $this->app->get('slugger')->slugify(strip_tags($title));
+            $id = $this->app->slugifyUniquely(strip_tags($title));
         }
 
         $block = "<h$level id=\"$id\">".$this->runSpanGamut($title)."</h$level>";
@@ -140,7 +140,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         $title = $this->runSpanGamut($matches[2]);
         $id    = array_key_exists(3, $matches) ? $matches[3] : '';
         if ('' == $id || null == $id) {
-            $id = $this->app->get('slugger')->slugify($this->unhash($title));
+            $id = $this->app->slugifyUniquely($this->unhash($title));
         }
 
         $block = "<h$level id=\"$id\">".$title."</h$level>";

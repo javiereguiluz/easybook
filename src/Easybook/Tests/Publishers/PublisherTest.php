@@ -61,6 +61,12 @@ class PublisherTest extends TestCase
         foreach ($books as $book) {
             $slug = $book->getFileName();
 
+            if ('book5' == $slug && (version_compare(phpversion(), '5.4.0', '<') || !extension_loaded('intl'))) {
+                $this->markTestSkipped(
+                    'This test requires PHP 5.4.0+ with the intl extension enabled (the book contains a lot of non-latin characters that need the PHP built-in transliterator)'
+                );
+            }
+
             // mirror test book contents in temp dir
             $this->filesystem->mirror(
                 __DIR__.'/fixtures/'.$slug.'/input',
@@ -86,6 +92,7 @@ class PublisherTest extends TestCase
                     ->notName('.gitignore')
                     ->in($this->tmpDir.'/'.$slug.'/Output/'.$editionName)
                 ;
+
                 foreach ($generatedFiles as $file) {
                     if ('epub' == $file->getExtension()) {
                         // unzip both files to compare its contents

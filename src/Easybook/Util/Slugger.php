@@ -13,86 +13,83 @@ namespace Easybook\Util;
 
 class Slugger
 {
-    private $app;
     private $separator;
     private $prefix;
-    private $unique;
 
-    public function __construct($app)
+    /**
+     * @param array $options The global configuration options for the slugger.
+     *                       These options can be overriden in the 'slugify()' call
+     */
+    public function __construct($options)
     {
-        $this->app = $app;
-
-        $this->separator = $app['slugger.options']['separator'];
-        $this->prefix    = $app['slugger.options']['prefix'];
-        $this->unique    = $app['slugger.options']['unique'];
+        $this->separator = $options['separator'];
+        $this->prefix    = $options['prefix'];
     }
 
     /**
-     * Transforms the original string in a web-safe slug.
+     * Transforms the original string into a web-safe slug.
      * Code adapted from http://cubiq.org/the-perfect-php-clean-url-generator
      *
      * @param  string  $string    The string to slug
-     * @param  string  $separator Used between words and instead of illegal characters
+     * @param  string  $separator Used between words and to replace illegal characters
      * @param  string  $prefix    Prefix to be appended at the beginning of the slug
-     * @param  boolean $unique    Should this slug be unique across the entire book?
      * @return string             The generated slug
      */
-    public function slugify($string, $separator = null, $prefix = null, $unique = null)
+    public function slugify($string, $separator = null, $prefix = null)
     {
-        $this->separator = null === $separator ? $this->separator : $separator;
-        $this->prefix    = null === $prefix    ? $this->prefix    : $prefix;
-        $this->unique    = null === $unique    ? $this->unique    : $unique;
+        $separator = $separator ?: $this->separator;
+        $prefix    = $prefix    ?: $this->prefix;
 
         $string = strip_tags($string);
-        $string = $this->transliterate($string);
 
-        // consider Japanese as an special case
-        if ($this->isJapanese($string)) {
-            $slug = $this->utf8_uri_encode($string);
-        } elseif (function_exists('iconv')) {
-            $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-        } elseif (function_exists('mb_convert_encoding')) {
-            $slug = mb_convert_encoding($string, 'ASCII');
-        } else {
-            // if both iconv and mb_* functions are unavailable, use a
-            // simple method to remove accents
-            // TODO: Is it better to just throw an exception?
-            $slug = strtr(
-                utf8_decode($string),
-                utf8_decode('ŠŒŽšœžŸ¥µÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ'),
-                'SOZsozYYuAAAAAAACEEEEIIIIDNOOOOOOUUUUYsaaaaaaaceeeeiiiionoooooouuuuyy'
-            );
-        }
+        $slug = $this->transliterate($string);
 
         $slug = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $slug);
-        $slug = strtolower(trim($slug, $this->separator));
-        $slug = preg_replace("/[\/_|+ -]+/", $this->separator, $slug);
+        $slug = strtolower(trim($slug, $separator));
+        $slug = preg_replace("/[\/_|+ -]+/", $separator, $slug);
 
-        $slug = $this->prefix.$slug;
-
-        // $slugs array must hold original slugs, without unique substring
-        $slugs = $this->app->append('publishing.slugs', $slug);
-
-        if ($this->unique) {
-            $occurrences = array_count_values($slugs);
-
-            $count = $occurrences[$slug];
-            if ($count > 1) {
-                $slug .= $this->separator.(++$count);
-            }
-        }
+        $slug = $prefix.$slug;
 
         return $slug;
     }
 
     private function transliterate($string)
     {
-        // uncomment the following code when PHP 5.4 is supported
-        // if (extension_loaded('intl')) {
-        //    $slug = \Normalizer::normalize($string, \Normalizer::FORM_C);
-        //    $slug = \Transliterator::transliterate($slug);
-        // }
+        // the built-in PHP transliterator is only available for 5.4.0+
+        if (version_compare(phpversion(), '5.4.0', '>=') && extension_loaded('intl')) {
+            return transliterator_transliterate("Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; Lower();", $string);
+        }
 
+        $string = $this->mappedTransliterator($string);
+
+        // consider Japanese as an special case
+        if ($this->isJapanese($string)) {
+            return $this->utf8_uri_encode($string);
+        }
+
+        if (function_exists('iconv')) {
+            return iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+        } elseif (function_exists('mb_convert_encoding')) {
+            return mb_convert_encoding($string, 'ASCII');
+        } else {
+            return $this->mappedTransliterator($string);
+            // if both iconv and mb_* functions are unavailable, use a
+            // simple method to remove accents
+
+            $slug = strtr(
+                utf8_decode($string),
+                utf8_decode('ŠŒŽšœžŸ¥µÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ'),
+                'SOZsozYYuAAAAAAACEEEEIIIIDNOOOOOOUUUUYsaaaaaaaceeeeiiiionoooooouuuuyy'
+            );
+        }
+    }
+
+
+    /**
+     * Transliterates a string using some pre-configured character maps.
+     */
+    private function mappedTransliterator($string)
+    {
         // transliterator mapping copied from:
         // http://iamseanmurphy.com/creating-seo-friendly-urls-in-php-with-url-slug/
         $transliterator = array(
@@ -162,9 +159,9 @@ class Slugger
             'š' => 's', 'ū' => 'u', 'ž' => 'z'
         );
 
-        $slug = str_replace(array_keys($transliterator), $transliterator, $string);
+        $string = str_replace(array_keys($transliterator), $transliterator, $string);
 
-        return $slug;
+        return $string;
     }
 
     /**

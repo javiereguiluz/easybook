@@ -127,7 +127,7 @@ class ParserPlugin implements EventSubscriberInterface
         $item = $event->getItem();
         if ('' == $item['title']) {
             $item['title'] = $event->app->getTitle($item['config']['element']);
-            $item['slug']  = $event->app->get('slugger')->slugify($item['title']);
+            $item['slug']  = $event->app->slugify($item['title']);
 
             $event->setItem($item);
         }

@@ -52,7 +52,7 @@ class BookNewCommand extends BaseCommand
         );
 
         // TODO: extensibility: user should be allowed to define the slug
-        $slug = $this->app->get('slugger')->slugify($title);
+        $slug = $this->app->slugify($title);
 
         $this->registerPlugins();
         $this->app->dispatch(Events::PRE_NEW, new BaseEvent($this->app));

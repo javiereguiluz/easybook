@@ -106,7 +106,6 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = $this->console->find('customize');
         $tester  = new CommandTester($command);
-
         $tester->execute(array(
             'command' => $command->getName(),
             'slug'    => 'the-origin-of-species',
