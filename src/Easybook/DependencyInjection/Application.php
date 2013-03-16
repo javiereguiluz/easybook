@@ -308,10 +308,10 @@ class Application extends \Pimple
         // -- princeXML -------------------------------------------------------
         $this['prince.path'] = null;
         $this['prince'] = $app->share(function () use ($app) {
-            $princePath = $app['prince.path'] ?: $this->findPrinceXmlExecutable();
+            $princePath = $app['prince.path'] ?: $app->findPrinceXmlExecutable();
             // ask the user about the location of the executable
             if (null == $princePath) {
-                $princePath = $this->askForPrinceXMLExecutablePath();
+                $princePath = $app->askForPrinceXMLExecutablePath();
 
                 if (!file_exists($princePath)) {
                     throw new \RuntimeException(sprintf(
