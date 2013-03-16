@@ -74,8 +74,7 @@ class Slugger
         } else {
             // if both iconv and mb_* functions are unavailable, use a
             // simple method to remove accents
-
-            $slug = strtr(
+            return strtr(
                 utf8_decode($string),
                 utf8_decode('ŠŒŽšœžŸ¥µÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ'),
                 'SOZsozYYuAAAAAAACEEEEIIIIDNOOOOOOUUUUYsaaaaaaaceeeeiiiionoooooouuuuyy'
