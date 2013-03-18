@@ -15,12 +15,12 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
+use Easybook\Configurator\BookConfigurator;
 use Easybook\Publishers\PdfPublisher;
 use Easybook\Publishers\HtmlPublisher;
 use Easybook\Publishers\HtmlChunkedPublisher;
 use Easybook\Publishers\Epub2Publisher;
 use Easybook\Parsers\MarkdownParser;
-use Easybook\Util\Configurator;
 use Easybook\Util\Prince;
 use Easybook\Util\Slugger;
 use Easybook\Util\Toolkit;
@@ -55,48 +55,6 @@ class Application extends \Pimple
         $this['app.dir.translations'] = $this['app.dir.resources'].'/Translations';
         $this['app.dir.skeletons']    = $this['app.dir.resources'].'/Skeletons';
         $this['app.dir.themes']       = $this['app.dir.resources'].'/Themes';
-
-        // -- default book options -------------------------------------------
-        $this['app.book.defaults'] = array(
-            'title'            => '"Change this: Book title"',
-            'author'           => '"Change this: Author Name"',
-            'edition'          => 'First edition',
-            'language'         => 'en',
-            'publication_date' => null,
-            'generator'        => array(
-                'name'         => $this['app.name'],
-                'version'      => $this->getVersion(),
-            ),
-            'contents'         => array(),
-            'editions'         => array()
-        );
-
-        // -- default edition options -----------------------------------------
-        // TODO: should each edition type define different default values?
-        $this['app.edition.defaults'] = array(
-            'format'          => 'html',
-            'chunk_level'     => 1,     // used only for html_chunked format
-            'highlight_cache' => false,
-            'highlight_code'  => false,
-            'images_base_dir' => 'images/',
-            'include_styles'  => true,
-            'isbn'            => null,
-            'labels'          => array('appendix', 'chapter', 'figure'),
-            'margin'          => array(
-                'top'         => '25mm',
-                'bottom'      => '25mm',
-                'inner'       => '30mm',
-                'outter'      => '20mm'
-            ),
-            'page_size'       => 'A4',
-            'theme'           => 'clean',
-            'toc'             => array(
-                'deep'        => 2,
-                'elements'    => array('appendix', 'chapter')
-            ),
-            'two_sided'       => true,
-            'use_html_toc'    => false
-        );
 
         // -- console ---------------------------------------------------------
         $this['console.input']  = null;
@@ -162,7 +120,7 @@ class Application extends \Pimple
 
         // -- configurator ----------------------------------------------------
         $this['configurator'] = $this->share(function ($app) {
-            return new Configurator($app);
+            return new BookConfigurator($app);
         });
 
         // -- validator -------------------------------------------------------
@@ -294,8 +252,8 @@ class Application extends \Pimple
 
             $twig->addGlobal('app', $app);
 
-            if (null != $app->get('book')) {
-                $twig->addGlobal('book', $app->get('book'));
+            if (null != $bookConfig = $app->get('book')) {
+                $twig->addGlobal('book', $bookConfig['book']);
 
                 $publishingEdition = $app->get('publishing.edition');
                 $editions = $app->book('editions');
@@ -501,8 +459,8 @@ class Application extends \Pimple
 
         $twig->addGlobal('app', $this);
 
-        if (null != $this->get('book')) {
-            $twig->addGlobal('book', $this->get('book'));
+        if (null != $bookConfig = $this->get('book')) {
+            $twig->addGlobal('book', $bookConfig['book']);
 
             $publishingEdition = $this->get('publishing.edition');
             $editions = $this->book('editions');
@@ -697,6 +655,29 @@ class Application extends \Pimple
     }
 
     /**
+     * It loads the full book configuration by combining all the different sources
+     * (config.yml file, console command option and default values). It also loads
+     * the edition configuration and resolves the edition inheritance (if used).
+     *
+     * @param string $configurationViaCommand The configuration options provided via the console command
+     */
+    public function loadBookConfiguration($configurationViaCommand = "")
+    {
+        $config = $this->get('configurator')->loadBookConfiguration($this->get('publishing.dir.book'), $configurationViaCommand);
+        $this->set('book', $config);
+
+        $this->get('validator')->validatePublishingEdition($this->get('publishing.edition'));
+
+        $config = $this->get('configurator')->loadEditionConfiguration();
+        $this->set('book', $config);
+
+        $config = $this->get('configurator')->processConfigurationValues();
+        $this->set('book', $config);
+
+        $this->get('configurator')->validateConfiguration($config);
+    }
+
+    /**
      * Shortcut to get/set book configuration options:
      *
      *   // returns 'author' option value
@@ -711,14 +692,13 @@ class Application extends \Pimple
      */
     public function book($key, $newValue = null)
     {
-        if (null == $newValue) {
-            $book = $this->get('book');
+        $bookConfig = $this->get('book');
 
-            return array_key_exists($key, $book) ? $book[$key] : null;
+        if (null == $newValue) {
+            return array_key_exists($key, $bookConfig['book']) ? $bookConfig['book'][$key] : null;
         } else {
-            $book = $this->get('book');
-            $book[$key] = $newValue;
-            $this->set('book', $book);
+            $bookConfig['book'][$key] = $newValue;
+            $this->set('book', $bookConfig);
         }
     }
 
@@ -757,7 +737,7 @@ class Application extends \Pimple
      *
      * @return string The absolute path of the executable
      */
-    protected function findPrinceXmlExecutable()
+    public function findPrinceXmlExecutable()
     {
         $foundPath = null;
 
@@ -778,7 +758,7 @@ class Application extends \Pimple
         return $foundPath;
     }
 
-    protected function askForPrinceXMLExecutablePath()
+    public function askForPrinceXMLExecutablePath()
     {
         // the common installation dirs for PrinceXML in several OS
         $defaultPaths = array(

@@ -1,0 +1,27 @@
+--TEST--
+Book with some dynamic options defined by Twig expressions via --configuration command option.
+--COMMAND_CONFIG--
+{
+  "book": {
+    "title": "{{ book.author }} diary",
+    "author": "John Smith", 
+    "edition": "{{ 'First' ~ ' ' ~ 'edition' }}", 
+    "language": "{{ ['es', 'fr', 'en']|reverse|first }}", 
+    "publication_date": "{{ 'yyyy-mm-dd'|upper }}", 
+    "generator": {
+      "version": "N"
+    }
+  }
+}
+--BOOK_CONFIG--
+~
+--EXPECT--
+book:
+    title: John Smith diary
+    author: John Smith
+    edition: First edition
+    language: en
+    publication_date: YYYY-MM-DD
+    generator: { name: easybook, version: N }
+    contents: null
+    editions: null

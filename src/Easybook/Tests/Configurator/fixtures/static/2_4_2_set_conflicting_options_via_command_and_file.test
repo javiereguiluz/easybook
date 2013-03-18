@@ -1,0 +1,21 @@
+--TEST--
+Book with some options set via configuration file and other options set via --configuration option. Some options conflict because they are set via the two configuration methods.
+--COMMAND_CONFIG--
+{ "book": {
+       "author": "Author set via command configuration"
+   }
+}
+--BOOK_CONFIG--
+book:
+    title:  'Title set via configuration file'
+    author: 'Author set via configuration file'
+--EXPECT--
+book:
+    title: Title set via configuration file
+    author: Author set via command configuration
+    edition: null
+    language: en
+    publication_date: null
+    generator: { name: easybook, version: '{{ app.getVersion() }}' }
+    contents: null
+    editions: null

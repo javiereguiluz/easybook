@@ -1,0 +1,16 @@
+--TEST--
+Book with an empty config.yml file and no command configuration.
+--COMMAND_CONFIG--
+""
+--BOOK_CONFIG--
+~
+--EXPECT--
+book:
+    title: Untitled
+    author: Anonymous
+    edition: null
+    language: en
+    publication_date: null
+    generator: { name: easybook, version: '{{ app.getVersion() }}' }
+    contents: null
+    editions: null

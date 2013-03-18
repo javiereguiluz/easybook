@@ -7,7 +7,6 @@ use Symfony\Component\Filesystem\Filesystem;
 class BookGenerator extends Generator
 {
     private $filesystem;
-    private $renderer;
     private $bookDirectory;
     private $skeletonDirectory;
     private $configuration;

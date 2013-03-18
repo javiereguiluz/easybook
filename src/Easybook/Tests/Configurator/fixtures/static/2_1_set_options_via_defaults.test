@@ -1,0 +1,20 @@
+--TEST--
+Book with some missing options (title and author) set via default configuration options.
+--COMMAND_CONFIG--
+""
+--BOOK_CONFIG--
+book:
+    edition:          'First edition'
+    language:         'en'
+    publication_date: 'YYYY-MM-DD'
+    generator:        { name: 'easybook', version: 'N' }
+--EXPECT--
+book:
+    title: Untitled
+    author: Anonymous
+    edition: First edition
+    language: en
+    publication_date: YYYY-MM-DD
+    generator: { name: easybook, version: 'N' }
+    contents: null
+    editions: null

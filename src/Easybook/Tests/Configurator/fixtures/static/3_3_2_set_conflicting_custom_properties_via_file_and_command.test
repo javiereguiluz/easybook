@@ -1,0 +1,28 @@
+--TEST--
+Book with custom properties set via configuration file and --configuration command option. Some options conflict because they are set via the two configuration methods.
+--COMMAND_CONFIG--
+{
+  "book": {
+    "sales_rank": 88,
+    "categories": ["non-programming", "non-php"],
+    "published": true
+  }
+}
+--BOOK_CONFIG--
+book:
+    sales_rank:    8
+    published:     false
+    categories:    ['programming', 'php']
+--EXPECT--
+book:
+    title: Untitled
+    author: Anonymous
+    edition: null
+    language: en
+    publication_date: null
+    generator: { name: easybook, version: '{{ app.getVersion() }}' }
+    contents: null
+    editions: null
+    sales_rank:    88
+    published:     true
+    categories:    ["non-programming", "non-php"]

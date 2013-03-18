@@ -38,7 +38,7 @@ class BookPublishCommand extends BaseCommand
                     'dir', '', InputOption::VALUE_OPTIONAL, "Path of the documentation directory"
                 ),
                 new InputOption(
-                    'configuration', '', InputOption::VALUE_OPTIONAL, "Additional book configuration options"
+                    'configuration', '', InputOption::VALUE_OPTIONAL, "Additional book configuration options", ""
                 ),
             ))
             ->setHelp(file_get_contents(__DIR__.'/Resources/BookPublishCommandHelp.txt'));
@@ -56,11 +56,8 @@ class BookPublishCommand extends BaseCommand
         $this->app->set('console.output', $output);
         $this->app->set('console.dialog', $dialog);
 
-        $configurator = $this->app->get('configurator');
-        $validator    = $this->app->get('validator');
-
         // validate book dir and add some useful values to the app configuration
-        $bookDir = $validator->validateBookDir($slug, $dir);
+        $bookDir = $this->app->get('validator')->validateBookDir($slug, $dir);
 
         $this->app->set('publishing.dir.book',      $bookDir);
         $this->app->set('publishing.dir.contents',  $bookDir.'/Contents');
@@ -68,21 +65,10 @@ class BookPublishCommand extends BaseCommand
         $this->app->set('publishing.dir.plugins',   $bookDir.'/Resources/Plugins');
         $this->app->set('publishing.dir.templates', $bookDir.'/Resources/Templates');
         $this->app->set('publishing.book.slug',     $slug);
+        $this->app->set('publishing.edition',       $edition);
 
         // load book configuration
-        $configurator->loadBookConfiguration();
-
-        // validate edition slug and add some useful values to the app configuration
-        $edition = $validator->validatePublishingEdition($edition);
-        $this->app->set('publishing.edition', $edition);
-
-        // load edition configuration (it also resolves possible edition inheritante)
-        $configurator->loadEditionConfiguration();
-
-        // resolve book+edition configuration
-        $configurator->resolveConfiguration();
-
-        // all checks passed, the book can now be published
+        $this->app->loadBookConfiguration($input->getOption('configuration'));
 
         // register easybook and custom book plugins
         $this->registerPlugins();
@@ -92,13 +78,9 @@ class BookPublishCommand extends BaseCommand
 
         // book publishing starts
         $this->app->dispatch(Events::PRE_PUBLISH, new BaseEvent($this->app));
-        $output->writeln(array(
-            '',
-            sprintf(
-                " Publishing <comment>%s</comment> edition of <info>%s</info> book...",
-                $edition, $this->app->book('title')
-            ),
-            ''
+        $output->writeln(sprintf(
+            "\n Publishing <comment>%s</comment> edition of <info>%s</info> book...\n",
+            $edition, $this->app->book('title')
         ));
 
         // 1-line magic publication!

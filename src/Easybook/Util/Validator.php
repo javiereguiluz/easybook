@@ -123,24 +123,6 @@ class Validator
     }
 
     /**
-     * Validates that the given book configuration is valid.
-     */
-    public function validateBookConfig($config)
-    {
-        // TODO: validate configuration against some sort of schema instead of
-        // the current trivial check
-        if (!array_key_exists('title', $config)) {
-            throw new \RuntimeException(sprintf(
-                "Malformed 'config.yml' configuration file for '%s' book \n\n"
-                ."Open '%s' file\n"
-                ."and add at least the 'title' configuration option ",
-                $this->app->get('publishing.book.slug'),
-                realpath($this->app->get('publishing.dir.book')).'/config.yml'
-            ));
-        }
-    }
-
-    /**
      * Validates that the given $slug is a valid string for a edition slug.
      */
     public static function validateEditionSlug($slug)
@@ -152,14 +134,6 @@ class Validator
         }
 
         return $slug;
-    }
-
-    /**
-     * Validates that the given edition configuration is valid.
-     */
-    public function validateEditionConfig($config)
-    {
-        // TODO: validate configuration against some sort of schema
     }
 
     /**
@@ -222,13 +196,5 @@ class Validator
         }
 
         return $edition;
-    }
-
-    /**
-     * Performs the last global validation of the final resolved book configuration
-     */
-    public function validateResolvedConfiguration()
-    {
-        // TODO
     }
 }

@@ -11,241 +11,108 @@
 
 namespace Easybook\Tests\Configurator;
 
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Yaml;
 use Easybook\DependencyInjection\Application;
-use Easybook\Console\ConsoleApplication;
 use Easybook\Tests\TestCase;
 
 class BookConfigurationTest extends TestCase
 {
-    protected $app;
-    protected $filesystem;
-    protected $tmpDir;
-
-    public function setUp()
+    public function testBookWithNoConfigFile()
     {
-        $this->app = new Application();
+        $app = new Application();
 
-        // setup temp dir for generated files
-        $this->tmpDir = $this->app['app.dir.cache'].'/'.uniqid('phpunit_', true);
-        $this->filesystem = new Filesystem();
-        $this->filesystem->mkdir($this->tmpDir);
+        $app->set('publishing.dir.book', uniqid('this-path-does-not-exist'));
+        $app->set('publishing.book.slug', 'book_with_no_config_file');
 
-        parent::setUp();
-    }
+        try {
+            $app->loadBookConfiguration();
 
-    public function tearDown()
-    {
-        $this->filesystem->remove($this->tmpDir);
-
-        parent::tearDown();
-    }
-
-    private function publishBookAndCheckParsedConfiguration($options)
-    {
-        $console = new ConsoleApplication($this->app);
-
-        $sourceDir = __DIR__.'/fixtures/'.$options['slug'];
-        $targetDir = $this->tmpDir.'/'.$options['slug'];
-        $edition   = $options['edition'];
-
-        // mirror test book contents in temp dir
-        $this->filesystem->mirror($sourceDir.'/input', $targetDir);
-
-        // rename config_$edition.yml to config.yml
-        $this->filesystem->copy(
-            $targetDir.'/Configuration/config_'.$edition.'.yml',
-            $targetDir.'/config.yml',
-            true
-        );
-
-        // publish the book
-        $input = new ArrayInput(array_replace(array(
-            'command' => 'publish',
-            '--dir'   => $this->tmpDir
-        ), $options));
-        $console->find('publish')->run($input, new NullOutput());
-
-        $this->assertFileEquals(
-            $sourceDir.'/expected/'.$edition.'/book.html',
-            $targetDir.'/Output/'.$edition.'/book.html',
-            sprintf("'%s' options not properly parsed", $edition)
-        );
+            $this->fail();
+        } catch (\RuntimeException $e) {
+            $this->assertInstanceOf('\RuntimeException', $e);
+            $this->assertContains("There is no 'config.yml' configuration file", $e->getMessage());
+        }
     }
 
     /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Book hasn't defined any edition
+     * @dataProvider getStaticTests
      */
-    public function testNoConfiguration()
+    public function testStaticBookConfiguration($testMessage, $commandConfiguration, $bookConfiguration, $expectedConfiguration)
     {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'    => 'book2',
-            'edition' => 'edition1'
-        ));
-    }
+        $app = new Application();
 
-    public function testNoTitleAndNoAuthor()
-    {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'    => 'book2',
-            'edition' => 'edition2'
-        ));
-    }
+        $configurator = $this->getMock('Easybook\Configurator\BookConfigurator', array('loadBookFileConfiguration'), array($app));
+        $configurator->expects($this->once())
+            ->method('loadBookFileConfiguration')
+            ->will($this->returnValue(Yaml::parse($bookConfiguration) ?: array()))
+        ;
 
-    public function testOnlyTitle()
-    {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'    => 'book2',
-            'edition' => 'edition3'
-        ));
-    }
+        $configuration = $configurator->loadBookConfiguration(null, $commandConfiguration);
+        $expectedConfiguration = Yaml::parse($expectedConfiguration);
 
-    public function testOnlyCustomOptions()
-    {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'    => 'book2',
-            'edition' => 'edition4'
-        ));
-    }
-
-    public function testAllDefaultOptionsAndSomeCustomOptions()
-    {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'    => 'book2',
-            'edition' => 'edition5'
-        ));
-    }
-
-    public function testOverrideDefaultOptions()
-    {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'    => 'book2',
-            'edition' => 'edition6'
-        ));
+        $this->assertEquals($expectedConfiguration, $configuration, $testMessage);
     }
 
     /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Book hasn't defined any edition
+     * @dataProvider getDynamicTests
      */
-    public function testSimpleButIncompleteDynamicConfiguration()
+    public function testDynamicBookConfiguration($testMessage, $commandConfiguration, $bookConfiguration, $expectedConfiguration)
     {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'      => 'book2',
-            'edition'   => 'edition7',
-            '--configuration' => '{
-                "book": {
-                    "title": "My dynamic title",
-                    "author": "Author Name set from the console"
-                }
-            }'
-        ));
+        $app = new Application();
+
+        $configurator = $this->getMock('Easybook\Configurator\BookConfigurator', array('loadBookFileConfiguration'), array($app));
+        $configurator->expects($this->once())
+            ->method('loadBookFileConfiguration')
+            ->will($this->returnValue(Yaml::parse($bookConfiguration) ?: array()))
+        ;
+
+        $configuration = $configurator->loadBookConfiguration(null, $commandConfiguration);
+
+        $app->set('book', $configuration);
+        $configuration = $configurator->processConfigurationValues();
+
+        $expectedConfiguration = Yaml::parse($expectedConfiguration);
+        $this->assertEquals($expectedConfiguration, $configuration, $testMessage);
     }
 
-    public function testFullDynamicConfiguration()
+    public function getStaticTests()
     {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'      => 'book2',
-            'edition'   => 'edition8',
-            '--configuration' => '{
-                "book": {
-                    "title": "My dynamic title",
-                    "author": "Author Name set from the console",
-                    "editions": {
-                        "edition8": null
-                    }
-                }
-            }'
-        ));
+        return $this->getTests(__DIR__.'/fixtures/static');
     }
 
-    public function testDynamicConfigurationOverridesSomeFileOptions()
+    public function getDynamicTests()
     {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'      => 'book2',
-            'edition'   => 'edition9',
-            '--configuration' => '{
-                "book": {
-                    "title": "My dynamic title",
-                    "author": "Author Name set from the console",
-                    "editions": {
-                        "edition9": {
-                            "page_size": "US-Letter",
-                            "toc": {
-                                "deep": 3
-                            }
-                        }
-                    }
-                }
-            }'
-        ));
+        return $this->getTests(__DIR__.'/fixtures/dynamic');
     }
 
-    public function testDynamicConfigurationSetsNewOptionsAndOverridesFileAndDefaultOptions()
+    /**
+     * code adapted from Twig_Test_IntegrationTestCase class
+     * @see http://github.com/fabpot/Twig/blob/master/lib/Twig/Test/IntegrationTestCase.php
+     */
+    public function getTests($dir)
     {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'      => 'book2',
-            'edition'   => 'edition10',
-            '--configuration' => '{
-                "book": {
-                    "title": "My dynamic title",
-                    "generator": {
-                        "name": "easybook",
-                        "version": "premium"
-                    },
-                    "contents": [
-                        { "element": "cover" },
-                        { "element": "toc" }
-                    ],
-                    "editions": {
-                        "edition10": {
-                            "extends": "edition9",
-                            "page_size": "US-Letter",
-                            "price": "15",
-                            "pages": 250,
-                            "toc": {
-                                "deep": 2
-                            }
-                        }
-                    }
-                }
-            }'
-        ));
-    }
+        $fixturesDir = realpath($dir);
+        $tests = array();
 
-    public function testConfigurationWithTwigExpressions()
-    {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'    => 'book2',
-            'edition' => 'edition11'
-        ));
-    }
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($fixturesDir), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
+            if (!preg_match('/\.test$/', $file)) {
+                continue;
+            }
 
-    public function testDynamicConfigurationWithTwigExpressions()
-    {
-        $this->publishBookAndCheckParsedConfiguration(array(
-            'slug'    => 'book2',
-            'edition' => 'edition12',
-            '--configuration' => '{
-                "book": {
-                    "title": "{{ book.buyer }} diary",
-                    "buyer": "The name of the buyer",
-                    "editions": {
-                        "edition12": {
-                            "extends": "edition11",
-                            "debug": "false",
-                            "page_size": "{{ \"A\" ~ (1**2 + 2**1 - 2) }}",
-                            "labels": ["chapter"],
-                            "toc": {
-                                "deep": "{{ book.contents|length }}"
-                            }
-                        }
-                    }
-                }
-            }'
-        ));
+            $test = file_get_contents($file->getRealpath());
+
+            if (preg_match('/--TEST--(.*)--COMMAND_CONFIG--(.*)--BOOK_CONFIG--(.*)--EXPECT--(.*)/sx', $test, $matches)) {
+                $testMessage           = trim($matches[1]);
+                $commandConfiguration  = trim($matches[2]);
+                $bookConfiguration     = trim($matches[3]);
+                $expectedConfiguration = trim($matches[4]);
+            } else {
+                throw new InvalidArgumentException(sprintf('Test "%s" is not valid.', str_replace($fixturesDir.'/', '', $file)));
+            }
+
+            $tests[] = array($testMessage, $commandConfiguration, $bookConfiguration, $expectedConfiguration);
+        }
+
+        return $tests;
     }
 }

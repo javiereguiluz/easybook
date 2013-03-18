@@ -76,6 +76,7 @@ class PublisherTest extends TestCase
             // look for and publish all the book editions
             $bookConfig = Yaml::parse($this->tmpDir.'/'.$slug.'/config.yml');
             $editions = $bookConfig['book']['editions'];
+
             foreach ($editions as $editionName => $editionConfig) {
                 // publish each book edition
                 $input = new ArrayInput(array(
@@ -84,6 +85,7 @@ class PublisherTest extends TestCase
                     'edition' => $editionName,
                     '--dir'   => $this->tmpDir
                 ));
+
                 $console->find('publish')->run($input, new NullOutput());
 
                 // assert that generated files are exactly the same as expected

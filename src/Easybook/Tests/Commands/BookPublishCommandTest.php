@@ -114,11 +114,8 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getNonInteractiveCommandData
      */
-    public function testNonInteractiveCommand($options, $expected)
+    public function testNonInteractiveCommand($edition, $publishedBookFilePath, $maxTimeElapsed)
     {
-        list($publishedBook, $maxDuration) = $expected;
-        $edition = $options['edition'];
-
         $command = $this->console->find('publish');
         $tester  = new CommandTester($command);
 
@@ -138,23 +135,22 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertFileExists(
-            sprintf('%s/the-origin-of-species/Output/%s', $this->tmpDir, $publishedBook),
-            sprintf('The book has been published as %s', $publishedBook)
+            sprintf('%s/the-origin-of-species/Output/%s', $this->tmpDir, $publishedBookFilePath),
+            sprintf('The book has been published as %s', $publishedBookFilePath)
         );
 
-        $this->assertLessThan(
-            $maxDuration,
-            $finish - $start,
-            sprintf('The publication of "%s" edition took less than %s seconds', $edition, $maxDuration)
+        $this->assertLessThan($maxTimeElapsed, $finish - $start,
+            sprintf('The publication of "%s" edition took less than %s seconds', $edition, $maxTimeElapsed)
         );
     }
 
     public function getNonInteractiveCommandData()
     {
         return array(
-            array(array('edition' => 'web'), array('web/book.html', 5)),
-            array(array('edition' => 'website'), array('website/book/index.html', 5)),
-            array(array('edition' => 'ebook'), array('ebook/book.epub', 5)),
+            //    edition    $publishedBookFilePath     maxTimeElapsed
+            array('web',     'web/book.html',           5),
+            array('website', 'website/book/index.html', 5),
+            array('ebook',   'ebook/book.epub',         5),
         );
     }
 
@@ -177,23 +173,27 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         ));
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testNonInteractionInvalidEdition()
     {
         $command = $this->console->find('publish');
         $tester  = new CommandTester($command);
 
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'slug'    => 'the-origin-of-species',
-            'edition' => uniqid('non_existent_edition_'),
-            '--dir'   => $this->tmpDir,
-            '--no-interaction' => true
-        ), array(
-            'interactive' => false
-        ));
+        try {
+            $tester->execute(array(
+                'command' => $command->getName(),
+                'slug'    => 'the-origin-of-species',
+                'edition' => uniqid('non_existent_edition_'),
+                '--dir'   => $this->tmpDir,
+                '--no-interaction' => true
+            ), array(
+                'interactive' => false
+            ));
+
+            $assert->fail();
+        } catch (\RuntimeException $e) {
+            $this->assertInstanceOf('\RuntimeException', $e);
+            $this->assertContains('edition isn\'t defined', $e->getMessage());
+        }
     }
 
     // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php

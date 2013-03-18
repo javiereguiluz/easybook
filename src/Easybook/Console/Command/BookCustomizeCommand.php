@@ -50,11 +50,8 @@ class BookCustomizeCommand extends BaseCommand
         $this->app->set('console.output', $output);
         $this->app->set('console.dialog', $dialog);
 
-        $configurator = $this->app->get('configurator');
-        $validator    = $this->app->get('validator');
-
         // validate book dir and add some useful values to the app configuration
-        $bookDir = $validator->validateBookDir($slug, $dir);
+        $bookDir = $this->app->get('validator')->validateBookDir($slug, $dir);
 
         $this->app->set('publishing.dir.book',      $bookDir);
         $this->app->set('publishing.dir.contents',  $bookDir.'/Contents');
@@ -62,22 +59,12 @@ class BookCustomizeCommand extends BaseCommand
         $this->app->set('publishing.dir.plugins',   $bookDir.'/Resources/Plugins');
         $this->app->set('publishing.dir.templates', $bookDir.'/Resources/Templates');
         $this->app->set('publishing.book.slug',     $slug);
-
-        // load book configuration
-        $configurator->loadBookConfiguration();
-
-        // validate edition slug and add some useful values to the app configuration
-        $edition = $validator->validatePublishingEdition($edition);
         $this->app->set('publishing.edition', $edition);
 
-        // load edition configuration (it also resolves possible edition inheritante)
-        $configurator->loadEditionConfiguration();
-
-        // resolve book+edition configuration
-        $configurator->resolveConfiguration();
+        // load book configuration
+        $this->app->loadBookConfiguration();
 
         // all checks passed, the book can now be customized
-
         $customizationDir = $this->app->get('publishing.dir.templates').'/'.$edition;
         if (!file_exists($customizationDir)) {
             $this->app->get('filesystem')->mkdir($customizationDir);
