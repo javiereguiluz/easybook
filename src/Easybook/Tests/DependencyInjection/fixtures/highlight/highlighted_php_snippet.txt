@@ -1,0 +1,1636 @@
+<pre class="php"><span class="kw2">&lt;?php</span>
+&nbsp;
+<span class="coMULTI">/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier &lt;fabien@symfony.com&gt;
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */</span>
+&nbsp;
+<span class="kw2">namespace</span> Symfony\Component\HttpFoundation<span class="sy0">;</span>
+&nbsp;
+<span class="kw2">use</span> Symfony\Component\HttpFoundation\Session\SessionInterface<span class="sy0">;</span>
+&nbsp;
+<span class="co4">/**
+ * Request represents an HTTP request.
+ *
+ * The methods dealing with URL accept / return a raw path (% encoded):
+ *   * getBasePath
+ *   * getBaseUrl
+ *   * getPathInfo
+ *   * getRequestUri
+ *   * getUri
+ *   * getUriForPath
+ *
+ * @author Fabien Potencier &lt;fabien@symfony.com&gt;
+ *
+ * @api
+ */</span>
+<span class="kw2">class</span> Request
+<span class="br0">&#123;</span>
+    <span class="kw2">const</span> HEADER_CLIENT_IP <span class="sy0">=</span> <span class="st_h">'client_ip'</span><span class="sy0">;</span>
+    <span class="kw2">const</span> HEADER_CLIENT_HOST <span class="sy0">=</span> <span class="st_h">'client_host'</span><span class="sy0">;</span>
+    <span class="kw2">const</span> HEADER_CLIENT_PROTO <span class="sy0">=</span> <span class="st_h">'client_proto'</span><span class="sy0">;</span>
+    <span class="kw2">const</span> HEADER_CLIENT_PORT <span class="sy0">=</span> <span class="st_h">'client_port'</span><span class="sy0">;</span>
+&nbsp;
+    <span class="kw2">protected</span> static <span class="re0">$trustProxy</span> <span class="sy0">=</span> <span class="kw4">false</span><span class="sy0">;</span>
+&nbsp;
+    <span class="kw2">protected</span> static <span class="re0">$trustedProxies</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * Names for headers that can be trusted when
+     * using trusted proxies.
+     *
+     * The default names are non-standard, but widely used
+     * by popular reverse proxies (like Apache mod_proxy or Amazon EC2).
+     */</span>
+    <span class="kw2">protected</span> static <span class="re0">$trustedHeaders</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span>
+        <span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_IP</span>    <span class="sy0">=&gt;</span> <span class="st_h">'X_FORWARDED_FOR'</span><span class="sy0">,</span>
+        <span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_HOST</span>  <span class="sy0">=&gt;</span> <span class="st_h">'X_FORWARDED_HOST'</span><span class="sy0">,</span>
+        <span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_PROTO</span> <span class="sy0">=&gt;</span> <span class="st_h">'X_FORWARDED_PROTO'</span><span class="sy0">,</span>
+        <span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_PORT</span>  <span class="sy0">=&gt;</span> <span class="st_h">'X_FORWARDED_PORT'</span><span class="sy0">,</span>
+    <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var \Symfony\Component\HttpFoundation\ParameterBag
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="re0">$attributes</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var \Symfony\Component\HttpFoundation\ParameterBag
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="re0">$request</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var \Symfony\Component\HttpFoundation\ParameterBag
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="re0">$query</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var \Symfony\Component\HttpFoundation\ServerBag
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="re0">$server</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var \Symfony\Component\HttpFoundation\FileBag
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="re0">$files</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var \Symfony\Component\HttpFoundation\ParameterBag
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="re0">$cookies</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var \Symfony\Component\HttpFoundation\HeaderBag
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="re0">$headers</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var string
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$content</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var array
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$languages</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var array
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$charsets</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var array
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$acceptableContentTypes</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var string
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$pathInfo</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var string
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$requestUri</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var string
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$baseUrl</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var string
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$basePath</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var string
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$method</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var string
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$format</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$session</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var string
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$locale</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var string
+     */</span>
+    <span class="kw2">protected</span> <span class="re0">$defaultLocale</span> <span class="sy0">=</span> <span class="st_h">'en'</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * @var array
+     */</span>
+    <span class="kw2">protected</span> static <span class="re0">$formats</span><span class="sy0">;</span>
+&nbsp;
+    <span class="co4">/**
+     * Constructor.
+     *
+     * @param array  $query      The GET parameters
+     * @param array  $request    The POST parameters
+     * @param array  $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
+     * @param array  $cookies    The COOKIE parameters
+     * @param array  $files      The FILES parameters
+     * @param array  $server     The SERVER parameters
+     * @param string $content    The raw body data
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> __construct<span class="br0">&#40;</span><span class="kw3">array</span> <span class="re0">$query</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$request</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$attributes</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$cookies</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$files</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$server</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$content</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">initialize</span><span class="br0">&#40;</span><span class="re0">$query</span><span class="sy0">,</span> <span class="re0">$request</span><span class="sy0">,</span> <span class="re0">$attributes</span><span class="sy0">,</span> <span class="re0">$cookies</span><span class="sy0">,</span> <span class="re0">$files</span><span class="sy0">,</span> <span class="re0">$server</span><span class="sy0">,</span> <span class="re0">$content</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Sets the parameters for this request.
+     *
+     * This method also re-initializes all properties.
+     *
+     * @param array  $query      The GET parameters
+     * @param array  $request    The POST parameters
+     * @param array  $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
+     * @param array  $cookies    The COOKIE parameters
+     * @param array  $files      The FILES parameters
+     * @param array  $server     The SERVER parameters
+     * @param string $content    The raw body data
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> initialize<span class="br0">&#40;</span><span class="kw3">array</span> <span class="re0">$query</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$request</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$attributes</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$cookies</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$files</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$server</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$content</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">request</span> <span class="sy0">=</span> <span class="kw2">new</span> ParameterBag<span class="br0">&#40;</span><span class="re0">$request</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">query</span> <span class="sy0">=</span> <span class="kw2">new</span> ParameterBag<span class="br0">&#40;</span><span class="re0">$query</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">attributes</span> <span class="sy0">=</span> <span class="kw2">new</span> ParameterBag<span class="br0">&#40;</span><span class="re0">$attributes</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">cookies</span> <span class="sy0">=</span> <span class="kw2">new</span> ParameterBag<span class="br0">&#40;</span><span class="re0">$cookies</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">files</span> <span class="sy0">=</span> <span class="kw2">new</span> FileBag<span class="br0">&#40;</span><span class="re0">$files</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span> <span class="sy0">=</span> <span class="kw2">new</span> ServerBag<span class="br0">&#40;</span><span class="re0">$server</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span> <span class="sy0">=</span> <span class="kw2">new</span> HeaderBag<span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">getHeaders</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">content</span> <span class="sy0">=</span> <span class="re0">$content</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">languages</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">charsets</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">acceptableContentTypes</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="kw3">pathInfo</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">requestUri</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">baseUrl</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">basePath</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">method</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">format</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Creates a new request with values from PHP's super globals.
+     *
+     * @return Request A new request
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> static <span class="kw2">function</span> createFromGlobals<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$request</span> <span class="sy0">=</span> <span class="kw2">new</span> static<span class="br0">&#40;</span><span class="re0">$_GET</span><span class="sy0">,</span> <span class="re0">$_POST</span><span class="sy0">,</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$_COOKIE</span><span class="sy0">,</span> <span class="re0">$_FILES</span><span class="sy0">,</span> <span class="re0">$_SERVER</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="nu0">0</span> <span class="sy0">===</span> <span class="kw3">strpos</span><span class="br0">&#40;</span><span class="re0">$request</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'CONTENT_TYPE'</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="st_h">'application/x-www-form-urlencoded'</span><span class="br0">&#41;</span>
+            <span class="sy0">&amp;&amp;</span> <span class="kw3">in_array</span><span class="br0">&#40;</span><span class="kw3">strtoupper</span><span class="br0">&#40;</span><span class="re0">$request</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'REQUEST_METHOD'</span><span class="sy0">,</span> <span class="st_h">'GET'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'PUT'</span><span class="sy0">,</span> <span class="st_h">'DELETE'</span><span class="sy0">,</span> <span class="st_h">'PATCH'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+        <span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw3">parse_str</span><span class="br0">&#40;</span><span class="re0">$request</span><span class="sy0">-&gt;</span><span class="me1">getContent</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$data</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="re0">$request</span><span class="sy0">-&gt;</span><span class="me1">request</span> <span class="sy0">=</span> <span class="kw2">new</span> ParameterBag<span class="br0">&#40;</span><span class="re0">$data</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$request</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Creates a Request based on a given URI and configuration.
+     *
+     * @param string $uri        The URI
+     * @param string $method     The HTTP method
+     * @param array  $parameters The query (GET) or request (POST) parameters
+     * @param array  $cookies    The request cookies ($_COOKIE)
+     * @param array  $files      The request files ($_FILES)
+     * @param array  $server     The server parameters ($_SERVER)
+     * @param string $content    The raw body data
+     *
+     * @return Request A Request instance
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> static <span class="kw2">function</span> create<span class="br0">&#40;</span><span class="re0">$uri</span><span class="sy0">,</span> <span class="re0">$method</span> <span class="sy0">=</span> <span class="st_h">'GET'</span><span class="sy0">,</span> <span class="re0">$parameters</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$cookies</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$files</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$server</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$content</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$defaults</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span>
+            <span class="st_h">'SERVER_NAME'</span>          <span class="sy0">=&gt;</span> <span class="st_h">'localhost'</span><span class="sy0">,</span>
+            <span class="st_h">'SERVER_PORT'</span>          <span class="sy0">=&gt;</span> <span class="nu0">80</span><span class="sy0">,</span>
+            <span class="st_h">'HTTP_HOST'</span>            <span class="sy0">=&gt;</span> <span class="st_h">'localhost'</span><span class="sy0">,</span>
+            <span class="st_h">'HTTP_USER_AGENT'</span>      <span class="sy0">=&gt;</span> <span class="st_h">'Symfony/2.X'</span><span class="sy0">,</span>
+            <span class="st_h">'HTTP_ACCEPT'</span>          <span class="sy0">=&gt;</span> <span class="st_h">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span><span class="sy0">,</span>
+            <span class="st_h">'HTTP_ACCEPT_LANGUAGE'</span> <span class="sy0">=&gt;</span> <span class="st_h">'en-us,en;q=0.5'</span><span class="sy0">,</span>
+            <span class="st_h">'HTTP_ACCEPT_CHARSET'</span>  <span class="sy0">=&gt;</span> <span class="st_h">'ISO-8859-1,utf-8;q=0.7,*;q=0.7'</span><span class="sy0">,</span>
+            <span class="st_h">'REMOTE_ADDR'</span>          <span class="sy0">=&gt;</span> <span class="st_h">'127.0.0.1'</span><span class="sy0">,</span>
+            <span class="st_h">'SCRIPT_NAME'</span>          <span class="sy0">=&gt;</span> <span class="st_h">''</span><span class="sy0">,</span>
+            <span class="st_h">'SCRIPT_FILENAME'</span>      <span class="sy0">=&gt;</span> <span class="st_h">''</span><span class="sy0">,</span>
+            <span class="st_h">'SERVER_PROTOCOL'</span>      <span class="sy0">=&gt;</span> <span class="st_h">'HTTP/1.1'</span><span class="sy0">,</span>
+            <span class="st_h">'REQUEST_TIME'</span>         <span class="sy0">=&gt;</span> <span class="kw3">time</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span>
+        <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="re0">$components</span> <span class="sy0">=</span> <span class="kw3">parse_url</span><span class="br0">&#40;</span><span class="re0">$uri</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'host'</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'SERVER_NAME'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'host'</span><span class="br0">&#93;</span><span class="sy0">;</span>
+            <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'HTTP_HOST'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'host'</span><span class="br0">&#93;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'scheme'</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="st_h">'https'</span> <span class="sy0">===</span> <span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'scheme'</span><span class="br0">&#93;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'HTTPS'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="st_h">'on'</span><span class="sy0">;</span>
+                <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'SERVER_PORT'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="nu0">443</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'port'</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'SERVER_PORT'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'port'</span><span class="br0">&#93;</span><span class="sy0">;</span>
+            <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'HTTP_HOST'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'HTTP_HOST'</span><span class="br0">&#93;</span><span class="sy0">.</span><span class="st_h">':'</span><span class="sy0">.</span><span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'port'</span><span class="br0">&#93;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'user'</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'PHP_AUTH_USER'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'user'</span><span class="br0">&#93;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'pass'</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'PHP_AUTH_PW'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'pass'</span><span class="br0">&#93;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="sy0">!</span><span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'path'</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'path'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="st_h">'/'</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">switch</span> <span class="br0">&#40;</span><span class="kw3">strtoupper</span><span class="br0">&#40;</span><span class="re0">$method</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">case</span> <span class="st_h">'POST'</span><span class="sy0">:</span>
+            <span class="kw1">case</span> <span class="st_h">'PUT'</span><span class="sy0">:</span>
+            <span class="kw1">case</span> <span class="st_h">'DELETE'</span><span class="sy0">:</span>
+                <span class="re0">$defaults</span><span class="br0">&#91;</span><span class="st_h">'CONTENT_TYPE'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="st_h">'application/x-www-form-urlencoded'</span><span class="sy0">;</span>
+            <span class="kw1">case</span> <span class="st_h">'PATCH'</span><span class="sy0">:</span>
+                <span class="re0">$request</span> <span class="sy0">=</span> <span class="re0">$parameters</span><span class="sy0">;</span>
+                <span class="re0">$query</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+                <span class="kw1">break</span><span class="sy0">;</span>
+            <span class="kw1">default</span><span class="sy0">:</span>
+                <span class="re0">$request</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+                <span class="re0">$query</span> <span class="sy0">=</span> <span class="re0">$parameters</span><span class="sy0">;</span>
+                <span class="kw1">break</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'query'</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw3">parse_str</span><span class="br0">&#40;</span><span class="kw3">html_entity_decode</span><span class="br0">&#40;</span><span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'query'</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$qs</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="re0">$query</span> <span class="sy0">=</span> array_replace<span class="br0">&#40;</span><span class="re0">$qs</span><span class="sy0">,</span> <span class="re0">$query</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+        <span class="re0">$queryString</span> <span class="sy0">=</span> <span class="kw3">http_build_query</span><span class="br0">&#40;</span><span class="re0">$query</span><span class="sy0">,</span> <span class="st_h">''</span><span class="sy0">,</span> <span class="st_h">'&amp;'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="re0">$uri</span> <span class="sy0">=</span> <span class="re0">$components</span><span class="br0">&#91;</span><span class="st_h">'path'</span><span class="br0">&#93;</span><span class="sy0">.</span><span class="br0">&#40;</span><span class="st_h">''</span> <span class="sy0">!==</span> <span class="re0">$queryString</span> ? <span class="st_h">'?'</span><span class="sy0">.</span><span class="re0">$queryString</span> <span class="sy0">:</span> <span class="st_h">''</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="re0">$server</span> <span class="sy0">=</span> array_replace<span class="br0">&#40;</span><span class="re0">$defaults</span><span class="sy0">,</span> <span class="re0">$server</span><span class="sy0">,</span> <span class="kw3">array</span><span class="br0">&#40;</span>
+            <span class="st_h">'REQUEST_METHOD'</span> <span class="sy0">=&gt;</span> <span class="kw3">strtoupper</span><span class="br0">&#40;</span><span class="re0">$method</span><span class="br0">&#41;</span><span class="sy0">,</span>
+            <span class="st_h">'PATH_INFO'</span>      <span class="sy0">=&gt;</span> <span class="st_h">''</span><span class="sy0">,</span>
+            <span class="st_h">'REQUEST_URI'</span>    <span class="sy0">=&gt;</span> <span class="re0">$uri</span><span class="sy0">,</span>
+            <span class="st_h">'QUERY_STRING'</span>   <span class="sy0">=&gt;</span> <span class="re0">$queryString</span><span class="sy0">,</span>
+        <span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="kw2">new</span> static<span class="br0">&#40;</span><span class="re0">$query</span><span class="sy0">,</span> <span class="re0">$request</span><span class="sy0">,</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$cookies</span><span class="sy0">,</span> <span class="re0">$files</span><span class="sy0">,</span> <span class="re0">$server</span><span class="sy0">,</span> <span class="re0">$content</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Clones a request and overrides some of its parameters.
+     *
+     * @param array $query      The GET parameters
+     * @param array $request    The POST parameters
+     * @param array $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
+     * @param array $cookies    The COOKIE parameters
+     * @param array $files      The FILES parameters
+     * @param array $server     The SERVER parameters
+     *
+     * @return Request The duplicated request
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> duplicate<span class="br0">&#40;</span><span class="kw3">array</span> <span class="re0">$query</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$request</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$attributes</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$cookies</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$files</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">,</span> <span class="kw3">array</span> <span class="re0">$server</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$dup</span> <span class="sy0">=</span> clone <span class="re0">$this</span><span class="sy0">;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$query</span> <span class="sy0">!==</span> <span class="kw4">null</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">query</span> <span class="sy0">=</span> <span class="kw2">new</span> ParameterBag<span class="br0">&#40;</span><span class="re0">$query</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$request</span> <span class="sy0">!==</span> <span class="kw4">null</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">request</span> <span class="sy0">=</span> <span class="kw2">new</span> ParameterBag<span class="br0">&#40;</span><span class="re0">$request</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$attributes</span> <span class="sy0">!==</span> <span class="kw4">null</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">attributes</span> <span class="sy0">=</span> <span class="kw2">new</span> ParameterBag<span class="br0">&#40;</span><span class="re0">$attributes</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$cookies</span> <span class="sy0">!==</span> <span class="kw4">null</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">cookies</span> <span class="sy0">=</span> <span class="kw2">new</span> ParameterBag<span class="br0">&#40;</span><span class="re0">$cookies</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$files</span> <span class="sy0">!==</span> <span class="kw4">null</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">files</span> <span class="sy0">=</span> <span class="kw2">new</span> FileBag<span class="br0">&#40;</span><span class="re0">$files</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$server</span> <span class="sy0">!==</span> <span class="kw4">null</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">server</span> <span class="sy0">=</span> <span class="kw2">new</span> ServerBag<span class="br0">&#40;</span><span class="re0">$server</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">headers</span> <span class="sy0">=</span> <span class="kw2">new</span> HeaderBag<span class="br0">&#40;</span><span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">getHeaders</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+        <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">languages</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">charsets</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">acceptableContentTypes</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="kw3">pathInfo</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">requestUri</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">baseUrl</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">basePath</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">method</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$dup</span><span class="sy0">-&gt;</span><span class="me1">format</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$dup</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Clones the current request.
+     *
+     * Note that the session is not cloned as duplicated requests
+     * are most of the time sub-requests of the main one.
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> __clone<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">query</span>      <span class="sy0">=</span> clone <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">query</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">request</span>    <span class="sy0">=</span> clone <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">request</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">attributes</span> <span class="sy0">=</span> clone <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">attributes</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">cookies</span>    <span class="sy0">=</span> clone <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">cookies</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">files</span>      <span class="sy0">=</span> clone <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">files</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span>     <span class="sy0">=</span> clone <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span>    <span class="sy0">=</span> clone <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the request as a string.
+     *
+     * @return string The request
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> __toString<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span>
+            <span class="kw3">sprintf</span><span class="br0">&#40;</span><span class="st_h">'%s %s %s'</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getMethod</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getRequestUri</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SERVER_PROTOCOL'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">.</span><span class="st0">&quot;<span class="es1">\r</span><span class="es1">\n</span>&quot;</span><span class="sy0">.</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">.</span><span class="st0">&quot;<span class="es1">\r</span><span class="es1">\n</span>&quot;</span><span class="sy0">.</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getContent</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Overrides the PHP global variables according to this request instance.
+     *
+     * It overrides $_GET, $_POST, $_REQUEST, $_SERVER, $_COOKIE.
+     * $_FILES is never override, see rfc1867
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> overrideGlobals<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$_GET</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">query</span><span class="sy0">-&gt;</span><span class="me1">all</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$_POST</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">request</span><span class="sy0">-&gt;</span><span class="me1">all</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$_SERVER</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">all</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$_COOKIE</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">cookies</span><span class="sy0">-&gt;</span><span class="me1">all</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">foreach</span> <span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">all</span><span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="kw1">as</span> <span class="re0">$key</span> <span class="sy0">=&gt;</span> <span class="re0">$value</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$key</span> <span class="sy0">=</span> <span class="kw3">strtoupper</span><span class="br0">&#40;</span><span class="kw3">str_replace</span><span class="br0">&#40;</span><span class="st_h">'-'</span><span class="sy0">,</span> <span class="st_h">'_'</span><span class="sy0">,</span> <span class="re0">$key</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">in_array</span><span class="br0">&#40;</span><span class="re0">$key</span><span class="sy0">,</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'CONTENT_TYPE'</span><span class="sy0">,</span> <span class="st_h">'CONTENT_LENGTH'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="re0">$_SERVER</span><span class="br0">&#91;</span><span class="re0">$key</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="kw3">implode</span><span class="br0">&#40;</span><span class="st_h">', '</span><span class="sy0">,</span> <span class="re0">$value</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span> <span class="kw1">else</span> <span class="br0">&#123;</span>
+                <span class="re0">$_SERVER</span><span class="br0">&#91;</span><span class="st_h">'HTTP_'</span><span class="sy0">.</span><span class="re0">$key</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="kw3">implode</span><span class="br0">&#40;</span><span class="st_h">', '</span><span class="sy0">,</span> <span class="re0">$value</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$request</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'g'</span> <span class="sy0">=&gt;</span> <span class="re0">$_GET</span><span class="sy0">,</span> <span class="st_h">'p'</span> <span class="sy0">=&gt;</span> <span class="re0">$_POST</span><span class="sy0">,</span> <span class="st_h">'c'</span> <span class="sy0">=&gt;</span> <span class="re0">$_COOKIE</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="re0">$requestOrder</span> <span class="sy0">=</span> <span class="kw3">ini_get</span><span class="br0">&#40;</span><span class="st_h">'request_order'</span><span class="br0">&#41;</span> ?<span class="sy0">:</span> <span class="kw3">ini_get</span><span class="br0">&#40;</span><span class="st_h">'variable_order'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$requestOrder</span> <span class="sy0">=</span> <span class="kw3">preg_replace</span><span class="br0">&#40;</span><span class="st_h">'#[^cgp]#'</span><span class="sy0">,</span> <span class="st_h">''</span><span class="sy0">,</span> <span class="kw3">strtolower</span><span class="br0">&#40;</span><span class="re0">$requestOrder</span><span class="br0">&#41;</span><span class="br0">&#41;</span> ?<span class="sy0">:</span> <span class="st_h">'gp'</span><span class="sy0">;</span>
+&nbsp;
+        <span class="re0">$_REQUEST</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="kw1">foreach</span> <span class="br0">&#40;</span><span class="kw3">str_split</span><span class="br0">&#40;</span><span class="re0">$requestOrder</span><span class="br0">&#41;</span> <span class="kw1">as</span> <span class="re0">$order</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$_REQUEST</span> <span class="sy0">=</span> <span class="kw3">array_merge</span><span class="br0">&#40;</span><span class="re0">$_REQUEST</span><span class="sy0">,</span> <span class="re0">$request</span><span class="br0">&#91;</span><span class="re0">$order</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Trusts $_SERVER entries coming from proxies.
+     *
+     * @deprecated Deprecated since version 2.0, to be removed in 2.3. Use setTrustedProxies instead.
+     */</span>
+    <span class="kw2">public</span> static <span class="kw2">function</span> trustProxyData<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustProxy</span> <span class="sy0">=</span> <span class="kw4">true</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Sets a list of trusted proxies.
+     *
+     * You should only list the reverse proxies that you manage directly.
+     *
+     * @param array $proxies A list of trusted proxies
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> static <span class="kw2">function</span> setTrustedProxies<span class="br0">&#40;</span><span class="kw3">array</span> <span class="re0">$proxies</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedProxies</span> <span class="sy0">=</span> <span class="re0">$proxies</span><span class="sy0">;</span>
+        <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustProxy</span> <span class="sy0">=</span> <span class="re0">$proxies</span> ? <span class="kw4">true</span> <span class="sy0">:</span> <span class="kw4">false</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Sets the name for trusted headers.
+     *
+     * The following header keys are supported:
+     *
+     *  * Request::HEADER_CLIENT_IP:    defaults to X-Forwarded-For   (see getClientIp())
+     *  * Request::HEADER_CLIENT_HOST:  defaults to X-Forwarded-Host  (see getClientHost())
+     *  * Request::HEADER_CLIENT_PORT:  defaults to X-Forwarded-Port  (see getClientPort())
+     *  * Request::HEADER_CLIENT_PROTO: defaults to X-Forwarded-Proto (see getScheme() and isSecure())
+     *
+     * Setting an empty value allows to disable the trusted header for the given key.
+     *
+     * @param string $key   The header key
+     * @param string $value The header name
+     */</span>
+    <span class="kw2">public</span> static <span class="kw2">function</span> setTrustedHeaderName<span class="br0">&#40;</span><span class="re0">$key</span><span class="sy0">,</span> <span class="re0">$value</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="sy0">!</span><span class="kw3">array_key_exists</span><span class="br0">&#40;</span><span class="re0">$key</span><span class="sy0">,</span> <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">throw</span> <span class="kw2">new</span> \InvalidArgumentException<span class="br0">&#40;</span><span class="kw3">sprintf</span><span class="br0">&#40;</span><span class="st_h">'Unable to set the trusted header name for key &quot;%s&quot;.'</span><span class="sy0">,</span> <span class="re0">$key</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="re0">$key</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$value</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns true if $_SERVER entries coming from proxies are trusted,
+     * false otherwise.
+     *
+     * @return boolean
+     */</span>
+    <span class="kw2">public</span> static <span class="kw2">function</span> isProxyTrusted<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustProxy</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Normalizes a query string.
+     *
+     * It builds a normalized query string, where keys/value pairs are alphabetized,
+     * have consistent escaping and unneeded delimiters are removed.
+     *
+     * @param string $qs Query string
+     *
+     * @return string A normalized query string for the Request
+     */</span>
+    <span class="kw2">public</span> static <span class="kw2">function</span> normalizeQueryString<span class="br0">&#40;</span><span class="re0">$qs</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="st_h">''</span> <span class="sy0">==</span> <span class="re0">$qs</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="st_h">''</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$parts</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$order</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">foreach</span> <span class="br0">&#40;</span><span class="kw3">explode</span><span class="br0">&#40;</span><span class="st_h">'&amp;'</span><span class="sy0">,</span> <span class="re0">$qs</span><span class="br0">&#41;</span> <span class="kw1">as</span> <span class="re0">$param</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="st_h">''</span> <span class="sy0">===</span> <span class="re0">$param</span> <span class="sy0">||</span> <span class="st_h">'='</span> <span class="sy0">===</span> <span class="re0">$param</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="co1">// Ignore useless delimiters, e.g. &quot;x=y&amp;&quot;.</span>
+                <span class="co1">// Also ignore pairs with empty key, even if there was a value, e.g. &quot;=value&quot;, as such nameless values cannot be retrieved anyway.</span>
+                <span class="co1">// PHP also does not include them when building _GET.</span>
+                <span class="kw1">continue</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+&nbsp;
+            <span class="re0">$keyValuePair</span> <span class="sy0">=</span> <span class="kw3">explode</span><span class="br0">&#40;</span><span class="st_h">'='</span><span class="sy0">,</span> <span class="re0">$param</span><span class="sy0">,</span> <span class="nu0">2</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+            <span class="co1">// GET parameters, that are submitted from a HTML form, encode spaces as &quot;+&quot; by default (as defined in enctype application/x-www-form-urlencoded).</span>
+            <span class="co1">// PHP also converts &quot;+&quot; to spaces when filling the global _GET or when using the function parse_str. This is why we use urldecode and then normalize to</span>
+            <span class="co1">// RFC 3986 with rawurlencode.</span>
+            <span class="re0">$parts</span><span class="br0">&#91;</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$keyValuePair</span><span class="br0">&#91;</span><span class="nu0">1</span><span class="br0">&#93;</span><span class="br0">&#41;</span> ?
+                <span class="kw3">rawurlencode</span><span class="br0">&#40;</span><span class="kw3">urldecode</span><span class="br0">&#40;</span><span class="re0">$keyValuePair</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">.</span><span class="st_h">'='</span><span class="sy0">.</span><span class="kw3">rawurlencode</span><span class="br0">&#40;</span><span class="kw3">urldecode</span><span class="br0">&#40;</span><span class="re0">$keyValuePair</span><span class="br0">&#91;</span><span class="nu0">1</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">:</span>
+                <span class="kw3">rawurlencode</span><span class="br0">&#40;</span><span class="kw3">urldecode</span><span class="br0">&#40;</span><span class="re0">$keyValuePair</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="re0">$order</span><span class="br0">&#91;</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="kw3">urldecode</span><span class="br0">&#40;</span><span class="re0">$keyValuePair</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw3">array_multisort</span><span class="br0">&#40;</span><span class="re0">$order</span><span class="sy0">,</span> SORT_ASC<span class="sy0">,</span> <span class="re0">$parts</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="kw3">implode</span><span class="br0">&#40;</span><span class="st_h">'&amp;'</span><span class="sy0">,</span> <span class="re0">$parts</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets a &quot;parameter&quot; value.
+     *
+     * This method is mainly useful for libraries that want to provide some flexibility.
+     *
+     * Order of precedence: GET, PATH, POST
+     *
+     * Avoid using this method in controllers:
+     *
+     *  * slow
+     *  * prefer to get from a &quot;named&quot; source
+     *
+     * It is better to explicitly get request parameters from the appropriate
+     * public property instead (query, attributes, request).
+     *
+     * @param string  $key     the key
+     * @param mixed   $default the default value
+     * @param Boolean $deep    is parameter deep in multidimensional array
+     *
+     * @return mixed
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> get<span class="br0">&#40;</span><span class="re0">$key</span><span class="sy0">,</span> <span class="re0">$default</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">,</span> <span class="re0">$deep</span> <span class="sy0">=</span> <span class="kw4">false</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">query</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="re0">$key</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">attributes</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="re0">$key</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">request</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="re0">$key</span><span class="sy0">,</span> <span class="re0">$default</span><span class="sy0">,</span> <span class="re0">$deep</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$deep</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$deep</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the Session.
+     *
+     * @return SessionInterface|null The session
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getSession<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">session</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Whether the request contains a Session which was started in one of the
+     * previous requests.
+     *
+     * @return Boolean
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> hasPreviousSession<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="co1">// the check for $this-&gt;session avoids malicious users trying to fake a session cookie with proper name</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">hasSession</span><span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="sy0">&amp;&amp;</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">cookies</span><span class="sy0">-&gt;</span><span class="me1">has</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">session</span><span class="sy0">-&gt;</span><span class="me1">getName</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Whether the request contains a Session object.
+     *
+     * This method does not give any information about the state of the session object,
+     * like whether the session is started or not. It is just a way to check if this Request
+     * is associated with a Session instance.
+     *
+     * @return Boolean true when the Request contains a Session object, false otherwise
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> hasSession<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="kw4">null</span> <span class="sy0">!==</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">session</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Sets the Session.
+     *
+     * @param SessionInterface $session The Session
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> setSession<span class="br0">&#40;</span>SessionInterface <span class="re0">$session</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">session</span> <span class="sy0">=</span> <span class="re0">$session</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the client IP address.
+     *
+     * This method can read the client IP address from the &quot;X-Forwarded-For&quot; header
+     * when trusted proxies were set via &quot;setTrustedProxies()&quot;. The &quot;X-Forwarded-For&quot;
+     * header value is a comma+space separated list of IP addresses, the left-most
+     * being the original client, and each successive proxy that passed the request
+     * adding the IP address where it received the request from.
+     *
+     * If your reverse proxy uses a different header name than &quot;X-Forwarded-For&quot;,
+     * (&quot;Client-Ip&quot; for instance), configure it via &quot;setTrustedHeaderName()&quot; with
+     * the &quot;client-ip&quot; key.
+     *
+     * @return string The client IP address
+     *
+     * @see http://en.wikipedia.org/wiki/X-Forwarded-For
+     *
+     * @deprecated The proxy argument is deprecated since version 2.0 and will be removed in 2.3. Use setTrustedProxies instead.
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getClientIp<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$ip</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'REMOTE_ADDR'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="sy0">!</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustProxy</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$ip</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="sy0">!</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_IP</span><span class="br0">&#93;</span> <span class="sy0">||</span> <span class="sy0">!</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">has</span><span class="br0">&#40;</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_IP</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$ip</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$clientIps</span> <span class="sy0">=</span> <span class="kw3">array_map</span><span class="br0">&#40;</span><span class="st_h">'trim'</span><span class="sy0">,</span> <span class="kw3">explode</span><span class="br0">&#40;</span><span class="st_h">','</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_IP</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$clientIps</span><span class="br0">&#91;</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$ip</span><span class="sy0">;</span>
+&nbsp;
+        <span class="re0">$trustedProxies</span> <span class="sy0">=</span> <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustProxy</span> <span class="sy0">&amp;&amp;</span> <span class="sy0">!</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedProxies</span> ? <span class="kw3">array</span><span class="br0">&#40;</span><span class="re0">$ip</span><span class="br0">&#41;</span> <span class="sy0">:</span> <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedProxies</span><span class="sy0">;</span>
+        <span class="re0">$clientIps</span> <span class="sy0">=</span> <span class="kw3">array_diff</span><span class="br0">&#40;</span><span class="re0">$clientIps</span><span class="sy0">,</span> <span class="re0">$trustedProxies</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="kw3">array_pop</span><span class="br0">&#40;</span><span class="re0">$clientIps</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns current script name.
+     *
+     * @return string
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getScriptName<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SCRIPT_NAME'</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'ORIG_SCRIPT_NAME'</span><span class="sy0">,</span> <span class="st_h">''</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the path being requested relative to the executed script.
+     *
+     * The path info always starts with a /.
+     *
+     * Suppose this request is instantiated from /mysite on localhost:
+     *
+     *  * http://localhost/mysite              returns an empty string
+     *  * http://localhost/mysite/about        returns '/about'
+     *  * htpp://localhost/mysite/enco%20ded   returns '/enco%20ded'
+     *  * http://localhost/mysite/about?var=1  returns '/about'
+     *
+     * @return string The raw path (i.e. not urldecoded)
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getPathInfo<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="kw3">pathInfo</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="kw3">pathInfo</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">preparePathInfo</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="kw3">pathInfo</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the root path from which this request is executed.
+     *
+     * Suppose that an index.php file instantiates this request object:
+     *
+     *  * http://localhost/index.php         returns an empty string
+     *  * http://localhost/index.php/page    returns an empty string
+     *  * http://localhost/web/index.php     returns '/web'
+     *  * http://localhost/we%20b/index.php  returns '/we%20b'
+     *
+     * @return string The raw path (i.e. not urldecoded)
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getBasePath<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">basePath</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">basePath</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">prepareBasePath</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">basePath</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the root url from which this request is executed.
+     *
+     * The base URL never ends with a /.
+     *
+     * This is similar to getBasePath(), except that it also includes the
+     * script filename (e.g. index.php) if one exists.
+     *
+     * @return string The raw url (i.e. not urldecoded)
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getBaseUrl<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">baseUrl</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">baseUrl</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">prepareBaseUrl</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">baseUrl</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the request's scheme.
+     *
+     * @return string
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getScheme<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">isSecure</span><span class="br0">&#40;</span><span class="br0">&#41;</span> ? <span class="st_h">'https'</span> <span class="sy0">:</span> <span class="st_h">'http'</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the port on which the request is made.
+     *
+     * This method can read the client port from the &quot;X-Forwarded-Port&quot; header
+     * when trusted proxies were set via &quot;setTrustedProxies()&quot;.
+     *
+     * The &quot;X-Forwarded-Port&quot; header must contain the client port.
+     *
+     * If your reverse proxy uses a different header name than &quot;X-Forwarded-Port&quot;,
+     * configure it via &quot;setTrustedHeaderName()&quot; with the &quot;client-port&quot; key.
+     *
+     * @return string
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getPort<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustProxy</span> <span class="sy0">&amp;&amp;</span> <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_PORT</span><span class="br0">&#93;</span> <span class="sy0">&amp;&amp;</span> <span class="re0">$port</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_PORT</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$port</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SERVER_PORT'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the user.
+     *
+     * @return string|null
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getUser<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'PHP_AUTH_USER'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the password.
+     *
+     * @return string|null
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getPassword<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'PHP_AUTH_PW'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the user info.
+     *
+     * @return string A user name and, optionally, scheme-specific information about how to gain authorization to access the server
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getUserInfo<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$userinfo</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getUser</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="re0">$pass</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getPassword</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="st_h">''</span> <span class="sy0">!=</span> <span class="re0">$pass</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+           <span class="re0">$userinfo</span> <span class="sy0">.=</span> <span class="st0">&quot;:<span class="es4">$pass</span>&quot;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$userinfo</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the HTTP host being requested.
+     *
+     * The port name will be appended to the host if it's non-standard.
+     *
+     * @return string
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getHttpHost<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$scheme</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getScheme</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$port</span>   <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getPort</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="br0">&#40;</span><span class="st_h">'http'</span> <span class="sy0">==</span> <span class="re0">$scheme</span> <span class="sy0">&amp;&amp;</span> <span class="re0">$port</span> <span class="sy0">==</span> <span class="nu0">80</span><span class="br0">&#41;</span> <span class="sy0">||</span> <span class="br0">&#40;</span><span class="st_h">'https'</span> <span class="sy0">==</span> <span class="re0">$scheme</span> <span class="sy0">&amp;&amp;</span> <span class="re0">$port</span> <span class="sy0">==</span> <span class="nu0">443</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getHost</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getHost</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">.</span><span class="st_h">':'</span><span class="sy0">.</span><span class="re0">$port</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the requested URI.
+     *
+     * @return string The raw URI (i.e. not urldecoded)
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getRequestUri<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">requestUri</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">requestUri</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">prepareRequestUri</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">requestUri</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the scheme and HTTP host.
+     *
+     * If the URL was called with basic authentication, the user
+     * and the password are not added to the generated string.
+     *
+     * @return string The scheme and HTTP host
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getSchemeAndHttpHost<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getScheme</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">.</span><span class="st_h">'://'</span><span class="sy0">.</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getHttpHost</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Generates a normalized URI for the Request.
+     *
+     * @return string A normalized URI for the Request
+     *
+     * @see getQueryString()
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getUri<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$qs</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getQueryString</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">!==</span> <span class="re0">$qs</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$qs</span> <span class="sy0">=</span> <span class="st_h">'?'</span><span class="sy0">.</span><span class="re0">$qs</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getSchemeAndHttpHost</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">.</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getBaseUrl</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">.</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getPathInfo</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">.</span><span class="re0">$qs</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Generates a normalized URI for the given path.
+     *
+     * @param string $path A path to use instead of the current one
+     *
+     * @return string The normalized URI for the path
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getUriForPath<span class="br0">&#40;</span><span class="re0">$path</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getSchemeAndHttpHost</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">.</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getBaseUrl</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">.</span><span class="re0">$path</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Generates the normalized query string for the Request.
+     *
+     * It builds a normalized query string, where keys/value pairs are alphabetized
+     * and have consistent escaping.
+     *
+     * @return string|null A normalized query string for the Request
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getQueryString<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$qs</span> <span class="sy0">=</span> static<span class="sy0">::</span><span class="me2">normalizeQueryString</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'QUERY_STRING'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="st_h">''</span> <span class="sy0">===</span> <span class="re0">$qs</span> ? <span class="kw4">null</span> <span class="sy0">:</span> <span class="re0">$qs</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Checks whether the request is secure or not.
+     *
+     * This method can read the client port from the &quot;X-Forwarded-Proto&quot; header
+     * when trusted proxies were set via &quot;setTrustedProxies()&quot;.
+     *
+     * The &quot;X-Forwarded-Proto&quot; header must contain the protocol: &quot;https&quot; or &quot;http&quot;.
+     *
+     * If your reverse proxy uses a different header name than &quot;X-Forwarded-Proto&quot;
+     * (&quot;SSL_HTTPS&quot; for instance), configure it via &quot;setTrustedHeaderName()&quot; with
+     * the &quot;client-proto&quot; key.
+     *
+     * @return Boolean
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> isSecure<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustProxy</span> <span class="sy0">&amp;&amp;</span> <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_PROTO</span><span class="br0">&#93;</span> <span class="sy0">&amp;&amp;</span> <span class="re0">$proto</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_PROTO</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="kw3">in_array</span><span class="br0">&#40;</span><span class="kw3">strtolower</span><span class="br0">&#40;</span><span class="re0">$proto</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'https'</span><span class="sy0">,</span> <span class="st_h">'on'</span><span class="sy0">,</span> <span class="st_h">'1'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="st_h">'on'</span> <span class="sy0">==</span> <span class="kw3">strtolower</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'HTTPS'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">||</span> <span class="nu0">1</span> <span class="sy0">==</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'HTTPS'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the host name.
+     *
+     * This method can read the client port from the &quot;X-Forwarded-Host&quot; header
+     * when trusted proxies were set via &quot;setTrustedProxies()&quot;.
+     *
+     * The &quot;X-Forwarded-Host&quot; header must contain the client host name.
+     *
+     * If your reverse proxy uses a different header name than &quot;X-Forwarded-Host&quot;,
+     * configure it via &quot;setTrustedHeaderName()&quot; with the &quot;client-host&quot; key.
+     *
+     * @return string
+     *
+     * @throws \UnexpectedValueException when the host name is invalid
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getHost<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustProxy</span> <span class="sy0">&amp;&amp;</span> <span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_HOST</span><span class="br0">&#93;</span> <span class="sy0">&amp;&amp;</span> <span class="re0">$host</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="kw2">self</span><span class="sy0">::</span><span class="re0">$trustedHeaders</span><span class="br0">&#91;</span><span class="kw2">self</span><span class="sy0">::</span><span class="me2">HEADER_CLIENT_HOST</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$elements</span> <span class="sy0">=</span> <span class="kw3">explode</span><span class="br0">&#40;</span><span class="st_h">','</span><span class="sy0">,</span> <span class="re0">$host</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+            <span class="re0">$host</span> <span class="sy0">=</span> <span class="re0">$elements</span><span class="br0">&#91;</span><span class="kw3">count</span><span class="br0">&#40;</span><span class="re0">$elements</span><span class="br0">&#41;</span> <span class="sy0">-</span> <span class="nu0">1</span><span class="br0">&#93;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span> <span class="kw1">elseif</span> <span class="br0">&#40;</span><span class="sy0">!</span><span class="re0">$host</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'HOST'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="sy0">!</span><span class="re0">$host</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SERVER_NAME'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="re0">$host</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SERVER_ADDR'</span><span class="sy0">,</span> <span class="st_h">''</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="co1">// trim and remove port number from host</span>
+        <span class="co1">// host is lowercase as per RFC 952/2181</span>
+        <span class="re0">$host</span> <span class="sy0">=</span> <span class="kw3">strtolower</span><span class="br0">&#40;</span><span class="kw3">preg_replace</span><span class="br0">&#40;</span><span class="st_h">'/:\d+$/'</span><span class="sy0">,</span> <span class="st_h">''</span><span class="sy0">,</span> <span class="kw3">trim</span><span class="br0">&#40;</span><span class="re0">$host</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="co1">// as the host can come from the user (HTTP_HOST and depending on the configuration, SERVER_NAME too can come from the user)</span>
+        <span class="co1">// check that it does not contain forbidden characters (see RFC 952 and RFC 2181)</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$host</span> <span class="sy0">&amp;&amp;</span> <span class="sy0">!</span><span class="kw3">preg_match</span><span class="br0">&#40;</span><span class="st_h">'/^\[?(?:[a-zA-Z0-9-:\]_]+\.?)+$/'</span><span class="sy0">,</span> <span class="re0">$host</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">throw</span> <span class="kw2">new</span> \UnexpectedValueException<span class="br0">&#40;</span><span class="st_h">'Invalid Host'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$host</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Sets the request method.
+     *
+     * @param string $method
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> setMethod<span class="br0">&#40;</span><span class="re0">$method</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">method</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">set</span><span class="br0">&#40;</span><span class="st_h">'REQUEST_METHOD'</span><span class="sy0">,</span> <span class="re0">$method</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the request method.
+     *
+     * The method is always an uppercased string.
+     *
+     * @return string The request method
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getMethod<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">method</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">method</span> <span class="sy0">=</span> <span class="kw3">strtoupper</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'REQUEST_METHOD'</span><span class="sy0">,</span> <span class="st_h">'GET'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="st_h">'POST'</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">method</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">method</span> <span class="sy0">=</span> <span class="kw3">strtoupper</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'X-HTTP-METHOD-OVERRIDE'</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">request</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'_method'</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">query</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'_method'</span><span class="sy0">,</span> <span class="st_h">'POST'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">method</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the mime type associated with the format.
+     *
+     * @param string $format The format
+     *
+     * @return string The associated mime type (null if not found)
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getMimeType<span class="br0">&#40;</span><span class="re0">$format</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> static<span class="sy0">::</span><span class="re0">$formats</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            static<span class="sy0">::</span><span class="me2">initializeFormats</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="kw3">isset</span><span class="br0">&#40;</span>static<span class="sy0">::</span><span class="re0">$formats</span><span class="br0">&#91;</span><span class="re0">$format</span><span class="br0">&#93;</span><span class="br0">&#41;</span> ? static<span class="sy0">::</span><span class="re0">$formats</span><span class="br0">&#91;</span><span class="re0">$format</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span> <span class="sy0">:</span> <span class="kw4">null</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the format associated with the mime type.
+     *
+     * @param string $mimeType The associated mime type
+     *
+     * @return string|null The format (null if not found)
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getFormat<span class="br0">&#40;</span><span class="re0">$mimeType</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">false</span> <span class="sy0">!==</span> <span class="re0">$pos</span> <span class="sy0">=</span> <span class="kw3">strpos</span><span class="br0">&#40;</span><span class="re0">$mimeType</span><span class="sy0">,</span> <span class="st_h">';'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$mimeType</span> <span class="sy0">=</span> <span class="kw3">substr</span><span class="br0">&#40;</span><span class="re0">$mimeType</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="re0">$pos</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> static<span class="sy0">::</span><span class="re0">$formats</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            static<span class="sy0">::</span><span class="me2">initializeFormats</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">foreach</span> <span class="br0">&#40;</span>static<span class="sy0">::</span><span class="re0">$formats</span> <span class="kw1">as</span> <span class="re0">$format</span> <span class="sy0">=&gt;</span> <span class="re0">$mimeTypes</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">in_array</span><span class="br0">&#40;</span><span class="re0">$mimeType</span><span class="sy0">,</span> <span class="br0">&#40;</span><span class="kw3">array</span><span class="br0">&#41;</span> <span class="re0">$mimeTypes</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="kw1">return</span> <span class="re0">$format</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="kw4">null</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Associates a format with mime types.
+     *
+     * @param string       $format    The format
+     * @param string|array $mimeTypes The associated mime types (the preferred one must be the first as it will be used as the content type)
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> setFormat<span class="br0">&#40;</span><span class="re0">$format</span><span class="sy0">,</span> <span class="re0">$mimeTypes</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> static<span class="sy0">::</span><span class="re0">$formats</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            static<span class="sy0">::</span><span class="me2">initializeFormats</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        static<span class="sy0">::</span><span class="re0">$formats</span><span class="br0">&#91;</span><span class="re0">$format</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="kw3">is_array</span><span class="br0">&#40;</span><span class="re0">$mimeTypes</span><span class="br0">&#41;</span> ? <span class="re0">$mimeTypes</span> <span class="sy0">:</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="re0">$mimeTypes</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the request format.
+     *
+     * Here is the process to determine the format:
+     *
+     *  * format defined by the user (with setRequestFormat())
+     *  * _format request parameter
+     *  * $default
+     *
+     * @param string $default The default format
+     *
+     * @return string The request format
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getRequestFormat<span class="br0">&#40;</span><span class="re0">$default</span> <span class="sy0">=</span> <span class="st_h">'html'</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">format</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">format</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'_format'</span><span class="sy0">,</span> <span class="re0">$default</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">format</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Sets the request format.
+     *
+     * @param string $format The request format.
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> setRequestFormat<span class="br0">&#40;</span><span class="re0">$format</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">format</span> <span class="sy0">=</span> <span class="re0">$format</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the format associated with the request.
+     *
+     * @return string|null The format (null if no content type is present)
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getContentType<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getFormat</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'CONTENT_TYPE'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Sets the default locale.
+     *
+     * @param string $locale
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> setDefaultLocale<span class="br0">&#40;</span><span class="re0">$locale</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">defaultLocale</span> <span class="sy0">=</span> <span class="re0">$locale</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">locale</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">setPhpDefaultLocale</span><span class="br0">&#40;</span><span class="re0">$locale</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Sets the locale.
+     *
+     * @param string $locale
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> <span class="kw3">setLocale</span><span class="br0">&#40;</span><span class="re0">$locale</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">setPhpDefaultLocale</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">locale</span> <span class="sy0">=</span> <span class="re0">$locale</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Get the locale.
+     *
+     * @return string
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getLocale<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">locale</span> ? <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">defaultLocale</span> <span class="sy0">:</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">locale</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Checks if the request method is of specified type.
+     *
+     * @param string $method Uppercase request method (GET, POST etc).
+     *
+     * @return Boolean
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> isMethod<span class="br0">&#40;</span><span class="re0">$method</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getMethod</span><span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="sy0">===</span> <span class="kw3">strtoupper</span><span class="br0">&#40;</span><span class="re0">$method</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Checks whether the method is safe or not.
+     *
+     * @return Boolean
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> isMethodSafe<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="kw3">in_array</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getMethod</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'GET'</span><span class="sy0">,</span> <span class="st_h">'HEAD'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the request body content.
+     *
+     * @param Boolean $asResource If true, a resource will be returned
+     *
+     * @return string|resource The request body content or a resource to read the body stream.
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getContent<span class="br0">&#40;</span><span class="re0">$asResource</span> <span class="sy0">=</span> <span class="kw4">false</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">false</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">content</span> <span class="sy0">||</span> <span class="br0">&#40;</span><span class="kw4">true</span> <span class="sy0">===</span> <span class="re0">$asResource</span> <span class="sy0">&amp;&amp;</span> <span class="kw4">null</span> <span class="sy0">!==</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">content</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">throw</span> <span class="kw2">new</span> \LogicException<span class="br0">&#40;</span><span class="st_h">'getContent() can only be called once when using the resource return type.'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">true</span> <span class="sy0">===</span> <span class="re0">$asResource</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">content</span> <span class="sy0">=</span> <span class="kw4">false</span><span class="sy0">;</span>
+&nbsp;
+            <span class="kw1">return</span> <span class="kw3">fopen</span><span class="br0">&#40;</span><span class="st_h">'php://input'</span><span class="sy0">,</span> <span class="st_h">'rb'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">content</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">content</span> <span class="sy0">=</span> <span class="kw3">file_get_contents</span><span class="br0">&#40;</span><span class="st_h">'php://input'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">content</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets the Etags.
+     *
+     * @return array The entity tags
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getETags<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="kw3">preg_split</span><span class="br0">&#40;</span><span class="st_h">'/\s*,\s*/'</span><span class="sy0">,</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'if_none_match'</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="kw4">null</span><span class="sy0">,</span> PREG_SPLIT_NO_EMPTY<span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * @return Boolean
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> isNoCache<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">hasCacheControlDirective</span><span class="br0">&#40;</span><span class="st_h">'no-cache'</span><span class="br0">&#41;</span> <span class="sy0">||</span> <span class="st_h">'no-cache'</span> <span class="sy0">==</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'Pragma'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns the preferred language.
+     *
+     * @param array $locales An array of ordered available locales
+     *
+     * @return string|null The preferred locale
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getPreferredLanguage<span class="br0">&#40;</span><span class="kw3">array</span> <span class="re0">$locales</span> <span class="sy0">=</span> <span class="kw4">null</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$preferredLanguages</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getLanguages</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">empty</span><span class="br0">&#40;</span><span class="re0">$locales</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$preferredLanguages</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="br0">&#41;</span> ? <span class="re0">$preferredLanguages</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span> <span class="sy0">:</span> <span class="kw4">null</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="sy0">!</span><span class="re0">$preferredLanguages</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$locales</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$preferredLanguages</span> <span class="sy0">=</span> <span class="kw3">array_values</span><span class="br0">&#40;</span><span class="kw3">array_intersect</span><span class="br0">&#40;</span><span class="re0">$preferredLanguages</span><span class="sy0">,</span> <span class="re0">$locales</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$preferredLanguages</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="br0">&#41;</span> ? <span class="re0">$preferredLanguages</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span> <span class="sy0">:</span> <span class="re0">$locales</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets a list of languages acceptable by the client browser.
+     *
+     * @return array Languages ordered in the user browser preferences
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getLanguages<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">!==</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">languages</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">languages</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$languages</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">splitHttpAcceptHeader</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'Accept-Language'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">languages</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="kw1">foreach</span> <span class="br0">&#40;</span><span class="re0">$languages</span> <span class="kw1">as</span> <span class="re0">$lang</span> <span class="sy0">=&gt;</span> <span class="re0">$q</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">strstr</span><span class="br0">&#40;</span><span class="re0">$lang</span><span class="sy0">,</span> <span class="st_h">'-'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="re0">$codes</span> <span class="sy0">=</span> <span class="kw3">explode</span><span class="br0">&#40;</span><span class="st_h">'-'</span><span class="sy0">,</span> <span class="re0">$lang</span><span class="br0">&#41;</span><span class="sy0">;</span>
+                <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$codes</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span> <span class="sy0">==</span> <span class="st_h">'i'</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                    <span class="co1">// Language not listed in ISO 639 that are not variants</span>
+                    <span class="co1">// of any listed language, which can be registered with the</span>
+                    <span class="co1">// i-prefix, such as i-cherokee</span>
+                    <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">count</span><span class="br0">&#40;</span><span class="re0">$codes</span><span class="br0">&#41;</span> <span class="sy0">&gt;</span> <span class="nu0">1</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                        <span class="re0">$lang</span> <span class="sy0">=</span> <span class="re0">$codes</span><span class="br0">&#91;</span><span class="nu0">1</span><span class="br0">&#93;</span><span class="sy0">;</span>
+                    <span class="br0">&#125;</span>
+                <span class="br0">&#125;</span> <span class="kw1">else</span> <span class="br0">&#123;</span>
+                    <span class="kw1">for</span> <span class="br0">&#40;</span><span class="re0">$i</span> <span class="sy0">=</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="re0">$max</span> <span class="sy0">=</span> <span class="kw3">count</span><span class="br0">&#40;</span><span class="re0">$codes</span><span class="br0">&#41;</span><span class="sy0">;</span> <span class="re0">$i</span> <span class="sy0">&lt;</span> <span class="re0">$max</span><span class="sy0">;</span> <span class="re0">$i</span><span class="sy0">++</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$i</span> <span class="sy0">==</span> <span class="nu0">0</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                            <span class="re0">$lang</span> <span class="sy0">=</span> <span class="kw3">strtolower</span><span class="br0">&#40;</span><span class="re0">$codes</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+                        <span class="br0">&#125;</span> <span class="kw1">else</span> <span class="br0">&#123;</span>
+                            <span class="re0">$lang</span> <span class="sy0">.=</span> <span class="st_h">'_'</span><span class="sy0">.</span><span class="kw3">strtoupper</span><span class="br0">&#40;</span><span class="re0">$codes</span><span class="br0">&#91;</span><span class="re0">$i</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+                        <span class="br0">&#125;</span>
+                    <span class="br0">&#125;</span>
+                <span class="br0">&#125;</span>
+            <span class="br0">&#125;</span>
+&nbsp;
+            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">languages</span><span class="br0">&#91;</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$lang</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">languages</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets a list of charsets acceptable by the client browser.
+     *
+     * @return array List of charsets in preferable order
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getCharsets<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">!==</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">charsets</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">charsets</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">charsets</span> <span class="sy0">=</span> <span class="kw3">array_keys</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">splitHttpAcceptHeader</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'Accept-Charset'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Gets a list of content types acceptable by the client browser
+     *
+     * @return array List of content types in preferable order
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> getAcceptableContentTypes<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">!==</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">acceptableContentTypes</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">acceptableContentTypes</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">acceptableContentTypes</span> <span class="sy0">=</span> <span class="kw3">array_keys</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">splitHttpAcceptHeader</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'Accept'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Returns true if the request is a XMLHttpRequest.
+     *
+     * It works if your JavaScript library set an X-Requested-With HTTP header.
+     * It is known to work with common JavaScript frameworks:
+     * @link http://en.wikipedia.org/wiki/List_of_Ajax_frameworks#JavaScript
+     *
+     * @return Boolean true if the request is an XMLHttpRequest, false otherwise
+     *
+     * @api
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> isXmlHttpRequest<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">return</span> <span class="st_h">'XMLHttpRequest'</span> <span class="sy0">==</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'X-Requested-With'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Splits an Accept-* HTTP header.
+     *
+     * @param string $header Header to split
+     *
+     * @return array Array indexed by the values of the Accept-* header in preferred order
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> splitHttpAcceptHeader<span class="br0">&#40;</span><span class="re0">$header</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="sy0">!</span><span class="re0">$header</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$values</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$groups</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="kw1">foreach</span> <span class="br0">&#40;</span><span class="kw3">array_filter</span><span class="br0">&#40;</span><span class="kw3">explode</span><span class="br0">&#40;</span><span class="st_h">','</span><span class="sy0">,</span> <span class="re0">$header</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="kw1">as</span> <span class="re0">$value</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="co1">// Cut off any q-value that might come after a semi-colon</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">preg_match</span><span class="br0">&#40;</span><span class="st_h">'/;\s*(q=.*$)/'</span><span class="sy0">,</span> <span class="re0">$value</span><span class="sy0">,</span> <span class="re0">$match</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="re0">$q</span>     <span class="sy0">=</span> <span class="kw3">substr</span><span class="br0">&#40;</span><span class="kw3">trim</span><span class="br0">&#40;</span><span class="re0">$match</span><span class="br0">&#91;</span><span class="nu0">1</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="nu0">2</span><span class="br0">&#41;</span><span class="sy0">;</span>
+                <span class="re0">$value</span> <span class="sy0">=</span> <span class="kw3">trim</span><span class="br0">&#40;</span><span class="kw3">substr</span><span class="br0">&#40;</span><span class="re0">$value</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="sy0">-</span><span class="kw3">strlen</span><span class="br0">&#40;</span><span class="re0">$match</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span> <span class="kw1">else</span> <span class="br0">&#123;</span>
+                <span class="re0">$q</span> <span class="sy0">=</span> <span class="nu0">1</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+&nbsp;
+            <span class="re0">$groups</span><span class="br0">&#91;</span><span class="re0">$q</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$value</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw3">krsort</span><span class="br0">&#40;</span><span class="re0">$groups</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">foreach</span> <span class="br0">&#40;</span><span class="re0">$groups</span> <span class="kw1">as</span> <span class="re0">$q</span> <span class="sy0">=&gt;</span> <span class="re0">$items</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$q</span> <span class="sy0">=</span> <span class="br0">&#40;</span>float<span class="br0">&#41;</span> <span class="re0">$q</span><span class="sy0">;</span>
+&nbsp;
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="nu0">0</span> <span class="sy0">&lt;</span> <span class="re0">$q</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="kw1">foreach</span> <span class="br0">&#40;</span><span class="re0">$items</span> <span class="kw1">as</span> <span class="re0">$value</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                    <span class="re0">$values</span><span class="br0">&#91;</span><span class="kw3">trim</span><span class="br0">&#40;</span><span class="re0">$value</span><span class="br0">&#41;</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="re0">$q</span><span class="sy0">;</span>
+                <span class="br0">&#125;</span>
+            <span class="br0">&#125;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$values</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="coMULTI">/*
+     * The following methods are derived from code of the Zend Framework (1.10dev - 2010-01-24)
+     *
+     * Code subject to the new BSD license (http://framework.zend.com/license/new-bsd).
+     *
+     * Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+     */</span>
+&nbsp;
+    <span class="kw2">protected</span> <span class="kw2">function</span> prepareRequestUri<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="st_h">''</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">has</span><span class="br0">&#40;</span><span class="st_h">'X_ORIGINAL_URL'</span><span class="br0">&#41;</span> <span class="sy0">&amp;&amp;</span> <span class="kw4">false</span> <span class="sy0">!==</span> <span class="kw3">stripos</span><span class="br0">&#40;</span><span class="kw4">PHP_OS</span><span class="sy0">,</span> <span class="st_h">'WIN'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="co1">// IIS with Microsoft Rewrite Module</span>
+            <span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'X_ORIGINAL_URL'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span> <span class="kw1">elseif</span> <span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">has</span><span class="br0">&#40;</span><span class="st_h">'X_REWRITE_URL'</span><span class="br0">&#41;</span> <span class="sy0">&amp;&amp;</span> <span class="kw4">false</span> <span class="sy0">!==</span> <span class="kw3">stripos</span><span class="br0">&#40;</span><span class="kw4">PHP_OS</span><span class="sy0">,</span> <span class="st_h">'WIN'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="co1">// IIS with ISAPI_Rewrite</span>
+            <span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">headers</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'X_REWRITE_URL'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span> <span class="kw1">elseif</span> <span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'IIS_WasUrlRewritten'</span><span class="br0">&#41;</span> <span class="sy0">==</span> <span class="st_h">'1'</span> <span class="sy0">&amp;&amp;</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'UNENCODED_URL'</span><span class="br0">&#41;</span> <span class="sy0">!=</span> <span class="st_h">''</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="co1">// IIS7 with URL Rewrite: make sure we get the unencoded url (double slash problem)</span>
+            <span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'UNENCODED_URL'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span> <span class="kw1">elseif</span> <span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">has</span><span class="br0">&#40;</span><span class="st_h">'REQUEST_URI'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'REQUEST_URI'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="co1">// HTTP proxy reqs setup request uri with scheme and host [and port] + the url path, only use url path</span>
+            <span class="re0">$schemeAndHttpHost</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getSchemeAndHttpHost</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">strpos</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="re0">$schemeAndHttpHost</span><span class="br0">&#41;</span> <span class="sy0">===</span> <span class="nu0">0</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="kw3">substr</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="kw3">strlen</span><span class="br0">&#40;</span><span class="re0">$schemeAndHttpHost</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+        <span class="br0">&#125;</span> <span class="kw1">elseif</span> <span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">has</span><span class="br0">&#40;</span><span class="st_h">'ORIG_PATH_INFO'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="co1">// IIS 5.0, PHP as CGI</span>
+            <span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'ORIG_PATH_INFO'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="st_h">''</span> <span class="sy0">!=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'QUERY_STRING'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                <span class="re0">$requestUri</span> <span class="sy0">.=</span> <span class="st_h">'?'</span><span class="sy0">.</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'QUERY_STRING'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="re0">$requestUri</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Prepares the base URL.
+     *
+     * @return string
+     */</span>
+    <span class="kw2">protected</span> <span class="kw2">function</span> prepareBaseUrl<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$filename</span> <span class="sy0">=</span> <span class="kw3">basename</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SCRIPT_FILENAME'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">basename</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SCRIPT_NAME'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">===</span> <span class="re0">$filename</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$baseUrl</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SCRIPT_NAME'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span> <span class="kw1">elseif</span> <span class="br0">&#40;</span><span class="kw3">basename</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'PHP_SELF'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">===</span> <span class="re0">$filename</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$baseUrl</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'PHP_SELF'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span> <span class="kw1">elseif</span> <span class="br0">&#40;</span><span class="kw3">basename</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'ORIG_SCRIPT_NAME'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">===</span> <span class="re0">$filename</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$baseUrl</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'ORIG_SCRIPT_NAME'</span><span class="br0">&#41;</span><span class="sy0">;</span> <span class="co1">// 1and1 shared hosting compatibility</span>
+        <span class="br0">&#125;</span> <span class="kw1">else</span> <span class="br0">&#123;</span>
+            <span class="co1">// Backtrack up the script_filename to find the portion matching</span>
+            <span class="co1">// php_self</span>
+            <span class="re0">$path</span>    <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'PHP_SELF'</span><span class="sy0">,</span> <span class="st_h">''</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="re0">$file</span>    <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SCRIPT_FILENAME'</span><span class="sy0">,</span> <span class="st_h">''</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="re0">$segs</span>    <span class="sy0">=</span> <span class="kw3">explode</span><span class="br0">&#40;</span><span class="st_h">'/'</span><span class="sy0">,</span> <span class="kw3">trim</span><span class="br0">&#40;</span><span class="re0">$file</span><span class="sy0">,</span> <span class="st_h">'/'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="re0">$segs</span>    <span class="sy0">=</span> <span class="kw3">array_reverse</span><span class="br0">&#40;</span><span class="re0">$segs</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="re0">$index</span>   <span class="sy0">=</span> <span class="nu0">0</span><span class="sy0">;</span>
+            <span class="re0">$last</span>    <span class="sy0">=</span> <span class="kw3">count</span><span class="br0">&#40;</span><span class="re0">$segs</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="re0">$baseUrl</span> <span class="sy0">=</span> <span class="st_h">''</span><span class="sy0">;</span>
+            <span class="kw1">do</span> <span class="br0">&#123;</span>
+                <span class="re0">$seg</span>     <span class="sy0">=</span> <span class="re0">$segs</span><span class="br0">&#91;</span><span class="re0">$index</span><span class="br0">&#93;</span><span class="sy0">;</span>
+                <span class="re0">$baseUrl</span> <span class="sy0">=</span> <span class="st_h">'/'</span><span class="sy0">.</span><span class="re0">$seg</span><span class="sy0">.</span><span class="re0">$baseUrl</span><span class="sy0">;</span>
+                <span class="sy0">++</span><span class="re0">$index</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span> <span class="kw1">while</span> <span class="br0">&#40;</span><span class="br0">&#40;</span><span class="re0">$last</span> <span class="sy0">&gt;</span> <span class="re0">$index</span><span class="br0">&#41;</span> <span class="sy0">&amp;&amp;</span> <span class="br0">&#40;</span><span class="kw4">false</span> <span class="sy0">!==</span> <span class="br0">&#40;</span><span class="re0">$pos</span> <span class="sy0">=</span> <span class="kw3">strpos</span><span class="br0">&#40;</span><span class="re0">$path</span><span class="sy0">,</span> <span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">&amp;&amp;</span> <span class="br0">&#40;</span><span class="nu0">0</span> <span class="sy0">!=</span> <span class="re0">$pos</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="co1">// Does the baseUrl have anything in common with the request_uri?</span>
+        <span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getRequestUri</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$baseUrl</span> <span class="sy0">&amp;&amp;</span> <span class="kw4">false</span> <span class="sy0">!==</span> <span class="re0">$prefix</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getUrlencodedPrefix</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="co1">// full $baseUrl matches</span>
+            <span class="kw1">return</span> <span class="re0">$prefix</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$baseUrl</span> <span class="sy0">&amp;&amp;</span> <span class="kw4">false</span> <span class="sy0">!==</span> <span class="re0">$prefix</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getUrlencodedPrefix</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="kw3">dirname</span><span class="br0">&#40;</span><span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="co1">// directory portion of $baseUrl matches</span>
+            <span class="kw1">return</span> <span class="kw3">rtrim</span><span class="br0">&#40;</span><span class="re0">$prefix</span><span class="sy0">,</span> <span class="st_h">'/'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$truncatedRequestUri</span> <span class="sy0">=</span> <span class="re0">$requestUri</span><span class="sy0">;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="br0">&#40;</span><span class="re0">$pos</span> <span class="sy0">=</span> <span class="kw3">strpos</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="st_h">'?'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">!==</span> <span class="kw4">false</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$truncatedRequestUri</span> <span class="sy0">=</span> <span class="kw3">substr</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="re0">$pos</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$basename</span> <span class="sy0">=</span> <span class="kw3">basename</span><span class="br0">&#40;</span><span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">empty</span><span class="br0">&#40;</span><span class="re0">$basename</span><span class="br0">&#41;</span> <span class="sy0">||</span> <span class="sy0">!</span><span class="kw3">strpos</span><span class="br0">&#40;</span><span class="kw3">rawurldecode</span><span class="br0">&#40;</span><span class="re0">$truncatedRequestUri</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$basename</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="co1">// no match whatsoever; set it blank</span>
+            <span class="kw1">return</span> <span class="st_h">''</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="co1">// If using mod_rewrite or ISAPI_Rewrite strip the script filename</span>
+        <span class="co1">// out of baseUrl. $pos !== 0 makes sure it is not matching a value</span>
+        <span class="co1">// from PATH_INFO or QUERY_STRING</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="br0">&#40;</span><span class="kw3">strlen</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="br0">&#41;</span> <span class="sy0">&gt;=</span> <span class="kw3">strlen</span><span class="br0">&#40;</span><span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">&amp;&amp;</span> <span class="br0">&#40;</span><span class="br0">&#40;</span><span class="kw4">false</span> <span class="sy0">!==</span> <span class="br0">&#40;</span><span class="re0">$pos</span> <span class="sy0">=</span> <span class="kw3">strpos</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">&amp;&amp;</span> <span class="br0">&#40;</span><span class="re0">$pos</span> <span class="sy0">!==</span> <span class="nu0">0</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$baseUrl</span> <span class="sy0">=</span> <span class="kw3">substr</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="re0">$pos</span> <span class="sy0">+</span> <span class="kw3">strlen</span><span class="br0">&#40;</span><span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="kw3">rtrim</span><span class="br0">&#40;</span><span class="re0">$baseUrl</span><span class="sy0">,</span> <span class="st_h">'/'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Prepares the base path.
+     *
+     * @return string base path
+     */</span>
+    <span class="kw2">protected</span> <span class="kw2">function</span> prepareBasePath<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$filename</span> <span class="sy0">=</span> <span class="kw3">basename</span><span class="br0">&#40;</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">server</span><span class="sy0">-&gt;</span><span class="me1">get</span><span class="br0">&#40;</span><span class="st_h">'SCRIPT_FILENAME'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="re0">$baseUrl</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getBaseUrl</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">empty</span><span class="br0">&#40;</span><span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="st_h">''</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">basename</span><span class="br0">&#40;</span><span class="re0">$baseUrl</span><span class="br0">&#41;</span> <span class="sy0">===</span> <span class="re0">$filename</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$basePath</span> <span class="sy0">=</span> <span class="kw3">dirname</span><span class="br0">&#40;</span><span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span> <span class="kw1">else</span> <span class="br0">&#123;</span>
+            <span class="re0">$basePath</span> <span class="sy0">=</span> <span class="re0">$baseUrl</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="st_h">'\\'</span> <span class="sy0">===</span> <span class="kw4">DIRECTORY_SEPARATOR</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$basePath</span> <span class="sy0">=</span> <span class="kw3">str_replace</span><span class="br0">&#40;</span><span class="st_h">'\\'</span><span class="sy0">,</span> <span class="st_h">'/'</span><span class="sy0">,</span> <span class="re0">$basePath</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="kw3">rtrim</span><span class="br0">&#40;</span><span class="re0">$basePath</span><span class="sy0">,</span> <span class="st_h">'/'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Prepares the path info.
+     *
+     * @return string path info
+     */</span>
+    <span class="kw2">protected</span> <span class="kw2">function</span> preparePathInfo<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$baseUrl</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getBaseUrl</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="br0">&#40;</span><span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">getRequestUri</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="st_h">'/'</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$pathInfo</span> <span class="sy0">=</span> <span class="st_h">'/'</span><span class="sy0">;</span>
+&nbsp;
+        <span class="co1">// Remove the query string from REQUEST_URI</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$pos</span> <span class="sy0">=</span> <span class="kw3">strpos</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="st_h">'?'</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="re0">$requestUri</span> <span class="sy0">=</span> <span class="kw3">substr</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="re0">$pos</span><span class="br0">&#41;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">!==</span> <span class="re0">$baseUrl</span><span class="br0">&#41;</span> <span class="sy0">&amp;&amp;</span> <span class="br0">&#40;</span><span class="kw4">false</span> <span class="sy0">===</span> <span class="br0">&#40;</span><span class="re0">$pathInfo</span> <span class="sy0">=</span> <span class="kw3">substr</span><span class="br0">&#40;</span><span class="re0">$requestUri</span><span class="sy0">,</span> <span class="kw3">strlen</span><span class="br0">&#40;</span><span class="re0">$baseUrl</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="co1">// If substr() returns false then PATH_INFO is set to an empty string</span>
+            <span class="kw1">return</span> <span class="st_h">'/'</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span> <span class="kw1">elseif</span> <span class="br0">&#40;</span><span class="kw4">null</span> <span class="sy0">===</span> <span class="re0">$baseUrl</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$requestUri</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="br0">&#40;</span>string<span class="br0">&#41;</span> <span class="re0">$pathInfo</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Initializes HTTP request formats.
+     */</span>
+    <span class="kw2">protected</span> static <span class="kw2">function</span> initializeFormats<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        static<span class="sy0">::</span><span class="re0">$formats</span> <span class="sy0">=</span> <span class="kw3">array</span><span class="br0">&#40;</span>
+            <span class="st_h">'html'</span> <span class="sy0">=&gt;</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'text/html'</span><span class="sy0">,</span> <span class="st_h">'application/xhtml+xml'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+            <span class="st_h">'txt'</span>  <span class="sy0">=&gt;</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'text/plain'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+            <span class="st_h">'js'</span>   <span class="sy0">=&gt;</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'application/javascript'</span><span class="sy0">,</span> <span class="st_h">'application/x-javascript'</span><span class="sy0">,</span> <span class="st_h">'text/javascript'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+            <span class="st_h">'css'</span>  <span class="sy0">=&gt;</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'text/css'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+            <span class="st_h">'json'</span> <span class="sy0">=&gt;</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'application/json'</span><span class="sy0">,</span> <span class="st_h">'application/x-json'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+            <span class="st_h">'xml'</span>  <span class="sy0">=&gt;</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'text/xml'</span><span class="sy0">,</span> <span class="st_h">'application/xml'</span><span class="sy0">,</span> <span class="st_h">'application/x-xml'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+            <span class="st_h">'rdf'</span>  <span class="sy0">=&gt;</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'application/rdf+xml'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+            <span class="st_h">'atom'</span> <span class="sy0">=&gt;</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'application/atom+xml'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+            <span class="st_h">'rss'</span>  <span class="sy0">=&gt;</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="st_h">'application/rss+xml'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+        <span class="br0">&#41;</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co4">/**
+     * Sets the default PHP locale.
+     *
+     * @param string $locale
+     */</span>
+    <span class="kw2">private</span> <span class="kw2">function</span> setPhpDefaultLocale<span class="br0">&#40;</span><span class="re0">$locale</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="co1">// if either the class Locale doesn't exist, or an exception is thrown when</span>
+        <span class="co1">// setting the default locale, the intl module is not installed, and</span>
+        <span class="co1">// the call can be ignored:</span>
+        try <span class="br0">&#123;</span>
+            <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">class_exists</span><span class="br0">&#40;</span><span class="st_h">'Locale'</span><span class="sy0">,</span> <span class="kw4">false</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+                \Locale<span class="sy0">::</span><span class="me2">setDefault</span><span class="br0">&#40;</span><span class="re0">$locale</span><span class="br0">&#41;</span><span class="sy0">;</span>
+            <span class="br0">&#125;</span>
+        <span class="br0">&#125;</span> catch <span class="br0">&#40;</span>\Exception <span class="re0">$e</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+        <span class="br0">&#125;</span>
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="coMULTI">/*
+     * Returns the prefix as encoded in the string when the string starts with
+     * the given prefix, false otherwise.
+     *
+     * @param string $string The urlencoded string
+     * @param string $prefix The prefix not encoded
+     *
+     * @return string|false The prefix as it is encoded in $string, or false
+     */</span>
+    <span class="kw2">private</span> <span class="kw2">function</span> getUrlencodedPrefix<span class="br0">&#40;</span><span class="re0">$string</span><span class="sy0">,</span> <span class="re0">$prefix</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="nu0">0</span> <span class="sy0">!==</span> <span class="kw3">strpos</span><span class="br0">&#40;</span><span class="kw3">rawurldecode</span><span class="br0">&#40;</span><span class="re0">$string</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="re0">$prefix</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="kw4">false</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$len</span> <span class="sy0">=</span> <span class="kw3">strlen</span><span class="br0">&#40;</span><span class="re0">$prefix</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+        <span class="kw1">if</span> <span class="br0">&#40;</span><span class="kw3">preg_match</span><span class="br0">&#40;</span><span class="st0">&quot;#^(%[[:xdigit:]]{2}|.){<span class="es4">{$len}</span>}#&quot;</span><span class="sy0">,</span> <span class="re0">$string</span><span class="sy0">,</span> <span class="re0">$match</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+            <span class="kw1">return</span> <span class="re0">$match</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span><span class="sy0">;</span>
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="kw1">return</span> <span class="kw4">false</span><span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+<span class="br0">&#125;</span>
+&nbsp;</pre>

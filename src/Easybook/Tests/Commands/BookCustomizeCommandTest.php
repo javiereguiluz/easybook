@@ -40,7 +40,7 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
         $this->filesystem = new Filesystem();
         $this->filesystem->mkdir($this->tmpDir);
 
-        // generate a sample book before testing its publication
+        // generate a sample book before testing its customization
         $command = $this->console->find('new');
         $tester  = new CommandTester($command);
         $tester->execute(array(
@@ -53,6 +53,25 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->filesystem->remove($this->tmpDir);
+    }
+
+    public function testCommandDisplaysApplicationSignature()
+    {
+        $command = $this->console->find('customize');
+
+        $tester  = new CommandTester($command);
+        $tester->execute(array(
+            'command' => $command->getName(),
+            'slug'    => 'the-origin-of-species',
+            'edition' => 'web',
+            '--dir'   => $this->tmpDir
+        ));
+
+        $app = $command->getApp();
+
+        $this->assertContains($app->get('app.signature'), $command->asText(),
+            'The command text description displays the application signature.'
+        );
     }
 
     public function testInteractiveCommand()
@@ -73,6 +92,12 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
         ), array(
             'interactive' => true
         ));
+
+        $this->assertContains(
+            $command->getApp()->get('app.signature'),
+            $tester->getDisplay(),
+            'The interactive customizer displays the application signature'
+        );
 
         $this->assertContains(
             'Welcome to the easybook interactive book customizer',
@@ -142,42 +167,96 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testNonInteractionInvalidBookAndEdition()
     {
         $command = $this->console->find('customize');
         $tester  = new CommandTester($command);
 
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'slug'    => uniqid('non_existent_book_'),
-            'edition' => uniqid('non_existent_edition_'),
-            '--dir'   => $this->tmpDir,
-            '--no-interaction' => true
-        ), array(
-            'interactive' => false
-        ));
+        try {
+            $tester->execute(array(
+                'command' => $command->getName(),
+                'slug'    => uniqid('non_existent_book_'),
+                'edition' => uniqid('non_existent_edition_'),
+                '--dir'   => $this->tmpDir,
+                '--no-interaction' => true
+            ), array(
+                'interactive' => false
+            ));
+        } catch (\RuntimeException $e) {
+            $this->assertInstanceOf('RuntimeException', $e);
+            $this->assertContains('The directory of the book cannot be found', $e->getMessage());
+        }
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testNonInteractionInvalidEdition()
     {
         $command = $this->console->find('customize');
         $tester  = new CommandTester($command);
 
+        try {
+            $tester->execute(array(
+                'command' => $command->getName(),
+                'slug'    => 'the-origin-of-species',
+                'edition' => uniqid('non_existent_edition_'),
+                '--dir'   => $this->tmpDir,
+                '--no-interaction' => true
+            ), array(
+                'interactive' => false
+            ));
+        } catch (\RuntimeException $e) {
+             $this->assertInstanceOf('RuntimeException', $e);
+             $this->assertContains('edition isn\'t defined', $e->getMessage());
+        }
+    }
+
+    public function testFailingCustomizationforABookThatAlreadyContainsCustomStyles()
+    {
+        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
+            $this->markTestSkipped("This test executes commands not available for Windows systems.");
+        }
+
+        // this configuration creates a 'style.css' file to simulate that the
+        // customization CSS file has already been defined
+        $bookConfigurationViaCommand = array(
+            'book' => array(
+                'editions' => array(
+                    'web' => array(
+                        'before_publish' => array(
+                            "mkdir -p Resources/Templates/web/",
+                            "touch Resources/Templates/web/style.css",
+                        )
+                    )
+                )
+            )
+        );
+
+        // publish the sample book before testing its customization
+        $command = $this->console->find('publish');
+        $tester  = new CommandTester($command);
         $tester->execute(array(
             'command' => $command->getName(),
             'slug'    => 'the-origin-of-species',
-            'edition' => uniqid('non_existent_edition_'),
+            'edition' => 'web',
             '--dir'   => $this->tmpDir,
-            '--no-interaction' => true
-        ), array(
-            'interactive' => false
+            '--configuration' => json_encode($bookConfigurationViaCommand)
         ));
+
+        $command = $this->console->find('customize');
+        $tester  = new CommandTester($command);
+
+        try {
+            $tester->execute(array(
+                'command' => $command->getName(),
+                'slug'    => 'the-origin-of-species',
+                'edition' => 'web',
+                '--dir'   => $this->tmpDir
+            ), array(
+                'interactive' => false
+            ));
+        } catch (\RuntimeException $e) {
+             $this->assertInstanceOf('RuntimeException', $e);
+             $this->assertContains('edition already contains a custom CSS stylesheet', $e->getMessage());
+        }
     }
 
     // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php

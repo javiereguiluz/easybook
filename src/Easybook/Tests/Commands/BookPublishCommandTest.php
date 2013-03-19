@@ -55,6 +55,25 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         $this->filesystem->remove($this->tmpDir);
     }
 
+    public function testCommandDisplaysApplicationSignature()
+    {
+        $command = $this->console->find('publish');
+
+        $tester  = new CommandTester($command);
+        $tester->execute(array(
+            'command' => $command->getName(),
+            'slug'    => 'the-origin-of-species',
+            'edition' => 'web',
+            '--dir'   => $this->tmpDir,
+        ));
+
+        $app = $command->getApp();
+
+        $this->assertContains($app->get('app.signature'), $command->asText(),
+            'The command text description displays the application signature.'
+        );
+    }
+
     public function testInteractiveCommand()
     {
         $command = $this->console->find('publish');
@@ -73,6 +92,12 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         ), array(
             'interactive' => true
         ));
+
+        $this->assertContains(
+            $command->getApp()->get('app.signature'),
+            $tester->getDisplay(),
+            'The interactive publisher displays the application signature'
+        );
 
         $this->assertContains(
             'Welcome to the easybook interactive book publisher',
@@ -154,23 +179,25 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testNonInteractionInvalidBookAndEdition()
     {
         $command = $this->console->find('publish');
         $tester  = new CommandTester($command);
 
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'slug'    => uniqid('non_existent_book_'),
-            'edition' => uniqid('non_existent_edition_'),
-            '--dir'   => $this->tmpDir,
-            '--no-interaction' => true
-        ), array(
-            'interactive' => false
-        ));
+        try {
+            $tester->execute(array(
+                'command' => $command->getName(),
+                'slug'    => uniqid('non_existent_book_'),
+                'edition' => uniqid('non_existent_edition_'),
+                '--dir'   => $this->tmpDir,
+                '--no-interaction' => true
+            ), array(
+                'interactive' => false
+            ));
+        } catch (\RuntimeException $e) {
+            $this->assertInstanceOf('\RuntimeException', $e);
+            $this->assertContains('The directory of the book cannot be found', $e->getMessage());
+        }
     }
 
     public function testNonInteractionInvalidEdition()
@@ -188,11 +215,98 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
             ), array(
                 'interactive' => false
             ));
-
-            $assert->fail();
         } catch (\RuntimeException $e) {
             $this->assertInstanceOf('\RuntimeException', $e);
             $this->assertContains('edition isn\'t defined', $e->getMessage());
+        }
+    }
+
+    public function testBeforeAndAfterPublishScripts()
+    {
+        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
+            $this->markTestSkipped("This test executes commands not available for Windows systems.");
+        }
+
+        $bookConfigurationViaCommand = array(
+            'book' => array(
+                'title' => 'My Custom Title',
+                'editions' => array(
+                    'web' => array(
+                        'before_publish' => array(
+                            "touch before_publish_script.txt",
+                            "echo '123' > before_publish_script.txt",
+                            "touch {{ 'other' ~ '_before_publish_script' ~ '.txt' }}",
+                            "echo '{{ book.title|upper }}' > other_before_publish_script.txt",
+                        ),
+                        'after_publish' => array(
+                            "touch after_publish_script.txt",
+                            "echo '456' > after_publish_script.txt",
+                            "touch {{ 'other' ~ '_after_publish_script' ~ '.txt' }}",
+                            "echo '{{ book.title[0:9]|upper }}' > other_after_publish_script.txt",
+                        ),
+                    )
+                )
+            )
+        );
+
+        $command = $this->console->find('publish');
+        $tester  = new CommandTester($command);
+
+        $tester->execute(array(
+            'command' => $command->getName(),
+            'slug'    => 'the-origin-of-species',
+            'edition' => 'web',
+            '--dir'   => $this->tmpDir,
+            '--no-interaction' => true,
+            '--configuration'  => json_encode($bookConfigurationViaCommand)
+        ), array(
+            'interactive' => false
+        ));
+
+        $bookDir = $this->tmpDir.'/the-origin-of-species';
+
+        $this->assertFileExists($bookDir.'/before_publish_script.txt');
+        $this->assertEquals("123\n", file_get_contents($bookDir.'/before_publish_script.txt'));
+        $this->assertFileExists($bookDir.'/other_before_publish_script.txt');
+        $this->assertEquals("MY CUSTOM TITLE\n", file_get_contents($bookDir.'/other_before_publish_script.txt'));
+
+        $this->assertFileExists($bookDir.'/after_publish_script.txt');
+        $this->assertEquals("456\n", file_get_contents($bookDir.'/after_publish_script.txt'));
+        $this->assertFileExists($bookDir.'/other_after_publish_script.txt');
+        $this->assertEquals("MY CUSTOM\n", file_get_contents($bookDir.'/other_after_publish_script.txt'));
+    }
+
+    public function testFailingBeforePublishScript()
+    {
+        $bookConfigurationViaCommand = array(
+            'book' => array(
+                'editions' => array(
+                    'web' => array(
+                        'before_publish' => array(
+                            uniqid('this_command_does_not_exist_')
+                        )
+                    )
+                )
+            )
+        );
+
+        $command = $this->console->find('publish');
+        $tester  = new CommandTester($command);
+
+        try {
+            $tester->execute(array(
+                'command' => $command->getName(),
+                'slug'    => 'the-origin-of-species',
+                'edition' => 'web',
+                '--dir'   => $this->tmpDir,
+                '--no-interaction' => true,
+                '--configuration'  => json_encode($bookConfigurationViaCommand)
+            ), array(
+                'interactive' => false
+            ));
+        } catch (\RuntimeException $e) {
+            $this->assertInstanceOf('\RuntimeException', $e);
+            $this->assertContains('There was an error executing the following script', $e->getMessage());
         }
     }
 

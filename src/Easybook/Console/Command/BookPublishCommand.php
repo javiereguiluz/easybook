@@ -125,7 +125,6 @@ class BookPublishCommand extends BaseCommand
 
             return;
         }
-
         $process = new Process(
             $this->app->renderString($scripts),
             $this->app->get('publishing.dir.book')

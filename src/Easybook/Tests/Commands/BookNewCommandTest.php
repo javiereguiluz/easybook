@@ -45,6 +45,24 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         $this->filesystem->remove($this->tmpDir);
     }
 
+    public function testCommandDisplaysApplicationSignature()
+    {
+        $command = $this->console->find('new');
+
+        $tester  = new CommandTester($command);
+        $tester->execute(array(
+            'command' => $command->getName(),
+            'title'   => 'The Origin of Species',
+            '--dir'   => $this->tmpDir
+        ));
+
+        $app = $command->getApp();
+
+        $this->assertContains($app->get('app.signature'), $command->asText(),
+            'The command text description displays the application signature.'
+        );
+    }
+
     public function testInteractiveCommand()
     {
         $command = $this->console->find('new');
@@ -63,6 +81,12 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         ), array(
             'interactive' => true
         ));
+
+        $this->assertContains(
+            $command->getApp()->get('app.signature'),
+            $tester->getDisplay(),
+            'The interactive generator displays the application signature'
+        );
 
         $this->assertContains(
             'ERROR: The title cannot be empty.',

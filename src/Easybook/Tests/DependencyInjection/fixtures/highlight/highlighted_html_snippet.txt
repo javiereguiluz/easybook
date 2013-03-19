@@ -1,0 +1,41 @@
+<pre class="html5"><span class="sc0">&lt;!DOCTYPE html&gt;</span>
+<span class="sc-1">&lt;!--[if lt IE 7]&gt;      &lt;html class=&quot;no-js lt-ie9 lt-ie8 lt-ie7&quot;&gt; &lt;![endif]--&gt;</span>
+<span class="sc-1">&lt;!--[if IE 7]&gt;         &lt;html class=&quot;no-js lt-ie9 lt-ie8&quot;&gt; &lt;![endif]--&gt;</span>
+<span class="sc-1">&lt;!--[if IE 8]&gt;         &lt;html class=&quot;no-js lt-ie9&quot;&gt; &lt;![endif]--&gt;</span>
+<span class="sc-1">&lt;!--[if gt IE 8]&gt;&lt;!--&gt;</span> <span class="sc2">&lt;<span class="kw2">html</span> <span class="kw3">class</span><span class="sy0">=</span><span class="st0">&quot;no-js&quot;</span>&gt;</span> <span class="sc-1">&lt;!--&lt;![endif]--&gt;</span>
+    <span class="sc2">&lt;<span class="kw2">head</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">meta</span> <span class="kw3">charset</span><span class="sy0">=</span><span class="st0">&quot;utf-8&quot;</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">meta</span> <span class="kw3">http-equiv</span><span class="sy0">=</span><span class="st0">&quot;X-UA-Compatible&quot;</span> <span class="kw3">content</span><span class="sy0">=</span><span class="st0">&quot;IE=edge,chrome=1&quot;</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">title</span>&gt;&lt;<span class="sy0">/</span><span class="kw2">title</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">meta</span> <span class="kw3">name</span><span class="sy0">=</span><span class="st0">&quot;description&quot;</span> <span class="kw3">content</span><span class="sy0">=</span><span class="st0">&quot;&quot;</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">meta</span> <span class="kw3">name</span><span class="sy0">=</span><span class="st0">&quot;viewport&quot;</span> <span class="kw3">content</span><span class="sy0">=</span><span class="st0">&quot;width=device-width&quot;</span>&gt;</span>
+&nbsp;
+        <span class="sc-1">&lt;!-- Place favicon.ico and apple-touch-icon.png in the root directory --&gt;</span>
+&nbsp;
+        <span class="sc2">&lt;<span class="kw2">link</span> <span class="kw3">rel</span><span class="sy0">=</span><span class="st0">&quot;stylesheet&quot;</span> <span class="kw3">href</span><span class="sy0">=</span><span class="st0">&quot;css/normalize.css&quot;</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">link</span> <span class="kw3">rel</span><span class="sy0">=</span><span class="st0">&quot;stylesheet&quot;</span> <span class="kw3">href</span><span class="sy0">=</span><span class="st0">&quot;css/main.css&quot;</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">script</span> <span class="kw3">src</span><span class="sy0">=</span><span class="st0">&quot;js/vendor/modernizr-2.6.2.min.js&quot;</span>&gt;&lt;<span class="sy0">/</span><span class="kw2">script</span>&gt;</span>
+    <span class="sc2">&lt;<span class="sy0">/</span><span class="kw2">head</span>&gt;</span>
+    <span class="sc2">&lt;<span class="kw2">body</span>&gt;</span>
+        <span class="sc-1">&lt;!--[if lt IE 7]&gt;</span>
+<span class="sc-1">            &lt;p class=&quot;chromeframe&quot;&gt;You are using an &lt;strong&gt;outdated&lt;/strong&gt; browser. Please &lt;a href=&quot;http://browsehappy.com/&quot;&gt;upgrade your browser&lt;/a&gt; or &lt;a href=&quot;http://www.google.com/chromeframe/?redirect=true&quot;&gt;activate Google Chrome Frame&lt;/a&gt; to improve your experience.&lt;/p&gt;</span>
+<span class="sc-1">        &lt;![endif]--&gt;</span>
+&nbsp;
+        <span class="sc-1">&lt;!-- Add your site or application content here --&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">p</span>&gt;</span>Hello world! This is HTML5 Boilerplate.<span class="sc2">&lt;<span class="sy0">/</span><span class="kw2">p</span>&gt;</span>
+&nbsp;
+        <span class="sc2">&lt;<span class="kw2">script</span> <span class="kw3">src</span><span class="sy0">=</span><span class="st0">&quot;//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js&quot;</span>&gt;&lt;<span class="sy0">/</span><span class="kw2">script</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">script</span>&gt;</span>window.jQuery || document.write('<span class="sc2">&lt;<span class="kw2">script</span> <span class="kw3">src</span><span class="sy0">=</span><span class="st0">&quot;js/vendor/jquery-1.9.0.min.js&quot;</span>&gt;&lt;\<span class="sy0">/</span>script&gt;</span>')<span class="sc2">&lt;<span class="sy0">/</span><span class="kw2">script</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">script</span> <span class="kw3">src</span><span class="sy0">=</span><span class="st0">&quot;js/plugins.js&quot;</span>&gt;&lt;<span class="sy0">/</span><span class="kw2">script</span>&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">script</span> <span class="kw3">src</span><span class="sy0">=</span><span class="st0">&quot;js/main.js&quot;</span>&gt;&lt;<span class="sy0">/</span><span class="kw2">script</span>&gt;</span>
+&nbsp;
+        <span class="sc-1">&lt;!-- Google Analytics: change UA-XXXXX-X to be your site's ID. --&gt;</span>
+        <span class="sc2">&lt;<span class="kw2">script</span>&gt;</span>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        <span class="sc2">&lt;<span class="sy0">/</span><span class="kw2">script</span>&gt;</span>
+    <span class="sc2">&lt;<span class="sy0">/</span><span class="kw2">body</span>&gt;</span>
+<span class="sc2">&lt;<span class="sy0">/</span><span class="kw2">html</span>&gt;</span>
+&nbsp;</pre>

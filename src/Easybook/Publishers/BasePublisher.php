@@ -20,13 +20,13 @@ class BasePublisher
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->prepareOutputDir();
     }
 
     public function publishBook()
     {
         $this->loadContents();
         $this->parseContents();
+        $this->prepareOutputDir();
         $this->decorateContents();
         $this->assembleBook();
     }

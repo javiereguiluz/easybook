@@ -26,8 +26,6 @@ class BookConfigurationTest extends TestCase
 
         try {
             $app->loadBookConfiguration();
-
-            $this->fail();
         } catch (\RuntimeException $e) {
             $this->assertInstanceOf('\RuntimeException', $e);
             $this->assertContains("There is no 'config.yml' configuration file", $e->getMessage());
@@ -68,7 +66,7 @@ class BookConfigurationTest extends TestCase
 
         $configuration = $configurator->loadBookConfiguration(null, $commandConfiguration);
 
-        $app->set('book', $configuration);
+        $app->set('publishing.book.config', $configuration);
         $configuration = $configurator->processConfigurationValues();
 
         $expectedConfiguration = Yaml::parse($expectedConfiguration);

@@ -42,14 +42,14 @@ class TwigCssExtension extends \Twig_Extension
 
         $rgb = $this->hex2rgb($color);
         $hsl = $this->rgb2hsl($rgb);
-
         list($h, $s, $l) = $hsl;
-        $l = max(0, min(100, $l + $percent));
+
+        $l = min(1, max(0, $l + $percent));
 
         $rgb = $this->hsl2rgb(array($h, $s, $l));
         $color = $this->rgb2hex($rgb);
 
-        return $color;
+        return strtoupper($color);
     }
 
     /*
@@ -77,8 +77,8 @@ class TwigCssExtension extends \Twig_Extension
     {
         $rgb = $this->hex2rgb($hex);
 
-        return sprintf('rgba(%d, %d, %d, %s)',
-            $rgb[0], $rgb[1], $rgb[2], $opacity
+        return sprintf('rgba(%d, %d, %d, %.2f)',
+            $rgb[0], $rgb[1], $rgb[2], max(0, min(1, $opacity))
         );
     }
 
@@ -90,9 +90,11 @@ class TwigCssExtension extends \Twig_Extension
     public function css_add($length, $factor)
     {
         return preg_replace_callback(
-            '/(?<value>.*)(?<unit>[a-z]{2})/i',
+            '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function($matches) use ($factor) {
-                return ($matches['value'] - $factor).$matches['unit'];
+                $unit = array_key_exists('unit', $matches) ? $matches['unit'] : 'px';
+
+                return ($matches['value'] + $factor).$unit;
             },
             $length
         );
@@ -106,9 +108,11 @@ class TwigCssExtension extends \Twig_Extension
     public function css_substract($length, $factor)
     {
         return preg_replace_callback(
-            '/(?<value>.*)(?<unit>[a-z]{2})/i',
+            '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function($matches) use ($factor) {
-                return ($matches['value'] - $factor).$matches['unit'];
+                $unit = array_key_exists('unit', $matches) ? $matches['unit'] : 'px';
+
+                return ($matches['value'] - $factor).$unit;
             },
             $length
         );
@@ -122,9 +126,11 @@ class TwigCssExtension extends \Twig_Extension
     public function css_multiply($length, $factor)
     {
         return preg_replace_callback(
-            '/(?<value>.*)(?<unit>[a-z]{2})/i',
+            '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function($matches) use ($factor) {
-                return ($matches['value'] * $factor).$matches['unit'];
+                $unit = array_key_exists('unit', $matches) ? $matches['unit'] : 'px';
+
+                return ($matches['value'] * $factor).$unit;
             },
             $length
         );
@@ -137,10 +143,16 @@ class TwigCssExtension extends \Twig_Extension
      */
     public function css_divide($length, $factor)
     {
+        if (0 == $factor) {
+            return 0;
+        }
+
         return preg_replace_callback(
-            '/(?<value>.*)(?<unit>[a-z]{2})/i',
+            '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function($matches) use ($factor) {
-                return ($matches['value'] / $factor).$matches['unit'];
+                $unit = array_key_exists('unit', $matches) ? $matches['unit'] : 'px';
+
+                return ($matches['value'] / $factor).$unit;
             },
             $length
         );

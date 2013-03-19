@@ -61,11 +61,7 @@ class BookConfigurator
     {
         $config = json_decode($configurationJsonString, true);
 
-        if ("" == $config || null == $config) {
-            $config = array();
-        }
-
-        return $config;
+        return empty($config) ? array() : $config;
     }
 
     /**
@@ -91,11 +87,7 @@ class BookConfigurator
 
         $config = Yaml::parse($bookConfigFile);
 
-        if ("" == $config || null == $config) {
-            $config = array();
-        }
-
-        return $config;
+        return empty($config) ? array() : $config;
     }
 
     /**
@@ -117,7 +109,7 @@ class BookConfigurator
      */
     public function loadEditionConfiguration()
     {
-        $bookConfiguration = $this->app->get('book');
+        $bookConfiguration = $this->app->get('publishing.book.config');
         $edition = $this->app->get('publishing.edition');
 
         if (!array_key_exists($edition, $bookConfiguration['book']['editions'])) {
@@ -195,7 +187,7 @@ class BookConfigurator
      */
     public function processConfigurationValues()
     {
-        $bookConfig = $this->app->get('book');
+        $bookConfig = $this->app->get('publishing.book.config');
         $editionConfig = $bookConfig['book']['editions'][$this->app->get('publishing.edition')];
 
         // prepare options needed to parse option values as Twig expressions

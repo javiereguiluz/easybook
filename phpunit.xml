@@ -12,6 +12,17 @@
          bootstrap="./src/Easybook/Tests/bootstrap.php"
 >
 
+    <!-- files considered for the code coverage -->
+    <filter>
+        <whitelist>
+            <directory>src</directory>
+            <exclude>
+                <directory>src/Easybook/Tests</directory>
+                <file>src/Easybook/Util/Prince.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+
     <testsuites>
         <testsuite name="easybook Test Suite">
             <directory>./src/Easybook/Tests/</directory>

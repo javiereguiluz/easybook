@@ -79,6 +79,7 @@ class Application extends \Pimple
         // the specific item currently being parsed/modified/decorated/...
         $this['publishing.active_item']     = array();
         $this['publishing.active_item.toc'] = array();
+        $this['publishing.book.config']     = array('book' => array());
         $this['publishing.book.slug']       = '';
         $this['publishing.book.items']      = array();
         // the real TOC used to generate the book (needed for html_chunked editions)
@@ -99,8 +100,6 @@ class Application extends \Pimple
         // maintained for backwards compatibility
         $this['publishing.id'] = $this->share(function ($app) {
             trigger_error('The "publishing.id" option is deprecated since version 5.0 and will be removed in the future. Use "publishing.edition.id" instead.', E_USER_DEPRECATED);
-
-            return $app['publishing.edition.id'];
         });
 
         // -- event dispatcher ------------------------------------------------
@@ -252,7 +251,7 @@ class Application extends \Pimple
 
             $twig->addGlobal('app', $app);
 
-            if (null != $bookConfig = $app->get('book')) {
+            if (null != $bookConfig = $app->get('publishing.book.config')) {
                 $twig->addGlobal('book', $bookConfig['book']);
 
                 $publishingEdition = $app->get('publishing.edition');
@@ -265,6 +264,14 @@ class Application extends \Pimple
 
         // -- princeXML -------------------------------------------------------
         $this['prince.path'] = null;
+
+        // the common installation dirs for PrinceXML in several OS
+        $this['prince.default_paths'] = array(
+            '/usr/local/bin/prince',                         # Mac OS X
+            '/usr/bin/prince',                               # Linux
+            'C:\Program Files\Prince\engine\bin\prince.exe'  # Windows
+        );
+
         $this['prince'] = $app->share(function () use ($app) {
             $princePath = $app['prince.path'] ?: $app->findPrinceXmlExecutable();
             // ask the user about the location of the executable
@@ -459,7 +466,7 @@ class Application extends \Pimple
 
         $twig->addGlobal('app', $this);
 
-        if (null != $bookConfig = $this->get('book')) {
+        if (null != $bookConfig = $this->get('publishing.book.config')) {
             $twig->addGlobal('book', $bookConfig['book']);
 
             $publishingEdition = $this->get('publishing.edition');
@@ -633,11 +640,13 @@ class Application extends \Pimple
 
         // save the highlighted code in the cache
         if ($this->edition('highlight_cache')) {
+            // @codeCoverageIgnoreStart
             $this->get('filesystem')->mkdir($cacheDir);
 
             if (false === @file_put_contents($cacheFilename, $highlightedCode)) {
                 throw new \RuntimeException(sprintf("ERROR: Failed to write cache file \n'%s'.", $cacheFilename));
             }
+            // @codeCoverageIgnoreEnd
         }
 
         return $highlightedCode;
@@ -664,15 +673,15 @@ class Application extends \Pimple
     public function loadBookConfiguration($configurationViaCommand = "")
     {
         $config = $this->get('configurator')->loadBookConfiguration($this->get('publishing.dir.book'), $configurationViaCommand);
-        $this->set('book', $config);
+        $this->set('publishing.book.config', $config);
 
         $this->get('validator')->validatePublishingEdition($this->get('publishing.edition'));
 
         $config = $this->get('configurator')->loadEditionConfiguration();
-        $this->set('book', $config);
+        $this->set('publishing.book.config', $config);
 
         $config = $this->get('configurator')->processConfigurationValues();
-        $this->set('book', $config);
+        $this->set('publishing.book.config', $config);
 
         $this->get('configurator')->validateConfiguration($config);
     }
@@ -692,13 +701,13 @@ class Application extends \Pimple
      */
     public function book($key, $newValue = null)
     {
-        $bookConfig = $this->get('book');
+        $bookConfig = $this->get('publishing.book.config');
 
         if (null == $newValue) {
             return array_key_exists($key, $bookConfig['book']) ? $bookConfig['book'][$key] : null;
         } else {
             $bookConfig['book'][$key] = $newValue;
-            $this->set('book', $bookConfig);
+            $this->set('publishing.book.config', $bookConfig);
         }
     }
 
@@ -725,10 +734,10 @@ class Application extends \Pimple
                    ? $editions[$publishingEdition][$key]
                    : null;
         } else {
-            $book = $this->get('book');
+            $bookConfig = $this->get('publishing.book.config');
             $publishingEdition = $this->get('publishing.edition');
-            $book['editions'][$publishingEdition][$key] = $newValue;
-            $this->set('book', $book);
+            $bookConfig['book']['editions'][$publishingEdition][$key] = $newValue;
+            $this->set('publishing.book.config', $bookConfig);
         }
     }
 
@@ -741,14 +750,7 @@ class Application extends \Pimple
     {
         $foundPath = null;
 
-        // the common installation dirs for PrinceXML in several OS
-        $defaultPaths = array(
-            '/usr/local/bin/prince',                         # Mac OS X
-            '/usr/bin/prince',                               # Linux
-            'C:\Program Files\Prince\engine\bin\prince.exe'  # Windows
-        );
-
-        foreach ($defaultPaths as $path) {
+        foreach ($this->get('prince.default_paths') as $path) {
             if (file_exists($path)) {
                 $foundPath = $path;
                 break;
@@ -758,15 +760,11 @@ class Application extends \Pimple
         return $foundPath;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function askForPrinceXMLExecutablePath()
     {
-        // the common installation dirs for PrinceXML in several OS
-        $defaultPaths = array(
-            '/usr/local/bin/prince',                         # Mac OS X
-            '/usr/bin/prince',                               # Linux
-            'C:\Program Files\Prince\engine\bin\prince.exe'  # Windows
-        );
-
         $this->get('console.output')->write(sprintf(
             " In order to generate PDF files, PrinceXML library must be installed. \n\n"
             ." We couldn't find PrinceXML executable in any of the following directories: \n"
@@ -774,7 +772,7 @@ class Application extends \Pimple
             ." If you haven't installed it yet, you can download a fully-functional demo at: \n"
             ." %s \n\n"
             ." If you have installed in a custom directory, please type its full absolute path:\n > ",
-            implode($defaultPaths, "\n   -> "),
+            implode($this->get('prince.default_paths'), "\n   -> "),
             'http://www.princexml.com/download'
         ));
 
