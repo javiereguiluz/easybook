@@ -12,6 +12,7 @@
 namespace Easybook\Tests\DependencyInjection;
 
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Yaml;
 use Easybook\Tests\TestCase;
 use Easybook\DependencyInjection\Application;
 
@@ -23,16 +24,16 @@ class ApplicationTest extends TestCase
 
         // don't use a dataProvider because it interferes with the slug generation
         $slugs = array(
-            array('Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet'),
-            array('Lorem ipsum !! dolor sit amet', 'lorem-ipsum-dolor-sit-amet'),
-            array('Lorem ipsum + dolor * sit amet', 'lorem-ipsum-dolor-sit-amet'),
-            array('Ut enim ad minim veniam', 'ut-enim-ad-minim-veniam'),
-            array('Ut enim ad / minim || veniam', 'ut-enim-ad-minim-veniam'),
-            array('Ut enim _ad minim_ veniam', 'ut-enim-ad-minim-veniam'),
-            array('Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet'),
-            array('Lorem ipsum dolor ++ sit amet', 'lorem-ipsum-dolor-sit-amet'),
+            array('Lorem ipsum dolor sit amet',      'lorem-ipsum-dolor-sit-amet'),
+            array('Lorem ipsum !! dolor sit amet',   'lorem-ipsum-dolor-sit-amet'),
+            array('Lorem ipsum + dolor * sit amet',  'lorem-ipsum-dolor-sit-amet'),
+            array('Ut enim ad minim veniam',         'ut-enim-ad-minim-veniam'),
+            array('Ut enim ad / minim || veniam',    'ut-enim-ad-minim-veniam'),
+            array('Ut enim _ad minim_ veniam',       'ut-enim-ad-minim-veniam'),
+            array('Lorem ipsum dolor sit amet',      'lorem-ipsum-dolor-sit-amet'),
+            array('Lorem ipsum dolor ++ sit amet',   'lorem-ipsum-dolor-sit-amet'),
             array('Ut * enim * ad * minim * veniam', 'ut-enim-ad-minim-veniam'),
-            array('Ut enim ad minim veniam', 'ut-enim-ad-minim-veniam'),
+            array('Ut enim ad minim veniam',         'ut-enim-ad-minim-veniam'),
         );
 
         foreach ($slugs as $slug) {
@@ -49,16 +50,16 @@ class ApplicationTest extends TestCase
 
         // don't use a dataProvider because it interferes with the slug generation
         $uniqueSlugs = array(
-            array('Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet'),
-            array('Lorem ipsum !! dolor sit amet', 'lorem-ipsum-dolor-sit-amet-2'),
-            array('Lorem ipsum + dolor * sit amet', 'lorem-ipsum-dolor-sit-amet-3'),
-            array('Ut enim ad minim veniam', 'ut-enim-ad-minim-veniam'),
-            array('Ut enim ad / minim || veniam', 'ut-enim-ad-minim-veniam-2'),
-            array('Ut enim _ad minim_ veniam', 'ut-enim-ad-minim-veniam-3'),
-            array('Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet-4'),
-            array('Lorem ipsum dolor ++ sit amet', 'lorem-ipsum-dolor-sit-amet-5'),
+            array('Lorem ipsum dolor sit amet',      'lorem-ipsum-dolor-sit-amet'),
+            array('Lorem ipsum !! dolor sit amet',   'lorem-ipsum-dolor-sit-amet-2'),
+            array('Lorem ipsum + dolor * sit amet',  'lorem-ipsum-dolor-sit-amet-3'),
+            array('Ut enim ad minim veniam',         'ut-enim-ad-minim-veniam'),
+            array('Ut enim ad / minim || veniam',    'ut-enim-ad-minim-veniam-2'),
+            array('Ut enim _ad minim_ veniam',       'ut-enim-ad-minim-veniam-3'),
+            array('Lorem ipsum dolor sit amet',      'lorem-ipsum-dolor-sit-amet-4'),
+            array('Lorem ipsum dolor ++ sit amet',   'lorem-ipsum-dolor-sit-amet-5'),
             array('Ut * enim * ad * minim * veniam', 'ut-enim-ad-minim-veniam-4'),
-            array('Ut enim ad minim veniam', 'ut-enim-ad-minim-veniam-5'),
+            array('Ut enim ad minim veniam',         'ut-enim-ad-minim-veniam-5'),
         );
 
         foreach ($uniqueSlugs as $slug) {
@@ -167,11 +168,11 @@ class ApplicationTest extends TestCase
     public function getPublishers()
     {
         return array(
-            array('pdf', 'Easybook\Publishers\PdfPublisher'),
-            array('html', 'Easybook\Publishers\HtmlPublisher'),
-            array('html_chunked', 'Easybook\Publishers\HtmlChunkedPublisher'),
-            array('epub', 'Easybook\Publishers\Epub2Publisher'),
+            array('epub',  'Easybook\Publishers\Epub2Publisher'),
             array('epub2', 'Easybook\Publishers\Epub2Publisher'),
+            array('pdf',   'Easybook\Publishers\PdfPublisher'),
+            array('html',  'Easybook\Publishers\HtmlPublisher'),
+            array('html_chunked', 'Easybook\Publishers\HtmlChunkedPublisher'),
         );
     }
 
@@ -192,7 +193,7 @@ class ApplicationTest extends TestCase
 
         try {
             $publisher = $app->get('publisher');
-        } catch (\Exception $e) {
+        } catch (\RuntimeException $e) {
             $this->assertContains('Unknown "this_format_does_not_exist" format', $e->getMessage());
         }
     }
@@ -203,14 +204,106 @@ class ApplicationTest extends TestCase
         $app->set('publishing.active_item', array(
             'config' => array(
                 'format'  => 'this_format_does_not_exist',
-                'content' => ''
+                'content' => 'test_chapter'
             )
         ));
 
         try {
-            $$parser = $app->get('parser');
-        } catch (\Exception $e) {
+            $parser = $app->get('parser');
+        } catch (\RuntimeException $e) {
             $this->assertContains('(easybook only supports Markdown)', $e->getMessage());
         }
+    }
+
+    public function testGetTitleMethodForDefaultTitles()
+    {
+        $app = new Application();
+
+        $files = $app->get('finder')->files()->name('titles.*.yml')
+                                    ->in($app->get('app.dir.translations'));
+
+        foreach ($files as $file) {
+            // reset the application for each language because titles are cached
+            $app = new Application();
+
+            $locale = substr($file->getRelativePathname(), -6, 2);
+            $bookConfig = array('book' => array('language' => $locale));
+            $app->set('publishing.book.config', $bookConfig);
+
+            $titles = Yaml::parse($file->getPathname());
+            foreach ($titles['title'] as $key => $expectedValue) {
+                $this->assertEquals($expectedValue, $app->getTitle($key));
+            }
+        }
+    }
+
+    public function testGetLabelMethodForDefaultLabels()
+    {
+        $app = new Application();
+
+        $files = $app->get('finder')->files()->name('labels.*.yml')
+                                    ->in($app->get('app.dir.translations'));
+
+        $labelVariables = array(
+            'item' => array(
+                'number'   => 1,
+                'counters' => array(1, 1, 1, 1, 1, 1),
+                'level'    => 1
+            ),
+            'element' => array(
+                'number' => 1
+            )
+        );
+
+        foreach ($files as $file) {
+            // reset the application for each language because labels are cached
+            $app = new Application();
+
+            $locale = substr($file->getRelativePathname(), -6, 2);
+            $bookConfig = array('book' => array('language' => $locale));
+            $app->set('publishing.book.config', $bookConfig);
+
+            $labels = Yaml::parse($file->getPathname());
+            foreach ($labels['label'] as $key => $value) {
+                // some labels (chapter and appendix) are arrays instead of strings
+                if (is_array($value)) {
+                    foreach ($value as $i => $subLabel) {
+                        $expectedValue = $app->renderString($subLabel, $labelVariables);
+                        $labelVariables['item']['level'] = $i+1;
+
+                        $this->assertEquals($expectedValue, $app->getLabel($key, $labelVariables));
+                    }
+                } else {
+                    $expectedValue = $app->renderString($value, $labelVariables);
+
+                    $this->assertEquals($expectedValue, $app->getLabel($key, $labelVariables));
+                }
+            }
+        }
+    }
+
+    public function testGetPublishingEditionId()
+    {
+        // get the ID of a ISBN-less book
+        $app = new Application();
+        $publishingId = $app->get('publishing.edition.id');
+
+        $this->assertEquals('URN', $publishingId['scheme']);
+        $this->assertRegExp(
+            '/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/',
+            $publishingId['value']
+        );
+
+        // get the ID of a book with an ISBN
+        $app = $this->getMock('Easybook\DependencyInjection\Application', array('edition'));
+        $app->expects($this->once())
+            ->method('edition')
+            ->with($this->equalTo('isbn'))
+            ->will($this->returnValue('9782918390060'));
+
+        $publishingId = $app->get('publishing.edition.id');
+
+        $this->assertEquals('isbn', $publishingId['scheme']);
+        $this->assertEquals('9782918390060', $publishingId['value']);
     }
 }

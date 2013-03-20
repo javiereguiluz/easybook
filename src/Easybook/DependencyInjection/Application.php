@@ -149,7 +149,7 @@ class Application extends \Pimple
                 //    return new Epub3Publisher($app);
 
                 default:
-                    throw new \Exception(sprintf(
+                    throw new \RuntimeException(sprintf(
                         'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "epub2")',
                         $outputFormat,
                         $app->get('publishing.edition')
@@ -171,7 +171,7 @@ class Application extends \Pimple
             }
 
             // TODO: extensibility -> support several format parsers (RST, Textile, ...)
-            throw new \Exception(sprintf(
+            throw new \RuntimeException(sprintf(
                 'Unknown "%s" format for "%s" content (easybook only supports Markdown)',
                 $format,
                 $app['publishing.active_item']['config']['content']
@@ -525,7 +525,7 @@ class Application extends \Pimple
             $this['publishing.dir.templates']
         );
 
-        return $this->getFirstFileOrNull($templateName, $paths);
+        return $this->getFirstExistingFile($templateName, $paths);
     }
 
     /*
@@ -545,7 +545,7 @@ class Application extends \Pimple
             $this['publishing.dir.resources'].'/Translations'
         );
 
-        return $this->getFirstFileOrNull($labelsFileName, $paths);
+        return $this->getFirstExistingFile($labelsFileName, $paths);
     }
 
     /*
@@ -565,7 +565,7 @@ class Application extends \Pimple
             $this['publishing.dir.resources'].'/Translations'
         );
 
-        return $this->getFirstFileOrNull($titlesFileName, $paths);
+        return $this->getFirstExistingFile($titlesFileName, $paths);
     }
 
     /*
@@ -585,7 +585,7 @@ class Application extends \Pimple
             $this['publishing.dir.templates']
         );
 
-        return $this->getFirstFileOrNull($coverFileName, $paths);
+        return $this->getFirstExistingFile($coverFileName, $paths);
     }
 
     /**
@@ -597,7 +597,7 @@ class Application extends \Pimple
      * @return string|null  The absolute filepath of the first found file or
      *                      null if the file isn't found in any of those paths.
      */
-    public function getFirstFileOrNull($file, $paths)
+    public function getFirstExistingFile($file, $paths)
     {
         foreach ($paths as $path) {
             if (file_exists($path.'/'.$file)) {
