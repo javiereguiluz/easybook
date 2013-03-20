@@ -1,0 +1,51 @@
+# Chinese translation made by Huang yunkun(htynkn@163.com)
+label:
+    appendix:
+        - '附录 {{ item.number }}'
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+
+    chapter:
+        - '第 {{ item.number }} 章'
+        - '{{ item.counters[0:2]|join(".") }}' # 1.1
+        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+
+    figure:          '图片 {{ element.number }}.{{ item.number }}'
+    part:            '第 {{ item.number }} 部分'
+    table:           '表格 {{ element.number }}.{{ item.number }}'
+
+    acknowledgement: ''
+    afterword:       ''
+    author:          ''
+    conclusion:      ''
+    cover:           ''
+    dedication:      ''
+    edition:         ''
+    epilogue:        ''
+    foreword:        ''
+    glossary:        ''
+    introduction:    ''
+    preface:         ''
+    prologue:        ''
+    title:           ''
+    toc:             ''
+
+    # Navigation elements
+    index:           '目录'
+    next:            '下一页'
+    previous:        '上一页'
+
+    # Special
+    date_format:     'Y-d-m'
+    datetime_format: 'Y-m-d H:i'
+
+    # Other
+    by:              '由'
+    page:            '页'
+    blank:           '此页有意留为空白'
