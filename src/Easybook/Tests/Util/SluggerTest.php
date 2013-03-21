@@ -25,36 +25,38 @@ class SluggerTest extends TestCase
     }
 
     /**
-     * @dataProvider getSlugsWithMappedTransliteration
+     * @dataProvider getSlugs
      */
-    public function testSlugifyWithMappedTransliteration($string, $expectedSlug)
+    public function testSlugify($string, $expectedSlug)
     {
-        if (version_compare(phpversion(), '5.4.0', '>=') && extension_loaded('intl')) {
-            $this->markTestSkipped(
-              'Mapped transliteration is not used in PHP 5.4.0+ with the intl extension enabled'
-            );
-        }
-
         $this->assertEquals($expectedSlug, $this->slugger->slugify($string));
     }
 
     /**
-     * @dataProvider getSlugsWithBuiltInTransliteration
+     * @dataProvider getStringsForMappedTransliteration
      */
-    public function testSlugifyWithBuiltInTransliteration($string, $expectedSlug)
+    public function testMappedTransliteration($string, $expectedString)
+    {
+        $this->assertEquals($expectedString, $this->slugger->mappedTransliteration($string));
+    }
+
+    /**
+     * @dataProvider getStringsForNativeTransliteration
+     */
+    public function testNativeTransliteration($string, $expectedString)
     {
         if (version_compare(phpversion(), '5.4.0', '<') || !extension_loaded('intl')) {
             $this->markTestSkipped(
-              'Built-in transliteration is only available in PHP 5.4.0+ with the intl extension enabled'
+              'Native transliteration is only available in PHP 5.4.0+ with the intl extension enabled'
             );
         }
 
-        $this->assertEquals($expectedSlug, $this->slugger->slugify($string));
+        $this->assertEquals($expectedString, $this->slugger->nativeTransliteration($string));
     }
 
-    public function getSlugsWithMappedTransliteration()
+    public function getSlugs()
     {
-        return array(
+        $slugsForMappedTransliteration = array(
             // English
             array(
                 'The origin of Species',
@@ -148,7 +150,7 @@ class SluggerTest extends TestCase
             // Edge cases
             array(
                 'ŠŒŽšœžŸ¥µ ÀÁÂÃÄÅÆ ÇÈÉÊËÌÍÎÏÐ ÑÒÓÔÕÖØ ÙÚÛÜ Ýß àáâãäåæ çèéêëìíîïð ñòóôõöø ùúûüýÿ',
-                'soezsoezyu-aaaaaaae-ceeeeiiiid-noooooo-uuuu-yss-aaaaaaae-ceeeeiiiid-noooooo-uuuuyy'
+                'soezsoezyyenu-aaaaaaae-ceeeeiiiid-noooooo-uuuu-yss-aaaaaaae-ceeeeiiiid-noooooo-uuuuyy'
             ),
             array(
                 '"·$%&/()=?¿¡!<>,;.:-_{}*+^',
@@ -159,11 +161,8 @@ class SluggerTest extends TestCase
                 '-'
             )
         );
-    }
 
-    public function getSlugsWithBuiltInTransliteration()
-    {
-        return array(
+        $slugsForNativeTransliteration = array(
             // English
             array(
                 'The origin of Species',
@@ -267,6 +266,104 @@ class SluggerTest extends TestCase
                 '     ',
                 '-'
             )
+        );
+
+        if (version_compare(phpversion(), '5.4.0', '>=') && extension_loaded('intl')) {
+            return $slugsForNativeTransliteration;
+        } else {
+            return $slugsForMappedTransliteration;
+        }
+    }
+
+    public function getStringsForMappedTransliteration()
+    {
+        return array(
+            // latin
+            array(
+                'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖŐØÙÚÛÜŰÝÞßàáâãäåæçèéêëìíîïðñòóôõöőøùúûüűýþÿ',
+                'AAAAAAAECEEEEIIIIDNOoOOOOOUUUUUYTHssaaaaaaaeceeeeiiiidnooooooouuuuuythy'
+            ),
+            // greek
+            array(
+                'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆΈΊΌΎΉΏΪΫαβγδεζηθικλμνξοπρστυφχψωάέίόύήώςϊΰϋΐ',
+                'ABGDEZH8IKLMN3OPRSTYFXPSWAEIOYHWIYabgdezh8iklmn3oprstyfxpswaeioyhwsiyyi'
+            ),
+            // turkish
+            array(
+                'ŞİÇÜÖĞşıçüöğ',
+                'SICUOGsicuog'
+            ),
+            // russian
+            array(
+                'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя',
+                'ABVGDEYoZhZIJKLMNOPRSTUFHCChShShYEYuYaabvgdeyozhzijklmnoprstufhcchshshyeyuya'
+            ),
+            // ukrainian
+            array(
+                'ЄІЇҐєіїґ',
+                'YeIYiGyeiyig'
+            ),
+            // czech
+            array(
+                'ČĎĚŇŘŠŤŮŽčďěňřšťůž',
+                'CDENRSTUZcdenrstuz'
+            ),
+            // polish
+            array(
+                'ĄĆĘŁŃÓŚŹŻąćęłńóśźż',
+                'ACeLNoSZZacelnoszz'
+            ),
+            // latvian
+            array(
+                'ĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž',
+                'ACEGikLNSuZacegiklnsuz'
+            ),
+        );
+    }
+
+    public function getStringsForNativeTransliteration()
+    {
+        return array(
+            // latin
+            array(
+                'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖŐØÙÚÛÜŰÝÞßàáâãäåæçèéêëìíîïðñòóôõöőøùúûüűýþÿ',
+                'AAAAAAÆCEEEEIIIIÐNOOOOOOØUUUUUYÞßaaaaaaæceeeeiiiiðnooooooøuuuuuyþy'
+            ),
+            // greek
+            array(
+                'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆΈΊΌΎΉΏΪΫαβγδεζηθικλμνξοπρστυφχψωάέίόύήώςϊΰϋΐ',
+                'ABGDEZETHIKLMN\'XOPRSTYPHCHPSOAEIOYEOIYabgdezethiklmn\'xoprstyphchpsoaeioyeosiyyi'
+            ),
+            // turkish
+            array(
+                'ŞİÇÜÖĞşıçüöğ',
+                'SICUOGsıcuog'
+            ),
+            // russian
+            array(
+                'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя',
+                'ABVGDEEZZIJKLMNOPRSTUFHCCSSʺYʹEUAabvgdeezzijklmnoprstufhccssʺyʹeua'
+            ),
+            // ukrainian
+            array(
+                'ЄІЇҐєіїґ',
+                'EIIGeiig'
+            ),
+            // czech
+            array(
+                'ČĎĚŇŘŠŤŮŽčďěňřšťůž',
+                'CDENRSTUZcdenrstuz'
+            ),
+            // polish
+            array(
+                'ĄĆĘŁŃÓŚŹŻąćęłńóśźż',
+                'ACEŁNOSZZacełnoszz'
+            ),
+            // latvian
+            array(
+                'ĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž',
+                'ACEGIKLNSUZacegiklnsuz'
+            ),
         );
     }
 }

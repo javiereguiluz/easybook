@@ -324,7 +324,7 @@ class Application extends \Pimple
             if (null != $customLabelsFile = $app->getCustomLabelsFile()) {
                 $customLabels = Yaml::parse($customLabelsFile);
 
-                return Toolkit::array_deep_merge($labels, $customLabels);
+                return Toolkit::array_deep_merge_and_replace($labels, $customLabels);
             }
 
             return $labels;
@@ -340,7 +340,7 @@ class Application extends \Pimple
             if (null != $customTitlesFile = $app->getCustomTitlesFile()) {
                 $customTitles = Yaml::parse($customTitlesFile);
 
-                return Toolkit::array_deep_merge($titles, $customTitles);
+                return Toolkit::array_deep_merge_and_replace($titles, $customTitles);
             }
 
             return $titles;

@@ -42,7 +42,11 @@ class Slugger
 
         $string = strip_tags($string);
 
-        $slug = $this->transliterate($string);
+        if (version_compare(phpversion(), '5.4.0', '>=') && extension_loaded('intl')) {
+            $slug = $this->nativeTransliteration($string);
+        } else {
+            $slug = $this->mappedTransliteration($string);
+        }
 
         $slug = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $slug);
         $slug = strtolower(trim($slug, $separator));
@@ -53,13 +57,28 @@ class Slugger
         return $slug;
     }
 
-    private function transliterate($string)
+    /**
+     * Transliterates strings using the PHP 5.4.0+ built-in transliterator.
+     *
+     * @param  string $sring The string to transliterate
+     *
+     * @return string        The transliterated string
+     */
+    public function nativeTransliteration($string)
     {
-        // the built-in PHP transliterator is only available for 5.4.0+
-        if (version_compare(phpversion(), '5.4.0', '>=') && extension_loaded('intl')) {
-            return transliterator_transliterate("Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; Lower();", $string);
-        }
+        return transliterator_transliterate("Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC;", $string);
+    }
 
+    /**
+     * Transliterates strings using a map of characters, for systems where
+     * the PHP 5.4.0+ built-in transliterator isn't available.
+     *
+     * @param  string $sring The string to transliterate
+     *
+     * @return string        The transliterated string
+     */
+    public function mappedTransliteration($string)
+    {
         $string = $this->mappedTransliterator($string);
 
         // consider Japanese as an special case
