@@ -41,7 +41,7 @@ class ParseEvent extends BaseEvent
             $this->setItemProperty($id, $value);
         } else {
             throw new \BadMethodCallException(sprintf(
-                'Undefined "%s" method (the method name must start with either "get" or "set"',
+                'Undefined "%s" method (the method name must start with either "get" or "set")',
                 $method
             ));
         }
