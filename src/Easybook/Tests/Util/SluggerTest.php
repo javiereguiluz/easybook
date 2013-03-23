@@ -158,7 +158,7 @@ class SluggerTest extends TestCase
             ),
             array(
                 '     ',
-                '-'
+                ''
             )
         );
 
@@ -264,7 +264,7 @@ class SluggerTest extends TestCase
             ),
             array(
                 '     ',
-                '-'
+                ''
             )
         );
 

@@ -40,7 +40,7 @@ class Slugger
         $separator = $separator ?: $this->separator;
         $prefix    = $prefix    ?: $this->prefix;
 
-        $string = strip_tags($string);
+        $string = trim(strip_tags($string));
 
         if (version_compare(phpversion(), '5.4.0', '>=') && extension_loaded('intl')) {
             $slug = $this->nativeTransliteration($string);
