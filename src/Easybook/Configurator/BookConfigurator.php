@@ -194,14 +194,23 @@ class BookConfigurator
         $app = clone $this->app;
         $twig_variables = array('book' => $bookConfig['book'], 'edition' => $editionConfig);
 
-        // TODO: the $bookConfig array should be parsed recursively. I don't know
-        // how to modify all the values of a multi-dimensional array. The built-in
-        // array_walk_recursive doesn't walk the array recursively (values that are
-        // arrays aren't parsed)
+        // TODO: the $bookConfig array should be parsed recursively because it
+        // can be multi-dimensional. Since I don't know how to modify all the
+        // values of a multi-dimensional array recursively, I only modify the
+        // first two levels of the array. (FYI, the built-in array_walk_recursive()
+        // function doesn't walk the array recursively (values that are arrays
+        // aren't parsed)
         foreach ($bookConfig['book'] as $key => $value) {
             if (true !== $value && false !== $value && null !== $value && !is_array($value)) {
                 $bookConfig['book'][$key] = $app->renderString($value, $twig_variables);
+            } elseif (is_array($value)) {
+                foreach ($value as $subkey => $subvalue) {
+                    if (true !== $subvalue && false !== $subvalue && null !== $subvalue && !is_array($subvalue)) {
+                        $bookConfig['book'][$key][$subkey] = $app->renderString($subvalue, $twig_variables);
+                    }
+                }
             }
+
         }
 
         return $bookConfig;
