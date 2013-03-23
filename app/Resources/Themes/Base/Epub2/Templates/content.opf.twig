@@ -19,8 +19,8 @@
  
     <manifest>
         <item id="titlepage" href="titlepage.html" media-type="application/xhtml+xml"/>
-{% for item in app.get('publishing.items') %}
-        <item id="{{ item.slug }}" href="{{ item.fileName }}" media-type="application/xhtml+xml" />
+{% for item in items %}
+        <item id="{{ item.slug }}" href="{{ item.slug }}.html" media-type="application/xhtml+xml" />
 {% endfor %}
 {% if edition.include_styles %}
         <item id="stylesheet" href="css/easybook.css" media-type="text/css" />
@@ -42,14 +42,14 @@
 
     <spine toc="ncx">
         <itemref idref="titlepage" />
-{% for item in app.get('publishing.items') %}
+{% for item in items %}
         <itemref idref="{{ item.slug }}" />
 {% endfor %}
     </spine>
 
     <guide>
         <reference href="titlepage.html" type="cover" title="Cover"/>
-{% if use_html_toc %}
+{% if edition.use_html_toc %}
         <reference href="toc.html" type="toc" title="Table of contents"/>
 {% endif %}
     </guide>

@@ -15,13 +15,18 @@ use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
 
+/**
+ * It publishes the book as a single HTML page. All the internal links
+ * are transformed into anchors. This means that the generated book can be
+ * browsed offline or copied under any web server directory.
+ */
 class HtmlPublisher extends BasePublisher
 {
     public function parseContents()
     {
         $parsedItems = array();
 
-        foreach ($this->app['publishing.items'] as $item) {
+        foreach ($this->app->get('publishing.items') as $item) {
             $this->app->set('publishing.active_item', $item);
 
             // filter the original item content before parsing it
@@ -50,7 +55,7 @@ class HtmlPublisher extends BasePublisher
     {
         $decoratedItems = array();
 
-        foreach ($this->app['publishing.items'] as $item) {
+        foreach ($this->app->get('publishing.items') as $item) {
             $this->app->set('publishing.active_item', $item);
 
             // filter the original item content before decorating it
@@ -59,6 +64,7 @@ class HtmlPublisher extends BasePublisher
 
             // get again 'item' object because PRE_DECORATE event can modify it
             $item = $this->app->get('publishing.active_item');
+
             $item['content'] = $this->app->render(
                 $item['config']['element'].'.twig',
                 array('item' => $item)
@@ -82,35 +88,39 @@ class HtmlPublisher extends BasePublisher
         if ($this->app->edition('include_styles')) {
             $this->app->render(
                 '@theme/style.css.twig',
-                array('resources_dir' => $this->app['app.dir.resources'].'/'),
-                $this->app['publishing.dir.output'].'/css/easybook.css'
+                array('resources_dir' => $this->app->get('app.dir.resources').'/'),
+                $this->app->get('publishing.dir.output').'/css/easybook.css'
             );
         }
 
         // generate custom CSS file
         $customCss = $this->app->getCustomTemplate('style.css');
-        if (file_exists($customCss)) {
+        $hasCustomCss = file_exists($customCss);
+        if ($hasCustomCss) {
             $this->app->get('filesystem')->copy(
                 $customCss,
-                $this->app['publishing.dir.output'].'/css/styles.css',
+                $this->app->get('publishing.dir.output').'/css/styles.css',
                 true
             );
         }
 
         // implode all the contents to create the whole book
-        $book = $this->app->render('book.twig', array(
-            'items'          => $this->app['publishing.items'],
-            'has_custom_css' => file_exists($customCss)
-        ));
+        $this->app->render(
+            'book.twig',
+            array(
+                'items'          => $this->app->get('publishing.items'),
+                'has_custom_css' => $hasCustomCss
+            ),
+            // TODO: the name of the book file (book.html) must be configurable
+            $this->app->get('publishing.dir.output').'/book.html'
+        );
 
-        // TODO: the name of the book file (book.html) must be configurable
-        file_put_contents($this->app['publishing.dir.output'].'/book.html', $book);
 
         // copy book images
-        if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {
+        if (file_exists($imagesDir = $this->app->get('publishing.dir.contents').'/images')) {
             $this->app->get('filesystem')->mirror(
                 $imagesDir,
-                $this->app['publishing.dir.output'].'/images'
+                $this->app->get('publishing.dir.output').'/images'
             );
         }
     }

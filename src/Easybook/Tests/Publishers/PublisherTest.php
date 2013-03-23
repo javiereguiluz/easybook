@@ -32,7 +32,7 @@ class PublisherTest extends TestCase
         $this->app = new Application();
 
         // setup temp dir for generated files
-        $this->tmpDir = $this->app['app.dir.cache'].'/'.uniqid('phpunit_', true);
+        $this->tmpDir = $this->app->get('app.dir.cache').'/'.uniqid('phpunit_', true);
         $this->filesystem = new Filesystem();
         $this->filesystem->mkdir($this->tmpDir);
 
@@ -55,7 +55,7 @@ class PublisherTest extends TestCase
             ->directories()
             ->name('book*')
             ->depth(0)
-            ->in(__DIR__.'/fixtures/')
+            ->in(__DIR__.'/fixtures')
         ;
 
         foreach ($books as $book) {
@@ -63,7 +63,7 @@ class PublisherTest extends TestCase
 
             if ('book5' == $slug && (version_compare(phpversion(), '5.4.0', '<') || !extension_loaded('intl'))) {
                 $this->markTestSkipped(
-                    'This test requires PHP 5.4.0+ with the intl extension enabled (the book contains a lot of non-latin characters that need the PHP built-in transliterator)'
+                    'This test requires PHP 5.4.0+ with the intl extension enabled (the book contains a lot of non-latin characters that need the native PHP transliterator)'
                 );
             }
 

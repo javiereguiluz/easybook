@@ -15,13 +15,19 @@ use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
 
+/**
+ * It publishes the book as a PDF file. All the internal links are transformed
+ * into clickable cross-section book links. These links even display automatically
+ * the page number where they point into, so no information is lost when printing
+ * the book.
+ */
 class PdfPublisher extends BasePublisher
 {
     public function parseContents()
     {
         $parsedItems = array();
 
-        foreach ($this->app['publishing.items'] as $item) {
+        foreach ($this->app->get('publishing.items') as $item) {
             $this->app->set('publishing.active_item', $item);
 
             // filter the original item content before parsing it
@@ -50,7 +56,7 @@ class PdfPublisher extends BasePublisher
     {
         $decoratedItems = array();
 
-        foreach ($this->app['publishing.items'] as $item) {
+        foreach ($this->app->get('publishing.items') as $item) {
             $this->app->set('publishing.active_item', $item);
 
             // filter the original item content before decorating it
@@ -78,23 +84,27 @@ class PdfPublisher extends BasePublisher
 
     public function assembleBook()
     {
+        $tmpDir = $this->app->get('app.dir.cache').'/'.uniqid('easybook_pdf_');
+        $this->app->get('filesystem')->mkdir($tmpDir);
+
         // implode all the contents to create the whole book
-        $book = $this->app->render('book.twig', array(
-            'items' => $this->app['publishing.items']
-        ));
-        $temp = tempnam(sys_get_temp_dir(), 'easybook_');
-        fputs(fopen($temp, 'w+'), $book);
+        $htmlBookFilePath = $tmpDir.'/book.html';
+        $this->app->render(
+            'book.twig',
+            array('items' => $this->app->get('publishing.items')),
+            $htmlBookFilePath
+        );
 
         // use PrinceXML to transform the HTML book into a PDF book
         $prince = $this->app->get('prince');
-        $prince->setBaseURL($this->app['publishing.dir.contents'].'/images');
+        $prince->setBaseURL($this->app->get('publishing.dir.contents').'/images');
 
         // Prepare and add stylesheets before PDF conversion
         if ($this->app->edition('include_styles')) {
-            $defaultStyles = tempnam(sys_get_temp_dir(), 'easybook_style_');
-            $this->app->render('@theme/style.css.twig', array(
-                    'resources_dir' => $this->app['app.dir.resources'].'/'
-                ),
+            $defaultStyles = $tmpDir.'/default_styles.css';
+            $this->app->render(
+                '@theme/style.css.twig',
+                array('resources_dir' => $this->app->get('app.dir.resources').'/'),
                 $defaultStyles
             );
 
@@ -109,13 +119,18 @@ class PdfPublisher extends BasePublisher
 
         // TODO: the name of the book file (book.pdf) must be configurable
         $errorMessages = array();
-        $prince->convert_file_to_file($temp, $this->app['publishing.dir.output'].'/book.pdf', $errorMessages);
+        $prince->convert_file_to_file($htmlBookFilePath, $this->app->get('publishing.dir.output').'/book.pdf', $errorMessages);
 
-        // show PDF conversion errors
+        // display PDF conversion errors
         if (count($errorMessages) > 0) {
+            $this->app->get('console.output')->writeln("\n PrinceXML errors and warnings");
+            $this->app->get('console.output')->writeln(" -----------------------------\n");
             foreach ($errorMessages as $message) {
-                echo $message[0].': '.$message[2].' ('.$message[1].')'."\n";
+                $this->app->get('console.output')->writeln(
+                    '   ['.strtoupper($message[0]).'] '.ucfirst($message[2]).' ('.$message[1].')'
+                );
             }
+            $this->app->get('console.output')->writeln("\n");
         }
     }
 }

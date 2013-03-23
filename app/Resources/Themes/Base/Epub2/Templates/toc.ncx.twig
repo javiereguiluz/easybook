@@ -4,7 +4,7 @@
 <ncx version="2005-1" xml:lang="{{ book.author }}" xmlns="http://www.daisy.org/z3986/2005/ncx/">
 
     <head>
-        <meta name="dtb:uid" content="{{ edition.id.value }}" />
+        <meta name="dtb:uid" content="{{ app.get('publishing.edition.id').value }}" />
         <meta name="dtb:depth" content="{{ edition.toc.deep }}" />
         <meta name="dtb:totalPageCount" content="0" /> <!-- must be 0 -->
         <meta name="dtb:maxPageNumber" content="0" />  <!-- must be 0 -->
@@ -19,14 +19,12 @@
     </docAuthor>
  
     <navMap>
-{% for item in app.get('publishing.items') %}
-        {# editions define the *tocable* items #}
-        {% if item.config.element in edition.toc.elements|default([]) %}
+{% for item in items
+   if item.config.element in edition.toc.elements|default([]) %}
         <navPoint class="chapter" id="{{ item.slug }}" playOrder="{{ loop.index }}">
             <navLabel><text>{{ '' != item.label ? item.label ~ ' ' ~ item.title : item.title }}</text></navLabel>
-            <content src="{{ item.fileName }}" />
+            <content src="{{ item.slug }}.html" />
         </navPoint>
-        {% endif %}
 {% endfor %}
     </navMap>
  

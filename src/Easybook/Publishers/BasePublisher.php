@@ -22,6 +22,13 @@ class BasePublisher
         $this->app = $app;
     }
 
+    /**
+     * It defines the complete workflow followed to publish a book (load its
+     * contents, transform them into HTML, etc.)
+     *
+     * This base workflow is currently used by every publisher type, whether
+     * it produces an EPUB book, a PDF book or an HTML website.
+     */
     public function publishBook()
     {
         $this->loadContents();
@@ -31,35 +38,37 @@ class BasePublisher
         $this->assembleBook();
     }
 
+    /**
+     * It creates the directory where the final book contents will be copied.
+     */
     public function prepareOutputDir()
     {
-        $bookOutputDir = $this->app['publishing.dir.book'].'/Output';
+        $bookOutputDir = $this->app->get('publishing.dir.book').'/Output/'.$this->app->get('publishing.edition');
+
         if (!file_exists($bookOutputDir)) {
-            mkdir($bookOutputDir);
-            // TODO: edge case -> output dir cannot be created
+            $this->app->get('filesystem')->mkdir($bookOutputDir);
         }
 
-        $editionOutputDir = $bookOutputDir.'/'.$this->app['publishing.edition'];
-
-        if (!file_exists($editionOutputDir)) {
-            mkdir($editionOutputDir);
-            // TODO: edge case -> output dir cannot be created
-        }
-
-        $this->app->set('publishing.dir.output', $editionOutputDir);
+        $this->app->set('publishing.dir.output', $bookOutputDir);
     }
 
+    /**
+     * It loads the original content of each of the book's items. If the item
+     * doesn't define its own content (such as the table of contents or the
+     * cover) it loads the default content (if defined).
+     */
     public function loadContents()
     {
         // TODO: extensibility -> editions can redefine book contents (to remove or reorder items)
-        foreach ($this->app->book('contents') as $contentConfig) {
-            $item = $this->initializeItem($contentConfig);
+        foreach ($this->app->book('contents') as $itemConfig) {
+            $item = $this->initializeItem($itemConfig);
 
-            // if the element defines its own content file (usually: `chapter`, `appendix`)
-            if (array_key_exists('content', $contentConfig)) {
-                // TODO: extensibility -> contents could be written in several formats simultaneously
-                // (e.g. Twig *and* Markdown)
-                $contentFile = $this->app['publishing.dir.contents'].'/'.$contentConfig['content'];
+            // for now, easybook only supports Markdown format
+            $item['config']['format'] = 'md';
+
+            // if the element defines its own content file (usually chapters and appendices)
+            if (array_key_exists('content', $itemConfig)) {
+                $contentFile = $this->app['publishing.dir.contents'].'/'.$itemConfig['content'];
 
                 // check that content file exists and is readable
                 if (!is_readable($contentFile)) {
@@ -68,9 +77,9 @@ class BasePublisher
                         ."or is not readable.\n\n"
                         ."Check that '%s'\n"
                         ."file exists and check its permissions.",
-                        $contentConfig['content'],
-                        $item['config']['element'],
-                        realpath($this->app['publishing.dir.contents']).'/'.$contentConfig['content']
+                        $itemConfig['content'],
+                        $itemConfig['element'],
+                        realpath($this->app['publishing.dir.contents']).'/'.$itemConfig['content']
                     ));
                 }
 
@@ -82,35 +91,29 @@ class BasePublisher
                 if ('.twig' == substr($contentFile, -5)) {
                     try {
                         $item['original'] = $this->app->renderString(file_get_contents($contentFile));
-                    } catch (\Twig_Error_Loader $e) {
+                    } catch (\Twig_Error_Syntax $e) {
                         // if there is a Twig parsing error, notify the user but don't
                         // stop the book publication
-                        echo sprintf(
-                            " [WARNING] There was an error while parsing the \"%s\" element\n",
+                        $this->app->get('console.output')->writeln(sprintf(
+                            " [WARNING] There was an error while parsing the \"%s\" file\n",
                             $contentFile
-                        );
+                        ));
                     }
                 // if the element content only uses Markdown (*.md), load
                 // directly its contents in the $item 'original' property
                 } else {
                     $item['original'] = file_get_contents($contentFile);
                 }
-
-                // for now, easybook only supports markdown
-                // $item['config']['format'] = pathinfo($contentFile, PATHINFO_EXTENSION);
-                $item['config']['format'] = 'md';
             } else {
                 // look for a default content defined by easybook for this element
                 // e.g. `cover.md.twig`, `license.md.twig`, `title.md.twig`
                 try {
-                    $contentFile = $contentConfig['element'].'.md.twig';
+                    $contentFile = $itemConfig['element'].'.md.twig';
                     $item['original'] = $this->app->render('@content/'.$contentFile);
-                    $item['config']['format']  = 'md';
                 }
                 // if Twig throws a Twig_Error_Loader exception, there is no default content
                 catch (\Twig_Error_Loader $e) {
                     $item['original'] = '';
-                    $item['config']['format']  = 'md';
                 }
             }
 
@@ -118,27 +121,40 @@ class BasePublisher
         }
     }
 
-    private function initializeItem($contentConfig)
+    /**
+     * It initializes an array with the configuration options and data of each
+     * book element (a chapter, an appendix, the table of contens, etc.)
+     *
+     * @param  array $itemConfig The configuration options set in the config.yml
+     *                           file for this item.
+     *
+     * @return array An array with all the configuration options and data for the item
+     */
+    private function initializeItem($itemConfig)
     {
-        // each book element is represented by a variable of type `item`
         $item = array();
 
         $item['config'] = array_merge(array(
-            'content' => '',  // the name of this item contents file (it's a relative path from book's `Contents/`)
-            'element' => '',  // the type of this content (`chapter`, `appendix`, `toc`, `license`, ...)
-            'format'  => '',  // the format in which contents are written ('md' for MArkdown)
-            'number'  => '',  // the number/letter of the content (useful for `chapter`, `part` and `appendix`)
-            'title'   => ''   // the title of the content defined in `config.yml` (usually only `part` defines it)
-        ), $contentConfig);
+            // the name of this item contents file (it's a relative path from book's `Contents/`)
+            'content' => '',
+            // the type of this content (`chapter`, `appendix`, `toc`, `license`, ...)
+            'element' => '',
+            // the format in which contents are written ('md' for Markdown)
+            'format'  => '',
+            // the number/letter of the content (useful for `chapter`, `part` and `appendix`)
+            'number'  => '',
+            // the title of the content defined in `config.yml` (usually only `part` defines it)
+            'title'   => '',
+        ), $itemConfig);
 
-        $item['content']  = '';      // transformed content of the element (HTML usually)
-        $item['label']    = '';      // the label of this element ('Chapter XX', 'Appendix XX', ...)
-        $item['original'] = '';      // original content as written by book author
+        $item['original'] = '';      // original content as written by book author (Markdown usually)
+        $item['content']  = '';      // transformed content of the item (HTML usually)
+        $item['label']    = '';      // the label of this item ('Chapter XX', 'Appendix XX', ...)
+        $item['title']    = '';      // the title of the item without any label ('Lorem ipsum dolor')
         $item['slug']     = '';      // the slug of the title
-        $item['title']    = '';      // the title of the element without any label ('Lorem ipsum dolor')
-        $item['toc']      = array(); // the table of contents of this element
+        $item['toc']      = array(); // the table of contents of this item
 
-        if ('' != $item['config']['title']) {
+        if (!empty($item['config']['title'])) {
             $item['title'] = $item['config']['title'];
             $item['slug']  = $this->app->slugify($item['title']);
         }

@@ -15,6 +15,10 @@ use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Util\Toolkit;
 
+/**
+ * It publishes the book as an EPUB file. All the internal links are transformed
+ * into clickable cross-section book links.
+ */
 class Epub2Publisher extends HtmlPublisher
 {
     public function loadContents()
@@ -23,7 +27,8 @@ class Epub2Publisher extends HtmlPublisher
         // 'cover' is a very special content for epub books
         $excludedElements = array('cover', 'lot', 'lof');
 
-        // some epub books may want to define an html toc (i.e. if being converted to kindle format
+        // some epub books may want to define an html toc
+        // (i.e. if being converted to kindle format
         // as recommended by Kindle Publishing Guidelines)
         if (!$this->app->edition('use_html_toc')) {
             $excludedElements[] = 'toc';
@@ -45,7 +50,7 @@ class Epub2Publisher extends HtmlPublisher
     {
         $decoratedItems = array();
 
-        foreach ($this->app['publishing.items'] as $item) {
+        foreach ($this->app->get('publishing.items') as $item) {
             $this->app->set('publishing.active_item', $item);
 
             // filter the original item content before decorating it
@@ -66,98 +71,155 @@ class Epub2Publisher extends HtmlPublisher
 
     public function assembleBook()
     {
-        // variables needed to hold the list of images and fonts of the book
-        $bookImages = array();
-        $bookFonts  = array();
-
-        // prepare the temp directory used to build the book
-        $bookTempDir = $this->app['app.dir.cache'].'/'.uniqid(
-            $this->app['publishing.book.slug'].'-'.$this->app['publishing.edition'].'-'
-        );
-
-        $this->app->get('filesystem')->mkdir(array(
-            $bookTempDir,
-            $bookTempDir.'/book',
-            $bookTempDir.'/book/META-INF',
-            $bookTempDir.'/book/OEBPS',
-            $bookTempDir.'/book/OEBPS/css',
-            $bookTempDir.'/book/OEBPS/images',
-            $bookTempDir.'/book/OEBPS/fonts',
-        ));
+        $bookTmpDir = $this->prepareBookTemporaryDirectory();
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
-            $this->app->render('@theme/style.css.twig', array(
-                    'resources_dir' => '..'
-                ),
-                $bookTempDir.'/book/OEBPS/css/easybook.css'
+            $this->app->render(
+                '@theme/style.css.twig',
+                array('resources_dir' => '..'),
+                $bookTmpDir.'/book/OEBPS/css/easybook.css'
             );
         }
 
         // generate custom CSS file
         $customCss = $this->app->getCustomTemplate('style.css');
-        if (file_exists($customCss)) {
+        $hasCustomCss = file_exists($customCss);
+        if ($hasCustomCss) {
             $this->app->get('filesystem')->copy(
                 $customCss,
-                $bookTempDir.'/book/OEBPS/css/styles.css',
+                $bookTmpDir.'/book/OEBPS/css/styles.css',
                 true
             );
         }
 
-        // each book element will generate an HTML page
-        // use automatic slugs (chapter-1, chapter-2, ...) instead of
-        // semantic slugs (lorem-ipsum, dolor-sit-amet, ...)
-        $this->app->set('publishing.slugs', array());
-        $items = array();
-        foreach ($this->app['publishing.items'] as $item) {
-            $pageName = array_key_exists('number', $item['config'])
-                ? $item['config']['element'].' '.$item['config']['number']
-                : $item['config']['element'];
-
-            $fileName = $this->app->slugify(trim($pageName));
-
-            // TODO: document this new item property
-            $item['fileName'] = $fileName.'.html';
-            $items[] = $item;
-        }
-        // update `publishing items` with the new slug value
-        $this->app->set('publishing.items', $items);
+        $bookItems = $this->normalizeSlugs($this->app->get('publishing.items'));
+        $this->app->set('publishing.items', $bookItems);
 
         // generate one HTML page for every book item
-        $items = array();
-        foreach ($this->app['publishing.items'] as $item) {
-            try {
-                // try first to render the specific template for each content
-                // type, if it exists (e.g. toc.twig, chapter.twig, etc.)
-                $parameters = array(
-                    'item'           => $item,
-                    'has_custom_css' => file_exists($customCss),
-                );
-                $renderedTemplatePath = $bookTempDir.'/book/OEBPS/'.$item['fileName'];
+        foreach ($bookItems as $item) {
+            $renderedTemplatePath = $bookTmpDir.'/book/OEBPS/'.$item['slug'].'.html';
+            $templateVariables = array(
+                'item'           => $item,
+                'has_custom_css' => $hasCustomCss,
+            );
 
-                $this->app->render(
-                    $item['config']['element'].'.twig',
-                    $parameters,
-                    $renderedTemplatePath
-                );
+            // try first to render the specific template for each content
+            // type, if it exists (e.g. toc.twig, chapter.twig, etc.) and
+            // use chunk.twig as the fallback template
+            try {
+                $templateName = $item['config']['element'].'.twig';
+
+                $this->app->render($templateName, $templateVariables, $renderedTemplatePath);
             } catch (\Twig_Error_Loader $e) {
-                // use the generic chunk.twig template to render the content
-                $this->app->render('chunk.twig', $parameters, $renderedTemplatePath);
+                $this->app->render('chunk.twig', $templateVariables, $renderedTemplatePath);
             }
         }
 
-        // copy book images and prepare image data for ebook manifest
-        if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {
+        $bookImages = $this->prepareBookImages($bookTmpDir.'/book/OEBPS/images');
+        $bookCover  = $this->prepareBookCoverImage($bookTmpDir.'/book/OEBPS/images');
+
+        // generate the book cover page
+        $this->app->render('cover.twig', array('customCoverImage' => $bookCover),
+            $bookTmpDir.'/book/OEBPS/titlepage.html'
+        );
+
+        // generate the OPF file (the ebook manifest)
+        $this->app->render('content.opf.twig', array(
+                'cover'          => $bookCover,
+                'has_custom_css' => $hasCustomCss,
+                'fonts'          => array(),
+                'images'         => $bookImages,
+                'items'          => $bookItems
+            ),
+            $bookTmpDir.'/book/OEBPS/content.opf'
+        );
+
+        // generate the NCX file (the table of contents)
+        $this->app->render('toc.ncx.twig', array('items' => $bookItems),
+            $bookTmpDir.'/book/OEBPS/toc.ncx'
+        );
+        
+        // generate container.xml and mimetype files
+        $this->app->render('container.xml.twig', array(),
+            $bookTmpDir.'/book/META-INF/container.xml'
+        );
+        $this->app->render('mimetype.twig', array(),
+            $bookTmpDir.'/book/mimetype'
+        );
+
+        // compress book contents as ZIP file and rename to .epub
+        // TODO: the name of the book file (book.epub) must be configurable
+        $this->zipBookContents($bookTmpDir.'/book', $bookTmpDir.'/book.zip');
+        $this->app->get('filesystem')->copy(
+            $bookTmpDir.'/book.zip',
+            $this->app->get('publishing.dir.output').'/book.epub',
+            true
+        );
+
+        // remove temp directory used to build the book
+        $this->app->get('filesystem')->remove($bookTmpDir);
+    }
+
+    /**
+     * Prepares the temporary directory where the book contents are generated
+     * before packing them into the resulting EPUB file. It also creates the
+     * full directory structure required for EPUB books.
+     *
+     * @return string The absolute path of the directory created.
+     */
+    private function prepareBookTemporaryDirectory()
+    {
+        $bookDir = $this->app->get('app.dir.cache').'/'
+                   .uniqid($this->app->get('publishing.book.slug'));
+
+        $this->app->get('filesystem')->mkdir(array(
+            $bookDir,
+            $bookDir.'/book',
+            $bookDir.'/book/META-INF',
+            $bookDir.'/book/OEBPS',
+            $bookDir.'/book/OEBPS/css',
+            $bookDir.'/book/OEBPS/images',
+            $bookDir.'/book/OEBPS/fonts',
+        ));
+
+        return $bookDir;
+    }
+
+    /**
+     * It prepares the book images by copying them into the appropriate
+     * temporary directory. It also prepares an array with all the images
+     * data needed later to generate the full ebook contents manifest.
+     *
+     * @param  string $targetDir The directory where the images are copied.
+     *
+     * @return array             Images data needed to create the book manifest.
+     */
+    private function prepareBookImages($targetDir)
+    {
+        if (!file_exists($targetDir)) {
+            throw new \RuntimeException(sprintf(
+                " ERROR: Books images couldn't be copied because \n"
+                ." the given '%s' \n"
+                ." directory doesn't exist.",
+                $targetDir
+            ));
+        }
+
+        $imagesDir = $this->app->get('publishing.dir.contents').'/images';
+        $imagesData = array();
+
+        if (file_exists($imagesDir)) {
             $images = $this->app->get('finder')->files()->in($imagesDir);
 
             $i = 1;
             foreach ($images as $image) {
                 $this->app->get('filesystem')->copy(
                     $image->getPathName(),
-                    $bookTempDir.'/book/OEBPS/images/'.$image->getFileName()
+                    $targetDir.'/'.$image->getFileName()
                 );
 
-                $bookImages[] = array(
+                $imagesData[] = array(
                     'id'        => 'figure-'.$i++,
                     'filePath'  => 'images/'.$image->getFileName(),
                     'mediaType' => 'image/'.pathinfo($image->getFilename(), PATHINFO_EXTENSION)
@@ -165,10 +227,24 @@ class Epub2Publisher extends HtmlPublisher
             }
         }
 
-        // look for cover images
+        return $imagesData;
+    }
+
+    /**
+     * It prepares the book cover image (if the book defines one).
+     *
+     * @param  string $targetDir The directory where the cover image is copied.
+     *
+     * @return array|null        Book cover image data or null if the book doesn't
+     *                           include a cover image.
+     */
+    private function prepareBookCoverImage($targetDir)
+    {
         $cover = null;
+
         if (null != $image = $this->app->getCustomCoverImage()) {
             list($width, $height, $type) = getimagesize($image);
+
             $cover = array(
                 'height'    => $height,
                 'width'     => $width,
@@ -176,55 +252,41 @@ class Epub2Publisher extends HtmlPublisher
                 'mediaType' => image_type_to_mime_type($type)
             );
 
-            // copy the cover image
-            $this->app->get('filesystem')->copy(
-                $image,
-                $bookTempDir.'/book/OEBPS/images/'.basename($image)
-            );
+            $this->app->get('filesystem')->copy($image, $targetDir.'/'.basename($image));
         }
 
-        // generate book cover
-        $this->app->render('cover.twig', array(
-                'cover' => $cover
-            ),
-            $bookTempDir.'/book/OEBPS/titlepage.html'
-        );
+        return $cover;
+    }
 
-        // generate OPF file
-        $this->app->render('content.opf.twig', array(
-                'cover'          => $cover,
-                'has_custom_css' => file_exists($customCss),
-                'fonts'          => $bookFonts,
-                'images'         => $bookImages,
-                'use_html_toc'   => $this->app->edition('use_html_toc')
-            ),
-            $bookTempDir.'/book/OEBPS/content.opf'
-        );
+    /**
+     * The generated HTML pages aren't named after the items' original slugs
+     * (e.g. introduction-to-lorem-ipsum.html) but using their content types
+     * and numbers (e.g. chapter-1.html).
+     *
+     * This method replaces the original slugs of the items by the normalized
+     * slugs based on their labels.
+     *
+     * @param  array $items The original book items.
+     *
+     * @return array        The book items with their slugs replaced.
+     */
+    private function normalizeSlugs($items)
+    {
+        $itemsWithNormalizedSlugs = array();
 
-        // generate NCX file
-        $this->app->render('toc.ncx.twig', array(),
-            $bookTempDir.'/book/OEBPS/toc.ncx'
-        );
-        
-        // generate container.xml and mimetype files
-        $this->app->render('container.xml.twig', array(),
-            $bookTempDir.'/book/META-INF/container.xml'
-        );
-        $this->app->render('mimetype.twig', array(),
-            $bookTempDir.'/book/mimetype'
-        );
+        foreach ($items as $item) {
+            $itemPageName = array_key_exists('number', $item['config'])
+                ? $item['config']['element'].' '.$item['config']['number']
+                : $item['config']['element'];
 
-        // compress book contents as ZIP file and rename to .epub
-        // TODO: the name of the book file (book.epub) must be configurable
-        $this->zipBookContents($bookTempDir.'/book', $bookTempDir.'/book.zip');
-        $this->app->get('filesystem')->copy(
-            $bookTempDir.'/book.zip',
-            $this->app['publishing.dir.output'].'/book.epub',
-            true
-        );
+            $newSlug = $this->app->slugify($itemPageName);
+            $item['slug'] = $newSlug;
+            $item['toc'][0]['slug'] = $newSlug;
 
-        // remove temp directory used to build the book
-        $this->app->get('filesystem')->remove($bookTempDir);
+            $itemsWithNormalizedSlugs[] = $item;
+        }
+
+        return $itemsWithNormalizedSlugs;
     }
 
     /*
