@@ -77,8 +77,10 @@ class LinkPlugin implements EventSubscriberInterface
                 if (in_array($format, array('epub', 'epub2'))) {
                     $links = $event->app->get('publishing.links');
 
-                    return sprintf(
-                        '<a class="internal" href="./%s"%s</a>',
+                    // internal links in ePub books must use the
+                    // syntax chapter.html or chapter.html#section-slug
+                    // instead of ./chapter.html and ./chapter.html#section-slug
+                    return sprintf('<a class="internal" href="%s"%s</a>',
                         $links[$matches[1]], $matches[2]
                     );
                 }
