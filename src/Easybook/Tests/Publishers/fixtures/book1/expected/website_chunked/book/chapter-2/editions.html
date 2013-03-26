@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Javier Eguiluz" />
+    <meta name="date" content="02/09/2012"/>
+    <meta name="generator" content="easybook 4"/>
+
+    <title>Editions | easybook test book #1</title>
+
+    <link rel="stylesheet" href="../css/easybook.css" />
+
+</head>
+
+<body class="item ">
+<div class="container">
+<div class="menu">
+    <div class="row">
+        <h1 class="span9"><a href="../index.html">easybook test book #1</a></h1>
+        <p class="span3">
+                        <a href="../chapter-2/content-types.html"><span>&larr;</span> Previous</a>
+            
+                        <a href="../chapter-2/themes.html">Next <span>&rarr;</span></a>
+                    </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span9">
+        <h1 id="editions"><span>2.2</span> Editions</h1>
+        
+
+<p><strong>easybook</strong> is so flexible it allows you to publish the very same book in radically different ways. This is possible thanks to the <strong>editions</strong>, that define the specific characteristics with which the book is published.</p>
+
+<p>Editions are defined under the <code>editions</code> options in <code>config.yml</code> file. By default, the books created with the <code>new</code> command have three editions named <code>print</code>, <code>web</code> and <code>website</code> with the following options:</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    editions:
+        print:
+            format:         pdf
+            auto_label:     true
+            include_styles: true
+            isbn:           ~
+            margin:
+                top:        25mm
+                bottom:     25mm
+                inner:      30mm
+                outter:     20mm
+            page_size:      A4
+            two_sided:      true
+            toc:
+                deep:       2
+                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]
+&nbsp;
+        web:
+            format:         html
+            auto_label:     true
+            highlight_code: true
+            include_styles: true
+            toc:
+                deep:       2
+                elements:   [&quot;appendix&quot;, &quot;chapter&quot;]</pre>
+</div>
+
+<div class="code code">
+<pre class="code">        website:
+            extends:        web
+            format:         html_chunked</pre>
+</div>
+
+<p>The name of each edition must be unique for the same book and cannot contain spaces.  The edition name is used as the subdirectory inside <code>Output/</code> directory to separate the contents of each edition. You can define as many editions as you need, but all must belong to one of the following three types defined by the <code>format</code> option:</p>
+
+<ul>
+<li><code>pdf</code>, the book is published as a PDF file named <code>book.pdf</code></li>
+<li><code>html</code>, the book is published as a HTML page named <code>book.html</code>.</li>
+<li><code>html_chunked</code>, the book is published as a static website in a directory named <code>book</code>.</li>
+</ul>
+
+<p>Editions can modify the aspect of the published book through several configuration options. The <code>html</code> and <code>html_chunked</code>  edition types share the same options:</p>
+
+<ul>
+<li><code>auto_label</code>, if <code>true</code> all the book headings are prefixed with labels (<code>1.1</code>, <code>1.2</code>, <code>1.2.1</code>, <code>1.2.2</code>, etc.)</li>
+<li><code>highligh_code</code>, if <code>true</code> the syntax of the code listings is highlighted (this option is a placeholder and it doesn't work for the momment).</li>
+<li><code>include_styles</code>, if <code>true</code> the generated HTML pages include a link to <strong>easybook</strong> default CSS file.</li>
+<li><code>toc</code>, sets the options of the table of contents. It's ignored unless the book has at least one <code>toc</code> element type. It has two options:
+
+<ul>
+<li><code>deep</code>, the maximum heading level included in the TOC (<code>1</code> is the lowest possible number and would only show <code>&lt;h1&gt;</code> level headings; <code>6</code> is the highest possible value and would show all <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code> and <code>&lt;h6&gt;</code> headings).</li>
+<li><code>items</code>, the type of elements included in the TOC (by default, only <code>appendix</code>, <code>chapter</code> and <code>part</code> are included).</li>
+</ul></li>
+</ul>
+
+<p>The <code>pdf</code> editions can define even more options:</p>
+
+<ul>
+<li><code>auto_label</code>, it's the same option and has the same meaning as for the <code>html</code> and <code>html_chunked</code> editions</li>
+<li><code>isbn</code>, the ISBN-10 or ISBN-13 code of the book (this option is a placeholder and it doesn't work for the momment).</li>
+<li><code>include_styles</code>, if <code>true</code> <strong>easybook</strong> will decide the layout, typesetting and design of the book. Use this option to create stunning books effortlessly. The next chapter will explain how to define your own styles.</li>
+<li><code>margin</code>, sets the four margins of the printed book: <code>top</code>, <code>bottom</code>, <code>inner</code> and <code>outter</code>. If the book is one-sided, <code>inner</code> equals left margin and <code>outter</code> equals right margin. The values of the margins can be set with any CSS valid lenght unit (<code>1in</code>, <code>25mm</code>, <code>2.5cm</code>).</li>
+<li><code>page_size</code>, the page size of the printed book. <strong>easybook</strong> only supports <code>A4</code> size for the moment (<code>A4</code> size is 8.27 inches × 11.69 inches).</li>
+<li><code>toc</code>, it's the same option and has the same meaning as for the <code>html</code> and <code>html_chunked</code> editions</li>
+<li><code>two_sided</code>, if <code>true</code> the PDF file is ready for two-sided printing.</li>
+</ul>
+
+<p>In addition to all these options, editions can set a very useful option named <code>extends</code>. The value of this option indicates the name of the edition from which this edition <em>inherits</em>. When an edition <em>inherits</em> from another edition, the options of the parent edition are copied on the <em>heir</em> edition, which can then override any value.</p>
+
+<p>Imagine for example you want to publish one PDF book with three slightly different design. The draft version (<code>draft</code>) must be double-sided and must have very small margins to reduce its length, the normal version (<code>print</code>) is one-sided and has normal margins. The version prepared for lulu.com website (<code>lulu</code>) is similar to the normal version, except is double-sided:</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    editions:
+        print:
+            format:       pdf
+            isbn:         ~
+            auto_label:   true
+            two_sided:    false
+            page_size:    A4
+            margin:
+                top:      25mm
+                bottom:   25mm
+                inner:    30mm
+                outter:   20mm
+            toc:
+                deep:     2
+                elements: ['appendix', 'chapter']
+&nbsp;
+        draft:
+            extends:      print
+            two_sided:    true
+            margin:
+                top:      15mm
+                bottom:   15mm
+                inner:    20mm
+                outter:   10mm</pre>
+</div>
+
+<div class="code code">
+<pre class="code">        lulu:
+            extends:      print
+            two_sided:    true</pre>
+</div>
+
+<p>The only limitation of <code>extends</code> is that it only works with one level inheritance. Therefore, and edition cannot extend another edition that extends a third one.</p>
+
+
+    </div>
+
+    <div class="span3">
+        <div class="item local_toc">
+            <h3>Table of contents</h3>
+
+            <ul class="unstyled">
+                                                                <li class="level-1">
+                        <span>Chapter 2</span>
+                        <a href="../chapter-2.html">Publishing your second book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>2.1</span>
+                        <a href="../chapter-2/content-types.html">Content types</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>2.2</span>
+                        <a href="../chapter-2/editions.html">Editions</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>2.3</span>
+                        <a href="../chapter-2/themes.html">Themes</a>
+                    </li>
+                                        </ul>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

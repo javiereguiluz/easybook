@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Javier Eguiluz" />
+    <meta name="date" content="02/09/2012"/>
+    <meta name="generator" content="easybook 4"/>
+
+    <title>Downloading easybook | easybook test book #1</title>
+
+    <link rel="stylesheet" href="../css/easybook.css" />
+
+</head>
+
+<body class="item ">
+<div class="container">
+<div class="menu">
+    <div class="row">
+        <h1 class="span9"><a href="../index.html">easybook test book #1</a></h1>
+        <p class="span3">
+                        <a href="../chapter-1.html"><span>&larr;</span> Previous</a>
+            
+                        <a href="../chapter-1/creating-the-book.html">Next <span>&rarr;</span></a>
+                    </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span9">
+        <h1 id="downloading-easybook"><span>1.1</span> Downloading easybook</h1>
+        
+
+<p>Before downloading <strong>easybook</strong>, create a directory for it. For example:</p>
+
+<ul>
+<li>On Windows: <code>C:\Users\javier\projects\easybook</code></li>
+<li>On Mac OS X: <code>/Users/javier/projects/easybook</code></li>
+<li>On Linux: <code>/home/javier/projects/easybook</code></li>
+</ul>
+
+<p>If you have Git installed on your computer, you should download  <strong>easybook</strong> cloning its public repository with the following command (replace <code>&lt;dir&gt;</code> for the path of the directory created previously):</p>
+
+<div class="code code">
+<pre class="code">$ git clone http://github.com/javiereguiluz/easybook.git &lt;dir&gt;</pre>
+</div>
+
+<p>If you don't use Git, you can download <strong>easybook</strong> as a compressed <code>.zip</code> archive. It's not as cool as using Git, but it works fine. Download the following file and uncompress it on the previously created directory: <a href="http://github.com/javiereguiluz/easybook/zipball/master">http://github.com/javiereguiluz/easybook/zipball/master</a></p>
+
+<h3 id="using-easybook">1.1.1 Using easybook</h3>
+
+<p>Once downloaded/unzipped, open a command console and run the following PHP script to check that you have downloaded <strong>easybook</strong>  correctly:</p>
+
+<div class="code code">
+<pre class="code">$ ./book</pre>
+</div>
+
+<p>If everything is fine, <strong>easybook</strong> should welcome you with the following message:</p>
+
+<div class="code code">
+<pre class="code">                    |              |    
+,---.,---.,---.,   .|---.,---.,---.|__/ 
+|---',---|`---.|   ||   ||   ||   ||  \ 
+`---'`---^`---'`---|`---'`---'`---'`   `
+               `---'
+&nbsp;
+easybook is the easiest and fastest tool to generate
+technical documentation, books, manuals and websites.
+&nbsp;
+Available commands:
+  help      Displays help for a command
+  list      Lists commands
+  new       Creates a new empty book
+  publish   Publishes an edition of a book
+  version   Shows installed easybook version</pre>
+</div>
+
+<p>If you find any issue running <code>./book</code> script, try running it as <code>php book</code>. If you still  find any issues, check the permissions of the <code>book</code> script. If everything fails, ask again advice from your computer savvy friends.</p>
+
+<p>The <code>./book</code> script is the unique <em>entry point</em> for every <strong>easybook</strong> command. If you need to know for example the installed version, just run the <code>version</code> command through <code>book</code> script:</p>
+
+<div class="code code">
+<pre class="code">$ ./book version
+&nbsp;
+&nbsp;
+                    |              |    
+,---.,---.,---.,   .|---.,---.,---.|__/ 
+|---',---|`---.|   ||   ||   ||   ||  \ 
+`---'`---^`---'`---|`---'`---'`---'`   `
+               `---'
+&nbsp;
+easybook installed version: 4.0</pre>
+</div>
+
+
+    </div>
+
+    <div class="span3">
+        <div class="item local_toc">
+            <h3>Table of contents</h3>
+
+            <ul class="unstyled">
+                                                                <li class="level-1">
+                        <span>Chapter 1</span>
+                        <a href="../chapter-1.html">Publishing your first book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.1</span>
+                        <a href="../chapter-1/downloading-easybook.html">Downloading easybook</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.2</span>
+                        <a href="../chapter-1/creating-the-book.html">Creating the book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.3</span>
+                        <a href="../chapter-1/writing-the-book.html">Writing the book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.4</span>
+                        <a href="../chapter-1/publishing-the-book.html">Publishing the book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.5</span>
+                        <a href="../chapter-1/book-configuration-options.html">Book configuration options</a>
+                    </li>
+                                        </ul>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

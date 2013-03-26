@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Javier Eguiluz" />
+    <meta name="date" content="02/09/2012"/>
+    <meta name="generator" content="easybook 4"/>
+
+    <title>Creating the book | easybook test book #1</title>
+
+    <link rel="stylesheet" href="../css/easybook.css" />
+
+</head>
+
+<body class="item ">
+<div class="container">
+<div class="menu">
+    <div class="row">
+        <h1 class="span9"><a href="../index.html">easybook test book #1</a></h1>
+        <p class="span3">
+                        <a href="../chapter-1/downloading-easybook.html"><span>&larr;</span> Previous</a>
+            
+                        <a href="../chapter-1/writing-the-book.html">Next <span>&rarr;</span></a>
+                    </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span9">
+        <h1 id="creating-the-book"><span>1.2</span> Creating the book</h1>
+        
+
+<p>In this section you will create your first <strong>easybook</strong> demo book. However, if you want to try <strong>easybook</strong> features as quickly as possible, you can use ready-made demo books named <code>easybook-doc-en</code> (English <strong>easybook</strong> documentation) and <code>easybook-doc-es</code> (Spanish <strong>easybook</strong> documentation). In that case, you can skip to the <em>Publishing the book</em> section.</p>
+
+<p><strong>easybook</strong> requires that your books follow a certain structure of archives and directories. To avoid creating this structure by hand, new books are bootstrapped with <strong>easybook</strong> <code>new</code> command:</p>
+
+<div class="code code">
+<pre class="code">$ ./book new &quot;The Origin of Species&quot;</pre>
+</div>
+
+<p>Type the title of your book after <code>new</code> command enclosing it with quotes. The result of this command is a new <code>the-origin-of-species</code> directory inside <strong>easybook</strong> <code>doc/</code> directory. Inside the new directory, you should see the following structure:</p>
+
+<div class="code code">
+<pre class="code">&lt;easybook&gt;/
+    doc/
+        the-origin-of-species/
+            config.yml
+            Contents/
+                chapter1.md
+                chapter2.md
+                images/
+            Output/</pre>
+</div>
+
+<p>These are the archives and directories created by <strong>easybook</strong>:</p>
+
+<ul>
+<li><code>config.yml</code>, this archive contains all the book configuration options. We'll cover all of them in the next sections and chapters, but meanwhile you can change the <code>author</code> option to set the book author's name (for example, <code>Charles Darwin</code>).</li>
+<li><code>Contents/</code>, this directory holds all the book contents (both text and images). <strong>easybook</strong> creates two sample chapters (<code>chapter1.md</code> and <code>chapter2.md</code>) and an empty <code>images/</code> directory.</li>
+<li><code>Output/</code>, initially this directory is empty, but eventually it will contain the published book.</li>
+</ul>
+
+
+    </div>
+
+    <div class="span3">
+        <div class="item local_toc">
+            <h3>Table of contents</h3>
+
+            <ul class="unstyled">
+                                                                <li class="level-1">
+                        <span>Chapter 1</span>
+                        <a href="../chapter-1.html">Publishing your first book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.1</span>
+                        <a href="../chapter-1/downloading-easybook.html">Downloading easybook</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.2</span>
+                        <a href="../chapter-1/creating-the-book.html">Creating the book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.3</span>
+                        <a href="../chapter-1/writing-the-book.html">Writing the book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.4</span>
+                        <a href="../chapter-1/publishing-the-book.html">Publishing the book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.5</span>
+                        <a href="../chapter-1/book-configuration-options.html">Book configuration options</a>
+                    </li>
+                                        </ul>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

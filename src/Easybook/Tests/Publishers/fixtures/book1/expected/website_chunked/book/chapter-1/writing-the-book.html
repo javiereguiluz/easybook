@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Javier Eguiluz" />
+    <meta name="date" content="02/09/2012"/>
+    <meta name="generator" content="easybook 4"/>
+
+    <title>Writing the book | easybook test book #1</title>
+
+    <link rel="stylesheet" href="../css/easybook.css" />
+
+</head>
+
+<body class="item ">
+<div class="container">
+<div class="menu">
+    <div class="row">
+        <h1 class="span9"><a href="../index.html">easybook test book #1</a></h1>
+        <p class="span3">
+                        <a href="../chapter-1/creating-the-book.html"><span>&larr;</span> Previous</a>
+            
+                        <a href="../chapter-1/publishing-the-book.html">Next <span>&rarr;</span></a>
+                    </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span9">
+        <h1 id="writing-the-book"><span>1.3</span> Writing the book</h1>
+        
+
+<p>Book contents are written in regular text archives using Markdown syntax. This format has become the <em>de facto</em> standard for writing documentation for Internet. If you are not familiar with Markdown syntax, read the <a href="http://daringfireball.net/projects/markdown/syntax">official Markdown syntax reference</a>. Markdown is the only format currently supported by <strong>easybook</strong>. In the future, many more formats will be incorporated, such as reStructuredText, Textile and other widely used formats.</p>
+
+<p>Therefore, forget <strong>easybook</strong> for a while and write the contents of your book in Markdown syntax using your favorite text editor (<code>vi</code>, <em>Notepad</em>, <em>TextMate</em>, <em>SublimeText</em>, etc.)</p>
+
+<p>The structure of a book can be very complex (cover, title page, acknowledgements, dedication, chapters, parts, etc.). <strong>easybook</strong> supports all the common book content types, but for now, we'll just focus on the chapters. You can add as many chapters as you want and each one can be as large or as short as you need. All you have to do is to define the book chapters under the <code>contents</code> option of the <code>config.yml</code> file:</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }</pre>
+</div>
+
+<p>Each line under the <code>contents</code> option defines a content of the book. The <code>cover</code> and <code>toc</code> lines are special contents that will be explained later. Add your book chapters with the  <code>chapter</code> type element. A chapter must set its number (with the <code>number</code> option) and the name of the file that holds its contents (with the <code>content</code> option).</p>
+
+<p>Besides being lightning-fast, the main feature of <strong>easybook</strong> is its flexibility, as it never forces you to work in a certain way. Do you want to number your chapters in an <em>imaginative</em> way? People will think you're crazy, but <strong>easybook</strong> allows you to do it:</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 100, content: chapter1.md }
+        - { element: chapter, number: 56,  content: chapter2.md }</pre>
+</div>
+
+<p>Do you need letters instead of numbers? This is usual for appendices instead of chapters, but <strong>easybook</strong> won't stop you from doing it:</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: A, content: chapter1.md }
+        - { element: chapter, number: B, content: chapter2.md }</pre>
+</div>
+
+<p>You can also use any name for the chapter contents file, as in the following example that mixes English and Spanish:</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: capitulo2.md }</pre>
+</div>
+
+<p>Using significant names for the book content files can easy its management:</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: publishing-your-first-book.md }
+        - { element: chapter, number: 2, content: publishing-your-second-book.md }</pre>
+</div>
+
+<p>The most important thing about the <code>contents</code> option is the order in which you define the contents. The published book will be always composed of those contents and in that order. Therefore, the following configuration will output a book with  the cover between the two chapters and the table of contents at the very end (completely crazy, but really easy to do with <strong>easybook</strong>):</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    contents:
+        - { element: chapter, number: 1, content: publishing-your-first-book.md }
+        - { element: cover }
+        - { element: chapter, number: 2, content: publishing-your-second-book.md }
+        - { element: toc   }</pre>
+</div>
+
+<p>By default, all content archives are stored in the <code>Contents/</code> directory. However, if your book is complex, you can divide the contents into subdirectories. Then, include the name of all the subdirectories in the <code>content</code> option  (don't forget to enclose it with quotes if the file path has spaces):</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: introduction/chapter1.md }
+        - { element: chapter, number: 2, content: introduction/chapter2.md }
+        - { element: chapter, number: 3, content: advanced/chapter1.md }</pre>
+</div>
+
+<p>The above configuration means that your book contents are distributed this way:</p>
+
+<div class="code code">
+<pre class="code">&lt;book_dir&gt;/
+    ...
+    Contents/
+        introduction/
+            chapter1.md
+            chapter2.md
+        advanced/
+            chapter1.md</pre>
+</div>
+
+
+    </div>
+
+    <div class="span3">
+        <div class="item local_toc">
+            <h3>Table of contents</h3>
+
+            <ul class="unstyled">
+                                                                <li class="level-1">
+                        <span>Chapter 1</span>
+                        <a href="../chapter-1.html">Publishing your first book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.1</span>
+                        <a href="../chapter-1/downloading-easybook.html">Downloading easybook</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.2</span>
+                        <a href="../chapter-1/creating-the-book.html">Creating the book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.3</span>
+                        <a href="../chapter-1/writing-the-book.html">Writing the book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.4</span>
+                        <a href="../chapter-1/publishing-the-book.html">Publishing the book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>1.5</span>
+                        <a href="../chapter-1/book-configuration-options.html">Book configuration options</a>
+                    </li>
+                                        </ul>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

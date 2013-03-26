@@ -276,10 +276,12 @@ class HtmlChunkedPublisher extends HtmlPublisher
     {
         $chunks = $this->prepareItemChunks($item);
 
-        foreach ($chunks as $i => $chunk) {
-            $bookToc = $this->filterBookToc($bookToc, 2);
-            $this->app->set('publishing.book.toc', $bookToc);
+        // bookToc can be modified by the previous prepareItemChunks() method
+        $bookToc = $this->app->get('publishing.book.toc');
+        $bookToc = $this->filterBookToc($bookToc, 2);
+        $this->app->set('publishing.book.toc', $bookToc);
 
+        foreach ($chunks as $i => $chunk) {
             $itemPosition = $this->findItemPosition($chunk, $bookToc, 'url');
 
             if (1 == $chunk['level']) {
@@ -310,9 +312,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
             } catch (\Twig_Error_Loader $e) {
                 $this->app->render('chunk.twig', $templateVariables, $chunkFilePath);
             }
-
-            return $bookToc;
         }
+
+        return $bookToc;
     }
 
     /**

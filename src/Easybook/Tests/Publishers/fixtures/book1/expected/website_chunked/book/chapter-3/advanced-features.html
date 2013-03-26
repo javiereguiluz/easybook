@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Javier Eguiluz" />
+    <meta name="date" content="02/09/2012"/>
+    <meta name="generator" content="easybook 4"/>
+
+    <title>Advanced features | easybook test book #1</title>
+
+    <link rel="stylesheet" href="../css/easybook.css" />
+
+</head>
+
+<body class="item ">
+<div class="container">
+<div class="menu">
+    <div class="row">
+        <h1 class="span9"><a href="../index.html">easybook test book #1</a></h1>
+        <p class="span3">
+                        <a href="../chapter-3/plugins.html"><span>&larr;</span> Previous</a>
+            
+                        <a class="disabled" href="#">Next <span>&rarr;</span></a>
+                    </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span9">
+        <h1 id="advanced-features"><span>3.3</span> Advanced features</h1>
+        
+
+<h3 id="different-directories-per-book">3.3.1 Different directories per book</h3>
+
+<p>Unless stated otherwise, the books are created in the <code>doc/</code> directory of <strong>easybook</strong>. If you want to save the contents in any other directory, add the <code>--dir</code> option when creating and/or publishig the book:</p>
+
+<div class="code code">
+<pre class="code">$ ./book new &quot;The Origin of Species&quot; --dir=&quot;/Users/javier/books&quot;
+(the book is created in &quot;/Users/javier/books/the-origin-of-species&quot;)
+&nbsp;
+$ ./book publish the-origin-of-species print --dir=&quot;/Users/javier/books&quot;
+(the book is published in &quot;/Users/javier/books/the-origin-of-species/Output/print/book.pdf&quot;)</pre>
+</div>
+
+<h3 id="advanced-configuration">3.3.2 Advanced configuration</h3>
+
+<p><strong>easybook</strong> doesn't restrict the configuration options that you can set on your book, editions and contents. <strong>easybook</strong> always puts you in control, so you can define all the new settings that you may need.</p>
+
+<p>Do you want to show the price of the book on the cover? Add a new option called <code>price</code> under the <code>book</code> option of <code>config.yml</code> file:</p>
+
+<div class="code code">
+<pre class="code">book:
+    ...
+    price: 10</pre>
+</div>
+
+<p>Now you can use this option in any template with the following expression: <code>{{ book.price }}</code>.  Do you want to use different CSS frameworks to generate the book website? Add a new option called <code>framework</code> in some editions:</p>
+
+<div class="code code">
+<pre class="code">editions:
+    my_website1:
+        format:    html_chunked
+        framework: twitter_bootstrap
+        ...
+&nbsp;
+    my_website2:
+        extends:   my_website1
+        framework: 960_gs</pre>
+</div>
+
+<p>This new option is now available in any template through the following expression: <code>{{ edition.framework }}</code>. Finally, you can also add new options to the contents of the book.  Do you want to indicate the estimated reading time in each chapter? Add the following <code>time</code> option for <code>chapter</code> elements:</p>
+
+<div class="code code">
+<pre class="code">contents:
+    - { element: cover }
+    - ...
+    - { element: chapter, number: 1, ..., time: 20 }
+    - { element: chapter, number: 2, ..., time: 12 }
+    - ...</pre>
+</div>
+
+<p>And now you can add <code>{{ item.config.time }}</code> in <code>chapter.twig</code> template to show the estimated reading time for each chapter.</p>
+
+<h3 id="defining-new-content-types">3.3.3 Defining new content types</h3>
+
+<p>It's uncommon and generally unneeded, but you can also define new content types besides the elvent types included in <strong>easybook</strong>. Imagine that you want to include a page with a humorous cartoon between some chapters. Let's call this new content type <code>cartoon</code>. First, you should add it to your book contents list:</p>
+
+<div class="code code">
+<pre class="code">contents:
+    - { element: cover }
+    - ...
+    - { element: chapter, number: 1, ... }
+    - { element: cartoon, image: cartoon1.png, content: cartoon.md }
+    - { element: chapter, number: 2, ... }
+    - ...</pre>
+</div>
+
+<p>Secondly, create the <code>cartoon.md</code> file in your book <code>Contents/</code> directory. For this new content type it's unnecessary to write content, so leave it empty. <strong>easybook</strong> needs some content for every element of the book. Since <code>cartoon</code> is a custom made type, <strong>easybook</strong> doesn't define a default content for it, so you <strong>must</strong> create the <code>cartoon.md</code> file even if you leve it empty.</p>
+
+<p>Lastly, create the <code>Resources/Templates/</code> directory inside your book directory. Add a new <code>cartoon.twig</code> template and copy the following Twig code:</p>
+
+<div class="code code">
+<pre class="code">&lt;div class=&quot;page:cartoon new-page&quot;&gt;
+    &lt;img src=&quot;{{ item.config.image }}&quot; /&gt;
+&lt;/div&gt;</pre>
+</div>
+
+<p>That's it! You can now use the new <code>cartoon</code> content type in your book and you can create new content types following the same steps explained above.</p>
+
+<h3 id="easybook-internals">3.3.4 easybook internals</h3>
+
+<p><strong>easybook</strong> flexibility allows you to create advanced books without effort and without having to study the source code of the application. However, to master <strong>easybook</strong> you'll have to dive into the guts of the application.</p>
+
+<p>The core and philosophy of <strong>easybook</strong> share many similarities with the source code of <a href="http://silex.sensiolabs.org/">Silex</a>, a PHP microframework that has also been created with the Symfony components. If you don't know Silex, we recommend that you study it and use it to create a demo application. Then, it'll vey easy for you to understand the source code of <strong>easybook</strong>.</p>
+
+<p>The most important class of <strong>easybook</strong> is <code>src/Easybook/DependencyInjection/Application.php</code>. This class follows the <em>dependency injection</em> pattern, it's created with <a href="http://pimple.sensiolabs.org/">Pimple component</a> and contains all the variables, functions and services of the application.</p>
+
+<p>The most interesting command of <strong>easybook</strong> is <code>publish</code>, which publishes an specific edition of the book. Internally it uses a class of type <em>publisher</em>, which depends on the type of edition that is published (<code>html</code>, <code>html_chunked</code> or <code>pdf</code>). The details of each <em>publisher</em> vary, but its basic operation is always the same:</p>
+
+<div class="code code">
+<pre class="code">public function publishBook()
+{
+    $this-&gt;loadContents();
+    $this-&gt;parseContents();
+    $this-&gt;decorateContents();
+    $this-&gt;assembleBook();
+}</pre>
+</div>
+
+<p>First the contents of the book, defined in the <code>contents</code> option of <code>config.yml</code> file, are loaded (<code>loadContents()</code>) . Then, each content is parsed (<code>parseContents()</code>) to convert it from its original format to the format needed by this <em>publisher</em>.</p>
+
+<p>At the moment <strong>easybook</strong> only supports Markdown as original format. If you want to add support for other formats, you have to create a new parser (dig into the Markdown parser to know how to create it) and you also have to change the <code>parseContents()</code> method of the <em>publisher</em>.</p>
+
+<p>After converting all contents to the desired format (usually HTML) they are decorated using Twig templates (<code>decorateContents()</code>). Finally, the <code>assembleBook()</code> method is responsible for creating the published book. This is the most unique method of the <em>publishers</em>, as sometimes it has to create a PDF file, sometimes just an HTML file and other times it must create an entire website with many HTML pages.</p>
+
+    </div>
+
+    <div class="span3">
+        <div class="item local_toc">
+            <h3>Table of contents</h3>
+
+            <ul class="unstyled">
+                                                                <li class="level-1">
+                        <span>Chapter 3</span>
+                        <a href="../chapter-3.html">Publishing your third book</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>3.2</span>
+                        <a href="../chapter-3/plugins.html">Plugins</a>
+                    </li>
+                                    <li class="level-2">
+                        <span>3.3</span>
+                        <a href="../chapter-3/advanced-features.html">Advanced features</a>
+                    </li>
+                                        </ul>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
