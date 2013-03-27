@@ -55,7 +55,7 @@ class TablePlugin implements EventSubscriberInterface
                     $parameters['item']['label'] = $label;
                 }
 
-                // add table datails to list-of-images
+                // add table details to list-of-images
                 $listOfTables[] = $parameters;
 
                 return $event->app->render('table.twig', $parameters);
@@ -63,7 +63,9 @@ class TablePlugin implements EventSubscriberInterface
             $item['content']
         );
 
-        $event->app->append('publishing.list.tables', $listOfTables);
+        if (count($listOfTables) > 0) {
+            $event->app->append('publishing.list.tables', $listOfTables);
+        }
 
         $event->setItem($item);
     }
