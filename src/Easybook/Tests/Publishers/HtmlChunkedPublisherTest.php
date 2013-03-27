@@ -23,51 +23,48 @@ class HtmlChunkedPublisherTest extends \PHPUnit_Framework_TestCase
         $this->app = new Application();
     }
 
-    public function testNormalizeSlugs()
+    public function testNormalizePageNames()
     {
         $publisher = new HtmlChunkedPublisher($this->app);
 
         $originalItems = array(
             array(
                 'slug'  => 'Lorem ipsum dolor sit amet',
-                'toc'   => array(array('slug' => '')),
                 'label' => 'Chapter 1',
             ),
             array(
                 'slug'  => 'Another lorem ipsum dolor sit amet',
-                'toc'   => array(array('slug' => '')),
                 'label' => 'Appendix A'
             ),
             array(
                 'slug'  => 'Yet another lorem ipsum dolor sit amet',
-                'toc'   => array(array('slug' => '')),
                 'label' => null
             )
         );
 
         $expectedItems = array(
             array(
-                'slug'  => 'chapter-1',
-                'toc'   => array(array('slug' => 'chapter-1')),
-                'label' => 'Chapter 1',
+                'slug'      => 'Lorem ipsum dolor sit amet',
+                'label'     => 'Chapter 1',
+                'page_name' => 'chapter-1',
             ),
             array(
-                'slug'  => 'appendix-a',
-                'toc'   => array(array('slug' => 'appendix-a')),
-                'label' => 'Appendix A'
+                'slug'      => 'Another lorem ipsum dolor sit amet',
+                'label'     => 'Appendix A',
+                'page_name' => 'appendix-a',
             ),
             array(
-                'slug'  => 'yet-another-lorem-ipsum-dolor-sit-amet',
-                'toc'   => array(array('slug' => 'yet-another-lorem-ipsum-dolor-sit-amet')),
-                'label' => null
+                'slug'      => 'Yet another lorem ipsum dolor sit amet',
+                'label'     => null,
+                'page_name' => 'yet-another-lorem-ipsum-dolor-sit-amet',
             )
         );
 
-        $method = new \ReflectionMethod('Easybook\Publishers\HtmlChunkedPublisher', 'normalizeSlugs');
+        $method = new \ReflectionMethod('Easybook\Publishers\HtmlChunkedPublisher', 'normalizePageNames');
         $method->setAccessible(true);
 
-        $itemsWithNormalizedSlugs = $method->invoke($publisher, $originalItems);
-        $this->assertEquals($expectedItems, $itemsWithNormalizedSlugs);
+        $itemsWithNormalizedPageNames = $method->invoke($publisher, $originalItems);
+        $this->assertEquals($expectedItems, $itemsWithNormalizedPageNames);
     }
 
     /**

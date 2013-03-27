@@ -103,6 +103,8 @@ class HtmlChunkedPublisher extends HtmlPublisher
             }
         }
 
+        $this->fixInternalLinks();
+
         // generate index page
         $this->app->render('index.twig', array(
                 'items'          => $indexItems,
@@ -130,7 +132,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
     {
         $flattenedToc = array();
 
-        $bookItems = $this->normalizeSlugs($this->app->get('publishing.items'));
+        $bookItems = $this->normalizePageNames($this->app->get('publishing.items'));
 
         // calculate the URL of each book chunk and generate the flattened TOC
         $bookSlug = $this->app->get('publishing.book.slug');
@@ -139,16 +141,16 @@ class HtmlChunkedPublisher extends HtmlPublisher
             $itemToc = array();
             foreach ($item['toc'] as $chunk) {
                 if (array_key_exists('level', $chunk) && 1 == $chunk['level']) {
-                    $chunk['url']    = sprintf('%s.html', $chunk['slug']);
+                    $chunk['url']    = sprintf('%s.html', $item['page_name']);
                     $chunk['parent'] = null;
                     $chunk['config'] = $item['config']; // needed for templates
 
                     $parentChunk = $chunk;
                 } elseif (array_key_exists('level', $chunk) && 2 == $chunk['level']) {
                     if (1 == $this->app->edition('chunk_level')) {
-                        $chunk['url'] = sprintf('%s.html#%s', $parentChunk['slug'], $chunk['slug']);
+                        $chunk['url'] = sprintf('%s.html#%s', $item['page_name'], $chunk['slug']);
                     } elseif (2 == $this->app->edition('chunk_level')) {
-                        $chunk['url'] = sprintf('%s/%s.html', $parentChunk['slug'], $chunk['slug']);
+                        $chunk['url'] = sprintf('%s/%s.html', $item['page_name'], $chunk['slug']);
                     }
 
                     $chunk['parent'] = $parentChunk;
@@ -172,32 +174,29 @@ class HtmlChunkedPublisher extends HtmlPublisher
     }
 
     /**
-     * The HTML pages generated for chapters and appendixes aren't named after
-     * their original slugs (e.g. introduction-to-lorem-ipsum.html) but using
-     * their labels (e.g. chapter-1.html) as this is the common practice for
-     * books published as websites. The only exception happens when the book
-     * has disabled labels. In that case, the item slug is used.
+     * The generated HTML pages aren't named after the items' original slugs
+     * (e.g. introduction-to-lorem-ipsum.html) but using their content types
+     * and numbers (e.g. chapter-1.html).
      *
-     * This method replaces the original slugs of the items by the normalized
-     * slugs based on their labels.
+     * This method creates a new property for each item called 'page_name' which
+     * stores the normalized page name that should have this item.
      *
      * @param  array $items The original book items.
      *
-     * @return array        The book items with their slugs replaced.
+     * @return array        The book items with their new 'page_name' property.
      */
-    private function normalizeSlugs($items)
+    private function normalizePageNames($items)
     {
-        $itemsWithNormalizedSlugs = array();
+        $itemsWithNormalizedPageNames = array();
 
         foreach ($items as $item) {
-            $newSlug = $this->app->slugify($item['label'] ?: $item['slug']);
-            $item['slug'] = $newSlug;
-            $item['toc'][0]['slug'] = $newSlug;
+            $itemPageName = $this->app->slugify($item['label'] ?: $item['slug']);
+            $item['page_name'] = $itemPageName;
 
-            $itemsWithNormalizedSlugs[] = $item;
+            $itemsWithNormalizedPageNames[] = $item;
         }
 
-        return $itemsWithNormalizedSlugs;
+        return $itemsWithNormalizedPageNames;
     }
 
     /**
@@ -237,7 +236,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
      */
     private function generateFirstLevelChunks($item, $bookToc, $hasCustomCss)
     {
-        $chunkFilePath = $this->app->get('publishing.dir.output').'/'.$item['slug'].'.html';
+        $chunkFilePath = $this->app->get('publishing.dir.output').'/'.$item['page_name'].'.html';
         $bookToc = $this->filterBookToc($bookToc);
         $itemPosition = $this->findItemPosition($item, $bookToc);
 
@@ -285,8 +284,8 @@ class HtmlChunkedPublisher extends HtmlPublisher
             $itemPosition = $this->findItemPosition($chunk, $bookToc, 'url');
 
             if (1 == $chunk['level']) {
-                $chunksDir = $this->app->get('publishing.dir.output').'/'.$chunk['slug'];
-                $chunkFilePath = $this->app->get('publishing.dir.output').'/'.$chunk['slug'].'.html';
+                $chunksDir = $this->app->get('publishing.dir.output').'/'.$item['page_name'];
+                $chunkFilePath = $this->app->get('publishing.dir.output').'/'.$item['page_name'].'.html';
             } elseif (2 == $chunk['level']) {
                 if (!file_exists($chunksDir)) {
                     $this->app->get('filesystem')->mkdir($chunksDir);
@@ -512,5 +511,87 @@ class HtmlChunkedPublisher extends HtmlPublisher
             : null;
 
         return $nextChunk;
+    }
+
+    /**
+     * If fixes the internal links of the book (the links that point to chapters
+     * and sections of the book).
+     *
+     * The author of the book always uses relative links, such as:
+     *   see <a href="#new-content-types">this section</a> for more information
+     *
+     * In order to work, the relative URIs must be replaced by absolute URIs:
+     *   see <a href="../chapter3/page-slug.html#new-content-types">this section</a>
+     *
+     * This replacement cannot be done earlier in the book processing, because
+     * books published as websites merge empty sections and the absolute URI
+     * cannot be determined until the book has been completely generated.
+     */
+    private function fixInternalLinks()
+    {
+        $generatedChunks = $this->app->get('finder')
+            ->files()
+            ->name('*.html')
+            ->in($this->app->get('publishing.dir.output'))
+        ;
+
+        // maps the original internal links (e.g. #new-content-types)
+        // with the correct absolute URL needed for a website
+        // (e.g. chapter-3/advanced-features.html#new-content-types
+        $internalLinkMapper = array();
+
+        // look for the ID of every book section
+        foreach ($generatedChunks as $chunk) {
+            $htmlContent = file_get_contents($chunk->getPathname());
+
+            $matches = array();
+            $numHeadings = preg_match_all(
+                '/<h[1-6].*id="(?<id>.*)".*<\/h[1-6]>/U',
+                $htmlContent, $matches, PREG_SET_ORDER
+            );
+
+            if ($numHeadings > 0) {
+                foreach ($matches as $match) {
+                    $relativeUri = '#'.$match['id'];
+                    $absoluteUri = $chunk->getRelativePathname().$relativeUri;
+
+                    $internalLinkMapper[$relativeUri] = $absoluteUri;
+                }
+            }
+        }
+
+        // replace the internal relative URIs for the mapped absolute URIs
+        foreach ($generatedChunks as $chunk) {
+            $htmlContent = file_get_contents($chunk->getPathname());
+
+            // hackish method the detect if this is a first level book page
+            // or a page inside a directory
+            if (false === strpos($chunk->getRelativePathname(), '/')) {
+                $chunkLevel = 1;
+            } else {
+                $chunkLevel = 2;
+            }
+
+            $htmlContent = preg_replace_callback(
+                '/<a href="(?<uri>#.*)"(.*)<\/a>/Us',
+                function ($matches) use ($chunkLevel, $internalLinkMapper) {
+                    if (array_key_exists($matches['uri'], $internalLinkMapper)) {
+                        $newUri = $internalLinkMapper[$matches['uri']];
+                        $urlBasePath = 2 == $chunkLevel ? '../' : './';
+                    } else {
+                        $newUri = $matches['uri'];
+                        $urlBasePath = '';
+                    }
+
+                    return sprintf(
+                        '<a class="internal" href="%s%s"%s</a>',
+                        $urlBasePath, $newUri, $matches[2]
+                    );
+                },
+                $htmlContent
+            );
+
+            file_put_contents($chunk->getPathname(), $htmlContent);
+        }
     }
 }

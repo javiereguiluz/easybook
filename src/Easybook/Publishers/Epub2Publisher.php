@@ -93,12 +93,12 @@ class Epub2Publisher extends HtmlPublisher
             );
         }
 
-        $bookItems = $this->normalizeSlugs($this->app->get('publishing.items'));
+        $bookItems = $this->normalizePageNames($this->app->get('publishing.items'));
         $this->app->set('publishing.items', $bookItems);
 
         // generate one HTML page for every book item
         foreach ($bookItems as $item) {
-            $renderedTemplatePath = $bookTmpDir.'/book/OEBPS/'.$item['slug'].'.html';
+            $renderedTemplatePath = $bookTmpDir.'/book/OEBPS/'.$item['page_name'].'.html';
             $templateVariables = array(
                 'item'           => $item,
                 'has_custom_css' => $hasCustomCss,
@@ -147,6 +147,8 @@ class Epub2Publisher extends HtmlPublisher
         $this->app->render('mimetype.twig', array(),
             $bookTmpDir.'/book/mimetype'
         );
+
+        $this->fixInternalLinks($bookTmpDir.'/book/OEBPS');
 
         // compress book contents as ZIP file and rename to .epub
         // TODO: the name of the book file (book.epub) must be configurable
@@ -263,30 +265,28 @@ class Epub2Publisher extends HtmlPublisher
      * (e.g. introduction-to-lorem-ipsum.html) but using their content types
      * and numbers (e.g. chapter-1.html).
      *
-     * This method replaces the original slugs of the items by the normalized
-     * slugs based on their labels.
+     * This method creates a new property for each item called 'page_name' which
+     * stores the normalized page name that should have this chunk.
      *
      * @param  array $items The original book items.
      *
-     * @return array        The book items with their slugs replaced.
+     * @return array        The book items with their new 'page_name' property.
      */
-    private function normalizeSlugs($items)
+    private function normalizePageNames($items)
     {
-        $itemsWithNormalizedSlugs = array();
+        $itemsWithNormalizedPageNames = array();
 
         foreach ($items as $item) {
             $itemPageName = array_key_exists('number', $item['config'])
                 ? $item['config']['element'].' '.$item['config']['number']
                 : $item['config']['element'];
 
-            $newSlug = $this->app->slugify($itemPageName);
-            $item['slug'] = $newSlug;
-            $item['toc'][0]['slug'] = $newSlug;
+            $item['page_name'] = $this->app->slugify($itemPageName);
 
-            $itemsWithNormalizedSlugs[] = $item;
+            $itemsWithNormalizedPageNames[] = $item;
         }
 
-        return $itemsWithNormalizedSlugs;
+        return $itemsWithNormalizedPageNames;
     }
 
     /*
@@ -342,6 +342,75 @@ class Epub2Publisher extends HtmlPublisher
                 ."Result:\n"
                 .$process->getErrorOutput()
             );
+        }
+    }
+
+    /**
+     * If fixes the internal links of the book (the links that point to chapters
+     * and sections of the book).
+     *
+     * The author of the book always uses relative links, such as:
+     *   see <a href="#new-content-types">this section</a> for more information
+     *
+     * In order to work, the relative URIs must be replaced by absolute URIs:
+     *   see <a href="chapter3/page-slug.html#new-content-types">this section</a>
+     *
+     * Unlike books published as websites, the absolute URIs of the ePub books
+     * cannot start with './' or '../' In other words, ./chapter.html and
+     * ./chapter.html#section-slug are wrong and chapter.html or
+     * chapter.html#section-slug are right.
+     *
+     * @param  string $chunksDir The directory where the book's HTML page/chunks
+     *                           are stored
+     */
+    private function fixInternalLinks($chunksDir)
+    {
+        $generatedChunks = $this->app->get('finder')->files()->name('*.html')->in($chunksDir);
+
+        // maps the original internal links (e.g. #new-content-types)
+        // with the correct absolute URL needed for a website
+        // (e.g. chapter-3/advanced-features.html#new-content-types
+        $internalLinkMapper = array();
+
+        //look for the ID of every book section
+        foreach ($generatedChunks as $chunk) {
+            $htmlContent = file_get_contents($chunk->getPathname());
+
+            $matches = array();
+            $numHeadings = preg_match_all(
+                '/<h[1-6].*id="(?<id>.*)".*<\/h[1-6]>/U',
+                $htmlContent, $matches, PREG_SET_ORDER
+            );
+
+            if ($numHeadings > 0) {
+                foreach ($matches as $match) {
+                    $relativeUri = '#'.$match['id'];
+                    $absoluteUri = $chunk->getRelativePathname().$relativeUri;
+
+                    $internalLinkMapper[$relativeUri] = $absoluteUri;
+                }
+            }
+        }
+
+        // replace the internal relative URIs for the mapped absolute URIs
+        foreach ($generatedChunks as $chunk) {
+            $htmlContent = file_get_contents($chunk->getPathname());
+
+            $htmlContent = preg_replace_callback(
+                '/<a href="(?<uri>#.*)"(.*)<\/a>/Us',
+                function ($matches) use ($internalLinkMapper) {
+                    if (array_key_exists($matches['uri'], $internalLinkMapper)) {
+                        $newUri = $internalLinkMapper[$matches['uri']];
+                    } else {
+                        $newUri = $matches['uri'];
+                    }
+
+                    return sprintf('<a class="internal" href="%s"%s</a>', $newUri, $matches[2]);
+                },
+                $htmlContent
+            );
+
+            file_put_contents($chunk->getPathname(), $htmlContent);
         }
     }
 }

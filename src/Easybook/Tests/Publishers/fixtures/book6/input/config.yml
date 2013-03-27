@@ -1,0 +1,48 @@
+book:
+    title:            'easybook test book #6'
+    author:           'Javier Eguiluz'
+    edition:          'First edition'
+    language:         en
+    publication_date: '27-03-2013'
+
+    generator: { name: easybook, version: 5.0 }
+
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+        - { element: chapter, number: 3, content: chapter3.md }
+
+    editions:
+        ebook:
+            format:         epub
+            highlight_code: false
+            include_styles: true
+            isbn:           '0000000000'
+            use_html_toc:   false
+            labels:         ['appendix', 'chapter']
+            theme:          clean
+            toc:
+                deep:       1
+                elements:   ["appendix", "chapter", "part"]
+
+        web:
+            format:         html
+            highlight_code: true
+            include_styles: true
+            labels:         ["appendix", "chapter"]
+            theme:          clean
+            toc:
+                deep:       2
+                elements:   ["appendix", "chapter"]
+
+        website_not_chunked:
+            extends:        web
+            format:         html_chunked
+            chunk_level:    1
+
+        website_chunked:
+            extends:        web
+            format:         html_chunked
+            chunk_level:    2

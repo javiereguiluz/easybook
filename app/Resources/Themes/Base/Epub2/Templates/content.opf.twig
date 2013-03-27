@@ -20,7 +20,7 @@
     <manifest>
         <item id="titlepage" href="titlepage.html" media-type="application/xhtml+xml"/>
 {% for item in items %}
-        <item id="{{ item.slug }}" href="{{ item.slug }}.html" media-type="application/xhtml+xml" />
+        <item id="{{ item.page_name }}" href="{{ item.page_name }}.html" media-type="application/xhtml+xml" />
 {% endfor %}
 {% if edition.include_styles %}
         <item id="stylesheet" href="css/easybook.css" media-type="text/css" />
@@ -43,7 +43,7 @@
     <spine toc="ncx">
         <itemref idref="titlepage" />
 {% for item in items %}
-        <itemref idref="{{ item.slug }}" />
+        <itemref idref="{{ item.page_name }}" />
 {% endfor %}
     </spine>
 
