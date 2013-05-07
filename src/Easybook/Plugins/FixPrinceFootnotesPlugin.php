@@ -97,7 +97,8 @@ class FixPrinceFootnotesPlugin implements EventSubscriberInterface
     {
         $footnotes = array();
 
-        $crawler = new Crawler($html);
+        $crawler = new Crawler();
+        $crawler->addHtmlContent($html, 'UTF-8');
 
         //
         // footnote text:
