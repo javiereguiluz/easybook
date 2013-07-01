@@ -41,14 +41,14 @@ class ConsoleApplication extends SymfonyConsoleApplication
         $this->add(new BookCustomizeCommand());
         $this->add(new EasybookVersionCommand());
 
-        $this->definition = new InputDefinition(array(
+        $this->setDefinition(new InputDefinition(array(
             new InputArgument(
                 'command', InputArgument::REQUIRED, 'The command to execute'
             ),
             new InputOption(
                 '--help', '-h', InputOption::VALUE_NONE, 'Shows this help message'
             ),
-        ));
+        )));
     }
 
     public function getHelp()
