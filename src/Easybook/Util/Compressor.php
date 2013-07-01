@@ -155,9 +155,16 @@ class Compressor
         );
     }
 
-    private function addFile($file, $verbose = true)
+    /**
+     * It adds the given file to the final ZIP package.
+     *
+     * @param \SplFileInfo $file The file to be added
+     * @param bool $verbose      If true, it shows progress by printing a dot for each added file
+     */
+    private function addFile(\SplFileInfo $file, $verbose = true)
     {
         $this->fileCount++;
+
         if ($verbose) {
             echo '.';
             if (0 == $this->fileCount % 80) {
