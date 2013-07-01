@@ -12,9 +12,6 @@
 namespace Easybook\Console;
 
 use Symfony\Component\Console\Application as SymfonyConsoleApplication;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputOption;
 use Easybook\Console\Command\BookNewCommand;
 use Easybook\Console\Command\BookPublishCommand;
 use Easybook\Console\Command\BookCustomizeCommand;
@@ -40,15 +37,6 @@ class ConsoleApplication extends SymfonyConsoleApplication
         $this->add(new BookPublishCommand());
         $this->add(new BookCustomizeCommand());
         $this->add(new EasybookVersionCommand());
-
-        $this->definition = new InputDefinition(array(
-            new InputArgument(
-                'command', InputArgument::REQUIRED, 'The command to execute'
-            ),
-            new InputOption(
-                '--help', '-h', InputOption::VALUE_NONE, 'Shows this help message'
-            ),
-        ));
     }
 
     public function getHelp()

@@ -22,3 +22,4 @@ Developers that helped **easybook** with promotion, ideas, code or bug reports.
   * [Fabien Potencier](https://github.com/fabpot)
   * [Henrik Bjørnskov](https://github.com/henrikbjorn)
   * [Daniel González](https://github.com/desarrolla2)
+  * [Matthieu Codron](https://github.com/CircleCode)
