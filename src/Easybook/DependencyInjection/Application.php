@@ -98,7 +98,7 @@ class Application extends \Pimple
             return array('scheme' => 'URN', 'value' => Toolkit::uuid());
         });
         // maintained for backwards compatibility
-        $this['publishing.id'] = $this->share(function ($app) {
+        $this['publishing.id'] = $this->share(function () {
             trigger_error('The "publishing.id" option is deprecated since version 5.0 and will be removed in the future. Use "publishing.edition.id" instead.', E_USER_DEPRECATED);
         });
 

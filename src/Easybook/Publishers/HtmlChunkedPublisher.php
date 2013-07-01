@@ -135,7 +135,6 @@ class HtmlChunkedPublisher extends HtmlPublisher
         $bookItems = $this->normalizePageNames($this->app->get('publishing.items'));
 
         // calculate the URL of each book chunk and generate the flattened TOC
-        $bookSlug = $this->app->get('publishing.book.slug');
         $items = array();
         foreach ($bookItems as $item) {
             $itemToc = array();
