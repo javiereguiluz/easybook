@@ -18,7 +18,7 @@ Developers that helped **easybook** with promotion, ideas, code or bug reports.
   * [Raúl Fraile](https://github.com/raulfraile)
   * [Miguel Angel Gabriel](https://github.com/magabriel)
   * [Andrew Smith](https://github.com/silentworks)
-  * [Huho Hamon](https://github.com/hhamon)
+  * [Hugo Hamon](https://github.com/hhamon)
   * [Fabien Potencier](https://github.com/fabpot)
   * [Henrik Bjørnskov](https://github.com/henrikbjorn)
   * [Daniel González](https://github.com/desarrolla2)
