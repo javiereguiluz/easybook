@@ -2,6 +2,43 @@
 
 ## Upgrade to easybook 5.0 ##
 
+### Added support for Kindle readers and apps ###
+
+easybook can now generate Kindle-compatible ebooks, thanks to
+the new `mobi` format. In most cases, you should create a new
+edition extending your regular ePub edition (because
+their configuration options should be nearly identical).
+
+```yaml
+book:
+    # ...
+
+    contents:
+        # ...
+
+    editions:
+        kindle:
+            extends:         ebook
+            format:          mobi
+
+        ebook:
+            format:          epub
+            include_styles:  true
+            highlight_cache: true
+            highlight_code:  false
+            labels:          ['appendix', 'chapter', 'figure']
+            theme:           clean
+            toc:
+                deep:        1
+                elements:    ["appendix", "chapter"]
+```
+
+### Removed the `use_html_toc` option ###
+
+This was an option needed for .ePub books in order to transform
+them to .mobi books. Now that easybook can geenrate Kindle
+compatible .mobi ebooks, this option is no longer needed.
+
 ### Custom CSS styles ###
 
 Themes and templates have been greatly improved. If you have designed a custom

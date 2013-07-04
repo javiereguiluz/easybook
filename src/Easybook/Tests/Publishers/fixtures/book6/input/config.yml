@@ -20,7 +20,6 @@ book:
             highlight_code: false
             include_styles: true
             isbn:           '0000000000'
-            use_html_toc:   false
             labels:         ['appendix', 'chapter']
             theme:          clean
             toc:

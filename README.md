@@ -3,7 +3,7 @@
 *«book publishing as easy as it should be»*
 
 **[easybook](http://easybook-project.org)** lets you easily publish books in
-various electronic formats (PDF, ePub and HTML). It was originally designed to
+various electronic formats (PDF, ePub, MOBI and HTML). It was originally designed to
 publish technical programming books, but you can use **easyboook** to publish
 any kind of book, manual or documentation website.
 
@@ -94,4 +94,9 @@ Travis CI status: [![Travis CI status](https://secure.travis-ci.org/javiereguilu
 In order to generate PDF files, PrinceXML library must be installed. 
 If you haven't installed it yet, you can download a fully-functional demo at: 
 
-    http://www.princexml.com/download 
+    http://www.princexml.com/download
+
+In order to generate MOBI files, KindleGen library must be installed.
+If you haven't installed it yet, you can download it freely at Amazon:
+
+    http://amzn.to/kindlegen

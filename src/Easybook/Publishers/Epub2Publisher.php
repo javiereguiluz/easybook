@@ -21,23 +21,16 @@ use Easybook\Util\Toolkit;
  */
 class Epub2Publisher extends HtmlPublisher
 {
+    // 'toc' content type usually makes no sense in epub books (see below)
+    // 'cover' is a very special content for epub books
+    protected $excludedElements = array('cover', 'lot', 'lof', 'toc');
+
     public function loadContents()
     {
-        // 'toc' content type usually makes no sense in epub books (see below)
-        // 'cover' is a very special content for epub books
-        $excludedElements = array('cover', 'lot', 'lof');
-
-        // some epub books may want to define an html toc
-        // (i.e. if being converted to kindle format
-        // as recommended by Kindle Publishing Guidelines)
-        if (!$this->app->edition('use_html_toc')) {
-            $excludedElements[] = 'toc';
-        }
-        
         // strip excluded elements before loading book contents
         $contents = array();
         foreach ($this->app->book('contents') as $content) {
-            if (!in_array($content['element'], $excludedElements)) {
+            if (!in_array($content['element'], $this->excludedElements)) {
                 $contents[] = $content;
             }
         }

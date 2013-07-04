@@ -13,7 +13,7 @@ namespace Easybook\Publishers;
 
 use Easybook\DependencyInjection\Application;
 
-class BasePublisher
+class BasePublisher implements PublisherInterface
 {
     protected $app;
 
@@ -22,15 +22,14 @@ class BasePublisher
         $this->app = $app;
     }
 
-    /**
-     * It defines the complete workflow followed to publish a book (load its
-     * contents, transform them into HTML, etc.)
-     *
-     * This base workflow is currently used by every publisher type, whether
-     * it produces an EPUB book, a PDF book or an HTML website.
-     */
+    public function isThisPublisherSupported()
+    {
+        return true;
+    }
+
     public function publishBook()
     {
+        $this->isThisPublisherSupported();
         $this->loadContents();
         $this->parseContents();
         $this->prepareOutputDir();
@@ -41,7 +40,7 @@ class BasePublisher
     /**
      * It creates the directory where the final book contents will be copied.
      */
-    public function prepareOutputDir()
+    protected function prepareOutputDir()
     {
         $bookOutputDir = $this->app->get('publishing.dir.book').'/Output/'.$this->app->get('publishing.edition');
 
@@ -57,7 +56,7 @@ class BasePublisher
      * doesn't define its own content (such as the table of contents or the
      * cover) it loads the default content (if defined).
      */
-    public function loadContents()
+    protected function loadContents()
     {
         // TODO: extensibility -> editions can redefine book contents (to remove or reorder items)
         foreach ($this->app->book('contents') as $itemConfig) {

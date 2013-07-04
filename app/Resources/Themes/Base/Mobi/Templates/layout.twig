@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ book.language }}">
+
+<head>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    <title>{% block title %}{{ book.title }}{% endblock %}</title>
+
+{% if edition.include_styles %}
+    <link rel="stylesheet" type="text/css" href="css/easybook.css" />
+{% endif %}
+
+{% if has_custom_css|default(false) %}
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+{% endif %}
+
+{% block template_css %}{% endblock %}
+</head>
+
+<body><div class="container">
+{% block body %}{% endblock %}
+</div></body>
+</html>

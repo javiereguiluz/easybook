@@ -20,6 +20,7 @@ use Easybook\Publishers\PdfPublisher;
 use Easybook\Publishers\HtmlPublisher;
 use Easybook\Publishers\HtmlChunkedPublisher;
 use Easybook\Publishers\Epub2Publisher;
+use Easybook\Publishers\MobiPublisher;
 use Easybook\Parsers\MarkdownParser;
 use Easybook\Util\Prince;
 use Easybook\Util\Slugger;
@@ -147,6 +148,9 @@ class Application extends \Pimple
 
                 //case 'epub3':
                 //    return new Epub3Publisher($app);
+
+                case 'mobi':
+                    return new MobiPublisher($app);
 
                 default:
                     throw new \RuntimeException(sprintf(
@@ -290,6 +294,26 @@ class Application extends \Pimple
 
             return $prince;
         });
+
+        // -- KindleGen -------------------------------------------------------
+        $this['kindlegen.path'] = null;
+
+        // the common installation dirs for KindleGen in several OS
+        $this['kindlegen.default_paths'] = array(
+            # Mac OS X & Linux
+            '/usr/local/bin/kindlegen',
+            '/usr/bin/kindlegen',
+            # Windows
+            'c:\KindleGen\kindlegen'
+        );
+
+        // -c0: no compression
+        // -c1: standard DOC compression
+        // -c2: Kindle huffdic compression
+        // -verbose: (even more) verbose output
+        // -western: force Windows-1252 charset
+        // -gif: transform book images to GIF
+        $this['kindlegen.command_options'] = '-c0';
 
         // -- slugger ---------------------------------------------------------
         $this['slugger.options'] = array(
@@ -739,48 +763,5 @@ class Application extends \Pimple
             $bookConfig['book']['editions'][$publishingEdition][$key] = $newValue;
             $this->set('publishing.book.config', $bookConfig);
         }
-    }
-
-    /**
-     * Looks for the executable of the PrinceXML library.
-     *
-     * @return string The absolute path of the executable
-     */
-    public function findPrinceXmlExecutable()
-    {
-        $foundPath = null;
-
-        foreach ($this->get('prince.default_paths') as $path) {
-            if (file_exists($path)) {
-                $foundPath = $path;
-                break;
-            }
-        }
-
-        return $foundPath;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function askForPrinceXMLExecutablePath()
-    {
-        $this->get('console.output')->write(sprintf(
-            " In order to generate PDF files, PrinceXML library must be installed. \n\n"
-            ." We couldn't find PrinceXML executable in any of the following directories: \n"
-            ."   -> %s \n\n"
-            ." If you haven't installed it yet, you can download a fully-functional demo at: \n"
-            ." %s \n\n"
-            ." If you have installed in a custom directory, please type its full absolute path:\n > ",
-            implode($this->get('prince.default_paths'), "\n   -> "),
-            'http://www.princexml.com/download'
-        ));
-
-        $userGivenPath = trim(fgets(STDIN));
-
-        // output a newline for aesthetic reasons
-        $this->get('console.output')->write("\n");
-
-        return $userGivenPath;
     }
 }

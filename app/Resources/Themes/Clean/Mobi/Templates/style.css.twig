@@ -1,0 +1,132 @@
+{% extends '@theme_base/style.css.twig' %}
+
+{% block theme_name        'clean' %}
+{% block theme_description 'simple and minimalistic' %}
+{% block theme_updated_at  '2/october/2012' %}
+
+{# ==========================================================================
+   @items
+   ========================================================================== #}
+{% block cover %}
+{{ parent() }}
+
+.item.cover h1 {
+    color: {{ color_black }};
+    font-size: 2em;
+    line-height: 1.1;
+    padding: 1.5em .25em .25em 0;
+    text-align: left;
+}
+.item.cover h2 {
+    color: {{ color_gray }};
+    font-size: 1em;
+    font-weight: normal;
+    margin-top: .5em;
+    text-align: left;
+}
+{% endblock %}
+
+{% block title %}
+{{ parent() }}
+
+.item.title h1,
+.item.title h2,
+.item.title h3 {
+    font-weight: normal;
+    text-align: center;
+}
+.item.title h1 {
+    font-size: 2em;
+    line-height: 1.1;
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+.item.title h2 {
+    font-size: 1.5em;
+    margin-top: .5em;
+}
+.item.title h3 {
+    font-size: 1em;
+    font-style: italic;
+    margin-top: 1em;
+}
+{% endblock %}
+
+{% block dedication %}
+{{ parent() }}
+
+.item.dedication {
+    padding-top: 5em;
+}
+.item.dedication h1.title {
+    display: none;
+}
+.item.dedication p {
+    font-style: italic;
+    text-align: center;
+}
+{% endblock %}
+
+{% block chapter %}
+{{ parent() }}
+
+.item.chapter h1 {
+    margin: 5em 1em .25em 0;
+}
+
+.item.chapter h1 span {
+    color: {{ color_gray }};
+    display: block;
+    font-size: 90%;
+    font-weight: normal;
+    padding-bottom: .25em;
+}
+
+.item.chapter h1 + h2,
+.item.chapter h2 + h3,
+.item.chapter h3 + h4,
+.item.chapter h4 + h5,
+.item.chapter h5 + h6 {
+    margin-top: 1em;
+}
+{% endblock %}
+
+{% block appendix %}
+{{ parent() }}
+
+.item.appendix h1 {
+    margin: 5em 1em .25em 0;
+}
+
+.item.appendix h1 span {
+    color: {{ color_gray }};
+    display: block;
+    font-size: 90%;
+    font-weight: normal;
+    padding-bottom: .25em;
+}
+
+.item.appendix h1 + h2,
+.item.chapter h2 + h3,
+.item.chapter h3 + h4,
+.item.chapter h4 + h5,
+.item.chapter h5 + h6 {
+    margin-top: 1em;
+}
+{% endblock %}
+
+{% block part %}
+{{ parent() }}
+
+.item.part h1 {
+    font-size: 2em;
+    margin: 3em 0;
+}
+.item.part h1 span {
+    color: {{ color_black }};
+    display: block;
+    font-size: 1.5em;
+    font-weight: normal;
+    margin-bottom: .5em;
+}
+{% endblock %}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+ 
+<ncx version="2005-1" xml:lang="{{ book.author }}" xmlns="http://www.daisy.org/z3986/2005/ncx/">
+
+    <head>
+        <meta name="dtb:uid" content="{{ app.get('publishing.edition.id').value }}" />
+        <meta name="dtb:depth" content="{{ edition.toc.deep }}" />
+        <meta name="dtb:totalPageCount" content="0" /> <!-- must be 0 -->
+        <meta name="dtb:maxPageNumber" content="0" />  <!-- must be 0 -->
+    </head>
+ 
+    <docTitle>
+        <text>{{ book.title }}</text>
+    </docTitle>
+ 
+    <docAuthor>
+        <text>{{ book.author }}</text>
+    </docAuthor>
+ 
+    <navMap>
+{% for item in items
+   if item.config.element in edition.toc.elements|default([]) %}
+        <navPoint class="chapter" id="{{ item.page_name }}" playOrder="{{ loop.index }}">
+            <navLabel><text>{{ '' != item.label ? item.label ~ ' ' ~ item.title : item.title }}</text></navLabel>
+            <content src="{{ item.page_name }}.html" />
+        </navPoint>
+{% endfor %}
+    </navMap>
+ 
+</ncx>

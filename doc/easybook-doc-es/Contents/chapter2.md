@@ -131,8 +131,8 @@ radicalmente diferentes. Esto es posible gracias a las **ediciones**, que
 definen las características concretas con las que se publica el libro.
 
 Las ediciones se definen bajo la opción `editions` en el archivo `config.yml`.
-Por defecto los libros creados con el comando `new` disponen de cuatro ediciones
-llamadas `ebook`, `print`, `web` y `website` con las siguientes opciones:
+Por defecto los libros creados con el comando `new` disponen de cinco ediciones
+llamadas `ebook`, `kindle`, `print`, `web` y `website` con las siguientes opciones:
 
     [yaml]
     book:
@@ -143,11 +143,14 @@ llamadas `ebook`, `print`, `web` y `website` con las siguientes opciones:
                 highlight_cache: false
                 highlight_code:  false
                 include_styles:  true
-                use_html_toc:    false
                 labels:          ['appendix', 'chapter']  # labels also available for: "figure", "table"
                 toc:
                     deep:        1
                     elements:    ["appendix", "chapter", "part"]
+
+            kindle:
+                extends:         ebook
+                format:          mobi
 
             print:
                 format:          pdf
@@ -183,17 +186,18 @@ El nombre de las ediciones debe ser único para un mismo libro y no puede
 contener espacios en blanco. Este mismo nombre se utiliza como subdirectorio
 dentro del directorio `Output/` del libro para distinguir los contenidos de
 cada edición. Puedes crear tantas ediciones como quieras, pero todas pertenecen
-a alguno de los cuatro tipos siguientes definidos por **easybook** mediante la
+a alguno de los cinco tipos siguientes definidos por **easybook** mediante la
 opción `format`:
 
   * `epub`, el libro se publica como un e-book llamado `book.epub`
+  * `mobi`, el libro se publica como un e-book compatible con Kindle llamado `book.mobi`
   * `pdf`, el libro se publica como un archivo PDF llamado `book.pdf`
   * `html`, el libro se publica como una página HTML llamada `book.html`
   * `html_chunked`, el libro se publica como un sitio web estático en un
   directorio llamado `book`
 
 Cada tipo de edición define sus propias opciones de configuración. Los tipos
-`epub`, `html` y `html_chunked` tienen las mismas opciones comunes:
+`epub`, `mobi`, `html` y `html_chunked` tienen las mismas opciones comunes:
 
   * `highlight_cache`, esta opción sólo es útil para los libros técnicos sobre
     programación. Si vale `true`, se guardan en una cache todos los listados de
@@ -222,24 +226,9 @@ Cada tipo de edición define sus propias opciones de configuración. Los tipos
     (por defecto sólo se muestran, si las hay, las secciones y los títulos de
     apéndices y capítulos).
 
-El tipo `epub`, además, tiene la opción siguiente dentro de `toc`:
-
-  * `use_html_toc`, permite incluir un índice de contenidos html en el ebook.
-  Se trata de un índice de contenidos que se presenta al lector como una página
-  con enlaces para navegar directamente a cada elemento, y es distinta del índice
-  de contenidos que presenta el programa o dispositivo de lectura al elegir la
-  opción correspondiente. Normalmente los ebooks en formato epub no incluyen 
-  este tipo de índice, aunque en algún caso puede ser necesario (por ejemplo,
-  si el epub se va a convertir a formato mobi para Amazon Kindle, es necesario
-  que incluya este tipo de índice de contenidos para cumplir con las 
-  [Directrices de Publicación para Kindle][kpg]).
-  
-[kpg]: http://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf  
-
 Por su parte, el tipo de edición `pdf` dispone de las siguientes opciones:
 
-  * `isbn`, idica el código ISBN-10 o ISBN-13 del libro impreso (esta opción
-  todavía no se tiene en cuenta).
+  * `isbn`, idica el código ISBN-10 o ISBN-13 del libro impreso.
   * `include_styles`, si vale `true` el libro PDF se maqueta con los estilos por
   defecto de **easybook**. Así podrás crear libros bonitos sin esfuerzo. En el
   próximo capítulo se explica cómo añadir también tus propios estilos.

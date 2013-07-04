@@ -324,6 +324,18 @@ formato `.ePub` (*tablets* como iPad, móviles como iPhone, la mayoría de
 *tablets* y móviles Android y todos los lectores de e-books salvo los Kindle
 de Amazon).
 
+Si ahora ejecutas el siguiente comando:
+
+    [cli]
+    $ ./book publish el-origen-de-las-especies kindle
+
+Entra en el directorio `Output/` del libro y verás que dentro del directorio
+`kindle` se ha creado un archivo llamado `book.mobi`. Esta es la versión e-
+book de tu libro, lista para leerla en cualquier lector Kindle o en cualquier
+aplicación para leer libros Kindle. La conversión al formato MOBI se realiza
+con ayuda de una aplicación externa gratuita llamada [KindleGen](http://amzn.to/kindlegen)
+que debes instalar para poder generar libros compatibles con Kindle.
+
 Por último, ejecuta el siguiente comando:
 
     [cli]
@@ -369,6 +381,8 @@ el archivo `config.yml`. Sus valores por defecto se muestran a continuación:
 
         editions:
             ebook:
+                # (esta opción es compleja, se explica más adelante)
+            kindle:
                 # (esta opción es compleja, se explica más adelante)
             print:
                 # (esta opción es compleja, se explica más adelante)

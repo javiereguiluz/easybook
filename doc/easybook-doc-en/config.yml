@@ -16,12 +16,15 @@ book:
         - { element: appendix, number: A, content: reference.md }
 
     editions:
+        kindle:
+            extends:         ebook
+            format:          mobi
+
         ebook:
             format:          epub
             include_styles:  true
             highlight_cache: true
             highlight_code:  false
-            use_html_toc:    false
             labels:          ['appendix', 'chapter', 'figure']
             theme:           clean
             toc:
@@ -61,9 +64,13 @@ book:
         website:
             extends:         web
             format:          html_chunked
+            chunk_level:     1
+            images_base_dir: /img/doc-en/
 
         easybook-project.org:
             format:          html_chunked
+            chunk_level:     2
+            images_base_dir: /img/doc-en/
             include_styles:  false
             highlight_cache: false
             highlight_code:  true

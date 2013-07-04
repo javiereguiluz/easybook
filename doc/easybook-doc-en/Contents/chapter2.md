@@ -112,8 +112,8 @@ radically different ways. This is possible thanks to the **editions**, that
 define the specific characteristics with which the book is published.
 
 Editions are defined under the `editions` options in `config.yml` file. By
-default, the books created with the `new` command have four editions named
-`ebook`, `print`, `web` and `website` with the following options:
+default, the books created with the `new` command have five editions named
+`ebook`, `kindle`, `print`, `web` and `website` with the following options:
 
     [yaml]
     book:
@@ -124,11 +124,14 @@ default, the books created with the `new` command have four editions named
                 highlight_cache: false
                 highlight_code:  false
                 include_styles:  true
-                use_html_toc:    false
                 labels:          ['appendix', 'chapter']  # labels also available for: "figure", "table"
                 toc:
                     deep:        1
                     elements:    ["appendix", "chapter", "part"]
+
+            kindle:
+                extends:         ebook
+                format:          mobi
 
             print:
                 format:          pdf
@@ -163,17 +166,18 @@ default, the books created with the `new` command have four editions named
 The name of each edition must be unique for the same book and cannot contain
 spaces.  The edition name is used as the subdirectory inside `Output/` directory
 to separate the contents of each edition. You can define as many editions as you
-need, but all must belong to one of the following four types defined by the
+need, but all must belong to one of the following five types defined by the
 `format` option:
 
   * `epub`, the book is published as an e-book named `book.epub`
+  * `mobi`, the book is published as a Kindle-compatible e-book named `book.mobi`
   * `pdf`, the book is published as a PDF file named `book.pdf`
   * `html`, the book is published as a HTML page named `book.html`
   * `html_chunked`, the book is published as a static website in a directory
   named `book`
 
 Editions can modify the aspect of the published book through several
-configuration options. The `epub`, `html` and `html_chunked` edition types share
+configuration options. The `epub`, `mobi`, `html` and `html_chunked` edition types share
 several options:
 
   * `highlight_cache`, this option is only useful for technical books that include
@@ -198,23 +202,9 @@ several options:
     * `elements`, the type of elements included in the TOC (by default, only
     `appendix`, `chapter` and `part` are included).
 
-The `epub` edition type can define an additional `toc` option:
-
- * `use_html_toc`, allows the inclusion of an html table of contents in the ebook.
-    This is a table of contents that appears to the reader as a page with links 
-    to navigate directly to each TOC element in the book, and is different from the 
-    navigational TOC shown by the reading application or device when the 
-    corresponding option is selected. Normally epub ebooks do not include
-    this type of TOC, although in some cases it may be necessary (i.e. when the 
-    epub file will be later converted to mobi format for Amazon Kindle, 
-    it must include this kind of TOC to comply with [Kindle Publishing Guidelines][kpg]).
-  
-[kpg]: http://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf      
-
 The `pdf` editions can define even more options:
 
-  * `isbn`, the ISBN-10 or ISBN-13 code of the book (this option is a placeholder
-  and it doesn't work for the momment).
+  * `isbn`, the ISBN-10 or ISBN-13 code of the book.
   * `include_styles`, if `true` **easybook** will define the layout, typesetting
   and design of the book. Use this option to create stunning books effortlessly.
   The next chapter will explain how to define your own styles.

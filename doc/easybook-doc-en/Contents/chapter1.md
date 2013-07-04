@@ -305,6 +305,17 @@ with a file named `book.epub`. This is the e-book version of your book, ready
 to be read in any `.ePub` compatible reader (iPad tablets, iPhone phones,
 most Android tablets and phones and every e-book reader except Amazon Kindle).
 
+Run the following command to generate a Kindle-compatible e-book:
+
+    [cli]
+    $ ./book publish the-origin-of-species kindle
+
+Inside your book's `Output/` directory you'll find a new `kindle` directory
+with a file named `book.mobi`. This is the e-book version of your book, ready
+to be read in any Kindle reader or Kindle application. The MOBI conversion
+is performed with a free third-party application named [KindleGen](http://amzn.to/kindlegen)
+that you must install before generating Kindle-compatible books.
+
 Lastly, run the following command:
 
     [cli]
@@ -313,7 +324,7 @@ Lastly, run the following command:
 Inside `Output/` directory you'll find a new `print` directory which contains
 a file name `book.pdf`. Open the file with your PDF reader and you'll see
 your book as a beautiful and carefully created PDF ebook. The PDF conversion
-is made with an external application named [PrinceXML](http://www.princexml.com/).
+is performed with a third-party application named [PrinceXML](http://www.princexml.com/).
 If you don't have it installed on your computer, you can download a
 fully-functional demo version at <http://www.princexml.com/download/>
 
@@ -349,6 +360,8 @@ In fact, **easybook** books can set many more options in the `config.yml` file
 
         editions:
             ebook:
+                # (this is a complex option, we'll see it later)
+            kindle:
                 # (this is a complex option, we'll see it later)
             print:
                 # (this is a complex option, we'll see it later)

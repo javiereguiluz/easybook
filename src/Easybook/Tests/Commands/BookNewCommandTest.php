@@ -200,14 +200,19 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         // --- test editions config -------------------------------------------
         $this->assertEquals(
             count($bookConfig['book']['editions']),
-            4,
-            'The new book has 4 editions configured'
+            5,
+            'The new book has 5 editions configured'
         );
 
         $this->assertArrayHasKey(
             'ebook',
             $bookConfig['book']['editions'],
             'The new book has an "ebook" (.epub) edition'
+        );
+        $this->assertArrayHasKey(
+            'kindle',
+            $bookConfig['book']['editions'],
+            'The new book has a "kindle" (.mobi) edition'
         );
         $this->assertArrayHasKey(
             'print',

@@ -21,7 +21,6 @@ book:
             include_styles:  true
             highlight_cache: true
             highlight_code:  true
-            use_html_toc:    false
             labels:          ['appendix', 'chapter', 'figure']
             theme:           clean
             toc:
@@ -61,12 +60,16 @@ book:
         website:
             extends:         web
             format:          html_chunked
+            chunk_level:     2
+            images_base_dir: /img/doc-en/
 
         easybook-project.org:
             format:          html_chunked
+            chunk_level:     2
             include_styles:  false
             highlight_cache: false
             highlight_code:  true
+            images_base_dir: /img/doc-en/
             labels:          ['appendix', 'chapter', 'figure']
             theme:           clean
             toc:

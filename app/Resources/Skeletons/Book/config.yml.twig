@@ -22,12 +22,15 @@ book:
             format:         epub
             highlight_code: false
             include_styles: true
-            use_html_toc:   false
             labels:         ['appendix', 'chapter']  # labels also available for: "figure", "table"
             theme:          clean
             toc:
                 deep:       1
                 elements:   ["appendix", "chapter", "part"]
+
+        kindle:
+            extends:        ebook
+            format:         mobi
 
         print:
             format:         pdf

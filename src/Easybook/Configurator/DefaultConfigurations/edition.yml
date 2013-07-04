@@ -19,4 +19,3 @@ edition:
         deep:        2
         elements:    ['appendix', 'chapter']
     two_sided:       true
-    use_html_toc:    false

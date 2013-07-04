@@ -1,0 +1,38 @@
+{% extends 'layout.twig' %}
+
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block body %}
+<h1 class="title" id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
+
+<div class="item toc">
+{% for item in app.get('publishing.items') if item.config.element in edition.toc.elements|default([]) %}
+{# item has several elements in its toc #}
+{% if item.toc|length > 0 %}
+    {%- for entry in item.toc if entry.level <= edition.toc.deep %}
+    <div class="{{ item.config.element }} level-{{ entry.level }}">
+        <a href="{{ item.page_name }}.html#{{ entry.level == 1 ? item.slug : entry.slug }}">{% spaceless %}
+        {% if '' != entry.label %}
+            <span>{{ entry.label }}</span> - {{ entry.title }}
+        {% else %}
+            {{ entry.title }}
+        {% endif %}
+        {% endspaceless %}</a>
+    </div>
+    {%- endfor %}
+{# empty or special item (anything different from 'chapter' and 'appendix' #}
+{% else %}
+    <div class="{{ item.config.element }} level-1">
+        <a href="{{ item.page_name }}.html#{{ item.slug }}">{% spaceless %}
+        {% if '' != item.label %}
+            <span>{{ item.label }}</span> - {{ item.title }}
+        {% else %}
+            {{ item.title }}
+        {% endif %}
+        {% endspaceless %}</a>
+    </div>
+{% endif %}
+
+{% endfor %}
+</div>
+{% endblock %}

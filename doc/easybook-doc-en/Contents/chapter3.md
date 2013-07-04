@@ -133,8 +133,7 @@ create a `cover.jpg` file and copy it into one of these directories:
 
 The cover image format must be JPEG, because this is the most supported format
 in e-book readers. In order to visualize it correctly in advanced readers such
-as the iPad, create a large image (at least 800 pixel height) and save it in
-color.
+as the iPad, create a large color image (at least 800 pixel height).
 
 ## Plugins ##
 

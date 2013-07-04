@@ -1,0 +1,10 @@
+{% extends 'layout.twig' %}
+
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block body %}
+<div class="item {{ item.config.element }}">
+    <h1 class="title" id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
+    {{ item.content }}
+</div>
+{% endblock %}

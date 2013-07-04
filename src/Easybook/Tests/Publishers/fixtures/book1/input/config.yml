@@ -36,19 +36,8 @@ book:
         ebook:
             format:         epub
             # as this ISBN value is only used for tests, it's irrelevant that
-            # it doesn't follow th ISBN format
+            # it doesn't follow the ISBN format
             isbn:           "4e2d12fe-c082-43f7-a3fa-e5379d26c5c6"
-            labels:         ['appendix', 'chapter', 'figure', 'table']
-            toc:
-                deep:       2
-                elements:   ["appendix", "chapter"]
-
-        ebook-with-html-toc:
-            format:         epub
-            # as this ISBN value is only used for tests, it's irrelevant that
-            # it doesn't follow th ISBN format
-            isbn:           "4e2d12fe-c082-43f7-a3fa-e5379d26c5c6"
-            use_html_toc:   true
             labels:         ['appendix', 'chapter', 'figure', 'table']
             toc:
                 deep:       2

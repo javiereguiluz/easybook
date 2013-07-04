@@ -23,6 +23,14 @@ use Easybook\Events\ParseEvent;
  */
 class PdfPublisher extends BasePublisher
 {
+    public function isThisPublisherSupported()
+    {
+        $princeXMLPath = $this->app['prince.path'] ?: $this->findPrinceXMLPath();
+        $this->app['prince.path'] = $princeXMLPath;
+
+        return null != $princeXMLPath;
+    }
+
     public function parseContents()
     {
         $parsedItems = array();
@@ -132,5 +140,47 @@ class PdfPublisher extends BasePublisher
             }
             $this->app->get('console.output')->writeln("\n");
         }
+    }
+
+    /**
+     * Looks for the executable of the PrinceXML library.
+     *
+     * @return string The absolute path of the executable
+     */
+    private function findPrinceXMLPath()
+    {
+        foreach ($this->app->get('prince.default_paths') as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+
+        // the executable couldn't be found in the common
+        // installation directories. Ask the user for the path
+        return $this->askForPrinceXMLPath();
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    private function askForPrinceXMLPath()
+    {
+        $this->app->get('console.output')->write(sprintf(
+                " In order to generate PDF files, PrinceXML library must be installed. \n\n"
+                    ." We couldn't find PrinceXML executable in any of the following directories: \n"
+                    ."   -> %s \n\n"
+                    ." If you haven't installed it yet, you can download a fully-functional demo at: \n"
+                    ." %s \n\n"
+                    ." If you have installed in a custom directory, please type its full absolute path:\n > ",
+                implode($this->app->get('prince.default_paths'), "\n   -> "),
+                'http://www.princexml.com/download'
+            ));
+
+        $userGivenPath = trim(fgets(STDIN));
+
+        // output a newline for aesthetic reasons
+        $this->app->get('console.output')->write("\n");
+
+        return $userGivenPath;
     }
 }
