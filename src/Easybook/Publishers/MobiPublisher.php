@@ -51,8 +51,6 @@ class MobiPublisher extends Epub2Publisher
 
         // remove the book.epub file used to generate the book.mobi file
         $this->app->get('filesystem')->remove($epubFilePath);
-
-        // exec("/Users/javier/Downloads/KindleGen_Mac_i386_v2_9/kindlegen -c0 -o libro.mobi -verbose ".$this->app->get('publishing.dir.output').'/book.epub');
     }
 
     /**
