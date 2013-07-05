@@ -313,7 +313,7 @@ class Application extends \Pimple
         // -verbose: (even more) verbose output
         // -western: force Windows-1252 charset
         // -gif: transform book images to GIF
-        $this['kindlegen.command_options'] = '-c0';
+        $this['kindlegen.command_options'] = '-c1';
 
         // -- slugger ---------------------------------------------------------
         $this['slugger.options'] = array(
