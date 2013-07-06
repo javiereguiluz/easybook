@@ -22,14 +22,13 @@ class BasePublisher implements PublisherInterface
         $this->app = $app;
     }
 
-    public function isThisPublisherSupported()
+    public function checkIfThisPublisherIsSupported()
     {
         return true;
     }
 
     public function publishBook()
     {
-        $this->isThisPublisherSupported();
         $this->loadContents();
         $this->parseContents();
         $this->prepareOutputDir();
@@ -42,7 +41,8 @@ class BasePublisher implements PublisherInterface
      */
     protected function prepareOutputDir()
     {
-        $bookOutputDir = $this->app->get('publishing.dir.book').'/Output/'.$this->app->get('publishing.edition');
+        $bookOutputDir = $this->app->get('publishing.dir.output')
+            ?: $this->app->get('publishing.dir.book').'/Output/'.$this->app->get('publishing.edition');
 
         if (!file_exists($bookOutputDir)) {
             $this->app->get('filesystem')->mkdir($bookOutputDir);

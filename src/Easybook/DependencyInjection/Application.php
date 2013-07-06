@@ -134,31 +134,41 @@ class Application extends \Pimple
 
             switch (strtolower($outputFormat)) {
                 case 'pdf':
-                    return new PdfPublisher($app);
+                    $publisher = new PdfPublisher($app);
+                    break;
 
                 case 'html':
-                    return new HtmlPublisher($app);
+                    $publisher = new HtmlPublisher($app);
+                    break;
 
                 case 'html_chunked':
-                    return new HtmlChunkedPublisher($app);
+                    $publisher = new HtmlChunkedPublisher($app);
+                    break;
 
                 case 'epub':
                 case 'epub2':
-                    return new Epub2Publisher($app);
+                    $publisher = new Epub2Publisher($app);
+                    break;
 
                 //case 'epub3':
-                //    return new Epub3Publisher($app);
+                //    $publisher = new Epub3Publisher($app);
+                //    break;
 
                 case 'mobi':
-                    return new MobiPublisher($app);
+                    $publisher = new MobiPublisher($app);
+                    break;
 
                 default:
                     throw new \RuntimeException(sprintf(
-                        'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "epub2")',
+                        'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "epub2", "mobi")',
                         $outputFormat,
                         $app->get('publishing.edition')
                     ));
             }
+
+            $publisher->checkIfThisPublisherIsSupported();
+
+            return $publisher;
         });
 
         // -- parser ----------------------------------------------------------
@@ -708,6 +718,26 @@ class Application extends \Pimple
         $this->set('publishing.book.config', $config);
 
         $this->get('configurator')->validateConfiguration($config);
+    }
+
+    /**
+     * It loads the full book configuration by combining all the different sources
+     * (config.yml file, console command option and default values). It also loads
+     * the edition configuration and resolves the edition inheritance (if used).
+     *
+     * @param string $configurationViaCommand The configuration options provided via the console command
+     */
+    public function loadEasybookConfiguration()
+    {
+        $bookFileConfig = $this->get('configurator')->loadBookFileConfiguration($this->get('publishing.dir.book'));
+
+        if (!array_key_exists('easybook', $bookFileConfig)) {
+            return;
+        }
+
+        foreach ($bookFileConfig['easybook']['parameters'] as $option => $value) {
+            $this->set($option, $value);
+        }
     }
 
     /**

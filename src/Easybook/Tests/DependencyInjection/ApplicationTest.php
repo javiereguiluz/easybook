@@ -150,6 +150,12 @@ class ApplicationTest extends TestCase
     public function testPublisherTypes($outputformat, $publisherClassName)
     {
         $app = new Application();
+
+        // needed to simulate the third-party libraries required
+        // to publish PDF and MOBI books
+        $app->set('kindlegen.path', __FILE__);
+        $app->set('princexml.path', __FILE__);
+
         $app->set('publishing.edition', 'my_edition');
 
         $app->set('publishing.book.config', array(
@@ -170,6 +176,7 @@ class ApplicationTest extends TestCase
         return array(
             array('epub',  'Easybook\Publishers\Epub2Publisher'),
             array('epub2', 'Easybook\Publishers\Epub2Publisher'),
+            array('mobi',  'Easybook\Publishers\MobiPublisher'),
             array('pdf',   'Easybook\Publishers\PdfPublisher'),
             array('html',  'Easybook\Publishers\HtmlPublisher'),
             array('html_chunked', 'Easybook\Publishers\HtmlChunkedPublisher'),

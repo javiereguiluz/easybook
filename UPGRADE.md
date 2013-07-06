@@ -2,6 +2,33 @@
 
 ## Upgrade to easybook 5.0 ##
 
+### Configuring easybook parameters ###
+
+You can now override any **easybook** parameter easily in your books. Create a
+new `easybook` section in your `config.yml` book and define the new value of
+each parameter under the `parameters` key:
+
+```yaml
+easybook:
+    parameters:
+        kindlegen.command_options: '-c0 -gif verbose'
+        kindlegen.path:            '/path/to/utils/KindleGen/kindlegen'
+        publishing.dir.output:     '/my/path/for/books/my-book'
+        slugger.options:
+            separator:             '_'
+
+book:
+    title:            easybook documentation
+    author:           Javier Eguiluz
+    edition:          First edition
+    language:         en
+    publication_date: ~
+    # ...
+```
+
+You can override any `src/Easybook/DependencyInjection/Application.php` parameter,
+as explained in the updated chapter 3 of the documentation.
+
 ### Added support for Kindle readers and apps ###
 
 easybook can now generate Kindle-compatible ebooks, thanks to

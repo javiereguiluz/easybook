@@ -1,0 +1,9 @@
+book:
+    title:    Untitled
+    author:   Anonymous
+    edition:  First edition
+    language: en
+    publication_date: YYYY-MM-DD
+    generator: { name: easybook, version: 'N' }
+    contents: ~
+    editions: ~

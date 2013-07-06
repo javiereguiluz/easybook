@@ -1,0 +1,17 @@
+easybook:
+    parameters:
+        parser.options:
+            markdown_syntax: "php-markdown-extra"
+        kindlegen.path:      "/this/path/does/not/exist/kindlegen"
+        slugger.options:
+            separator:       "_"
+
+book:
+    title:    Untitled
+    author:   Anonymous
+    edition:  First edition
+    language: en
+    publication_date: YYYY-MM-DD
+    generator: { name: easybook, version: 'N' }
+    contents: ~
+    editions: ~

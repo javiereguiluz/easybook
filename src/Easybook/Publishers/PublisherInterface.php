@@ -21,7 +21,7 @@ interface PublisherInterface {
      *
      * @return bool True if this publisher works in this system
      */
-    public function isThisPublisherSupported();
+    public function checkIfThisPublisherIsSupported();
 
     /**
      * It defines the complete workflow followed to publish a book (load its

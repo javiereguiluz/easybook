@@ -399,7 +399,7 @@ Likewise, any edition option can be set or override dynamically:
 When passing a lot of configuration options, you must be very careful with JSON
 braces and quotes. If you run the command automatically, it is easier to create
 a PHP array with all the options and then convert it to JSON with the
-``json_encode() `` function.
+`json_encode()` function.
 
 Dynamic options are so advanced that they even allow you to define on-the-fly
 editions:
@@ -427,6 +427,70 @@ combine configuration options (the higher, the more priority):
 Configuration options related to editions also take into account the possible
 edition inheritance. If an edition inherits from another one, its options
 always override the options of its *parent* edition.
+
+### Configuring easybook options ###
+
+In addition to its own configuration options, a book can also modify global
+**easybook** options. To do so, add an `easybook` configuration section
+inside your `config.yml` (we recommend you to create it at the top of the
+file to spot it easily):
+
+    [yaml]
+    easybook:
+        parameters:
+            kindlegen.command_options: '-c0 -gif verbose'
+            kindlegen.path:            '/path/to/utils/KindleGen/kindlegen'
+
+    book:
+        title:            easybook documentation
+        author:           Javier Eguiluz
+        edition:          First edition
+        language:         en
+        publication_date: ~
+        # ...
+
+Define the **easybook** global options under the `parameters` key of `easybook`
+section. In the previous example, the book sets the `kindlegen.command_options`
+option to use its own custom options for the command used to generate
+Kindle-compatible MOBI files. In addition, to avoid repeating it each time the
+book is generated, the book also sets the path to the `kindlegen` library thanks
+to the `kindlegen.path`.
+
+You can replace any of the parameters defined or used in the `Application.php`
+class located at `src/Easybook/DependencyInjection/`. Therefore, use the
+following configuration to modify the directory where the book is generated:
+
+    [yaml]
+    easybook:
+        parameters:
+            publishing.dir.output:  '/my/path/for/books/my-book'
+
+    book:
+        title:            easybook documentation
+        author:           Javier Eguiluz
+        edition:          First edition
+        language:         en
+        publication_date: ~
+        # ...
+
+The separator used by the slugger is another option that is usually modified.
+By default **easybook** uses the dash (`-`) for the slugs (this affects the
+book page names and the URL for the books published as websites). If you prefer
+the underscore (`_`) you can now easily configure it in your book:
+
+    [yaml]
+    easybook:
+        parameters:
+            slugger.options:
+                separator:   '_'
+
+    book:
+        title:            easybook documentation
+        author:           Javier Eguiluz
+        edition:          First edition
+        language:         en
+        publication_date: ~
+        # ...
 
 ### Defining new content types ### {#new-content-types}
 

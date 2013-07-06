@@ -424,7 +424,7 @@ cualquier edición:
 Como todas las opciones se pasan formateadas en una cadena JSON, debes ser muy
 cuidadoso con las llaves, corchetes y comillas. Si ejecutas el comando de forma
 automática, es más fácil crear un array PHP con todas las opciones y después
-convertirlas a JSON con la función ``json_encode()``.
+convertirlas a JSON con la función `json_encode()`.
 
 Las opciones definidas dinámicamente son tan avanzadas que incluso puedes crear
 en ese momento la edición que vas a publicar:
@@ -455,6 +455,73 @@ En el caso de las opciones de configuración relacionadas con las ediciones,
 también se tiene en cuenta la posible herencia de ediciones. Si una edición
 hereda de otra, sus opciones son siempre más prioritatias que las de la edición
 de la que hereda.
+
+### Configurando las opciones de easybook ###
+
+Además de sus propias opciones de configuración, los libros también pueden
+modificar las opciones globales de **easybook**. Para ello, añade una nueva
+sección de configuración llamada `easybook` dentro del archivo `config.yml`
+(te recomendamos que la pongas al principio del archivo, ya que así te será
+más fácil verla):
+
+    [yaml]
+    easybook:
+        parameters:
+            kindlegen.command_options: '-c0 -gif verbose'
+            kindlegen.path:            '/ruta/hasta/utils/KindleGen/kindlegen'
+
+    book:
+        title:            Documentación de easybook
+        author:           Javier Eguiluz
+        edition:          Primera edición
+        language:         es
+        publication_date: ~
+        # ...
+
+Las opciones globales de **easybook** se definen bajo la clave `parameters` de
+la sección `easybook`. En este ejemplo, el libro establece la opción
+`kindlegen.command_options` para utilizar sus propias opciones en el comando que
+genera libros compatibles con Kindle en formato MOBI. Además, y para no tener
+que escribirlo cada vez que se genera el libro, también establece la ruta hasta
+la librería `kindlegen` gracias a la opción `kindlegen.path`.
+
+Utilizando esta técnica puedes reemplazar cualquier parámetro definido o
+utilizado en la clase `Application.php` que se encuentra en el directorio
+`src/Easybook/DependencyInjection/`. Por tanto, la siguiente configuración
+modificaría el directorio donde se genera el libro:
+
+    [yaml]
+    easybook:
+        parameters:
+            publishing.dir.output:  '/ruta/de/mis/libros/mi-libro'
+
+    book:
+        title:            Documentación de easybook
+        author:           Javier Eguiluz
+        edition:          Primera edición
+        language:         es
+        publication_date: ~
+        # ...
+
+El separador que se utiliza en el *slugger* es otra de las opciones que los
+libros suelen necesitar modificar. Por defecto **easybook** utiliza el guión
+medio (`-`) para los *slugs* (esto afecta al nombre de las páginas del libro y
+a las URL de los libros publicados como sitios web). Si prefieres utilizar
+guiones bajos (`_`) ahora puedes configurarlo fácilmente en el libro:
+
+    [yaml]
+    easybook:
+        parameters:
+            slugger.options:
+                separator:   '_'
+
+    book:
+        title:            Documentación de easybook
+        author:           Javier Eguiluz
+        edition:          Primera edición
+        language:         es
+        publication_date: ~
+        # ...
 
 ### Definiendo nuevos tipos de contenido ### {#nuevos-tipos-de-contenido}
 

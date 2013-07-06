@@ -23,12 +23,17 @@ class MobiPublisher extends Epub2Publisher
     // should contain an HTML TOC, so it cannot be excluded
     protected $excludedElements = array('cover', 'lot', 'lof');
 
-    public function isThisPublisherSupported()
+    public function checkIfThisPublisherIsSupported()
     {
-        $kindleGenPath = $this->app['kindlegen.path'] ?: $this->findKindleGenPath();
+        if (null != $this->app['kindlegen.path'] && file_exists($this->app['kindlegen.path'])) {
+            $kindleGenPath = $this->app['kindlegen.path'];
+        } else {
+            $kindleGenPath = $this->findKindleGenPath();
+        }
+
         $this->app['kindlegen.path'] = $kindleGenPath;
 
-        return null != $kindleGenPath;
+        return null != $kindleGenPath && file_exists($kindleGenPath);
     }
 
     public function assembleBook()

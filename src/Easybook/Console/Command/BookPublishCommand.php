@@ -73,6 +73,9 @@ class BookPublishCommand extends BaseCommand
         // register easybook and custom book plugins
         $this->registerPlugins();
 
+        // load the custom easybook parameters defined by the book
+        $this->app->loadEasybookConfiguration();
+
         // execute the 'before_publish' scripts
         $this->runScripts($this->app->edition('before_publish'));
 
