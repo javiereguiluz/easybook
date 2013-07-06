@@ -113,6 +113,10 @@ class ApplicationTest extends TestCase
     public function testEditionMethodShortcut()
     {
         $app = new Application();
+
+        // needed to simulate the third-party library required to publish PDF books
+        $app->set('prince.path', __FILE__);
+
         $app->set('publishing.edition', 'my_edition');
 
         $app->set('publishing.book.config', array(
@@ -154,7 +158,7 @@ class ApplicationTest extends TestCase
         // needed to simulate the third-party libraries required
         // to publish PDF and MOBI books
         $app->set('kindlegen.path', __FILE__);
-        $app->set('princexml.path', __FILE__);
+        $app->set('prince.path', __FILE__);
 
         $app->set('publishing.edition', 'my_edition');
 
