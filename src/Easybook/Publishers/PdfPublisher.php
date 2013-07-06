@@ -162,6 +162,27 @@ class PdfPublisher extends BasePublisher
 
         // the executable couldn't be found in the common
         // installation directories. Ask the user for the path
+        $isInteractive = null != $this->app->get('console.input') && $this->app->get('console.input')->isInteractive();
+        if (!$isInteractive) {
+            $sampleYamlConfiguration = <<<YAML
+  easybook:
+      parameters:
+          prince.path: '/path/to/utils/PrinceXML/prince'
+
+  book:
+      title:  ...
+      author: ...
+      # ...
+YAML;
+            throw new \RuntimeException(sprintf(
+                "ERROR: The PrinceXML library needed to generate PDF books cannot be found.\n"
+                    ." Check that you have installed PrinceXML in a common directory \n"
+                    ." or set your custom PrinceXML path in the book's config.yml file:\n\n"
+                    ."%s",
+                $sampleYamlConfiguration
+            ));
+        }
+
         return $this->askForPrinceXMLPath();
     }
 

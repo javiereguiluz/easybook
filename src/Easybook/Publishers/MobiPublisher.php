@@ -73,6 +73,27 @@ class MobiPublisher extends Epub2Publisher
 
         // the executable couldn't be found in the common
         // installation directories. Ask the user for the path
+        $isInteractive = null != $this->app->get('console.input') && $this->app->get('console.input')->isInteractive();
+        if (!$isInteractive) {
+            $sampleYamlConfiguration = <<<YAML
+  easybook:
+      parameters:
+          kindlegen.path: '/path/to/utils/KindleGen/kindlegen'
+
+  book:
+      title:  ...
+      author: ...
+      # ...
+YAML;
+            throw new \RuntimeException(sprintf(
+                "ERROR: The KindleGen library needed to generate MOBI books cannot be found.\n"
+                    ." Check that you have installed KindleGen in a common directory \n"
+                    ." or set your custom KindleGen path in the book's config.yml file:\n\n"
+                    ."%s",
+                $sampleYamlConfiguration
+            ));
+        }
+
         return $this->askForKindleGenPath();
     }
 
