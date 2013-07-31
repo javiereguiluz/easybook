@@ -89,6 +89,8 @@ $ phpunit
 
 Travis CI status: [![Travis CI status](https://secure.travis-ci.org/javiereguiluz/easybook.png?branch=master)](http://travis-ci.org/javiereguiluz/easybook)
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/34c47e7f-a523-4702-8310-ebec02a6a241/big.png)](https://insight.sensiolabs.com/projects/34c47e7f-a523-4702-8310-ebec02a6a241)
+
 ## Requirements ##
 
 In order to generate PDF files, PrinceXML library must be installed. 
