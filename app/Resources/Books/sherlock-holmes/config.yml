@@ -1,0 +1,54 @@
+book:
+    title:            "The Adventures of Sherlock Holmes"
+    author:           "Arthur Conan Doyle"
+    edition:          "First edition"
+    language:         en
+    publication_date: 14-10-1892
+
+    contents:
+        - { element: cover   }
+        - { element: edition }
+        - { element: toc     }
+        - { element: lof     }
+        - { element: chapter, number: I,    content: chapter1.md }
+        - { element: chapter, number: II,   content: chapter2.md }
+        - { element: chapter, number: III,  content: chapter3.md }
+        - { element: chapter, number: IV,   content: chapter4.md }
+        - { element: chapter, number: V,    content: chapter5.md }
+        - { element: chapter, number: VI,   content: chapter6.md }
+        - { element: chapter, number: VII,  content: chapter7.md }
+        - { element: chapter, number: VIII, content: chapter8.md }
+        - { element: chapter, number: IX,   content: chapter9.md }
+        - { element: chapter, number: X,    content: chapter10.md }
+        - { element: chapter, number: XI,   content: chapter11.md }
+        - { element: chapter, number: XII,  content: chapter12.md }
+        - { element: license, content: license.md }
+
+    editions:
+        common:
+            labels:       ["chapter"]
+            toc:
+                deep:     1
+                elements: ["chapter"]
+
+        ebook:
+            extends:      common
+            format:       epub
+
+        kindle:
+            extends:      common
+            format:       mobi
+
+        print:
+            extends:      common
+            format:       pdf
+            page_size:    royal-octavo
+            two_sided:    true
+
+        web:
+            extends:      common
+            format:       html
+
+        website:
+            extends:      common
+            format:       html_chunked
