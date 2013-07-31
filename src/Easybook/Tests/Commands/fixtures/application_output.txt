@@ -9,6 +9,7 @@ easybook is the easiest and fastest tool to generate
 technical documentation, books, manuals and websites.
 
 Available commands:
+  benchmark   Benchmarks the performance of book publishing
   customize   Eases the customization of the book design
   help        Displays help for a command
   list        Lists commands
