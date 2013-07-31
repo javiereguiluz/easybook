@@ -52,20 +52,20 @@ class BookPublishCommand extends BaseCommand
 
         $dialog  = $this->getHelperSet()->get('dialog');
 
-        $this->app->set('console.input', $input);
-        $this->app->set('console.output', $output);
-        $this->app->set('console.dialog', $dialog);
+        $this->app['console.input']  = $input;
+        $this->app['console.output'] = $output;
+        $this->app['console.dialog'] = $dialog;
 
         // validate book dir and add some useful values to the app configuration
-        $bookDir = $this->app->get('validator')->validateBookDir($slug, $dir);
+        $bookDir = $this->app['validator']->validateBookDir($slug, $dir);
 
-        $this->app->set('publishing.dir.book',      $bookDir);
-        $this->app->set('publishing.dir.contents',  $bookDir.'/Contents');
-        $this->app->set('publishing.dir.resources', $bookDir.'/Resources');
-        $this->app->set('publishing.dir.plugins',   $bookDir.'/Resources/Plugins');
-        $this->app->set('publishing.dir.templates', $bookDir.'/Resources/Templates');
-        $this->app->set('publishing.book.slug',     $slug);
-        $this->app->set('publishing.edition',       $edition);
+        $this->app['publishing.dir.book']      = $bookDir;
+        $this->app['publishing.dir.contents']  = $bookDir.'/Contents';
+        $this->app['publishing.dir.resources'] = $bookDir.'/Resources';
+        $this->app['publishing.dir.plugins']   = $bookDir.'/Resources/Plugins';
+        $this->app['publishing.dir.templates'] = $bookDir.'/Resources/Templates';
+        $this->app['publishing.book.slug']     = $slug;
+        $this->app['publishing.edition']       = $edition;
 
         // load book configuration
         $this->app->loadBookConfiguration($input->getOption('configuration'));
@@ -87,7 +87,7 @@ class BookPublishCommand extends BaseCommand
         ));
 
         // 1-line magic publication!
-        $this->app->get('publisher')->publishBook();
+        $this->app['publisher']->publishBook();
 
         // book publishing finishes
         $this->app->dispatch(Events::POST_PUBLISH, new BaseEvent($this->app));
@@ -130,7 +130,7 @@ class BookPublishCommand extends BaseCommand
         }
         $process = new Process(
             $this->app->renderString($scripts),
-            $this->app->get('publishing.dir.book')
+            $this->app['publishing.dir.book']
         );
         $process->run();
 

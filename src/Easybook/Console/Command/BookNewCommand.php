@@ -55,7 +55,7 @@ class BookNewCommand extends BaseCommand
         $this->app->dispatch(Events::PRE_NEW, new BaseEvent($this->app));
 
         $generator = new BookGenerator();
-        $generator->setFilesystem($this->app->get('filesystem'));
+        $generator->setFilesystem($this->app['filesystem']);
         $generator->setSkeletonDirectory($this->app['app.dir.skeletons'].'/Book');
         $generator->setBookDirectory($dir.'/'.$slug);
         $generator->setConfiguration(array(

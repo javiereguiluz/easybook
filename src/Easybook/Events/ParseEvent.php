@@ -17,12 +17,12 @@ class ParseEvent extends BaseEvent
 {
     public function getItem()
     {
-        return $this->app->get('publishing.active_item');
+        return $this->app['publishing.active_item'];
     }
 
     public function setItem($item)
     {
-        $this->app->set('publishing.active_item', $item);
+        $this->app['publishing.active_item'] = $item;
     }
 
     /*
@@ -57,6 +57,6 @@ class ParseEvent extends BaseEvent
         $item = $this->app['publishing.active_item'];
         $item[$id] = $value;
 
-        $this->app->set('publishing.active_item', $item);
+        $this->app['publishing.active_item'] = $item;
     }
 }

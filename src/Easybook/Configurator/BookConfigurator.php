@@ -80,7 +80,7 @@ class BookConfigurator
                 "There is no 'config.yml' configuration file for '%s' book \n\n"
                 ."Try to create the book again with the 'new' command or create \n"
                 ."'%s' file by hand",
-                $this->app->get('publishing.book.slug'),
+                $this->app['publishing.book.slug'],
                 realpath($bookDir).'/config.yml'
             ));
         }
@@ -109,8 +109,8 @@ class BookConfigurator
      */
     public function loadEditionConfiguration()
     {
-        $bookConfiguration = $this->app->get('publishing.book.config');
-        $edition = $this->app->get('publishing.edition');
+        $bookConfiguration = $this->app['publishing.book.config'];
+        $edition = $this->app['publishing.edition'];
 
         if (!array_key_exists($edition, $bookConfiguration['book']['editions'])) {
             throw new \RuntimeException(sprintf(
@@ -144,7 +144,7 @@ class BookConfigurator
     public function loadParentEditionConfiguration()
     {
         $bookEditions = $this->app->book('editions');
-        $edition = $this->app->get('publishing.edition');
+        $edition = $this->app['publishing.edition'];
 
         $parentEdition = $this->app->edition('extends');
         $parentEditionConfig = array();
@@ -157,7 +157,7 @@ class BookConfigurator
                         ."Check in '%s' file \n"
                         ."that the value of 'extends' option in '%s' edition is a valid \n"
                         ."edition of the book",
-                    $edition, $parentEdition, realpath($this->app->get('publishing.dir.book').'/config.yml'), $edition
+                    $edition, $parentEdition, realpath($this->app['publishing.dir.book'].'/config.yml'), $edition
                 ));
             }
 
@@ -187,8 +187,8 @@ class BookConfigurator
      */
     public function processConfigurationValues()
     {
-        $bookConfig = $this->app->get('publishing.book.config');
-        $editionConfig = $bookConfig['book']['editions'][$this->app->get('publishing.edition')];
+        $bookConfig = $this->app['publishing.book.config'];
+        $editionConfig = $bookConfig['book']['editions'][$this->app['publishing.edition']];
 
         // prepare options needed to parse option values as Twig expressions
         $app = clone $this->app;

@@ -21,8 +21,8 @@ class BookConfigurationTest extends TestCase
     {
         $app = new Application();
 
-        $app->set('publishing.dir.book', uniqid('this-path-does-not-exist'));
-        $app->set('publishing.book.slug', 'book_with_no_config_file');
+        $app['publishing.dir.book'] = uniqid('this-path-does-not-exist');
+        $app['publishing.book.slug'] = 'book_with_no_config_file';
 
         try {
             $app->loadBookConfiguration();
@@ -66,7 +66,7 @@ class BookConfigurationTest extends TestCase
 
         $configuration = $configurator->loadBookConfiguration(null, $commandConfiguration);
 
-        $app->set('publishing.book.config', $configuration);
+        $app['publishing.book.config'] = $configuration;
         $configuration = $configurator->processConfigurationValues();
 
         $expectedConfiguration = Yaml::parse($expectedConfiguration);

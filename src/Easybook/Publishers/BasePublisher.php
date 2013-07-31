@@ -41,14 +41,14 @@ class BasePublisher implements PublisherInterface
      */
     protected function prepareOutputDir()
     {
-        $bookOutputDir = $this->app->get('publishing.dir.output')
-            ?: $this->app->get('publishing.dir.book').'/Output/'.$this->app->get('publishing.edition');
+        $bookOutputDir = $this->app['publishing.dir.output']
+            ?: $this->app['publishing.dir.book'].'/Output/'.$this->app['publishing.edition'];
 
         if (!file_exists($bookOutputDir)) {
-            $this->app->get('filesystem')->mkdir($bookOutputDir);
+            $this->app['filesystem']->mkdir($bookOutputDir);
         }
 
-        $this->app->set('publishing.dir.output', $bookOutputDir);
+        $this->app['publishing.dir.output'] = $bookOutputDir;
     }
 
     /**
@@ -93,7 +93,7 @@ class BasePublisher implements PublisherInterface
                     } catch (\Twig_Error_Syntax $e) {
                         // if there is a Twig parsing error, notify the user but don't
                         // stop the book publication
-                        $this->app->get('console.output')->writeln(sprintf(
+                        $this->app['console.output']->writeln(sprintf(
                             " [WARNING] There was an error while parsing the \"%s\" file\n",
                             $contentFile
                         ));

@@ -46,37 +46,37 @@ class BookCustomizeCommand extends BaseCommand
 
         $dialog  = $this->getHelperSet()->get('dialog');
 
-        $this->app->set('console.input', $input);
-        $this->app->set('console.output', $output);
-        $this->app->set('console.dialog', $dialog);
+        $this->app['console.input']  = $input;
+        $this->app['console.output'] = $output;
+        $this->app['console.dialog'] = $dialog;
 
         // validate book dir and add some useful values to the app configuration
-        $bookDir = $this->app->get('validator')->validateBookDir($slug, $dir);
+        $bookDir = $this->app['validator']->validateBookDir($slug, $dir);
 
-        $this->app->set('publishing.dir.book',      $bookDir);
-        $this->app->set('publishing.dir.contents',  $bookDir.'/Contents');
-        $this->app->set('publishing.dir.resources', $bookDir.'/Resources');
-        $this->app->set('publishing.dir.plugins',   $bookDir.'/Resources/Plugins');
-        $this->app->set('publishing.dir.templates', $bookDir.'/Resources/Templates');
-        $this->app->set('publishing.book.slug',     $slug);
-        $this->app->set('publishing.edition', $edition);
+        $this->app['publishing.dir.book']      = $bookDir;
+        $this->app['publishing.dir.contents']  = $bookDir.'/Contents';
+        $this->app['publishing.dir.resources'] = $bookDir.'/Resources';
+        $this->app['publishing.dir.plugins']   = $bookDir.'/Resources/Plugins';
+        $this->app['publishing.dir.templates'] = $bookDir.'/Resources/Templates';
+        $this->app['publishing.book.slug']     = $slug;
+        $this->app['publishing.edition']       = $edition;
 
         // load book configuration
         $this->app->loadBookConfiguration();
 
         // all checks passed, the book can now be customized
-        $customizationDir = $this->app->get('publishing.dir.templates').'/'.$edition;
+        $customizationDir = $this->app['publishing.dir.templates'].'/'.$edition;
         if (!file_exists($customizationDir)) {
-            $this->app->get('filesystem')->mkdir($customizationDir);
+            $this->app['filesystem']->mkdir($customizationDir);
         }
 
         $customizationCss = $customizationDir.'/style.css';
         $customizationSkeleton = sprintf('%s/Customization/%s/style.css',
-            $this->app->get('app.dir.skeletons'), $this->app->edition('format')
+            $this->app['app.dir.skeletons'], $this->app->edition('format')
         );
 
         if (!file_exists($customizationCss)) {
-            $this->app->get('filesystem')->copy($customizationSkeleton, $customizationCss);
+            $this->app['filesystem']->copy($customizationSkeleton, $customizationCss);
         } else {
             throw new \RuntimeException(sprintf(
                 "ERROR: The '%s' edition already contains a custom CSS stylesheet.\n"
@@ -97,8 +97,8 @@ class BookCustomizeCommand extends BaseCommand
                 ." rename:\n     %s/<info>%s</info>\n"
                 ." to:\n    %s/<info>%s</info>",
                 $this->app->edition('format'),
-                $this->app->get('publishing.dir.templates'), $edition,
-                $this->app->get('publishing.dir.templates'), $this->app->edition('format')
+                $this->app['publishing.dir.templates'], $edition,
+                $this->app['publishing.dir.templates'], $this->app->edition('format')
             ),
             ''
         ));

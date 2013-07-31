@@ -23,7 +23,7 @@ class CompressorTest extends TestCase
         // setup temp dir for generated ZIP file
         $app = new Application();
 
-        $tmpDir = $app->get('app.dir.cache').'/'.uniqid('phpunit_', true);
+        $tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
         $filesystem = new Filesystem();
         $filesystem->mkdir($tmpDir);
 

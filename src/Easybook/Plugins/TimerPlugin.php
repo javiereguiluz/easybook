@@ -27,11 +27,11 @@ class TimerPlugin implements EventSubscriberInterface
 
     public function onStart(BaseEvent $event)
     {
-        $event->app->set('app.timer.start', microtime(true));
+        $event->app['app.timer.start'] = microtime(true);
     }
 
     public function onFinish(BaseEvent $event)
     {
-        $event->app->set('app.timer.finish', microtime(true));
+        $event->app['app.timer.finish'] = microtime(true);
     }
 }

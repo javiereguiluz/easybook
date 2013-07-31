@@ -52,10 +52,10 @@ class MobiPublisher extends Epub2Publisher
         $process = new Process($command);
         $process->run();
 
-        $this->app->get('console.output')->write("\n\n".$process->getOutput()."\n\n");
+        $this->app['console.output']->write("\n\n".$process->getOutput()."\n\n");
 
         // remove the book.epub file used to generate the book.mobi file
-        $this->app->get('filesystem')->remove($epubFilePath);
+        $this->app['filesystem']->remove($epubFilePath);
     }
 
     /**
@@ -65,7 +65,7 @@ class MobiPublisher extends Epub2Publisher
      */
     private function findKindleGenPath()
     {
-        foreach ($this->app->get('kindlegen.default_paths') as $path) {
+        foreach ($this->app['kindlegen.default_paths'] as $path) {
             if (file_exists($path)) {
                 return $path;
             }
@@ -73,7 +73,7 @@ class MobiPublisher extends Epub2Publisher
 
         // the executable couldn't be found in the common
         // installation directories. Ask the user for the path
-        $isInteractive = null != $this->app->get('console.input') && $this->app->get('console.input')->isInteractive();
+        $isInteractive = null != $this->app['console.input'] && $this->app['console.input']->isInteractive();
         if (!$isInteractive) {
             $sampleYamlConfiguration = <<<YAML
   easybook:
@@ -102,21 +102,21 @@ YAML;
      */
     private function askForKindleGenPath()
     {
-        $this->app->get('console.output')->write(sprintf(
+        $this->app['console.output']->write(sprintf(
                 " In order to generate MOBI ebooks, KindleGen library must be installed. \n\n"
                     ." We couldn't find KindleGen executable in any of the following directories: \n"
                     ."   -> %s \n\n"
                     ." If you haven't installed it yet, you can download it freely from Amazon at: \n"
                     ." %s \n\n"
                     ." If you have installed it in a custom directory, please type its full absolute path:\n > ",
-                implode($this->app->get('kindlegen.default_paths'), "\n   -> "),
+                implode($this->app['kindlegen.default_paths'], "\n   -> "),
                 'http://amzn.to/kindlegen'
             ));
 
         $userGivenPath = trim(fgets(STDIN));
 
         // output a newline for aesthetic reasons
-        $this->app->get('console.output')->write("\n");
+        $this->app['console.output']->write("\n");
 
         return $userGivenPath;
     }

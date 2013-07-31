@@ -162,7 +162,7 @@ class Application extends \Pimple
                     throw new \RuntimeException(sprintf(
                         'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "epub2", "mobi")',
                         $outputFormat,
-                        $app->get('publishing.edition')
+                        $app['publishing.edition']
                     ));
             }
 
@@ -195,7 +195,7 @@ class Application extends \Pimple
         // -- twig ------------------------------------------------------------
         $this['twig.options'] = array(
             'autoescape'       => false,
-            // 'cache'         => $app['app.dir.cache'].'/Twig,
+            // 'cache'         => $app['app.dir.cache'].'/Twig',
             'charset'          => $this['app.charset'],
             'debug'            => $this['app.debug'],
             'strict_variables' => $this['app.debug'],
@@ -265,10 +265,10 @@ class Application extends \Pimple
 
             $twig->addGlobal('app', $app);
 
-            if (null != $bookConfig = $app->get('publishing.book.config')) {
+            if (null != $bookConfig = $app['publishing.book.config']) {
                 $twig->addGlobal('book', $bookConfig['book']);
 
-                $publishingEdition = $app->get('publishing.edition');
+                $publishingEdition = $app['publishing.edition'];
                 $editions = $app->book('editions');
                 $twig->addGlobal('edition', $editions[$publishingEdition]);
             }
@@ -386,11 +386,29 @@ class Application extends \Pimple
         return static::VERSION;
     }
 
+    /**
+     * @deprecated Deprecated since version 5.0.
+     *
+     * Instead of:
+     *   $value = $app->get('key');
+     *
+     * Use:
+     *   $value = $app['key'];
+     */
     public function get($id)
     {
         return $this->offsetGet($id);
     }
 
+    /**
+     * @deprecated Deprecated since version 5.0.
+     *
+     * Instead of:
+     *   $app->set('key', $value);
+     *
+     * Use:
+     *   $app['key'] = $value;
+     */
     public function set($id, $value)
     {
         $this->offsetSet($id, $value);
@@ -398,9 +416,9 @@ class Application extends \Pimple
 
     public function append($id, $value)
     {
-        $array = $this->get($id);
+        $array = $this[$id];
         $array[] = $value;
-        $this->set($id, $array);
+        $this[$id] = $array;
 
         return $array;
     }
@@ -415,7 +433,7 @@ class Application extends \Pimple
      */
     public function slugify($string, $separator = null, $prefix = null)
     {
-        $slug = $this->get('slugger')->slugify($string, $separator, $prefix);
+        $slug = $this['slugger']->slugify($string, $separator, $prefix);
         $this->append('slugger.generated_slugs', $slug);
 
         return $slug;
@@ -433,7 +451,7 @@ class Application extends \Pimple
      */
     public function slugifyUniquely($string, $separator = null, $prefix = null)
     {
-        $defaultOptions = $this->get('slugger.options');
+        $defaultOptions = $this['slugger.options'];
 
         $separator = $separator ?: $defaultOptions['separator'];
         $prefix    = $prefix    ?: $defaultOptions['prefix'];
@@ -441,7 +459,7 @@ class Application extends \Pimple
         $slug = $this->slugify($string, $separator, $prefix);
 
         // ensure the uniqueness of the slug
-        $occurrences = array_count_values($this->get('slugger.generated_slugs'));
+        $occurrences = array_count_values($this['slugger.generated_slugs']);
         $count = $occurrences[$slug];
         if ($count > 1) {
             $slug .= $separator.$count;
@@ -496,14 +514,14 @@ class Application extends \Pimple
      */
     public function renderString($string, $variables = array())
     {
-        $twig = new \Twig_Environment(new \Twig_Loader_String(), $this->get('twig.options'));
+        $twig = new \Twig_Environment(new \Twig_Loader_String(), $this['twig.options']);
 
         $twig->addGlobal('app', $this);
 
-        if (null != $bookConfig = $this->get('publishing.book.config')) {
+        if (null != $bookConfig = $this['publishing.book.config']) {
             $twig->addGlobal('book', $bookConfig['book']);
 
-            $publishingEdition = $this->get('publishing.edition');
+            $publishingEdition = $this['publishing.edition'];
             $editions = $this->book('editions');
             $twig->addGlobal('edition', $editions[$publishingEdition]);
         }
@@ -528,11 +546,11 @@ class Application extends \Pimple
             ));
         }
 
-        $rendered = $this->get('twig')->render($template, $variables);
+        $rendered = $this['twig']->render($template, $variables);
 
         if (null != $targetFile) {
             if (!is_dir($dir = dirname($targetFile))) {
-                $this->get('filesystem')->mkdir($dir);
+                $this['filesystem']->mkdir($dir);
             }
 
             file_put_contents($targetFile, $rendered);
@@ -656,7 +674,7 @@ class Application extends \Pimple
             // inspired by Twig_Environment -> getCacheFileName()
             // see https://github.com/fabpot/Twig/blob/master/lib/Twig/Environment.php
             $hash = md5($language.$code);
-            $cacheDir = $this->get('app.dir.cache').'/GeSHi/'.substr($hash, 0, 2).'/'.substr($hash, 2, 2);
+            $cacheDir = $this['app.dir.cache'].'/GeSHi/'.substr($hash, 0, 2).'/'.substr($hash, 2, 2);
             $cacheFilename = $cacheDir.'/'.substr($hash, 4).'.txt';
 
             if (file_exists($cacheFilename)) {
@@ -665,7 +683,7 @@ class Application extends \Pimple
         }
 
         // highlight the code useing GeSHi library
-        $geshi = $this->get('geshi');
+        $geshi = $this['geshi'];
         if ('html' == $language) { $language = 'html5'; }
 
         $geshi->set_source($code);
@@ -675,7 +693,7 @@ class Application extends \Pimple
         // save the highlighted code in the cache
         if ($this->edition('highlight_cache')) {
             // @codeCoverageIgnoreStart
-            $this->get('filesystem')->mkdir($cacheDir);
+            $this['filesystem']->mkdir($cacheDir);
 
             if (false === @file_put_contents($cacheFilename, $highlightedCode)) {
                 throw new \RuntimeException(sprintf("ERROR: Failed to write cache file \n'%s'.", $cacheFilename));
@@ -694,7 +712,7 @@ class Application extends \Pimple
      */
     public function dispatch($eventName, $eventObject = null)
     {
-        $this->get('dispatcher')->dispatch($eventName, $eventObject);
+        $this['dispatcher']->dispatch($eventName, $eventObject);
     }
 
     /**
@@ -706,18 +724,18 @@ class Application extends \Pimple
      */
     public function loadBookConfiguration($configurationViaCommand = "")
     {
-        $config = $this->get('configurator')->loadBookConfiguration($this->get('publishing.dir.book'), $configurationViaCommand);
-        $this->set('publishing.book.config', $config);
+        $config = $this['configurator']->loadBookConfiguration($this['publishing.dir.book'], $configurationViaCommand);
+        $this['publishing.book.config'] = $config;
 
-        $this->get('validator')->validatePublishingEdition($this->get('publishing.edition'));
+        $this['validator']->validatePublishingEdition($this['publishing.edition']);
 
-        $config = $this->get('configurator')->loadEditionConfiguration();
-        $this->set('publishing.book.config', $config);
+        $config = $this['configurator']->loadEditionConfiguration();
+        $this['publishing.book.config'] = $config;
 
-        $config = $this->get('configurator')->processConfigurationValues();
-        $this->set('publishing.book.config', $config);
+        $config = $this['configurator']->processConfigurationValues();
+        $this['publishing.book.config'] = $config;
 
-        $this->get('configurator')->validateConfiguration($config);
+        $this['configurator']->validateConfiguration($config);
     }
 
     /**
@@ -729,14 +747,14 @@ class Application extends \Pimple
      */
     public function loadEasybookConfiguration()
     {
-        $bookFileConfig = $this->get('configurator')->loadBookFileConfiguration($this->get('publishing.dir.book'));
+        $bookFileConfig = $this['configurator']->loadBookFileConfiguration($this['publishing.dir.book']);
 
         if (!array_key_exists('easybook', $bookFileConfig)) {
             return;
         }
 
         foreach ($bookFileConfig['easybook']['parameters'] as $option => $value) {
-            $this->set($option, $value);
+            $this[$option] = $value;
         }
     }
 
@@ -755,13 +773,13 @@ class Application extends \Pimple
      */
     public function book($key, $newValue = null)
     {
-        $bookConfig = $this->get('publishing.book.config');
+        $bookConfig = $this['publishing.book.config'];
 
         if (null == $newValue) {
             return array_key_exists($key, $bookConfig['book']) ? $bookConfig['book'][$key] : null;
         } else {
             $bookConfig['book'][$key] = $newValue;
-            $this->set('publishing.book.config', $bookConfig);
+            $this['publishing.book.config'] = $bookConfig;
         }
     }
 
@@ -781,17 +799,17 @@ class Application extends \Pimple
     public function edition($key, $newValue = null)
     {
         if (null == $newValue) {
-            $publishingEdition = $this->get('publishing.edition');
+            $publishingEdition = $this['publishing.edition'];
             $editions = $this->book('editions');
 
             return array_key_exists($key, $editions[$publishingEdition] ?: array())
                    ? $editions[$publishingEdition][$key]
                    : null;
         } else {
-            $bookConfig = $this->get('publishing.book.config');
-            $publishingEdition = $this->get('publishing.edition');
+            $bookConfig = $this['publishing.book.config'];
+            $publishingEdition = $this['publishing.edition'];
             $bookConfig['book']['editions'][$publishingEdition][$key] = $newValue;
-            $this->set('publishing.book.config', $bookConfig);
+            $this['publishing.book.config'] = $bookConfig;
         }
     }
 }

@@ -29,7 +29,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->app->set('publishing.active_item.toc', array());
+        $this->app['publishing.active_item.toc'] = array();
 
         $this->span_gamut += array(
             'doPageBreaks' => 20

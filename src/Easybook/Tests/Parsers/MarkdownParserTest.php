@@ -28,10 +28,10 @@ class MarkdownParserTest extends \PHPUnit_Framework_TestCase
 
     public function testOriginalMarkdown()
     {
-        $this->app->set('parser.options', array('markdown_syntax' => 'original'));
+        $this->app['parser.options'] = array('markdown_syntax' => 'original');
         $this->parser = new MarkdownParser($this->app);
 
-        $docs = $this->app->get('finder')
+        $docs = $this->app['finder']
             ->files()
             ->name('*.md')
             ->depth(0)
@@ -43,10 +43,10 @@ class MarkdownParserTest extends \PHPUnit_Framework_TestCase
 
     public function testPHPMarkdown()
     {
-        $this->app->set('parser.options', array('markdown_syntax' => 'php-markdown-extra'));
+        $this->app['parser.options'] = array('markdown_syntax' => 'php-markdown-extra');
         $this->parser = new MarkdownParser($this->app);
 
-        $docs = $this->app->get('finder')
+        $docs = $this->app['finder']
             ->files()
             ->name('*.md')
             ->notName('Backslash escapes.md')
@@ -59,10 +59,10 @@ class MarkdownParserTest extends \PHPUnit_Framework_TestCase
 
     public function testPHPExtraMarkdown()
     {
-        $this->app->set('parser.options', array('markdown_syntax' => 'php-markdown-extra'));
+        $this->app['parser.options'] = array('markdown_syntax' => 'php-markdown-extra');
         $this->parser = new MarkdownParser($this->app);
 
-        $docs = $this->app->get('finder')
+        $docs = $this->app['finder']
             ->files()
             ->name('*.md')
             ->depth(0)
@@ -74,10 +74,10 @@ class MarkdownParserTest extends \PHPUnit_Framework_TestCase
 
     public function testEasybookMarkdown()
     {
-        $this->app->set('parser.options', array('markdown_syntax' => 'easybook'));
+        $this->app['parser.options'] = array('markdown_syntax' => 'easybook');
         $this->parser = new MarkdownParser($this->app);
 
-        $docs = $this->app->get('finder')
+        $docs = $this->app['finder']
             ->files()
             ->name('*.md')
             ->depth(0)

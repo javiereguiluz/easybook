@@ -69,7 +69,7 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
 
         $app = $command->getApp();
 
-        $this->assertContains($app->get('app.signature'), $command->asText(),
+        $this->assertContains($app['app.signature'], $command->asText(),
             'The command text description displays the application signature.'
         );
     }
@@ -93,8 +93,10 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
             'interactive' => true
         ));
 
+        $app = $command->getApp();
+
         $this->assertContains(
-            $command->getApp()->get('app.signature'),
+            $app['app.signature'],
             $tester->getDisplay(),
             'The interactive publisher displays the application signature'
         );

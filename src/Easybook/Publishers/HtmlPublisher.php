@@ -26,60 +26,60 @@ class HtmlPublisher extends BasePublisher
     {
         $parsedItems = array();
 
-        foreach ($this->app->get('publishing.items') as $item) {
-            $this->app->set('publishing.active_item', $item);
+        foreach ($this->app['publishing.items'] as $item) {
+            $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before parsing it
             $event = new ParseEvent($this->app);
             $this->app->dispatch(Events::PRE_PARSE, $event);
 
             // get again 'item' object because PRE_PARSE event can modify it
-            $item = $this->app->get('publishing.active_item');
+            $item = $this->app['publishing.active_item'];
 
-            $item['content'] = $this->app->get('parser')->transform($item['original']);
-            $item['toc']     = $this->app->get('publishing.active_item.toc');
+            $item['content'] = $this->app['parser']->transform($item['original']);
+            $item['toc']     = $this->app['publishing.active_item.toc'];
 
-            $this->app->set('publishing.active_item', $item);
+            $this->app['publishing.active_item'] = $item;
 
             $event = new ParseEvent($this->app);
             $this->app->dispatch(Events::POST_PARSE, $event);
 
             // get again 'item' object because POST_PARSE event can modify it
-            $parsedItems[] = $this->app->get('publishing.active_item');
+            $parsedItems[] = $this->app['publishing.active_item'];
         }
 
-        $this->app->set('publishing.items', $parsedItems);
+        $this->app['publishing.items'] = $parsedItems;
     }
 
     public function decorateContents()
     {
         $decoratedItems = array();
 
-        foreach ($this->app->get('publishing.items') as $item) {
-            $this->app->set('publishing.active_item', $item);
+        foreach ($this->app['publishing.items'] as $item) {
+            $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before decorating it
             $event = new BaseEvent($this->app);
             $this->app->dispatch(Events::PRE_DECORATE, $event);
 
             // get again 'item' object because PRE_DECORATE event can modify it
-            $item = $this->app->get('publishing.active_item');
+            $item = $this->app['publishing.active_item'];
 
             $item['content'] = $this->app->render(
                 $item['config']['element'].'.twig',
                 array('item' => $item)
             );
 
-            $this->app->set('publishing.active_item', $item);
+            $this->app['publishing.active_item'] = $item;
 
             $event = new BaseEvent($this->app);
             $this->app->dispatch(Events::POST_DECORATE, $event);
 
             // get again 'item' object because POST_DECORATE event can modify it
-            $decoratedItems[] = $this->app->get('publishing.active_item');
+            $decoratedItems[] = $this->app['publishing.active_item'];
         }
 
-        $this->app->set('publishing.items', $decoratedItems);
+        $this->app['publishing.items'] = $decoratedItems;
     }
 
     public function assembleBook()
@@ -88,8 +88,8 @@ class HtmlPublisher extends BasePublisher
         if ($this->app->edition('include_styles')) {
             $this->app->render(
                 '@theme/style.css.twig',
-                array('resources_dir' => $this->app->get('app.dir.resources').'/'),
-                $this->app->get('publishing.dir.output').'/css/easybook.css'
+                array('resources_dir' => $this->app['app.dir.resources'].'/'),
+                $this->app['publishing.dir.output'].'/css/easybook.css'
             );
         }
 
@@ -97,9 +97,9 @@ class HtmlPublisher extends BasePublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app->get('filesystem')->copy(
+            $this->app['filesystem']->copy(
                 $customCss,
-                $this->app->get('publishing.dir.output').'/css/styles.css',
+                $this->app['publishing.dir.output'].'/css/styles.css',
                 true
             );
         }
@@ -108,19 +108,19 @@ class HtmlPublisher extends BasePublisher
         $this->app->render(
             'book.twig',
             array(
-                'items'          => $this->app->get('publishing.items'),
+                'items'          => $this->app['publishing.items'],
                 'has_custom_css' => $hasCustomCss
             ),
             // TODO: the name of the book file (book.html) must be configurable
-            $this->app->get('publishing.dir.output').'/book.html'
+            $this->app['publishing.dir.output'].'/book.html'
         );
 
 
         // copy book images
-        if (file_exists($imagesDir = $this->app->get('publishing.dir.contents').'/images')) {
-            $this->app->get('filesystem')->mirror(
+        if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {
+            $this->app['filesystem']->mirror(
                 $imagesDir,
-                $this->app->get('publishing.dir.output').'/images'
+                $this->app['publishing.dir.output'].'/images'
             );
         }
     }

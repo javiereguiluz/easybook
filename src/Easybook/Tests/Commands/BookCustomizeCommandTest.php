@@ -69,7 +69,7 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
 
         $app = $command->getApp();
 
-        $this->assertContains($app->get('app.signature'), $command->asText(),
+        $this->assertContains($app['app.signature'], $command->asText(),
             'The command text description displays the application signature.'
         );
     }
@@ -93,8 +93,10 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
             'interactive' => true
         ));
 
+        $app = $command->getApp();
+
         $this->assertContains(
-            $command->getApp()->get('app.signature'),
+            $app['app.signature'],
             $tester->getDisplay(),
             'The interactive customizer displays the application signature'
         );
@@ -144,12 +146,14 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
             sprintf('The "%s" edition of the sample book has been customized', $edition)
         );
 
+        $app = $this->console->getApp();
+
         $skeletonCss = sprintf('%s/Customization/%s/style.css',
-            $this->console->getApp()->get('app.dir.skeletons'),
-            $this->console->getApp()->edition('format')
+            $app['app.dir.skeletons'],
+            $app->edition('format')
         );
         $generatedCss = sprintf('%s/%s/style.css',
-            $this->console->getApp()->get('publishing.dir.templates'), $edition
+            $app['publishing.dir.templates'], $edition
         );
 
         $this->assertFileEquals($skeletonCss, $generatedCss,

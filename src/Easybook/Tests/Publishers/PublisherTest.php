@@ -32,7 +32,7 @@ class PublisherTest extends TestCase
         $this->app = new Application();
 
         // setup temp dir for generated files
-        $this->tmpDir = $this->app->get('app.dir.cache').'/'.uniqid('phpunit_', true);
+        $this->tmpDir = $this->app['app.dir.cache'].'/'.uniqid('phpunit_', true);
         $this->filesystem = new Filesystem();
         $this->filesystem->mkdir($this->tmpDir);
 
@@ -51,7 +51,7 @@ class PublisherTest extends TestCase
         $console = new ConsoleApplication($this->app);
 
         // find the test books
-        $books = $this->app->get('finder')
+        $books = $this->app['finder']
             ->directories()
             ->name('book*')
             ->depth(0)
@@ -89,7 +89,7 @@ class PublisherTest extends TestCase
                 $console->find('publish')->run($input, new NullOutput());
 
                 // assert that generated files are exactly the same as expected
-                $generatedFiles = $this->app->get('finder')
+                $generatedFiles = $this->app['finder']
                     ->files()
                     ->notName('.gitignore')
                     ->in($this->tmpDir.'/'.$slug.'/Output/'.$editionName)
@@ -107,7 +107,7 @@ class PublisherTest extends TestCase
                                     $editionName.'/'.$file->getRelativePathname(), $expected);
                         
                         // assert that generated files are exactly the same as expected
-                        $genFiles = $this->app->get('finder')
+                        $genFiles = $this->app['finder']
                             ->files()
                             ->notName('.gitignore')
                             ->in($generated);
@@ -157,7 +157,7 @@ class PublisherTest extends TestCase
      */
     protected function checkForMissingFiles($dirExpected, $dirGenerated)
     {
-        $expectedFiles = $this->app->get('finder')
+        $expectedFiles = $this->app['finder']
             ->files()
             ->notName('.gitignore')
             ->in($dirExpected);

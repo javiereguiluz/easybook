@@ -58,7 +58,7 @@ class BaseCommand extends Command
             return;
         }
 
-        $files = $this->app->get('finder')->files()
+        $files = $this->app['finder']->files()
             ->name('*Plugin.php')
             ->in($dir)
         ;
@@ -73,7 +73,7 @@ class BaseCommand extends Command
 
             $r = new \ReflectionClass($namespace.'\\'.$className);
             if ($r->implementsInterface('Symfony\\Component\\EventDispatcher\\EventSubscriberInterface')) {
-                $this->app->get('dispatcher')->addSubscriber($r->newInstance());
+                $this->app['dispatcher']->addSubscriber($r->newInstance());
             }
         }
     }

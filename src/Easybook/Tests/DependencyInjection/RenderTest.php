@@ -30,15 +30,15 @@ class RenderTest extends TestCase
         $this->app = new Application();
         
         // setup temp dir for generated files
-        $this->templateDir = $this->app->get('app.dir.cache').'/'.uniqid('phpunit_', true);
+        $this->templateDir = $this->app['app.dir.cache'].'/'.uniqid('phpunit_', true);
         $this->filesystem = new Filesystem();
         $this->filesystem->mkdir($this->templateDir);
 
-        $this->app->set('twig.loader', new \Twig_Loader_Filesystem($this->templateDir));
+        $this->app['twig.loader'] = new \Twig_Loader_Filesystem($this->templateDir);
 
-        $this->app->set('publishing.book.config', array('book' => array(
+        $this->app['publishing.book.config'] = array('book' => array(
             'title' => 'Custom Test Book Title'
-        )));
+        ));
     }
 
     public function tearDown()

@@ -33,7 +33,7 @@ class ParseEventTest extends TestCase
         );
 
         $this->app = new Application();
-        $this->app->set('publishing.active_item', $item);
+        $this->app['publishing.active_item'] = $item;
 
         $this->event = new ParseEvent($this->app);
     }

@@ -22,8 +22,8 @@ class TimerPluginTest extends TestCase
     {
         $app = new Application();
 
-        $this->assertEquals(null, $app->get('app.timer.start'));
-        $this->assertEquals(null, $app->get('app.timer.finish'));
+        $this->assertEquals(null, $app['app.timer.start']);
+        $this->assertEquals(null, $app['app.timer.finish']);
     }
 
     public function testTimerPlugin()
@@ -38,17 +38,17 @@ class TimerPluginTest extends TestCase
         usleep($elapsedMicroseconds);
         $plugin->onFinish($event);
 
-        $this->assertNotEquals(null, $app->get('app.timer.start'));
-        $this->assertNotEquals(null, $app->get('app.timer.finish'));
+        $this->assertNotEquals(null, $app['app.timer.start']);
+        $this->assertNotEquals(null, $app['app.timer.finish']);
 
         $this->assertGreaterThan(
-            $app->get('app.timer.start'),
-            $app->get('app.timer.finish')
+            $app['app.timer.start'],
+            $app['app.timer.finish']
         );
 
         $this->assertGreaterThanOrEqual(
             $elapsedMicroseconds / 1000000,
-            $app->get('app.timer.finish') - $app->get('app.timer.start')
+            $app['app.timer.finish'] - $app['app.timer.start']
         );
     }
 }

@@ -43,8 +43,8 @@ class Epub2Publisher extends HtmlPublisher
     {
         $decoratedItems = array();
 
-        foreach ($this->app->get('publishing.items') as $item) {
-            $this->app->set('publishing.active_item', $item);
+        foreach ($this->app['publishing.items'] as $item) {
+            $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before decorating it
             $event = new BaseEvent($this->app);
@@ -56,10 +56,10 @@ class Epub2Publisher extends HtmlPublisher
             $this->app->dispatch(Events::POST_DECORATE, $event);
 
             // get again 'item' object because POST_DECORATE event can modify it
-            $decoratedItems[] = $this->app->get('publishing.active_item');
+            $decoratedItems[] = $this->app['publishing.active_item'];
         }
 
-        $this->app->set('publishing.items', $decoratedItems);
+        $this->app['publishing.items'] = $decoratedItems;
     }
 
     public function assembleBook()
@@ -79,15 +79,15 @@ class Epub2Publisher extends HtmlPublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app->get('filesystem')->copy(
+            $this->app['filesystem']->copy(
                 $customCss,
                 $bookTmpDir.'/book/OEBPS/css/styles.css',
                 true
             );
         }
 
-        $bookItems = $this->normalizePageNames($this->app->get('publishing.items'));
-        $this->app->set('publishing.items', $bookItems);
+        $bookItems = $this->normalizePageNames($this->app['publishing.items']);
+        $this->app['publishing.items'] = $bookItems;
 
         // generate one HTML page for every book item
         foreach ($bookItems as $item) {
@@ -146,14 +146,14 @@ class Epub2Publisher extends HtmlPublisher
         // compress book contents as ZIP file and rename to .epub
         // TODO: the name of the book file (book.epub) must be configurable
         $this->zipBookContents($bookTmpDir.'/book', $bookTmpDir.'/book.zip');
-        $this->app->get('filesystem')->copy(
+        $this->app['filesystem']->copy(
             $bookTmpDir.'/book.zip',
-            $this->app->get('publishing.dir.output').'/book.epub',
+            $this->app['publishing.dir.output'].'/book.epub',
             true
         );
 
         // remove temp directory used to build the book
-        $this->app->get('filesystem')->remove($bookTmpDir);
+        $this->app['filesystem']->remove($bookTmpDir);
     }
 
     /**
@@ -165,10 +165,10 @@ class Epub2Publisher extends HtmlPublisher
      */
     private function prepareBookTemporaryDirectory()
     {
-        $bookDir = $this->app->get('app.dir.cache').'/'
-                   .uniqid($this->app->get('publishing.book.slug'));
+        $bookDir = $this->app['app.dir.cache'].'/'
+                   .uniqid($this->app['publishing.book.slug']);
 
-        $this->app->get('filesystem')->mkdir(array(
+        $this->app['filesystem']->mkdir(array(
             $bookDir,
             $bookDir.'/book',
             $bookDir.'/book/META-INF',
@@ -201,15 +201,15 @@ class Epub2Publisher extends HtmlPublisher
             ));
         }
 
-        $imagesDir = $this->app->get('publishing.dir.contents').'/images';
+        $imagesDir = $this->app['publishing.dir.contents'].'/images';
         $imagesData = array();
 
         if (file_exists($imagesDir)) {
-            $images = $this->app->get('finder')->files()->in($imagesDir);
+            $images = $this->app['finder']->files()->in($imagesDir);
 
             $i = 1;
             foreach ($images as $image) {
-                $this->app->get('filesystem')->copy(
+                $this->app['filesystem']->copy(
                     $image->getPathName(),
                     $targetDir.'/'.$image->getFileName()
                 );
@@ -247,7 +247,7 @@ class Epub2Publisher extends HtmlPublisher
                 'mediaType' => image_type_to_mime_type($type)
             );
 
-            $this->app->get('filesystem')->copy($image, $targetDir.'/'.basename($image));
+            $this->app['filesystem']->copy($image, $targetDir.'/'.basename($image));
         }
 
         return $cover;
@@ -358,7 +358,7 @@ class Epub2Publisher extends HtmlPublisher
      */
     private function fixInternalLinks($chunksDir)
     {
-        $generatedChunks = $this->app->get('finder')->files()->name('*.html')->in($chunksDir);
+        $generatedChunks = $this->app['finder']->files()->name('*.html')->in($chunksDir);
 
         // maps the original internal links (e.g. #new-content-types)
         // with the correct absolute URL needed for a website

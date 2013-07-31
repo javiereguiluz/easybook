@@ -26,9 +26,9 @@ class TablePluginTest extends TestCase
         $fixturesDir = __DIR__.'/fixtures/tables/';
         $app = new Application();
 
-        $app->set('publishing.book.slug', 'test_book');
-        $app->set('publishing.edition', 'test_edition');
-        $app->set('publishing.book.config', array(
+        $app['publishing.book.slug'] = 'test_book';
+        $app['publishing.edition'] = 'test_edition';
+        $app['publishing.book.config'] = array(
             'book' => array(
                 'slug'     => 'test_book',
                 'language' => 'en',
@@ -39,7 +39,7 @@ class TablePluginTest extends TestCase
                     )
                 )
             )
-        ));
+        );
 
         $event  = new ParseEvent($app);
         $plugin = new TablePlugin();
@@ -57,8 +57,8 @@ class TablePluginTest extends TestCase
             $item['content']
         );
 
-        if (count($app->get('publishing.list.tables')) > 0) {
-            foreach ($app->get('publishing.list.tables') as $i => $table) {
+        if (count($app['publishing.list.tables']) > 0) {
+            foreach ($app['publishing.list.tables'] as $i => $table) {
                 $this->assertRegexp('/<table.*<\/table>/s', $table[$i]['item']['content']);
                 
                 if ($addLabels) {

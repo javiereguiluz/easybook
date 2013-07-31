@@ -34,7 +34,7 @@ class Epub2PublisherTest extends \PHPUnit_Framework_TestCase
             'book/OEBPS/fonts',
         );
 
-        $this->app->set('publishing.book.slug', uniqid('phpunit_'));
+        $this->app['publishing.book.slug'] = uniqid('phpunit_');
         $publisher = new Epub2Publisher($this->app);
 
         $method = new \ReflectionMethod('Easybook\Publishers\Epub2Publisher', 'prepareBookTemporaryDirectory');
@@ -73,8 +73,8 @@ class Epub2PublisherTest extends \PHPUnit_Framework_TestCase
             );
         }
 
-        $tmpDir = $this->app->get('app.dir.cache').'/'.uniqid('phpunit_');
-        $this->app->get('filesystem')->mkdir($tmpDir);
+        $tmpDir = $this->app['app.dir.cache'].'/'.uniqid('phpunit_');
+        $this->app['filesystem']->mkdir($tmpDir);
 
         $imageFilePath = $tmpDir.'/'.$fileName;
 
@@ -115,7 +115,7 @@ class Epub2PublisherTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($coverImage, $method->invoke($publisher, $tmpDir));
 
-        $this->app->get('filesystem')->remove($tmpDir);
+        $this->app['filesystem']->remove($tmpDir);
         imagedestroy($image);
     }
 

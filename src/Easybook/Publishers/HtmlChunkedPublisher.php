@@ -33,8 +33,8 @@ class HtmlChunkedPublisher extends HtmlPublisher
     {
         $decoratedItems = array();
 
-        foreach ($this->app->get('publishing.items') as $item) {
-            $this->app->set('publishing.active_item', $item);
+        foreach ($this->app['publishing.items'] as $item) {
+            $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before decorating it
             $event = new BaseEvent($this->app);
@@ -46,24 +46,24 @@ class HtmlChunkedPublisher extends HtmlPublisher
             $this->app->dispatch(Events::POST_DECORATE, $event);
 
             // get again 'item' object because POST_DECORATE event can modify it
-            $decoratedItems[] = $this->app->get('publishing.active_item');
+            $decoratedItems[] = $this->app['publishing.active_item'];
         }
 
-        $this->app->set('publishing.items', $decoratedItems);
+        $this->app['publishing.items'] = $decoratedItems;
     }
 
     public function assembleBook()
     {
         // TODO: the name of the chunked book directory (book/) must be configurable
-        $this->app->set('publishing.dir.output', $this->app->get('publishing.dir.output').'/book');
-        $this->app->get('filesystem')->mkdir($this->app->get('publishing.dir.output'));
+        $this->app['publishing.dir.output'] = $this->app['publishing.dir.output'].'/book';
+        $this->app['filesystem']->mkdir($this->app['publishing.dir.output']);
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
             $this->app->render(
                 '@theme/style.css.twig',
-                array('resources_dir' => $this->app->get('app.dir.resources').'/'),
-                $this->app->get('publishing.dir.output').'/css/easybook.css'
+                array('resources_dir' => $this->app['app.dir.resources'].'/'),
+                $this->app['publishing.dir.output'].'/css/easybook.css'
             );
         }
 
@@ -71,18 +71,18 @@ class HtmlChunkedPublisher extends HtmlPublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app->get('filesystem')->copy(
+            $this->app['filesystem']->copy(
                 $customCss,
-                $this->app->get('publishing.dir.output').'/css/styles.css',
+                $this->app['publishing.dir.output'].'/css/styles.css',
                 true
             );
         }
 
         // generate the chunks (HTML pages) of the published book
         $toc = $this->flattenToc();
-        $this->app->set('publishing.book.toc', $toc);
+        $this->app['publishing.book.toc'] = $toc;
 
-        foreach ($this->app->get('publishing.items') as $item) {
+        foreach ($this->app['publishing.items'] as $item) {
             $element = $item['config']['element'];
 
             if (in_array($element, $this->elementsGeneratingPages)) {
@@ -111,14 +111,14 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 'toc'            => $toc,
                 'has_custom_css' => $hasCustomCss
             ),
-            $this->app->get('publishing.dir.output').'/index.html'
+            $this->app['publishing.dir.output'].'/index.html'
         );
 
         // copy book images
-        if (file_exists($imagesDir = $this->app->get('publishing.dir.contents').'/images')) {
-            $this->app->get('filesystem')->mirror(
+        if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {
+            $this->app['filesystem']->mirror(
                 $imagesDir,
-                $this->app->get('publishing.dir.output').'/images'
+                $this->app['publishing.dir.output'].'/images'
             );
         }
     }
@@ -132,7 +132,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
     {
         $flattenedToc = array();
 
-        $bookItems = $this->normalizePageNames($this->app->get('publishing.items'));
+        $bookItems = $this->normalizePageNames($this->app['publishing.items']);
 
         // calculate the URL of each book chunk and generate the flattened TOC
         $items = array();
@@ -167,7 +167,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
             $items[] = $item;
         }
 
-        $this->app->set('publishing.items', $items);
+        $this->app['publishing.items'] = $items;
 
         return $flattenedToc;
     }
@@ -235,7 +235,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
      */
     private function generateFirstLevelChunks($item, $bookToc, $hasCustomCss)
     {
-        $chunkFilePath = $this->app->get('publishing.dir.output').'/'.$item['page_name'].'.html';
+        $chunkFilePath = $this->app['publishing.dir.output'].'/'.$item['page_name'].'.html';
         $bookToc = $this->filterBookToc($bookToc);
         $itemPosition = $this->findItemPosition($item, $bookToc);
 
@@ -275,19 +275,19 @@ class HtmlChunkedPublisher extends HtmlPublisher
         $chunks = $this->prepareItemChunks($item);
 
         // bookToc can be modified by the previous prepareItemChunks() method
-        $bookToc = $this->app->get('publishing.book.toc');
+        $bookToc = $this->app['publishing.book.toc'];
         $bookToc = $this->filterBookToc($bookToc, 2);
-        $this->app->set('publishing.book.toc', $bookToc);
+        $this->app['publishing.book.toc'] = $bookToc;
 
         foreach ($chunks as $i => $chunk) {
             $itemPosition = $this->findItemPosition($chunk, $bookToc, 'url');
 
             if (1 == $chunk['level']) {
-                $chunksDir = $this->app->get('publishing.dir.output').'/'.$item['page_name'];
-                $chunkFilePath = $this->app->get('publishing.dir.output').'/'.$item['page_name'].'.html';
+                $chunksDir = $this->app['publishing.dir.output'].'/'.$item['page_name'];
+                $chunkFilePath = $this->app['publishing.dir.output'].'/'.$item['page_name'].'.html';
             } elseif (2 == $chunk['level']) {
                 if (!file_exists($chunksDir)) {
-                    $this->app->get('filesystem')->mkdir($chunksDir);
+                    $this->app['filesystem']->mkdir($chunksDir);
                 }
 
                 $chunkFilePath = $chunksDir.'/'.$chunk['slug'].'.html';
@@ -401,7 +401,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
             $itemChunks[0]['content'] = $firstH2SectionHeading."\n".$firstH2SectionContent;
 
             // look for and unset this item from the global flatten TOC
-            $toc = $this->app->get('publishing.book.toc');
+            $toc = $this->app['publishing.book.toc'];
             foreach ($toc as $i => $entry) {
                 if ($itemChunks[1]['slug'] == $entry['slug']) {
                     unset($toc[$i]);
@@ -410,7 +410,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                     // removing the previous TOC item
                     $toc = array_values($toc);
 
-                    $this->app->set('publishing.book.toc', $toc);
+                    $this->app['publishing.book.toc'] = $toc;
 
                     break;
                 }
@@ -528,10 +528,10 @@ class HtmlChunkedPublisher extends HtmlPublisher
      */
     private function fixInternalLinks()
     {
-        $generatedChunks = $this->app->get('finder')
+        $generatedChunks = $this->app['finder']
             ->files()
             ->name('*.html')
-            ->in($this->app->get('publishing.dir.output'))
+            ->in($this->app['publishing.dir.output'])
         ;
 
         // maps the original internal links (e.g. #new-content-types)

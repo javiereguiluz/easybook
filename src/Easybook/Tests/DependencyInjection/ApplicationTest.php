@@ -96,11 +96,11 @@ class ApplicationTest extends TestCase
     public function testBookMethodShortcut()
     {
         $app = new Application();
-        $app->set('publishing.book.config', array(
+        $app['publishing.book.config'] = array(
             'book' => array(
                 'title' => 'The title of the book'
             )
-        ));
+        );
 
         $this->assertEquals('The title of the book', $app->book('title'));
 
@@ -115,11 +115,11 @@ class ApplicationTest extends TestCase
         $app = new Application();
 
         // needed to simulate the third-party library required to publish PDF books
-        $app->set('prince.path', __FILE__);
+        $app['prince.path'] = __FILE__;
 
-        $app->set('publishing.edition', 'my_edition');
+        $app['publishing.edition'] = 'my_edition';
 
-        $app->set('publishing.book.config', array(
+        $app['publishing.book.config'] = array(
             'book' => array(
                 'editions' => array(
                     'my_edition' => array(
@@ -127,7 +127,7 @@ class ApplicationTest extends TestCase
                     )
                 )
             )
-        ));
+        );
 
         $this->assertEquals('pdf', $app->edition('format'));
 
@@ -138,10 +138,10 @@ class ApplicationTest extends TestCase
     public function testDeprecatedPublishingIdProperty()
     {
         $app = new Application();
-        $app->set('publishing.edition.id', 'custom_edition_id');
+        $app['publishing.edition.id'] = 'custom_edition_id';
 
         try {
-            $id = $app->get('publishing.id');
+            $id = $app['publishing.id'];
         } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit_Framework_Error_Deprecated', $e);
             $this->assertContains('The "publishing.id" option is deprecated', $e->getMessage());
@@ -157,12 +157,12 @@ class ApplicationTest extends TestCase
 
         // needed to simulate the third-party libraries required
         // to publish PDF and MOBI books
-        $app->set('kindlegen.path', __FILE__);
-        $app->set('prince.path', __FILE__);
+        $app['kindlegen.path'] = __FILE__;
+        $app['prince.path']    = __FILE__;
 
-        $app->set('publishing.edition', 'my_edition');
+        $app['publishing.edition'] = 'my_edition';
 
-        $app->set('publishing.book.config', array(
+        $app['publishing.book.config'] = array(
             'book' => array(
                 'editions' => array(
                     'my_edition' => array(
@@ -170,9 +170,9 @@ class ApplicationTest extends TestCase
                     )
                 )
             )
-        ));
+        );
 
-        $this->assertInstanceOf($publisherClassName, $app->get('publisher'));
+        $this->assertInstanceOf($publisherClassName, $app['publisher']);
     }
 
     public function getPublishers()
@@ -190,9 +190,9 @@ class ApplicationTest extends TestCase
     public function testUnsupportedPublisher()
     {
         $app = new Application();
-        $app->set('publishing.edition', 'my_edition');
+        $app['publishing.edition'] = 'my_edition';
 
-        $app->set('publishing.book.config', array(
+        $app['publishing.book.config'] = array(
             'book' => array(
                 'editions' => array(
                     'my_edition' => array(
@@ -200,10 +200,10 @@ class ApplicationTest extends TestCase
                     )
                 )
             )
-        ));
+        );
 
         try {
-            $publisher = $app->get('publisher');
+            $publisher = $app['publisher'];
         } catch (\RuntimeException $e) {
             $this->assertContains('Unknown "this_format_does_not_exist" format', $e->getMessage());
         }
@@ -212,15 +212,15 @@ class ApplicationTest extends TestCase
     public function testUnsupportedContentFormat()
     {
         $app = new Application();
-        $app->set('publishing.active_item', array(
+        $app['publishing.active_item'] = array(
             'config' => array(
                 'format'  => 'this_format_does_not_exist',
                 'content' => 'test_chapter'
             )
-        ));
+        );
 
         try {
-            $parser = $app->get('parser');
+            $parser = $app['parser'];
         } catch (\RuntimeException $e) {
             $this->assertContains('(easybook only supports Markdown)', $e->getMessage());
         }
@@ -230,8 +230,8 @@ class ApplicationTest extends TestCase
     {
         $app = new Application();
 
-        $files = $app->get('finder')->files()->name('titles.*.yml')
-                                    ->in($app->get('app.dir.translations'));
+        $files = $app['finder']->files()->name('titles.*.yml')
+                               ->in($app['app.dir.translations']);
 
         foreach ($files as $file) {
             // reset the application for each language because titles are cached
@@ -239,7 +239,7 @@ class ApplicationTest extends TestCase
 
             $locale = substr($file->getRelativePathname(), -6, 2);
             $bookConfig = array('book' => array('language' => $locale));
-            $app->set('publishing.book.config', $bookConfig);
+            $app['publishing.book.config'] = $bookConfig;
 
             $titles = Yaml::parse($file->getPathname());
             foreach ($titles['title'] as $key => $expectedValue) {
@@ -252,8 +252,8 @@ class ApplicationTest extends TestCase
     {
         $app = new Application();
 
-        $files = $app->get('finder')->files()->name('labels.*.yml')
-                                    ->in($app->get('app.dir.translations'));
+        $files = $app['finder']->files()->name('labels.*.yml')
+                               ->in($app['app.dir.translations']);
 
         $labelVariables = array(
             'item' => array(
@@ -272,7 +272,7 @@ class ApplicationTest extends TestCase
 
             $locale = substr($file->getRelativePathname(), -6, 2);
             $bookConfig = array('book' => array('language' => $locale));
-            $app->set('publishing.book.config', $bookConfig);
+            $app['publishing.book.config'] = $bookConfig;
 
             $labels = Yaml::parse($file->getPathname());
             foreach ($labels['label'] as $key => $value) {
@@ -297,7 +297,7 @@ class ApplicationTest extends TestCase
     {
         // get the ID of a ISBN-less book
         $app = new Application();
-        $publishingId = $app->get('publishing.edition.id');
+        $publishingId = $app['publishing.edition.id'];
 
         $this->assertEquals('URN', $publishingId['scheme']);
         $this->assertEquals(36, strlen($publishingId['value']));
@@ -310,7 +310,7 @@ class ApplicationTest extends TestCase
             ->with($this->equalTo('isbn'))
             ->will($this->returnValue('9782918390060'));
 
-        $publishingId = $app->get('publishing.edition.id');
+        $publishingId = $app['publishing.edition.id'];
 
         $this->assertEquals('isbn', $publishingId['scheme']);
         $this->assertEquals('9782918390060', $publishingId['value']);

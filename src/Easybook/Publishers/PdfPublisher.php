@@ -40,84 +40,84 @@ class PdfPublisher extends BasePublisher
     {
         $parsedItems = array();
 
-        foreach ($this->app->get('publishing.items') as $item) {
-            $this->app->set('publishing.active_item', $item);
+        foreach ($this->app['publishing.items'] as $item) {
+            $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before parsing it
             $event = new ParseEvent($this->app);
             $this->app->dispatch(Events::PRE_PARSE, $event);
 
             // get again 'item' object because PRE_PARSE event can modify it
-            $item = $this->app->get('publishing.active_item');
+            $item = $this->app['publishing.active_item'];
 
-            $item['content'] = $this->app->get('parser')->transform($item['original']);
-            $item['toc']     = $this->app->get('publishing.active_item.toc');
+            $item['content'] = $this->app['parser']->transform($item['original']);
+            $item['toc']     = $this->app['publishing.active_item.toc'];
 
-            $this->app->set('publishing.active_item', $item);
+            $this->app['publishing.active_item'] = $item;
 
             $event = new ParseEvent($this->app);
             $this->app->dispatch(Events::POST_PARSE, $event);
 
             // get again 'item' object because POST_PARSE event can modify it
-            $parsedItems[] = $this->app->get('publishing.active_item');
+            $parsedItems[] = $this->app['publishing.active_item'];
         }
 
-        $this->app->set('publishing.items', $parsedItems);
+        $this->app['publishing.items'] = $parsedItems;
     }
 
     public function decorateContents()
     {
         $decoratedItems = array();
 
-        foreach ($this->app->get('publishing.items') as $item) {
-            $this->app->set('publishing.active_item', $item);
+        foreach ($this->app['publishing.items'] as $item) {
+            $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before decorating it
             $event = new BaseEvent($this->app);
             $this->app->dispatch(Events::PRE_DECORATE, $event);
 
             // get again 'item' object because PRE_DECORATE event can modify it
-            $item = $this->app->get('publishing.active_item');
+            $item = $this->app['publishing.active_item'];
             $item['content'] = $this->app->render(
                 $item['config']['element'].'.twig',
                 array('item' => $item)
             );
 
-            $this->app->set('publishing.active_item', $item);
+            $this->app['publishing.active_item'] = $item;
 
             $event = new BaseEvent($this->app);
             $this->app->dispatch(Events::POST_DECORATE, $event);
 
             // get again 'item' object because POST_DECORATE event can modify it
-            $decoratedItems[] = $this->app->get('publishing.active_item');
+            $decoratedItems[] = $this->app['publishing.active_item'];
         }
 
-        $this->app->set('publishing.items', $decoratedItems);
+        $this->app['publishing.items'] = $decoratedItems;
     }
 
     public function assembleBook()
     {
-        $tmpDir = $this->app->get('app.dir.cache').'/'.uniqid('easybook_pdf_');
-        $this->app->get('filesystem')->mkdir($tmpDir);
+        $tmpDir = $this->app['app.dir.cache'].'/'.uniqid('easybook_pdf_');
+        $this->app['filesystem']->mkdir($tmpDir);
 
         // implode all the contents to create the whole book
         $htmlBookFilePath = $tmpDir.'/book.html';
         $this->app->render(
             'book.twig',
-            array('items' => $this->app->get('publishing.items')),
+            array('items' => $this->app['publishing.items']),
             $htmlBookFilePath
         );
 
         // use PrinceXML to transform the HTML book into a PDF book
-        $prince = $this->app->get('prince');
-        $prince->setBaseURL($this->app->get('publishing.dir.contents').'/images');
+        $prince = $this->app['prince'];
+        $prince->setBaseURL($this->app['publishing.dir.contents'].'/images');
 
         // Prepare and add stylesheets before PDF conversion
         if ($this->app->edition('include_styles')) {
             $defaultStyles = $tmpDir.'/default_styles.css';
             $this->app->render(
                 '@theme/style.css.twig',
-                array('resources_dir' => $this->app->get('app.dir.resources').'/'),
+                array('resources_dir' => $this->app['app.dir.resources'].'/'),
                 $defaultStyles
             );
 
@@ -132,18 +132,18 @@ class PdfPublisher extends BasePublisher
 
         // TODO: the name of the book file (book.pdf) must be configurable
         $errorMessages = array();
-        $prince->convert_file_to_file($htmlBookFilePath, $this->app->get('publishing.dir.output').'/book.pdf', $errorMessages);
+        $prince->convert_file_to_file($htmlBookFilePath, $this->app['publishing.dir.output'].'/book.pdf', $errorMessages);
 
         // display PDF conversion errors
         if (count($errorMessages) > 0) {
-            $this->app->get('console.output')->writeln("\n PrinceXML errors and warnings");
-            $this->app->get('console.output')->writeln(" -----------------------------\n");
+            $this->app['console.output']->writeln("\n PrinceXML errors and warnings");
+            $this->app['console.output']->writeln(" -----------------------------\n");
             foreach ($errorMessages as $message) {
-                $this->app->get('console.output')->writeln(
+                $this->app['console.output']->writeln(
                     '   ['.strtoupper($message[0]).'] '.ucfirst($message[2]).' ('.$message[1].')'
                 );
             }
-            $this->app->get('console.output')->writeln("\n");
+            $this->app['console.output']->writeln("\n");
         }
     }
 
@@ -154,7 +154,7 @@ class PdfPublisher extends BasePublisher
      */
     private function findPrinceXMLPath()
     {
-        foreach ($this->app->get('prince.default_paths') as $path) {
+        foreach ($this->app['prince.default_paths'] as $path) {
             if (file_exists($path)) {
                 return $path;
             }
@@ -162,7 +162,7 @@ class PdfPublisher extends BasePublisher
 
         // the executable couldn't be found in the common
         // installation directories. Ask the user for the path
-        $isInteractive = null != $this->app->get('console.input') && $this->app->get('console.input')->isInteractive();
+        $isInteractive = null != $this->app['console.input'] && $this->app['console.input']->isInteractive();
         if (!$isInteractive) {
             $sampleYamlConfiguration = <<<YAML
   easybook:
@@ -191,21 +191,21 @@ YAML;
      */
     private function askForPrinceXMLPath()
     {
-        $this->app->get('console.output')->write(sprintf(
+        $this->app['console.output']->write(sprintf(
                 " In order to generate PDF files, PrinceXML library must be installed. \n\n"
                     ." We couldn't find PrinceXML executable in any of the following directories: \n"
                     ."   -> %s \n\n"
                     ." If you haven't installed it yet, you can download a fully-functional demo at: \n"
                     ." %s \n\n"
                     ." If you have installed in a custom directory, please type its full absolute path:\n > ",
-                implode($this->app->get('prince.default_paths'), "\n   -> "),
+                implode($this->app['prince.default_paths'], "\n   -> "),
                 'http://www.princexml.com/download'
             ));
 
         $userGivenPath = trim(fgets(STDIN));
 
         // output a newline for aesthetic reasons
-        $this->app->get('console.output')->write("\n");
+        $this->app['console.output']->write("\n");
 
         return $userGivenPath;
     }

@@ -81,7 +81,7 @@ class Validator
         $attempts = 6;
         $bookDir  = $baseDir.'/'.$slug;
 
-        $isInteractive = $this->app->get('console.input')->isInteractive();
+        $isInteractive = $this->app['console.input']->isInteractive();
         if (!$isInteractive && !file_exists($bookDir)) {
             throw new \RuntimeException(sprintf(
                 "ERROR: The directory of the book cannot be found.\n"
@@ -102,14 +102,14 @@ class Validator
                 ));
             }
 
-            $this->app->get('console.output')->writeln(array(
+            $this->app['console.output']->writeln(array(
                 "",
                 " <bg=red;fg=white> ERROR </> The given <info>$slug</info> slug doesn't match any book in",
                 " <comment>".realpath($baseDir)."/</comment> directory"
             ));
 
-            $slug = $this->app->get('console.dialog')->ask(
-                $this->app->get('console.output'),
+            $slug = $this->app['console.dialog']->ask(
+                $this->app['console.output'],
                 array(
                     "\n Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n"
                     ." > "
@@ -142,7 +142,7 @@ class Validator
     public function validatePublishingEdition($edition)
     {
         $attemps = 6;
-        $bookDir = $this->app->get('publishing.dir.book');
+        $bookDir = $this->app['publishing.dir.book'];
 
         // if book defines no edition, raise an exception
         if (count($this->app->book('editions') ?: array()) == 0) {
@@ -153,11 +153,11 @@ class Validator
                 ." 'editions' option in the following configuration file:\n"
                 ."\n"
                 ." '%s'",
-                realpath($this->app->get('publishing.dir.book').'/config.yml')
+                realpath($this->app['publishing.dir.book'].'/config.yml')
             ));
         }
 
-        $isInteractive = $this->app->get('console.input')->isInteractive();
+        $isInteractive = $this->app['console.input']->isInteractive();
         if (!$isInteractive && !array_key_exists($edition, $this->app->book('editions'))) {
             throw new \RuntimeException(sprintf(
                 "ERROR: The '%s' edition isn't defined for\n"
@@ -177,7 +177,7 @@ class Validator
                 ));
             }
 
-            $this->app->get('console.output')->writeln(array(
+            $this->app['console.output']->writeln(array(
                 "",
                 " <bg=red;fg=white> ERROR </> The <info>$edition</info> edition isn't defined for "
                 ."<comment>".$this->app->book('title')."</comment> book",
@@ -186,8 +186,8 @@ class Validator
                 " defines a <info>$edition</info> edition under the <info>editions</info> option."
             ));
 
-            $edition = $this->app->get('console.dialog')->ask(
-                $this->app->get('console.output'),
+            $edition = $this->app['console.dialog']->ask(
+                $this->app['console.output'],
                 array(
                     "\n Please, type the name of the <info>edition</info> to be published:\n"
                     ." > "
