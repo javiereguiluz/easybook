@@ -798,16 +798,14 @@ class Application extends \Pimple
      */
     public function edition($key, $newValue = null)
     {
-        if (null == $newValue) {
-            $publishingEdition = $this['publishing.edition'];
-            $editions = $this->book('editions');
+        $bookConfig = $this['publishing.book.config'];
+        $publishingEdition = $this['publishing.edition'];
 
-            return array_key_exists($key, $editions[$publishingEdition] ?: array())
-                   ? $editions[$publishingEdition][$key]
-                   : null;
+        if (null == $newValue) {
+            return array_key_exists($key, $bookConfig['book']['editions'][$publishingEdition])
+                ? $bookConfig['book']['editions'][$publishingEdition][$key]
+                : null;
         } else {
-            $bookConfig = $this['publishing.book.config'];
-            $publishingEdition = $this['publishing.edition'];
             $bookConfig['book']['editions'][$publishingEdition][$key] = $newValue;
             $this['publishing.book.config'] = $bookConfig;
         }

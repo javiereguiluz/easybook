@@ -234,12 +234,17 @@ class ApplicationTest extends TestCase
                                ->in($app['app.dir.translations']);
 
         foreach ($files as $file) {
+            $locale = substr($file->getRelativePathname(), -6, 2);
+
             // reset the application for each language because titles are cached
             $app = new Application();
-
-            $locale = substr($file->getRelativePathname(), -6, 2);
-            $bookConfig = array('book' => array('language' => $locale));
-            $app['publishing.book.config'] = $bookConfig;
+            $app['publishing.edition'] = 'edition1';
+            $app['publishing.book.config'] = array('book' => array(
+                'language' => $locale,
+                'editions' => array(
+                    'edition1' => array(),
+                ),
+            ));
 
             $titles = Yaml::parse($file->getPathname());
             foreach ($titles['title'] as $key => $expectedValue) {
@@ -267,12 +272,17 @@ class ApplicationTest extends TestCase
         );
 
         foreach ($files as $file) {
+            $locale = substr($file->getRelativePathname(), -6, 2);
+
             // reset the application for each language because labels are cached
             $app = new Application();
-
-            $locale = substr($file->getRelativePathname(), -6, 2);
-            $bookConfig = array('book' => array('language' => $locale));
-            $app['publishing.book.config'] = $bookConfig;
+            $app['publishing.edition'] = 'edition1';
+            $app['publishing.book.config'] = array('book' => array(
+                'language' => $locale,
+                'editions' => array(
+                    'edition1' => array(),
+                ),
+            ));
 
             $labels = Yaml::parse($file->getPathname());
             foreach ($labels['label'] as $key => $value) {
@@ -297,6 +307,13 @@ class ApplicationTest extends TestCase
     {
         // get the ID of a ISBN-less book
         $app = new Application();
+        $app['publishing.edition'] = 'edition1';
+        $app['publishing.book.config'] = array('book' => array(
+            'editions' => array(
+                'edition1' => array(),
+            ),
+        ));
+
         $publishingId = $app['publishing.edition.id'];
 
         $this->assertEquals('URN', $publishingId['scheme']);
