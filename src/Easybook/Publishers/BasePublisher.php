@@ -12,6 +12,8 @@
 namespace Easybook\Publishers;
 
 use Easybook\DependencyInjection\Application;
+use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\ParseEvent;
 
 class BasePublisher implements PublisherInterface
 {
@@ -27,6 +29,9 @@ class BasePublisher implements PublisherInterface
         return true;
     }
 
+    /**
+     * It controls the book publishing workflow for this particular publisher.
+     */
     public function publishBook()
     {
         $this->loadContents();
@@ -34,21 +39,6 @@ class BasePublisher implements PublisherInterface
         $this->prepareOutputDir();
         $this->decorateContents();
         $this->assembleBook();
-    }
-
-    /**
-     * It creates the directory where the final book contents will be copied.
-     */
-    protected function prepareOutputDir()
-    {
-        $bookOutputDir = $this->app['publishing.dir.output']
-            ?: $this->app['publishing.dir.book'].'/Output/'.$this->app['publishing.edition'];
-
-        if (!file_exists($bookOutputDir)) {
-            $this->app['filesystem']->mkdir($bookOutputDir);
-        }
-
-        $this->app['publishing.dir.output'] = $bookOutputDir;
     }
 
     /**
@@ -118,6 +108,56 @@ class BasePublisher implements PublisherInterface
 
             $this->app->append('publishing.items', $item);
         }
+    }
+
+    /**
+     * It parses the original (Markdown) book contents and transforms
+     * them into the output (HTML) format. It also notifies several
+     * events to allow plugins modify the content before and/or after
+     * the transformation.
+     */
+    public function parseContents()
+    {
+        $parsedItems = array();
+
+        foreach ($this->app['publishing.items'] as $item) {
+            $this->app['publishing.active_item'] = $item;
+
+            // filter the original item content before parsing it
+            $event = new ParseEvent($this->app);
+            $this->app->dispatch(Events::PRE_PARSE, $event);
+
+            // get again 'item' object because PRE_PARSE event can modify it
+            $item = $this->app['publishing.active_item'];
+
+            $item['content'] = $this->app['parser']->transform($item['original']);
+            $item['toc']     = $this->app['publishing.active_item.toc'];
+
+            $this->app['publishing.active_item'] = $item;
+
+            $event = new ParseEvent($this->app);
+            $this->app->dispatch(Events::POST_PARSE, $event);
+
+            // get again 'item' object because POST_PARSE event can modify it
+            $parsedItems[] = $this->app['publishing.active_item'];
+        }
+
+        $this->app['publishing.items'] = $parsedItems;
+    }
+
+    /**
+     * It creates the directory where the final book contents will be copied.
+     */
+    protected function prepareOutputDir()
+    {
+        $bookOutputDir = $this->app['publishing.dir.output']
+            ?: $this->app['publishing.dir.book'].'/Output/'.$this->app['publishing.edition'];
+
+        if (!file_exists($bookOutputDir)) {
+            $this->app['filesystem']->mkdir($bookOutputDir);
+        }
+
+        $this->app['publishing.dir.output'] = $bookOutputDir;
     }
 
     /**

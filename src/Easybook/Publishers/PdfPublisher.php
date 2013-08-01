@@ -13,7 +13,6 @@ namespace Easybook\Publishers;
 
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
-use Easybook\Events\ParseEvent;
 
 /**
  * It publishes the book as a PDF file. All the internal links are transformed
@@ -34,35 +33,6 @@ class PdfPublisher extends BasePublisher
         $this->app['prince.path'] = $princeXMLPath;
 
         return null != $princeXMLPath && file_exists($princeXMLPath);
-    }
-
-    public function parseContents()
-    {
-        $parsedItems = array();
-
-        foreach ($this->app['publishing.items'] as $item) {
-            $this->app['publishing.active_item'] = $item;
-
-            // filter the original item content before parsing it
-            $event = new ParseEvent($this->app);
-            $this->app->dispatch(Events::PRE_PARSE, $event);
-
-            // get again 'item' object because PRE_PARSE event can modify it
-            $item = $this->app['publishing.active_item'];
-
-            $item['content'] = $this->app['parser']->transform($item['original']);
-            $item['toc']     = $this->app['publishing.active_item.toc'];
-
-            $this->app['publishing.active_item'] = $item;
-
-            $event = new ParseEvent($this->app);
-            $this->app->dispatch(Events::POST_PARSE, $event);
-
-            // get again 'item' object because POST_PARSE event can modify it
-            $parsedItems[] = $this->app['publishing.active_item'];
-        }
-
-        $this->app['publishing.items'] = $parsedItems;
     }
 
     public function decorateContents()
