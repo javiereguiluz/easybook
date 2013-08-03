@@ -17,8 +17,8 @@
     ],
 
     "require": {
-        "dflydev/markdown":         "dev-master",
-        "easybook/geshi":           "*",
+        "dflydev/markdown":         "1.0.x-dev",
+        "easybook/geshi":           "~1.0.8",
         "pimple/pimple":            "1.*",
         "symfony/console":          "~2.3",
         "symfony/event-dispatcher": "~2.3",
