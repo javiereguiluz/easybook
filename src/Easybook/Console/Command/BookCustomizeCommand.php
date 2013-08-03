@@ -66,42 +66,48 @@ class BookCustomizeCommand extends BaseCommand
 
         // all checks passed, the book can now be customized
         $customizationDir = $this->app['publishing.dir.templates'].'/'.$edition;
-        if (!file_exists($customizationDir)) {
-            $this->app['filesystem']->mkdir($customizationDir);
-        }
+        $this->prepareCustomizationDir($customizationDir);
 
-        $customizationCss = $customizationDir.'/style.css';
-        $customizationSkeleton = sprintf('%s/Customization/%s/style.css',
-            $this->app['app.dir.skeletons'], $this->app->edition('format')
-        );
-
-        if (!file_exists($customizationCss)) {
-            $this->app['filesystem']->copy($customizationSkeleton, $customizationCss);
-        } else {
-            throw new \RuntimeException(sprintf(
-                "ERROR: The '%s' edition already contains a custom CSS stylesheet.\n"
-                ." You can find it at the following file:\n\n"
-                ." %s",
-                $edition, $customizationCss
-            ));
-        }
+        $customizationCssPath = $customizationDir.'/style.css';
+        $this->prepareCustomizationCssFile($customizationCssPath);
 
         $output->writeln(array(
-            ' <bg=green;fg=black> OK </> You can now customize the book design with the following stylesheet:',
-            '',
-            ' <info>'.$customizationCss.'</info>',
-            '',
-            '',
+            " <bg=green;fg=black> OK </> You can now customize the book design with the following stylesheet:\n",
+            " <info>$customizationCssPath</info> \n\n",
             sprintf(
                 " <bg=green;fg=black> TIP </> If you want to customize every edition of <info>'%s'</info> format,\n"
                 ." rename:\n     %s/<info>%s</info>\n"
-                ." to:\n    %s/<info>%s</info>",
+                ." to:\n    %s/<info>%s</info>\n",
                 $this->app->edition('format'),
                 $this->app['publishing.dir.templates'], $edition,
                 $this->app['publishing.dir.templates'], $this->app->edition('format')
             ),
-            ''
         ));
+    }
+
+    private function prepareCustomizationDir($dir)
+    {
+        if (!file_exists($dir)) {
+            $this->app['filesystem']->mkdir($dir);
+        }
+    }
+
+    private function prepareCustomizationCssFile($file)
+    {
+        $customizationSkeleton = sprintf('%s/Customization/%s/style.css',
+            $this->app['app.dir.skeletons'], $this->app->edition('format')
+        );
+
+        if (!file_exists($file)) {
+            $this->app['filesystem']->copy($customizationSkeleton, $file);
+        } else {
+            throw new \RuntimeException(sprintf(
+                "ERROR: The '%s' edition already contains a custom CSS stylesheet.\n"
+                    ." You can find it at the following file:\n\n"
+                    ." %s",
+                $this->app['publishing.edition'], $file
+            ));
+        }
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)
