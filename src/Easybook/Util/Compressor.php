@@ -55,16 +55,42 @@ class Compressor
             unlink($this->zipFile);
         }
 
-        // add book script
-        $this->addFile(new \SplFileInfo($this->rootDir.'/book'));
+        // add package files
+        $this->addBookScript();
+        $this->addAutoloaders();
+        $this->addResources();
+        $this->addSampleBooks();
+        $this->addCommandHelp();
+        $this->addCoreClasses();
+        $this->addVendors();
+        $this->addLicenseAndReadme();
 
-        // add autoloaders
+        // compress all files into a single ZIP file
+        Toolkit::zip($this->packageDir, $this->zipFile);
+
+        // delete temp directory
+        $this->filesystem->remove($this->packageDir);
+
+        echo sprintf("\n %d files added\n\n %s (%.2f MB) package built successfully\n\n",
+            $this->fileCount, $this->zipFile, filesize($this->zipFile) / (1024*1024)
+        );
+    }
+
+    private function addBookScript()
+    {
+        $this->addFile(new \SplFileInfo($this->rootDir.'/book'));
+    }
+
+    private function addAutoloaders()
+    {
         $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/autoload.php'));
         $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/composer/ClassLoader.php'));
         $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/composer/autoload_classmap.php'));
         $this->addFile(new \SplFileInfo($this->rootDir.'/vendor/composer/autoload_namespaces.php'));
+    }
 
-        // add resources
+    private function addResources()
+    {
         $finder = new Finder();
         $finder->files()
             ->ignoreVCS(true)
@@ -75,8 +101,10 @@ class Compressor
         foreach ($finder as $file) {
             $this->addFile($file);
         }
+    }
 
-        // add sample books
+    private function addSampleBooks()
+    {
         $finder = new Finder();
         $finder->files()
             ->ignoreVCS(true)
@@ -92,12 +120,20 @@ class Compressor
         foreach ($finder as $file) {
             $this->addFile($file);
         }
+    }
 
-        // add command help files
-        $this->addFile(new \SplFileInfo($this->rootDir.'/src/Easybook/Console/Command/Resources/BookNewCommandHelp.txt'));
-        $this->addFile(new \SplFileInfo($this->rootDir.'/src/Easybook/Console/Command/Resources/BookPublishCommandHelp.txt'));
+    private function addCommandHelp()
+    {
+        $this->addFile(new \SplFileInfo(
+            $this->rootDir.'/src/Easybook/Console/Command/Resources/BookNewCommandHelp.txt'
+        ));
+        $this->addFile(new \SplFileInfo(
+            $this->rootDir.'/src/Easybook/Console/Command/Resources/BookPublishCommandHelp.txt'
+        ));
+    }
 
-        // add core classes
+    private function addCoreClasses()
+    {
         $finder = new Finder();
         $finder->files()
             ->ignoreVCS(true)
@@ -111,8 +147,10 @@ class Compressor
         foreach ($finder as $file) {
             $this->addFile($file);
         }
+    }
 
-        // add vendors
+    private function addVendors()
+    {
         $finder = new Finder();
         $finder->files()
             ->ignoreVCS(true)
@@ -139,20 +177,12 @@ class Compressor
         foreach ($finder as $file) {
             $this->addFile($file);
         }
+    }
 
-        // add license and Readme
+    private function addLicenseAndReadme()
+    {
         $this->addFile(new \SplFileInfo($this->rootDir.'/LICENSE.md'));
         $this->addFile(new \SplFileInfo($this->rootDir.'/README.md'));
-
-        // compress all files into a single ZIP file
-        Toolkit::zip($this->packageDir, $this->zipFile);
-
-        // delete temp directory
-        $this->filesystem->remove($this->packageDir);
-
-        echo sprintf("\n %d files added\n\n %s (%.2f MB) package built successfully\n\n",
-            $this->fileCount, $this->zipFile, filesize($this->zipFile) / (1024*1024)
-        );
     }
 
     /**
