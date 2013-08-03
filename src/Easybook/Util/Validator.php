@@ -141,10 +141,7 @@ class Validator
      */
     public function validatePublishingEdition($edition)
     {
-        $attemps = 6;
-        $bookDir = $this->app['publishing.dir.book'];
-
-        // if book defines no edition, raise an exception
+        // if the book defines no edition, raise an exception
         if (count($this->app->book('editions') ?: array()) == 0) {
             throw new \RuntimeException(sprintf(
                 " ERROR: Book hasn't defined any edition.\n"
@@ -158,17 +155,40 @@ class Validator
         }
 
         $isInteractive = $this->app['console.input']->isInteractive();
-        if (!$isInteractive && !array_key_exists($edition, $this->app->book('editions'))) {
-            throw new \RuntimeException(sprintf(
-                "ERROR: The '%s' edition isn't defined for\n"
-                ."'%s' book.",
-                $edition, $this->app->book('title')
-            ));
+
+        if (!array_key_exists($edition, $this->app->book('editions'))) {
+            if ($isInteractive) {
+                $edition = $this->askForPublishingEdition();
+            } else {
+                throw new \RuntimeException(sprintf(
+                    "ERROR: The '%s' edition isn't defined for\n"
+                        ."'%s' book.",
+                    $edition, $this->app->book('title')
+                ));
+            }
         }
 
+        return $edition;
+    }
+
+    /**
+     * Asks the user for a valid edition to be published. If the given edition
+     * names are invalid, this method ask again several times before throwing
+     * an exception.
+     *
+     * @return string  The name of the edition to be published
+     *
+     * @throws \RuntimeException If there are too many failed attempts
+     */
+    private function askForPublishingEdition()
+    {
+        $attempts = 6;
+        $bookDir  = $this->app['publishing.dir.book'];
+        $edition  = null;
+
         // check that the book has defined the given edition or ask for another edition
-        while (!array_key_exists($edition, $this->app->book('editions')) && $attemps--) {
-            if (!$attemps) {
+        while (!array_key_exists($edition, $this->app->book('editions')) && $attempts--) {
+            if (!$attempts) {
                 throw new \RuntimeException(sprintf(
                     " ERROR: Too many failed attempts. Check that your book has a\n"
                     ." '%s' edition defined in the following configuration file:\n"
