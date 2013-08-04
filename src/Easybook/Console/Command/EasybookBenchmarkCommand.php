@@ -69,72 +69,104 @@ class EasybookBenchmarkCommand extends BaseCommand
      * @param int   $iterations The number of times that each edition is published
      *
      * @return array The results of the benchmark
-     *
-     * @throws RuntimeException If some edition cannot be published
      */
     private function benchmark(array $editions, $iterations)
     {
         $results = array();
 
-        // prepare the progress bar of the benchmark
-        $totalIterations = count($editions) * $iterations;
-        $step = floor(100 / $totalIterations);
-
+        $step = floor(100 / count($editions));
         $progressBar = $this->getHelperSet()->get('progress');
 
         $this->output->write("\n");
+        $this->output->write(" Benchmarking <info>easybook</info>...\n\n");
         $progressBar->start($this->output, 100);
 
         foreach ($editions as $edition) {
-            $publishBookCommand = sprintf(
-                "./book publish --dir=%s sherlock-holmes %s",
-                __DIR__.'/../../../../app/Resources/Books/',
-                $edition
-            );
-
-            for ($i=0; $i<$iterations; $i++) {
-                $process = new Process($publishBookCommand);
-
-                $start  = microtime(true);
-                $process->run();
-                $finish = microtime(true);
-
-                $progressBar->advance($step);
-
-                if ($process->isSuccessful()) {
-                    $elapsedTime = 1000 * ($finish - $start);
-                    $consumedMemory = memory_get_peak_usage(true);
-                    $score = $this->getScore($elapsedTime, $consumedMemory, $edition);
-
-                    $results[$edition][] = array(
-                        'format' => $edition,
-                        'time'   => $elapsedTime,
-                        'memory' => $consumedMemory,
-                        'score'  => $score,
-                    );
-                } else {
-                    throw new \RuntimeException(sprintf(
-                        "[ERROR] The benchmark couldn't be completed because there was\n"
-                            ." an error while publishing the book with this command:\n"
-                            ." %s\n\n"
-                            ." Command result:\n"
-                            ." %s",
-                        $publishBookCommand,
-                        $process->getOutput()
-                    ));
-                }
-            }
+            $results[$edition] = $this->benchmarkEdition($edition, $iterations);
+            $progressBar->advance($step);
         }
 
         $progressBar->setCurrent(100);
         $progressBar->finish();
 
-        // calculate for each edition the mean value of all its iterations
+        $meanResults = $this->calculateMeanResults($results);
+
+        return $meanResults;
+    }
+
+    /**
+     * Performs the benchmark of the given edition by publishing it
+     * the number of times indicated by the second argument.
+     *
+     * @param string $edition    The edition to be published
+     * @param int    $iterations The number of times that this edition is published
+     *
+     * @return array The results of this edition benchmark
+     *
+     * @throws RuntimeException If the edition cannot be published
+     */
+    private function benchmarkEdition($edition, $iterations)
+    {
+        $results = array();
+
+        $publishBookCommand = sprintf(
+            "./book publish --dir=%s sherlock-holmes %s",
+            __DIR__.'/../../../../app/Resources/Books/',
+            $edition
+        );
+
+        for ($i=0; $i<$iterations; $i++) {
+            $process = new Process($publishBookCommand);
+
+            $start  = microtime(true);
+            $process->run();
+            $finish = microtime(true);
+
+            if (!$process->isSuccessful()) {
+                throw new \RuntimeException(sprintf(
+                    "[ERROR] The benchmark couldn't be completed because there was\n"
+                        ." an error while publishing the book with this command:\n"
+                        ." %s\n\n"
+                        ." Command result:\n"
+                        ." %s",
+                    $publishBookCommand,
+                    $process->getOutput()
+                ));
+            }
+
+            $elapsedTime = 1000 * ($finish - $start);
+            $consumedMemory = memory_get_peak_usage(true);
+            $score = $this->getScore($elapsedTime, $consumedMemory, $edition);
+
+            $results[] = array(
+                'format' => $edition,
+                'time'   => $elapsedTime,
+                'memory' => $consumedMemory,
+                'score'  => $score,
+            );
+        }
+
+        return $results;
+    }
+
+    /**
+     * Calculates the mean benchmark results by performing the arithmetic mean of
+     * the results of each iteration.
+     *
+     * @param array $results The original results of each benchmark iteration
+     *
+     * @return array The mean results for all the iterations of the benchmark
+     */
+    private function calculateMeanResults(array $results)
+    {
         $meanResults = array();
+
         foreach ($results as $edition => $editionResults) {
             $totalTime   = 0;
             $totalMemory = 0;
             $totalScore  = 0;
+
+            $iterations = count($editionResults);
 
             foreach ($editionResults as $result) {
                 $totalTime   += $result['time'];
@@ -213,9 +245,9 @@ class EasybookBenchmarkCommand extends BaseCommand
      * Calculates the score of the given benchmark results and
      * normalizes that score in a 0..100 scale.
      *
-     * @param $elapsedTime    The time elapsed to complete the benchmark in milliseconds
-     * @param $consumedMemory The memory consumed during the benchmark in bytes.
-     * @param $edition        The name of the edition being published
+     * @param float  $elapsedTime    The time elapsed to complete the benchmark in milliseconds
+     * @param int    $consumedMemory The memory consumed during the benchmark in bytes.
+     * @param string $edition        The name of the edition being published
      *
      * @return float  The score of the benchmark in a 0..100 scale
      */
