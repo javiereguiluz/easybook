@@ -39,6 +39,11 @@ class Epub2Publisher extends HtmlPublisher
         parent::loadContents();
     }
 
+    /**
+     * Overrides the base publisher method to avoid the decoration of the book items.
+     * Instead of using the regular Twig templates based on the item type (e.g. chapter),
+     * ePub books items are decorated afterwards with some special Twig templates.
+     */
     public function decorateContents()
     {
         $decoratedItems = array();

@@ -29,6 +29,12 @@ class HtmlChunkedPublisher extends HtmlPublisher
     // TODO: this property should be easily configurable
     public $elementsGeneratingPages = array('appendix', 'chapter');
 
+    /**
+     * Overrides the base publisher method to avoid the decoration of the book items.
+     * Instead of using the regular Twig templates based on the item type (e.g. chapter),
+     * the items of the books published as websites are decorated afterwards with some
+     * special Twig templates.
+     */
     public function decorateContents()
     {
         $decoratedItems = array();

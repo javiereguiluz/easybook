@@ -13,6 +13,7 @@ namespace Easybook\Publishers;
 
 use Easybook\DependencyInjection\Application;
 use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
 
 class BasePublisher implements PublisherInterface
@@ -55,58 +56,90 @@ class BasePublisher implements PublisherInterface
             // for now, easybook only supports Markdown format
             $item['config']['format'] = 'md';
 
-            // if the element defines its own content file (usually chapters and appendices)
             if (array_key_exists('content', $itemConfig)) {
-                $contentFile = $this->app['publishing.dir.contents'].'/'.$itemConfig['content'];
-
-                // check that content file exists and is readable
-                if (!is_readable($contentFile)) {
-                    throw new \RuntimeException(sprintf(
-                        "The '%s' content associated with '%s' element doesn't exist\n"
-                        ."or is not readable.\n\n"
-                        ."Check that '%s'\n"
-                        ."file exists and check its permissions.",
-                        $itemConfig['content'],
-                        $itemConfig['element'],
-                        realpath($this->app['publishing.dir.contents']).'/'.$itemConfig['content']
-                    ));
-                }
-
-                // TODO: document the following change:
-                // contents can now be defined with Twig and a markup language
-
-                // if the element content uses Twig (such as *.md.twig), parse
-                // the Twig template before parsing the Markdown contents
-                if ('.twig' == substr($contentFile, -5)) {
-                    try {
-                        $item['original'] = $this->app->renderString(file_get_contents($contentFile));
-                    } catch (\Twig_Error_Syntax $e) {
-                        // if there is a Twig parsing error, notify the user but don't
-                        // stop the book publication
-                        $this->app['console.output']->writeln(sprintf(
-                            " [WARNING] There was an error while parsing the \"%s\" file\n",
-                            $contentFile
-                        ));
-                    }
-                // if the element content only uses Markdown (*.md), load
-                // directly its contents in the $item 'original' property
-                } else {
-                    $item['original'] = file_get_contents($contentFile);
-                }
+                // the element defines its own content file (usually chapters and appendices)
+                $item['original'] = $this->loadItemContent($itemConfig['content'], $itemConfig['element']);
             } else {
-                // look for a default content defined by easybook for this element
-                // e.g. `cover.md.twig`, `license.md.twig`, `title.md.twig`
-                try {
-                    $contentFile = $itemConfig['element'].'.md.twig';
-                    $item['original'] = $this->app->render('@content/'.$contentFile);
-                }
-                // if Twig throws a Twig_Error_Loader exception, there is no default content
-                catch (\Twig_Error_Loader $e) {
-                    $item['original'] = '';
-                }
+                // the element doesn't define its own content file (try to load the default
+                // content for this item type, if any)
+                $item['original'] = $this->loadDefaultItemContent($itemConfig['element']);
             }
 
             $this->app->append('publishing.items', $item);
+        }
+    }
+
+    /**
+     * It loads the contents of the given content file name. Most of the time
+     * this means returning the Markdown content stored in that file. Anyway,
+     * the contents can also be defined with Twig and Markdown simultaneously.
+     * In those cases, the content is parsed as a Twig template before returning
+     * the resulting Markdown content.
+     *
+     * @param string $contentFileName The name of the file that stores the item content
+     * @param string $itemType        The type of the item (e.g. 'chapter')
+     *
+     * @return string The content of the item (currently, this content is always in
+     *                Markdown format)
+     *
+     * @throws \RuntimeException If the content file doesn't exist or is not readable
+     */
+    private function loadItemContent($contentFileName, $itemType)
+    {
+        $contentFilePath = $this->app['publishing.dir.contents'].'/'.$contentFileName;
+
+        // check that content file exists and is readable
+        if (!is_readable($contentFilePath)) {
+            throw new \RuntimeException(sprintf(
+                "The '%s' content associated with '%s' element doesn't exist\n"
+                    ."or is not readable.\n\n"
+                    ."Check that '%s'\n"
+                    ."file exists and check its permissions.",
+                $contentFileName,
+                $itemType,
+                realpath($this->app['publishing.dir.contents']).'/'.$contentFileName
+            ));
+        }
+
+        if ('.twig' == substr($contentFilePath, -5)) {
+            // if the element content uses Twig (such as *.md.twig), parse
+            // the Twig template before parsing the Markdown contents
+
+            try {
+                return $this->app->renderString(file_get_contents($contentFilePath));
+            } catch (\Twig_Error_Syntax $e) {
+                // if there is a Twig parsing error, notify the user but don't
+                // stop the book publication
+                $this->app['console.output']->writeln(sprintf(
+                    " [WARNING] There was an error while parsing the \"%s\" file\n",
+                    $contentFilePath
+                ));
+            }
+        } else {
+            // if the element content only uses Markdown (*.md), load
+            // directly its contents in the $item 'original' property
+            return file_get_contents($contentFilePath);
+        }
+    }
+
+    /**
+     * Tries to load the default content defined by easybook for this item type.
+     *
+     * @param string  $itemType The type of item (e.g. 'cover', 'license', 'title')
+     *
+     * @return string The default content or an empty string if it doesn't exist
+     */
+    private function loadDefaultItemContent($itemType)
+    {
+        $contentFileName = $itemType.'.md.twig';
+
+        try {
+            return $this->app->render('@content/'.$contentFileName);
+        }
+        catch (\Twig_Error_Loader $e) {
+            // if Twig throws a Twig_Error_Loader exception,
+            // there is no default content
+            return '';
         }
     }
 
@@ -158,6 +191,40 @@ class BasePublisher implements PublisherInterface
         }
 
         $this->app['publishing.dir.output'] = $bookOutputDir;
+    }
+
+    /**
+     * Decorates each book item with the appropriate Twig template.
+     */
+    public function decorateContents()
+    {
+        $decoratedItems = array();
+
+        foreach ($this->app['publishing.items'] as $item) {
+            $this->app['publishing.active_item'] = $item;
+
+            // filter the original item content before decorating it
+            $event = new BaseEvent($this->app);
+            $this->app->dispatch(Events::PRE_DECORATE, $event);
+
+            // get again 'item' object because PRE_DECORATE event can modify it
+            $item = $this->app['publishing.active_item'];
+
+            $item['content'] = $this->app->render(
+                $item['config']['element'].'.twig',
+                array('item' => $item)
+            );
+
+            $this->app['publishing.active_item'] = $item;
+
+            $event = new BaseEvent($this->app);
+            $this->app->dispatch(Events::POST_DECORATE, $event);
+
+            // get again 'item' object because POST_DECORATE event can modify it
+            $decoratedItems[] = $this->app['publishing.active_item'];
+        }
+
+        $this->app['publishing.items'] = $decoratedItems;
     }
 
     /**
