@@ -109,8 +109,6 @@ class HtmlChunkedPublisher extends HtmlPublisher
             }
         }
 
-        $this->fixInternalLinks();
-
         // generate index page
         $this->app->render('index.twig', array(
                 'items'          => $indexItems,
@@ -516,87 +514,5 @@ class HtmlChunkedPublisher extends HtmlPublisher
             : null;
 
         return $nextChunk;
-    }
-
-    /**
-     * If fixes the internal links of the book (the links that point to chapters
-     * and sections of the book).
-     *
-     * The author of the book always uses relative links, such as:
-     *   see <a href="#new-content-types">this section</a> for more information
-     *
-     * In order to work, the relative URIs must be replaced by absolute URIs:
-     *   see <a href="../chapter3/page-slug.html#new-content-types">this section</a>
-     *
-     * This replacement cannot be done earlier in the book processing, because
-     * books published as websites merge empty sections and the absolute URI
-     * cannot be determined until the book has been completely generated.
-     */
-    private function fixInternalLinks()
-    {
-        $generatedChunks = $this->app['finder']
-            ->files()
-            ->name('*.html')
-            ->in($this->app['publishing.dir.output'])
-        ;
-
-        // maps the original internal links (e.g. #new-content-types)
-        // with the correct absolute URL needed for a website
-        // (e.g. chapter-3/advanced-features.html#new-content-types
-        $internalLinkMapper = array();
-
-        // look for the ID of every book section
-        foreach ($generatedChunks as $chunk) {
-            $htmlContent = file_get_contents($chunk->getPathname());
-
-            $matches = array();
-            $numHeadings = preg_match_all(
-                '/<h[1-6].*id="(?<id>.*)".*<\/h[1-6]>/U',
-                $htmlContent, $matches, PREG_SET_ORDER
-            );
-
-            if ($numHeadings > 0) {
-                foreach ($matches as $match) {
-                    $relativeUri = '#'.$match['id'];
-                    $absoluteUri = $chunk->getRelativePathname().$relativeUri;
-
-                    $internalLinkMapper[$relativeUri] = $absoluteUri;
-                }
-            }
-        }
-
-        // replace the internal relative URIs for the mapped absolute URIs
-        foreach ($generatedChunks as $chunk) {
-            $htmlContent = file_get_contents($chunk->getPathname());
-
-            // hackish method the detect if this is a first level book page
-            // or a page inside a directory
-            if (false === strpos($chunk->getRelativePathname(), '/')) {
-                $chunkLevel = 1;
-            } else {
-                $chunkLevel = 2;
-            }
-
-            $htmlContent = preg_replace_callback(
-                '/<a href="(?<uri>#.*)"(.*)<\/a>/Us',
-                function ($matches) use ($chunkLevel, $internalLinkMapper) {
-                    if (array_key_exists($matches['uri'], $internalLinkMapper)) {
-                        $newUri = $internalLinkMapper[$matches['uri']];
-                        $urlBasePath = 2 == $chunkLevel ? '../' : './';
-                    } else {
-                        $newUri = $matches['uri'];
-                        $urlBasePath = '';
-                    }
-
-                    return sprintf(
-                        '<a class="internal" href="%s%s"%s</a>',
-                        $urlBasePath, $newUri, $matches[2]
-                    );
-                },
-                $htmlContent
-            );
-
-            file_put_contents($chunk->getPathname(), $htmlContent);
-        }
     }
 }

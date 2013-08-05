@@ -1,0 +1,118 @@
+<?php
+
+/*
+ * This file is part of the easybook application.
+ *
+ * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Easybook\Plugins;
+
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Finder\Finder;
+use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\BaseEvent;
+
+class LinkPlugin implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents()
+    {
+        return array(
+            Events::POST_PUBLISH => array('onItemPostPublish', -10),
+        );
+    }
+
+    public function onItemPostPublish(BaseEvent $event)
+    {
+        if ('html_chunked' == $event->app->edition('format')) {
+            $bookPages = $event->app['finder']
+                ->files()
+                ->name('*.html')
+                ->in($event->app['publishing.dir.output'])
+            ;
+
+            $this->fixInternalLinks($bookPages);
+        }
+    }
+
+    /**
+     * If fixes the internal links of the book (the links that point to chapters
+     * and sections of the book).
+     *
+     * The author of the book always uses section ID as link values:
+     *   see <a href="#new-content-types">this section</a> for more information
+     *
+     * In order to work, the ID must be replaced by relative URIs:
+     *   see <a href="../chapter3/page-slug.html#new-content-types">this section</a>
+     *
+     * This replacement cannot be done earlier in the book processing, because
+     * books published as websites merge empty sections and the absolute URI
+     * cannot be determined until the book has been completely generated.
+     *
+     * @param Finder $bookPages The list of HTML book pages to be fixed
+     */
+    private function fixInternalLinks(Finder $bookPages)
+    {
+        // maps the original internal links (e.g. #new-content-types)
+        // with the correct relative URL needed for a website
+        // (e.g. chapter-3/advanced-features.html#new-content-types
+        $internalLinkMapper = array();
+
+        // look for the ID of every book section
+        foreach ($bookPages as $bookPage) {
+            $htmlContent = file_get_contents($bookPage->getPathname());
+
+            $matches = array();
+            $numHeadings = preg_match_all(
+                '/<h[1-6].*id="(?<id>.*)".*<\/h[1-6]>/U',
+                $htmlContent, $matches, PREG_SET_ORDER
+            );
+
+            if ($numHeadings > 0) {
+                foreach ($matches as $match) {
+                    $relativeUri = '#'.$match['id'];
+                    $absoluteUri = $bookPage->getRelativePathname().$relativeUri;
+
+                    $internalLinkMapper[$relativeUri] = $absoluteUri;
+                }
+            }
+        }
+
+        // replace the internal relative URIs for the mapped absolute URIs
+        foreach ($bookPages as $bookPage) {
+            $htmlContent = file_get_contents($bookPage->getPathname());
+
+            // hackish method the detect if this is a first level book page
+            // or a page inside a directory
+            if (false === strpos($bookPage->getRelativePathname(), '/')) {
+                $chunkLevel = 1;
+            } else {
+                $chunkLevel = 2;
+            }
+
+            $htmlContent = preg_replace_callback(
+                '/<a href="(?<uri>#.*)"(.*)<\/a>/Us',
+                function ($matches) use ($chunkLevel, $internalLinkMapper) {
+                    if (array_key_exists($matches['uri'], $internalLinkMapper)) {
+                        $newUri = $internalLinkMapper[$matches['uri']];
+                        $urlBasePath = 2 == $chunkLevel ? '../' : './';
+                    } else {
+                        $newUri = $matches['uri'];
+                        $urlBasePath = '';
+                    }
+
+                    return sprintf(
+                        '<a class="internal" href="%s%s"%s</a>',
+                        $urlBasePath, $newUri, $matches[2]
+                    );
+                },
+                $htmlContent
+            );
+
+            file_put_contents($bookPage->getPathname(), $htmlContent);
+        }
+    }
+}
