@@ -322,14 +322,14 @@ Lastly, run the following command:
     $ ./book publish the-origin-of-species print
 
 Inside `Output/` directory you'll find a new `print` directory which contains
-a file name `book.pdf`. Open the file with your PDF reader and you'll see
+a file named `book.pdf`. Open the file with your PDF reader and you'll see
 your book as a beautiful and carefully created PDF ebook. The PDF conversion
 is performed with a third-party application named [PrinceXML](http://www.princexml.com/).
 If you don't have it installed on your computer, you can download a
 fully-functional demo version at <http://www.princexml.com/download/>
 
 **easybook** lets you easily publish the same book in very different ways.
-Each of these *ways*  is called **edition**. This concept will be explained
+Each of these *ways* is called an **edition**. This concept will be explained
 in the next chapter.
 
 ## Book configuration options ##
