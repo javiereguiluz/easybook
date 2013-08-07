@@ -624,7 +624,7 @@ class Application extends \Pimple
      * It looks for custom book cover images. The search order is:
      *   1. <book>/Resources/Templates/<edition-name>/cover.jpg
      *   2. <book>/Resources/Templates/<edition-format>/cover.jpg
-     *   3. <book>/Resources/Templates/<templateName>/cover.jpg
+     *   3. <book>/Resources/Templates/cover.jpg
      *
      * It returns null if there is no custom cover image.
      */
