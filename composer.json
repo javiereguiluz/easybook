@@ -26,7 +26,8 @@
         "symfony/finder":           "~2.3",
         "symfony/process":          "~2.3",
         "symfony/yaml":             "~2.3",
-        "twig/twig":                "~1.0"
+        "twig/twig":                "~1.0",
+        "zendframework/zendpdf":    "2.0.x-dev"
     },
 
     "autoload": {

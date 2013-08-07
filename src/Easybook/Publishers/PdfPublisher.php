@@ -32,6 +32,28 @@ class PdfPublisher extends BasePublisher
         return null != $princeXMLPath && file_exists($princeXMLPath);
     }
 
+    public function loadContents()
+    {
+        parent::loadContents();
+
+        // if the book includes its own cover as a PDF file,
+        // remove the default 'cover' element to prevent
+        // publishing a book with two covers
+        if (null != $this->getCustomCover()) {
+            $bookItems = array();
+
+            // remove any element of type 'cover' from the
+            // publishing items
+            foreach ($this->app['publishing.items'] as $item) {
+                if ('cover' != $item['config']['element']) {
+                    $bookItems[] = $item;
+                }
+            }
+
+            $this->app['publishing.items'] = $bookItems;
+        }
+    }
+
     public function assembleBook()
     {
         $tmpDir = $this->app['app.dir.cache'].'/'.uniqid('easybook_pdf_');
@@ -69,7 +91,8 @@ class PdfPublisher extends BasePublisher
 
         // TODO: the name of the book file (book.pdf) must be configurable
         $errorMessages = array();
-        $prince->convert_file_to_file($htmlBookFilePath, $this->app['publishing.dir.output'].'/book.pdf', $errorMessages);
+        $pdfBookFilePath = $this->app['publishing.dir.output'].'/book.pdf';
+        $prince->convert_file_to_file($htmlBookFilePath, $pdfBookFilePath, $errorMessages);
 
         // display PDF conversion errors
         if (count($errorMessages) > 0) {
@@ -81,6 +104,17 @@ class PdfPublisher extends BasePublisher
                 );
             }
             $this->app['console.output']->writeln("\n");
+        }
+
+        // add the PDF cover if the book includes it
+        if (null != $coverFilePath = $this->getCustomCover()) {
+            $pdfBook  = \ZendPdf\PdfDocument::load($pdfBookFilePath);
+            $pdfCover = \ZendPdf\PdfDocument::load($coverFilePath);
+
+            $pdfCover = clone $pdfCover->pages[0];
+            array_unshift($pdfBook->pages, $pdfCover);
+
+            $pdfBook->save($pdfBookFilePath, true);
         }
     }
 
@@ -145,5 +179,25 @@ YAML;
         $this->app['console.output']->write("\n");
 
         return $userGivenPath;
+    }
+
+    /*
+     * It looks for custom book cover PDF. The search order is:
+     *   1. <book>/Resources/Templates/<edition-name>/cover.pdf
+     *   2. <book>/Resources/Templates/<edition-format>/cover.pdf
+     *   3. <book>/Resources/Templates/cover.pdf
+     *
+     * @return null|string The filePath of the PDF cover or null if none exists
+     */
+    private function getCustomCover()
+    {
+        $coverFileName = 'cover.pdf';
+        $paths = array(
+            $this->app['publishing.dir.templates'].'/'.$this->app['publishing.edition'],
+            $this->app['publishing.dir.templates'].'/'.$this->app->edition('format'),
+            $this->app['publishing.dir.templates']
+        );
+
+        return $this->app->getFirstExistingFile($coverFileName, $paths);
     }
 }
