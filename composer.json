@@ -17,7 +17,7 @@
     ],
 
     "require": {
-        "dflydev/markdown":         "1.0.x-dev",
+        "michelf/php-markdown":     "1.3.x-dev",
         "easybook/geshi":           "~1.0.8",
         "pimple/pimple":            "1.*",
         "symfony/console":          "~2.3",

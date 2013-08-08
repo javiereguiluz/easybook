@@ -13,8 +13,8 @@ namespace Easybook\Parsers;
 
 use Easybook\Parsers\ParserInterface;
 use Easybook\DependencyInjection\Application;
-use dflydev\markdown\MarkdownParser as OriginalMarkdownParser;
-use dflydev\markdown\MarkdownExtraParser as ExtraMarkdownParser;
+use Michelf\Markdown as OriginalMarkdownParser;
+use Michelf\MarkdownExtra as ExtraMarkdownParser;
 use Easybook\Parsers\EasybookMarkdownParser;
 
 /**
@@ -83,7 +83,6 @@ class MarkdownParser implements ParserInterface
                 // replace <!--BREAK--> with {pagebreak} to prevent Markdown
                 // parser from considering <!--BREAK--> as a regular HTML comment
                 $content = str_replace('<!--BREAK-->', '{pagebreak}', $content);
- 
                 break;
         }
 
