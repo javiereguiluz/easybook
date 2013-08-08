@@ -10,14 +10,15 @@ editions and how to tweak its appearance using templates.
 Books define their contents with the `contents` options in the `config.yml` file.
 After creating a new book with the `new` command, the default contents are:
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - { element: cover }
-            - { element: toc   }
-            - { element: chapter, number: 1, content: chapter1.md }
-            - { element: chapter, number: 2, content: chapter2.md }
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+~~~
 
 The most important option of each content is `element`, which defines its
 content type. **easybook** currently supports 21 content types (the following
@@ -71,19 +72,20 @@ definitions have been [copied from Wikipedia](http://en.wikipedia.org/wiki/Book_
 
 Most of the content types don't require any other option besides `element`:
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - { element: cover }
-            - { element: title }
-            - { element: license }
-            - { element: toc }
-            - { element: chapter, number: 1, content: chapter1.md }
-            - { element: chapter, number: 2, content: chapter2.md }
-            - ...
-            - { element: author }
-            - { element: acknowledgement }
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - { element: cover }
+        - { element: title }
+        - { element: license }
+        - { element: toc }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+        - ...
+        - { element: author }
+        - { element: acknowledgement }
+~~~
 
 The `appendix` and `chapter` content types can define the following options:
 
@@ -115,53 +117,54 @@ Editions are defined under the `editions` options in `config.yml` file. By
 default, the books created with the `new` command have five editions named
 `ebook`, `kindle`, `print`, `web` and `website` with the following options:
 
-    [yaml]
-    book:
-        # ...
-        editions:
-            ebook:
-                format:          epub
-                highlight_cache: false
-                highlight_code:  false
-                include_styles:  true
-                labels:          ['appendix', 'chapter']  # labels also available for: "figure", "table"
-                toc:
-                    deep:        1
-                    elements:    ["appendix", "chapter", "part"]
+~~~ .yaml
+book:
+    # ...
+    editions:
+        ebook:
+            format:          epub
+            highlight_cache: false
+            highlight_code:  false
+            include_styles:  true
+            labels:          ['appendix', 'chapter']  # labels also available for: "figure", "table"
+            toc:
+                deep:        1
+                elements:    ["appendix", "chapter", "part"]
 
-            kindle:
-                extends:         ebook
-                format:          mobi
+        kindle:
+            extends:         ebook
+            format:          mobi
 
-            print:
-                format:          pdf
-                include_styles:  true
-                isbn:            ~
-                labels:          ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
-                margin:
-                    top:         25mm
-                    bottom:      25mm
-                    inner:       30mm
-                    outter:      20mm
-                page_size:       A4
-                toc:
-                    deep:        2
-                    elements:    ["appendix", "chapter"]
-                two_sided:       true
+        print:
+            format:          pdf
+            include_styles:  true
+            isbn:            ~
+            labels:          ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
+            margin:
+                top:         25mm
+                bottom:      25mm
+                inner:       30mm
+                outter:      20mm
+            page_size:       A4
+            toc:
+                deep:        2
+                elements:    ["appendix", "chapter"]
+            two_sided:       true
 
-            web:
-                format:          html
-                highlight_cache: false
-                highlight_code:  true
-                include_styles:  true
-                labels:          ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
-                toc:
-                    deep:        2
-                    elements:    ["appendix", "chapter"]
+        web:
+            format:          html
+            highlight_cache: false
+            highlight_code:  true
+            include_styles:  true
+            labels:          ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
+            toc:
+                deep:        2
+                elements:    ["appendix", "chapter"]
 
-            website:
-                extends:         web
-                format:          html_chunked
+        website:
+            extends:         web
+            format:          html_chunked
+~~~
 
 The name of each edition must be unique for the same book and cannot contain
 spaces.  The edition name is used as the subdirectory inside `Output/` directory
@@ -233,37 +236,38 @@ have very small margins to reduce its length, the normal version (`print`) is
 one-sided and has normal margins. The version prepared for lulu.com website
 (`lulu`) is similar to the normal version, except is double-sided:
 
-    [yaml]
-    book:
-        # ...
-        editions:
-            print:
-                format:       pdf
-                isbn:         ~
-                labels:       ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
-                margin:
-                    top:      25mm
-                    bottom:   25mm
-                    inner:    30mm
-                    outter:   20mm
-                page_size:    A4
-                toc:
-                    deep:     2
-                    elements: ['appendix', 'chapter']
-                two_sided:    false
+~~~ .yaml
+book:
+    # ...
+    editions:
+        print:
+            format:       pdf
+            isbn:         ~
+            labels:       ['appendix', 'chapter']  # labels also available for: 'figure', 'table'
+            margin:
+                top:      25mm
+                bottom:   25mm
+                inner:    30mm
+                outter:   20mm
+            page_size:    A4
+            toc:
+                deep:     2
+                elements: ['appendix', 'chapter']
+            two_sided:    false
 
-            draft:
-                extends:      print
-                margin:
-                    top:      15mm
-                    bottom:   15mm
-                    inner:    20mm
-                    outter:   10mm
-                two_sided:    true
+        draft:
+            extends:      print
+            margin:
+                top:      15mm
+                bottom:   15mm
+                inner:    20mm
+                outter:   10mm
+            two_sided:    true
 
-            lulu:
-                extends:      print
-                two_sided:    true
+        lulu:
+            extends:      print
+            two_sided:    true
+~~~
 
 The only limitation of `extends` is that it only works with one level inheritance.
 Therefore, and edition cannot extend another edition that extends a third one.
@@ -287,20 +291,22 @@ appendices (with the `content` option). In addition, **easybook** defines
 sensible default contents for some content types. If your book for example
 includes an inner cover (`title` content type) without any contents file:
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - ...
-            - { element: title }
-            - ...
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - ...
+        - { element: title }
+        - ...
+~~~
 
 **easybook** will use the following as the content for this element:
 
-    [twig]
-    <h1>{{ book.title }}</h1>
-    <h2>{{ book.author }}</h2>
-    <h3>{{ book.edition }}</h3>
+~~~ .twig
+<h1>{{ book.title }}</h1>
+<h2>{{ book.author }}</h2>
+<h3>{{ book.edition }}</h3>
+~~~
 
 The default title page shows the title, the name of the author and the current
 edition of the book. All these values are configured in the `book` option of
@@ -315,14 +321,15 @@ directory of the theme.
 If you don't want to use **easybook** default contents for some element, simply
 add the `content` option indicating the file that defines its contents:
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - ...
-            - { element: license, content: creative-commons.md }
-            - { element: title, content: my-own-title-page.md }
-            - ...
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - ...
+        - { element: license, content: creative-commons.md }
+        - { element: title, content: my-own-title-page.md }
+        - ...
+~~~
 
 ### Default templates ###
 
@@ -333,14 +340,15 @@ can access all the default templates in the `Templates/` directory of the theme.
 
 See for example the template used to decorate each chapter of a PDF book:
 
-    [twig]
-    <div class="item chapter">
+~~~ .twig
+<div class="item chapter">
 
-    <h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
+<h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
 
-    {{ item.content }}
+{{ item.content }}
 
-    </div>
+</div>
+~~~
 
 The data of the content being decorated are accessible through a special
 variable called `item`, which holds the following properties:
@@ -447,11 +455,12 @@ in English are defined in `app/Resources/Translations/labels.en.yml` file.
 Unlike the titles, labels can contain variable parts, such as the appendix or
 chapter number. Therefore, **easybook** uses Twig templates to define each label:
 
-    [yaml]
-    label:
-        figure: 'Figure {{ element.number }}.{{ item.number }}'
-        part:   'Part {{ item.number }}'
-        table:  'Table {{ element.number }}.{{ item.number }}'
+~~~ .yaml
+label:
+    figure: 'Figure {{ element.number }}.{{ item.number }}'
+    part:   'Part {{ item.number }}'
+    table:  'Table {{ element.number }}.{{ item.number }}'
+~~~
 
 The templates for `figure` and `table` labels can use the same variables as
 `figure.twig` and `table.twig` templates explained before. Therefore,
@@ -463,15 +472,16 @@ one of the six heading levels (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` and `<h6>`
 In the following example, appendices only include a label in their titles, thus
 leaving empty the last five levels:
 
-    [yaml]
-    label:
-        appendix:
-            - 'Appendix {{ item.number }}'
-            - ''
-            - ''
-            - ''
-            - ''
-            - ''
+~~~ .yaml
+label:
+    appendix:
+        - 'Appendix {{ item.number }}'
+        - ''
+        - ''
+        - ''
+        - ''
+        - ''
+~~~
 
 Labels can access to all configuration options defined by the item in the
 `config.yml` file. The label of a chapter can then use `{{ item.number }}` to
@@ -484,25 +494,27 @@ headings. The `counters` variable is an array with the counters of all heading
 levels. For that reason, to show second-level headings as `1.1`, `1.2` ... `7.1`,
 `7.2` you can use the following expression:
 
-    [yaml]
-    label:
-        chapter:
-            - 'Chapter {{ item.number }}'
-            - '{{ item.counters[0] }}.{{ item.counters [1] }}'
-            - ...
+~~~ .yaml
+label:
+    chapter:
+        - 'Chapter {{ item.number }}'
+        - '{{ item.counters[0] }}.{{ item.counters [1] }}'
+        - ...
+~~~
 
 Extending the previous example, you can use the following templates to format
 all the heading levels as `1.1`, `1.1.1`, `1.1.1.1`, etc.:
 
-    [yaml]
-     label:
-         chapter:
-             - 'Chapter {{ item.number }} '
-             - '{{ item.counters[0:2]|join(".") }}'  # 1.1
-             - '{{ item.counters[0:3]|join(".") }}'  # 1.1.1
-             - '{{ item.counters[0:4]|join(".") }}'  # 1.1.1.1
-             - '{{ item.counters[0:5]|join(".") }}'  # 1.1.1.1.1
-             - '{{ item.counters[0:6]|join(".") }}'  # 1.1.1.1.1.1
+~~~ .yaml
+label:
+    chapter:
+        - 'Chapter {{ item.number }} '
+        - '{{ item.counters[0:2]|join(".") }}'  # 1.1
+        - '{{ item.counters[0:3]|join(".") }}'  # 1.1.1
+        - '{{ item.counters[0:4]|join(".") }}'  # 1.1.1.1
+        - '{{ item.counters[0:5]|join(".") }}'  # 1.1.1.1.1
+        - '{{ item.counters[0:6]|join(".") }}'  # 1.1.1.1.1.1
+~~~
 
 This last example clearly shows what you can achieve by combining the
 flexibility of **easybook** and the power of Twig.
@@ -529,9 +541,10 @@ to the rest their default values. Therefore, to only modify the label of the
 images in any book edition, create a new `<libro>/Resources/Translations/labels.en.yml`
 file and add just the following content:
 
-    [yaml]
-    label:
-        figure: 'Illustration {{ item.number }}'
+~~~ .yaml
+label:
+    figure: 'Illustration {{ item.number }}'
+~~~
 
 If you want to change the titles instead of the labels, follow the same steps
 but create a file called `titles.en.yml` instead of `labels.en.yml`. If your book

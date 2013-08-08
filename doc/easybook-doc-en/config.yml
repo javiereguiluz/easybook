@@ -1,3 +1,8 @@
+easybook:
+    parameters:
+        parser.options:
+            code_block_type: fenced
+
 book:
     title:            easybook documentation
     author:           Javier Eguiluz
@@ -10,9 +15,9 @@ book:
     contents:
         - { element: cover }
         - { element: toc   }
-        - { element: chapter, number: 1, content: chapter1.md }
-        - { element: chapter, number: 2, content: chapter2.md }
-        - { element: chapter, number: 3, content: chapter3.md }
+        - { element: chapter,  number: 1, content: chapter1.md }
+        - { element: chapter,  number: 2, content: chapter2.md }
+        - { element: chapter,  number: 3, content: chapter3.md }
         - { element: appendix, number: A, content: reference.md }
 
     editions:

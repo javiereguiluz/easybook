@@ -109,11 +109,12 @@ add a file called `style.css` within the directory:
 Instead of creating this CSS file by hand, **easybook** includes a command called
 `customize` that generates the needed CSS for each edition:
 
-    [cli]
-    $ ./book customize the-origin-of-species ebook
+~~~ .cli
+$ ./book customize the-origin-of-species ebook
 
-    OK: You can now customize the book design with the following stylesheet:
-    <easybook-dir>/doc/the-origin-of-species/Resources/Templates/ebook/style.css
+OK: You can now customize the book design with the following stylesheet:
+<easybook-dir>/doc/the-origin-of-species/Resources/Templates/ebook/style.css
+~~~
 
 This initial CSS is different for every edition format (`html`, `pdf`, `epub`)
 and contains some comments to ease the customization of the book design.
@@ -152,34 +153,35 @@ Technically, plugins are based on the subscribers defined by the event dispatche
 the word `Plugin`. The following code shows the source of `TimerPlugin.php`, the
 plugin used by **easybook** to measure how long it takes to publish a book:
 
-    [php]
-    <?php
-    namespace Easybook\Plugins;
-    
-    use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-    use Easybook\Events\EasybookEvents as Events;
-    use Easybook\Events\BaseEvent;
+~~~ .php
+<?php
+namespace Easybook\Plugins;
 
-    class TimerPlugin implements EventSubscriberInterface
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\BaseEvent;
+
+class TimerPlugin implements EventSubscriberInterface
+{
+    static public function getSubscribedEvents()
     {
-        static public function getSubscribedEvents()
-        {
-            return array(
-                Events::PRE_PUBLISH  => 'onStart',
-                Events::POST_PUBLISH => 'onFinish',
-            );
-        }
-
-        public function onStart(BaseEvent $event)
-        {
-            $event->app->set('app.timer.start', microtime(true));
-        }
-
-        public function onFinish(BaseEvent $event)
-        {
-            $event->app->set('app.timer.finish', microtime(true));
-        }
+        return array(
+            Events::PRE_PUBLISH  => 'onStart',
+            Events::POST_PUBLISH => 'onFinish',
+        );
     }
+
+    public function onStart(BaseEvent $event)
+    {
+        $event->app->set('app.timer.start', microtime(true));
+    }
+
+    public function onFinish(BaseEvent $event)
+    {
+        $event->app->set('app.timer.finish', microtime(true));
+    }
+}
+~~~
 
 **easybook** plugins must implement `EventSubscriberInterface` interface, which
 in turn forces to define a method called `getSubscribedEvents()`. This method
@@ -210,13 +212,14 @@ object of type `ParseEvent` (which in turn inherits from `BaseEvent`).
 You can access any property and service of the application through the event
 object using `$event-> app`:
 
-    [php]
-    // ...
+~~~ .php
+// ...
 
-    public function onStart(BaseEvent $event)
-    {
-        $event->app->set('app.timer.start', microtime(true));
-    }
+public function onStart(BaseEvent $event)
+{
+    $event->app->set('app.timer.start', microtime(true));
+}
+~~~
 
 If you want to add plugins to your own book, create a directory called `Plugins`
 inside the `Resources` directory of your book (create the latter one if it
@@ -228,44 +231,45 @@ before and after its conversion. First, the plugin modifies the original Markdow
 content to put in bold all occurrences of the word *easybook*. Then, it
 modifies the HTML content to add a `class` attribute to all these occurrences:
 
-    [php]
-    <?php
-    use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-    use Easybook\Events\EasybookEvents as Events;
-    use Easybook\Events\ParseEvent;
+~~~ .php
+<?php
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\ParseEvent;
 
-    class BrandingPlugin implements EventSubscriberInterface
+class BrandingPlugin implements EventSubscriberInterface
+{
+    static public function getSubscribedEvents()
     {
-        static public function getSubscribedEvents()
-        {
-            return array(
-                Events::PRE_PARSE  => 'onItemPreParse',
-                Events::POST_PARSE => 'onItemPostParse',
-            );
-        }
-    
-        public function onItemPreParse(ParseEvent $event)
-        {
-            $txt = str_replace(
-                'easybook',
-                '**easybook**',
-                $event->getOriginal()
-            );
-            
-            $event->setOriginal($txt);
-        }
-        
-        public function onItemPostParse(ParseEvent $event)
-        {
-            $html = str_replace(
-                '<strong>easybook</strong>',
-                '<strong class="branding">easybook</strong>',
-                $event->getContent()
-            );
-            
-            $event->setContent($html);
-        }
+        return array(
+            Events::PRE_PARSE  => 'onItemPreParse',
+            Events::POST_PARSE => 'onItemPostParse',
+        );
     }
+
+    public function onItemPreParse(ParseEvent $event)
+    {
+        $txt = str_replace(
+            'easybook',
+            '**easybook**',
+            $event->getOriginal()
+        );
+        
+        $event->setOriginal($txt);
+    }
+    
+    public function onItemPostParse(ParseEvent $event)
+    {
+        $html = str_replace(
+            '<strong>easybook</strong>',
+            '<strong class="branding">easybook</strong>',
+            $event->getContent()
+        );
+        
+        $event->setContent($html);
+    }
+}
+~~~
 
 The event object received by plugins related to content parsing is of type
 `ParseEvent`. In addition to application access (`$event->app`), this object has
@@ -284,12 +288,13 @@ Unless stated otherwise, the books are created in the `doc/` directory of
 **easybook**. If you want to save the contents in any other directory, add the
 `--dir` option when creating and/or publishig the book:
 
-    [cli]
-    $ ./book new "The Origin of Species" --dir="/Users/javier/books"
-    (the book is created in "/Users/javier/books/the-origin-of-species")
-    
-    $ ./book publish the-origin-of-species print --dir="/Users/javier/books"
-    (the book is published in "/Users/javier/books/the-origin-of-species/Output/print/book.pdf")
+~~~ .cli
+$ ./book new "The Origin of Species" --dir="/Users/javier/books"
+(the book is created in "/Users/javier/books/the-origin-of-species")
+
+$ ./book publish the-origin-of-species print --dir="/Users/javier/books"
+(the book is published in "/Users/javier/books/the-origin-of-species/Output/print/book.pdf")
+~~~
 
 ### Syntax highlighting ###
 
@@ -300,27 +305,31 @@ the option `highlight_code` to `true` in any edition with syntax highlighting.
 Then, set the programming language in the listings you want to color. Imagine
 that you have the following PHP code:
 
-    public function onStart(BaseEvent $event)
-    {
-        $event->app->set('app.timer.start', microtime (true));
-    }
+~~~ .php
+public function onStart(BaseEvent $event)
+{
+    $event->app->set('app.timer.start', microtime (true));
+}
+~~~
 
 Add `[php]` as the first line of the listing to highlight its code:
 
-    [code]
-    [php]
-    public function onStart(BaseEvent $event)
-    {
-        $event->app->set('app.timer.start', microtime (true));
-    }
+~~~
+[php]
+public function onStart(BaseEvent $event)
+{
+    $event->app->set('app.timer.start', microtime (true));
+}
+~~~
 
 The result is the following code with syntax highlighting:
 
-    [php]
-    public function onStart(BaseEvent $event)
-    {
-        $event->app->set('app.timer.start', microtime (true));
-    }
+~~~ .php
+public function onStart(BaseEvent $event)
+{
+    $event->app->set('app.timer.start', microtime (true));
+}
+~~~
 
 **easybook** uses the [GeSHi library](http://qbnz.com/highlighter) to highlight
 the code listings. Therefore, it supports more than 200 programming languages
@@ -337,38 +346,41 @@ define all the new settings that you may need.
 Do you want to show the price of the book on the cover? Add a new option called
 `price` under the `book` option of `config.yml` file:
 
-    [yaml]
-    book:
-        # ...
-        price: 10
+~~~ .yaml
+book:
+    # ...
+    price: 10
+~~~
 
 Now you can use this option in any template with the following expression:
 `{{ book.price }}`.  Do you want to use different CSS frameworks to generate
 the book website? Add a new option called `framework` in some editions:
 
-    [yaml]
-    editions:
-        my_website1:
-            format:    html_chunked
-            framework: twitter_bootstrap
-            # ...
-        
-        my_website2:
-            extends:   my_website1
-            framework: 960_gs
+~~~ .yaml
+editions:
+    my_website1:
+        format:    html_chunked
+        framework: twitter_bootstrap
+        # ...
+    
+    my_website2:
+        extends:   my_website1
+        framework: 960_gs
+~~~
 
 This new option is now available in any template through the following expression:
 `{{ edition.framework }}`. You can also add new options to the contents of the
 book.  Do you want to indicate the estimated reading time in each chapter?
 Add the following `time` option for `chapter` elements:
 
-    [yaml]
-    contents:
-        - { element: cover }
-        - ...
-        - { element: chapter, number: 1, ..., time: 20 }
-        - { element: chapter, number: 2, ..., time: 12 }
-        - ...
+~~~ .yaml
+contents:
+    - { element: cover }
+    - ...
+    - { element: chapter, number: 1, ..., time: 20 }
+    - { element: chapter, number: 2, ..., time: 12 }
+    - ...
+~~~
 
 And now you can add `{{ item.config.time }}` in `chapter.twig` template to show
 the estimated reading time for each chapter.
@@ -380,21 +392,24 @@ options dynamically with the publication command since version 4.4.
 Add `--configuration` option to `publish` command and pass it a JSON formatted
 string with the configuration options:
 
-    [cli]
-    $ ./book publish the-origin-of-species web --configuration='{ "book": { "title": "My new title" } }'
+~~~ .cli
+$ ./book publish the-origin-of-species web --configuration='{ "book": { "title": "My new title" } }'
+~~~
 
 Using dynamic options you can for example define a new `buyer` option that
 stores the name of the person that bought the book. Then you can prevent or
 minimize digital piracy displaying the buyer name inside the book (use
 `{{ book.buyer }}` Twig expression in any book template):
 
-    [cli]
-    $ ./book publish the-origin-of-species print --configuration='{ "book": { "buyer": "John Smith" } }'
+~~~ .cli
+$ ./book publish the-origin-of-species print --configuration='{ "book": { "buyer": "John Smith" } }'
+~~~
 
 Likewise, any edition option can be set or override dynamically:
 
-    [cli]
-    $ ./book publish the-origin-of-species web --configuration='{ "book": { "editions": { "web": { "highlight_code": true } } } }'
+~~~ .cli
+$ ./book publish the-origin-of-species web --configuration='{ "book": { "editions": { "web": { "highlight_code": true } } } }'
+~~~
 
 When passing a lot of configuration options, you must be very careful with JSON
 braces and quotes. If you run the command automatically, it is easier to create
@@ -404,18 +419,20 @@ a PHP array with all the options and then convert it to JSON with the
 Dynamic options are so advanced that they even allow you to define on-the-fly
 editions:
 
-    [cli]
-    $ ./book publish the-origin-of-species edition1 --configuration='{ "book": { "editions": { "edition1": { ... } } } }'
+~~~ .cli
+$ ./book publish the-origin-of-species edition1 --configuration='{ "book": { "editions": { "edition1": { ... } } } }'
+~~~
 
 Book configuration options can also use Twig expression for their values (even
 for dynamic options set by `--configuration` option):
 
-    [yaml]
-    book:
-        title:            "{{ book.author }} diary"
-        author:           "..."
-        publication_date: "{{ '+2days'|date('m/d/Y') }}"
-        # ...
+~~~ .yaml
+book:
+    title:            "{{ book.author }} diary"
+    author:           "..."
+    publication_date: "{{ '+2days'|date('m/d/Y') }}"
+    # ...
+~~~
 
 When publishing a book, **easybook** uses the following priority hierarchy to
 combine configuration options (the higher, the more priority):
@@ -435,19 +452,20 @@ In addition to its own configuration options, a book can also modify global
 inside your `config.yml` (we recommend you to create it at the top of the
 file to spot it easily):
 
-    [yaml]
-    easybook:
-        parameters:
-            kindlegen.command_options: '-c0 -gif verbose'
-            kindlegen.path:            '/path/to/utils/KindleGen/kindlegen'
+~~~ .yaml
+easybook:
+    parameters:
+        kindlegen.command_options: '-c0 -gif verbose'
+        kindlegen.path:            '/path/to/utils/KindleGen/kindlegen'
 
-    book:
-        title:            easybook documentation
-        author:           Javier Eguiluz
-        edition:          First edition
-        language:         en
-        publication_date: ~
-        # ...
+book:
+    title:            easybook documentation
+    author:           Javier Eguiluz
+    edition:          First edition
+    language:         en
+    publication_date: ~
+    # ...
+~~~
 
 Define the **easybook** global options under the `parameters` key of `easybook`
 section. In the previous example, the book sets the `kindlegen.command_options`
@@ -460,37 +478,39 @@ You can replace any of the parameters defined or used in the `Application.php`
 class located at `src/Easybook/DependencyInjection/`. Therefore, use the
 following configuration to modify the directory where the book is generated:
 
-    [yaml]
-    easybook:
-        parameters:
-            publishing.dir.output:  '/my/path/for/books/my-book'
+~~~ .yaml
+easybook:
+    parameters:
+        publishing.dir.output:  '/my/path/for/books/my-book'
 
-    book:
-        title:            easybook documentation
-        author:           Javier Eguiluz
-        edition:          First edition
-        language:         en
-        publication_date: ~
-        # ...
+book:
+    title:            easybook documentation
+    author:           Javier Eguiluz
+    edition:          First edition
+    language:         en
+    publication_date: ~
+    # ...
+~~~
 
 The separator used by the slugger is another option that is usually modified.
 By default **easybook** uses the dash (`-`) for the slugs (this affects the
 book page names and the URL for the books published as websites). If you prefer
 the underscore (`_`) you can now easily configure it in your book:
 
-    [yaml]
-    easybook:
-        parameters:
-            slugger.options:
-                separator:   '_'
+~~~ .yaml
+easybook:
+    parameters:
+        slugger.options:
+            separator:   '_'
 
-    book:
-        title:            easybook documentation
-        author:           Javier Eguiluz
-        edition:          First edition
-        language:         en
-        publication_date: ~
-        # ...
+book:
+    title:            easybook documentation
+    author:           Javier Eguiluz
+    edition:          First edition
+    language:         en
+    publication_date: ~
+    # ...
+~~~
 
 ### Defining new content types ### {#new-content-types}
 
@@ -502,53 +522,58 @@ type `cartoon`.
 If pages of type `cartoon` include few contents (a picture and its caption for
 example), it's better to define these contents directly in the  `config.yml` file:
 
-    [yaml]
-    contents:
-        - { element: cover }
-        - ...
-        - { element: chapter, number: 1, ... }
-        - { element: cartoon, image: cartoon1.png, caption: '...' }
-        - { element: chapter, number: 2, ... }
-        - ...
+~~~ .yaml
+contents:
+    - { element: cover }
+    - ...
+    - { element: chapter, number: 1, ... }
+    - { element: cartoon, image: cartoon1.png, caption: '...' }
+    - { element: chapter, number: 2, ... }
+    - ...
+~~~
 
 Then, create a custom `cartoon.twig` template in your book `Resources/Templates/`
 directory:
 
-    [twig]
-    <div class="page:cartoon">
-        <img src="{{ item.config.image }}" />
-        <p>{{ item.config.caption }}</p>
-    </div>
+~~~ .twig
+<div class="page:cartoon">
+    <img src="{{ item.config.image }}" />
+    <p>{{ item.config.caption }}</p>
+</div>
+~~~
 
 In contrast, if pages of type `cartoon` include a lot of contents, it's better
 to create a content file for each of these elements:
 
-    [yaml]
-    contents:
-        - { element: cover }
-        - ...
-        - { element: chapter, number: 1, ... }
-        - { element: cartoon, content: cartoon1.md }
-        - { element: chapter, number: 2, ... }
-        - ...
+~~~ .yaml
+contents:
+    - { element: cover }
+    - ...
+    - { element: chapter, number: 1, ... }
+    - { element: cartoon, content: cartoon1.md }
+    - { element: chapter, number: 2, ... }
+    - ...
+~~~
 
 Then, display this content with the following simplified `cartoon.twig` template:
 
-    [twig]
-     <div class="page:cartoon">
-         {{ item.content }}
-     </div>
+~~~ .twig
+<div class="page:cartoon">
+    {{ item.content }}
+</div>
+~~~
 
 Finally, you can also combine these two methods creating a file with the contents
 and adding several configuration options in `config.yml`. The template can easily
 use both sources of information:
 
-    [twig]
-     <div class="page:cartoon">
-         <img src="{{ item.config.image }}" />
-        
-         {{ item.content }}
-     </div>
+~~~ .twig
+<div class="page:cartoon">
+    <img src="{{ item.config.image }}" />
+
+    {{ item.content }}
+</div>
+~~~
 
 That's it! You can now use the new `cartoon` content type in your book and you
 can create new content types following the same steps explained above.
@@ -577,14 +602,15 @@ which depends on the type of edition that is published (`epub`, `html`,
 `html_chunked` or `pdf`). The details of each *publisher* vary, but its basic
 operation is always the same:
 
-    [php]
-    public function publishBook()
-    {
-        $this->loadContents();
-        $this->parseContents();
-        $this->decorateContents();
-        $this->assembleBook();
-    }
+~~~ .php
+public function publishBook()
+{
+    $this->loadContents();
+    $this->parseContents();
+    $this->decorateContents();
+    $this->assembleBook();
+}
+~~~
 
 First the contents of the book, defined in the `contents` option of `config.yml`
 file, are loaded (`loadContents()`) . Then, each content is parsed (`parseContents()`)

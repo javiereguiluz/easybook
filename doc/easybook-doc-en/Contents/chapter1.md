@@ -11,8 +11,9 @@ sentence, ask advice from a computer savvy friend and send him the link to
 this page. You can check your installed PHP version executing the following
 command on the console:
 
-    [cli]
-    php -v
+~~~ .cli
+php -v
+~~~
 
 **easybook** is a free and open-source application published under the MIT
 license. This means that you can do anything with it. The only condition is
@@ -36,17 +37,19 @@ If you have Git installed on your computer, you should download  **easybook**
 cloning its public repository with the following command (replace `<dir>` for
 the path of the directory created previously):
 
-    [cli]
-    $ git clone http://github.com/javiereguiluz/easybook.git <dir>
+~~~ .cli
+$ git clone http://github.com/javiereguiluz/easybook.git <dir>
+~~~
 
 **easybook** uses [Composer](http://getcomposer.org/) to manage its dependencies.
 This means that before using **easybook** you must download and install Composer
 and then, install all the **easybook** dependencies:
 
-    [cli]
-    $ cd easybook
-    $ curl -s http://getcomposer.org/installer | php
-    $ php composer.phar install
+~~~ .cli
+$ cd easybook
+$ curl -s http://getcomposer.org/installer | php
+$ php composer.phar install
+~~~
 
 If you don't use Git, you can download **easybook** as a compressed `.zip`
 archive. It's not as cool as using Git, but it works fine. Download the
@@ -58,28 +61,30 @@ following file and uncompress it on the previously created directory:
 Once downloaded/unzipped, open a command console and run the following PHP
 script to check that you have downloaded **easybook** correctly:
 
-    [cli]
-    $ ./book
+~~~ .cli
+$ ./book
+~~~
 
 If everything is fine, **easybook** should welcome you with the following
 message:
 
-    [cli]
-                        |              |    
-    ,---.,---.,---.,   .|---.,---.,---.|__/ 
-    |---',---|`---.|   ||   ||   ||   ||  \ 
-    `---'`---^`---'`---|`---'`---'`---'`   `
-                   `---'
+~~~ .cli
+                    |              |    
+,---.,---.,---.,   .|---.,---.,---.|__/ 
+|---',---|`---.|   ||   ||   ||   ||  \ 
+`---'`---^`---'`---|`---'`---'`---'`   `
+               `---'
 
-    easybook is the easiest and fastest tool to generate
-    technical documentation, books, manuals and websites.
+easybook is the easiest and fastest tool to generate
+technical documentation, books, manuals and websites.
 
-    Available commands:
-      help      Displays help for a command
-      list      Lists commands
-      new       Creates a new empty book
-      publish   Publishes an edition of a book
-      version   Shows installed easybook version
+Available commands:
+  help      Displays help for a command
+  list      Lists commands
+  new       Creates a new empty book
+  publish   Publishes an edition of a book
+  version   Shows installed easybook version
+~~~
 
 If you find any issue running `./book` script, try running it as `php book`.
 If you still find any issues, check the permissions of the `book` script. If
@@ -89,17 +94,17 @@ The `./book` script is the unique *entry point* for every **easybook**
 command. If you need to know for example the installed version, just run the
 `version` command through `book` script:
 
-    [cli]
-    $ ./book version
+~~~ .cli
+$ ./book version
 
+                    |              |    
+,---.,---.,---.,   .|---.,---.,---.|__/ 
+|---',---|`---.|   ||   ||   ||   ||  \ 
+`---'`---^`---'`---|`---'`---'`---'`   `
+               `---'
 
-                        |              |    
-    ,---.,---.,---.,   .|---.,---.,---.|__/ 
-    |---',---|`---.|   ||   ||   ||   ||  \ 
-    `---'`---^`---'`---|`---'`---'`---'`   `
-                   `---'
-
-    easybook installed version: 4.8
+easybook installed version: 4.8
+~~~
 
 ## Creating the book ##
 
@@ -113,23 +118,26 @@ can skip to the *Publishing the book* section.
 and directories. To avoid creating this structure by hand, new books are
 bootstrapped with **easybook** `new` command:
 
-    [cli]
-    $ ./book new "The Origin of Species"
+~~~ .cli
+$ ./book new "The Origin of Species"
+~~~
 
 Type the title of your book after `new` command enclosing it with quotes. The
 result of this command is a new `the-origin-of-species` directory inside
 **easybook** `doc/` directory. You should see the following structure inside
 the new directory:
 
-    <easybook>/
-        doc/
-            the-origin-of-species/
-                config.yml
-                Contents/
-                    chapter1.md
-                    chapter2.md
-                    images/
-                Output/
+~~~
+<easybook>/
+    doc/
+        the-origin-of-species/
+            config.yml
+            Contents/
+                chapter1.md
+                chapter2.md
+                images/
+            Output/
+~~~
 
 These are the archives and directories created by **easybook**:
 
@@ -164,14 +172,15 @@ chapters. You can add as many chapters as you want and each one can be as
 large or as short as you need. All you have to do is to list the book
 chapters under the `contents` option of the `config.yml` file:
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - { element: cover }
-            - { element: toc   }
-            - { element: chapter, number: 1, content: chapter1.md }
-            - { element: chapter, number: 2, content: chapter2.md }
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+~~~
 
 Each line under the `contents` option defines a content of the book. The
 `cover` and `toc` lines are special contents that will be explained later.
@@ -184,49 +193,53 @@ flexibility, as it never forces you to work in a certain way. Do you want to
 number your chapters in an *imaginative* way? People will think you're crazy,
 but **easybook** allows you to do it:
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - { element: cover }
-            - { element: toc   }
-            - { element: chapter, number: 100, content: chapter1.md }
-            - { element: chapter, number: 56,  content: chapter2.md }
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 100, content: chapter1.md }
+        - { element: chapter, number: 56,  content: chapter2.md }
+~~~
 
 Do you need letters instead of numbers? This is usual for appendices instead
 of chapters, but **easybook** won't stop you from doing it:
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - { element: cover }
-            - { element: toc   }
-            - { element: chapter, number: A, content: chapter1.md }
-            - { element: chapter, number: B, content: chapter2.md }
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: A, content: chapter1.md }
+        - { element: chapter, number: B, content: chapter2.md }
+~~~
 
 You can also use any name for the chapter contents file, as in the following
 example that mixes English and Spanish:
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - { element: cover }
-            - { element: toc   }
-            - { element: chapter, number: 1, content: chapter1.md }
-            - { element: chapter, number: 2, content: capitulo2.md }
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: capitulo2.md }
+~~~
 
 Using significant names for book content files eases its management:
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - { element: cover }
-            - { element: toc   }
-            - { element: chapter, number: 1, content: publishing-your-first-book.md }
-            - { element: chapter, number: 2, content: publishing-your-second-book.md }
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: publishing-your-first-book.md }
+        - { element: chapter, number: 2, content: publishing-your-second-book.md }
+~~~
 
 The most important thing about the `contents` option is the order in which
 you define the contents. The published book will be always composed of those
@@ -235,42 +248,45 @@ output a book with  the cover between the two chapters and the table of
 contents at the very end (completely crazy, but really easy to do with
 **easybook**):
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - { element: chapter, number: 1, content: publishing-your-first-book.md }
-            - { element: cover }
-            - { element: chapter, number: 2, content: publishing-your-second-book.md }
-            - { element: toc   }
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - { element: chapter, number: 1, content: publishing-your-first-book.md }
+        - { element: cover }
+        - { element: chapter, number: 2, content: publishing-your-second-book.md }
+        - { element: toc   }
+~~~
 
 By default, all content files are stored in the `Contents/` directory.
 However, if your book is complex, you can divide the contents into
 subdirectories. Then, include the name of the subdirectories in the `content`
 option  (don't forget to enclose it with quotes if the file path has spaces):
 
-    [yaml]
-    book:
-        # ...
-        contents:
-            - { element: cover }
-            - { element: toc   }
-            - { element: chapter, number: 1, content: introduction/chapter1.md }
-            - { element: chapter, number: 2, content: introduction/chapter2.md }
-            - { element: chapter, number: 3, content: advanced/chapter1.md }
+~~~ .yaml
+book:
+    # ...
+    contents:
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: introduction/chapter1.md }
+        - { element: chapter, number: 2, content: introduction/chapter2.md }
+        - { element: chapter, number: 3, content: advanced/chapter1.md }
+~~~
 
 The above configuration means that your book contents are distributed this
 way:
 
-    <book_dir>/
-        ...
-        Contents/
-            introduction/
-                chapter1.md
-                chapter2.md
-            advanced/
-                chapter1.md
-
+~~~
+<book_dir>/
+    ...
+    Contents/
+        introduction/
+            chapter1.md
+            chapter2.md
+        advanced/
+            chapter1.md
+~~~
 
 ## Publishing the book ##
 
@@ -278,8 +294,9 @@ When you finish writing all the chapters and after adding them to the
 `config.yml` archive, run the following command to publish the book (replace
 `the-origin-of-the-species` by the name of your book directory):
 
-    [cli]
-    $ ./book publish the-origin-of-species web
+~~~ .cli
+$ ./book publish the-origin-of-species web
+~~~
 
 If everything works fine, you should see a new `web` directory inside
 `Output/` directory. Enter the `web/` directory and you'll find a file named
@@ -288,8 +305,9 @@ the Internet.
 
 Then, run the following command:
 
-    [cli]
-    $ ./book publish the-origin-of-species website
+~~~ .cli
+$ ./book publish the-origin-of-species website
+~~~
 
 Now, inside `Output/` directory you'll find a new `website` directory with
 several HTML pages. Open `index.html` in your browser and you'll see that
@@ -297,8 +315,9 @@ several HTML pages. Open `index.html` in your browser and you'll see that
 
 Run the following command to generate an e-book:
 
-    [cli]
-    $ ./book publish the-origin-of-species ebook
+~~~ .cli
+$ ./book publish the-origin-of-species ebook
+~~~
 
 Inside your book's `Output/` directory you'll find a new `ebook` directory
 with a file named `book.epub`. This is the e-book version of your book, ready
@@ -307,8 +326,9 @@ most Android tablets and phones and every e-book reader except Amazon Kindle).
 
 Run the following command to generate a Kindle-compatible e-book:
 
-    [cli]
-    $ ./book publish the-origin-of-species kindle
+~~~ .cli
+$ ./book publish the-origin-of-species kindle
+~~~
 
 Inside your book's `Output/` directory you'll find a new `kindle` directory
 with a file named `book.mobi`. This is the e-book version of your book, ready
@@ -318,8 +338,9 @@ that you must install before generating Kindle-compatible books.
 
 Lastly, run the following command:
 
-    [cli]
-    $ ./book publish the-origin-of-species print
+~~~ .cli
+$ ./book publish the-origin-of-species print
+~~~
 
 Inside `Output/` directory you'll find a new `print` directory which contains
 a file named `book.pdf`. Open the file with your PDF reader and you'll see
@@ -338,37 +359,38 @@ In the previous sections we've mentioned the `author` configuration option.
 In fact, **easybook** books can set many more options in the `config.yml` file
 . The default values of the options are as follows:
 
-    [yaml]
-    book:
-        title:            "(the title typed when creating the book)"
-        author:           "Change this: Author Name"
-        edition:          "First edition"
-        language:         en
-        publication_date: ~
-
-        generator: { name: easybook, version: 4.2 }
-
-        contents:
-            # available content types: acknowledgement, afterword, appendix, author,
-            # chapter, conclusion, cover, dedication, edition, epilogue, foreword,
-            # glossary, introduction, license, lof (list of figures), lot (list of
-            # tables), part, preface, prologue, title, toc (table of contents)
-            - { element: cover }
-            - { element: toc   }
-            - { element: chapter, number: 1, content: chapter1.md }
-            - { element: chapter, number: 2, content: chapter2.md }
-
-        editions:
-            ebook:
-                # (this is a complex option, we'll see it later)
-            kindle:
-                # (this is a complex option, we'll see it later)
-            print:
-                # (this is a complex option, we'll see it later)
-            web:
-                # (this is a complex option, we'll see it later)
-            website:
-                # (this is a complex option, we'll see it later)
+~~~ .yaml
+book:
+    title:            "(the title typed when creating the book)"
+    author:           "Change this: Author Name"
+    edition:          "First edition"
+    language:         en
+    publication_date: ~
+    
+    generator: { name: easybook, version: 4.2 }
+    
+    contents:
+        # available content types: acknowledgement, afterword, appendix, author,
+        # chapter, conclusion, cover, dedication, edition, epilogue, foreword,
+        # glossary, introduction, license, lof (list of figures), lot (list of
+        # tables), part, preface, prologue, title, toc (table of contents)
+        - { element: cover }
+        - { element: toc   }
+        - { element: chapter, number: 1, content: chapter1.md }
+        - { element: chapter, number: 2, content: chapter2.md }
+    
+    editions:
+        ebook:
+            # (this is a complex option, we'll see it later)
+        kindle:
+            # (this is a complex option, we'll see it later)
+        print:
+            # (this is a complex option, we'll see it later)
+        web:
+            # (this is a complex option, we'll see it later)
+        website:
+            # (this is a complex option, we'll see it later)
+~~~
 
 The `contents` and `editions` options are explained in  detail in the
 following chapters: `contents` option defines the book contents and their
