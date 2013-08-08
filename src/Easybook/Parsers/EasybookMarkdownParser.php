@@ -329,62 +329,12 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
     }
 
     /**
-     * easybook supports three different code block types. If the book
-     * doesn't use the fenced code block type, disable it from PHP Markdown.
+     * easybook supports three different code block types thanks to the
+     * Code Plugin. Therefore, it doesn't use the fenced code block parsing
+     * of the PHP Markdown library.
      */
     protected function doFencedCodeBlocks($text)
     {
-        if ('fenced' == $this->app['parser.options']['code_block_type']) {
-            return parent::doFencedCodeBlocks($text);
-        } else {
-            return $text;
-        }
-    }
-
-    public function _doFencedCodeBlocks_callback($matches) {
-        $classname = $matches[2];
-        $attrs     = $matches[3];
-        // TODO: fix this problem in a less 'hackish' way
-        // codeblocks always end with an empty new line (due to the regexp used)
-        // the current solution rtrims() the whole block. This would not work
-        // in the (very) rare situations where a code block must end with
-        // whitespaces, tabs or new lines
-        $codeblock = rtrim($matches[4]);
-
-        if ('' != $classname) {
-            $attr_str = ' class="'.$this->code_class_prefix.$classname.'"';
-            $language = $classname;
-        } else {
-            $attr_str = $this->doExtraAttributes('pre', $attrs);
-
-            // $attr_str contains the language name inside:
-            //   id="example-1" class="yaml"
-            $numMatches = preg_match('/class="(.*)"/', $attr_str, $languageMatches);
-            $language = $numMatches > 0 ? $languageMatches[1] : 'code';
-        }
-
-        if ($this->app->edition('highlight_code')) {
-            // highlight the code if the edition wants to
-            $codeblock = $this->app->highlight($codeblock, $language);
-        }
-        else {
-            // escape code to show it instead of interpreting it
-            // yaml-style comments could be interpreted as Markdown headings
-            // replace any starting # character by its HTML entity (&#35;)
-            $codeblock = "<pre$attr_str>"
-                . preg_replace('/^# (.*)/', "&#35; $1", htmlspecialchars($codeblock))
-                . '</pre>';
-        }
-
-        $codeblock = $this->app->render('code.twig', array(
-            'item' => array(
-                'content'  => $codeblock,
-                'language' => $language,
-                'number'   => '',
-                'slug'     => ''
-            )
-        ));
-
-        return "\n\n".$this->hashBlock($codeblock)."\n\n";
+        return $text;
     }
 }

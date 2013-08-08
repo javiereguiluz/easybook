@@ -40,8 +40,7 @@ class CodePlugin implements EventSubscriberInterface
                 break;
 
             case 'fenced':
-                // Do nothing, because these code blocks are
-                // supported by the PHP Markdown library
+                $this->parseFencedTypeCodeBlocks($event);
                 break;
         }
     }
@@ -76,10 +75,10 @@ class CodePlugin implements EventSubscriberInterface
      *     [code]
      *     Generic code not associated with any language
      *
-     * @param $event The event object that provides access to the $app and
-     *               the $item being parsed
+     * @param ParseEvent $event The event object that provides access to the $app and
+     *                          the $item being parsed
      */
-    private function parseEasybookTypeCodeBlocks($event)
+    private function parseEasybookTypeCodeBlocks(ParseEvent $event)
     {
         $item = $event->getItem();
         // regexp copied from PHP-Markdown
@@ -150,10 +149,10 @@ class CodePlugin implements EventSubscriberInterface
      *     Generic code not associated with any language
      *     ```
      *
-     * @param $event The event object that provides access to the $app and
-     *               the $item being parsed
+     * @param ParseEvent $event The event object that provides access to the $app and
+     *                          the $item being parsed
      */
-    private function parseGithubTypeCodeBlocks($event)
+    private function parseGithubTypeCodeBlocks(ParseEvent $event)
     {
         $item = $event->getItem();
         // regexp adapted from PHP-Markdown
@@ -183,6 +182,82 @@ class CodePlugin implements EventSubscriberInterface
             function ($matches) use ($event) {
                 $code = $matches[3];
                 $language = $matches[2];
+
+                if ('' == $language) {
+                    $language = 'code';
+                }
+
+                $code = $this->highlightAndDecorateCode($code, $language, $event->app);
+
+                return "\n\n" . $code;
+            },
+            $item['original']
+        );
+        $event->setItem($item);
+    }
+
+    /**
+     * It parses the code blocks of the item content that use the
+     * fenced style for code blocks:
+     *   * the code listing starts with at least three ~~~
+     *   * (optionally) followed by a whitespace + a dot + the programming language name
+     *   * the lines of code don't include any leading tab or whitespace
+     *   * the code listing ends with the same number of opening ~~~
+     *
+     * Examples:
+     *
+     *     ~~~ .php
+     *     $lorem = 'ipsum';
+     *     // ...
+     *     ~~~
+     *
+     *     ~~~~~~~~~~ .javascript
+     *     var lorem = 'ipsum';
+     *     // ...
+     *     ~~~~~~~~~~
+     *
+     *     ~~~
+     *     Generic code not associated with any language
+     *     ~~~
+     *
+     * @param ParseEvent $event The event object that provides access to the $app and
+     *                          the $item being parsed
+     */
+    private function parseFencedTypeCodeBlocks(ParseEvent $event)
+    {
+        $item = $event->getItem();
+        // regexp adapted from PHP-Markdown
+        $item['original'] = preg_replace_callback('{
+                (?:\n|\A)
+                # 1: Opening marker
+                (
+                    ~{3,} # Marker: three tilde or more.
+                )
+                [ ]*
+                (?:
+                    \.?([-_:a-zA-Z0-9]+) # 2: standalone class name
+                )?
+                [ ]* \n # Whitespace and newline following marker.
+
+                # 4: Content
+                (
+                    (?>
+                        (?!\1 [ ]* \n)    # Not a closing marker.
+                        .*\n+
+                    )+
+                )
+
+                # Closing marker.
+                \1 [ ]* \n
+            }Uxm',
+            function ($matches) use ($event) {
+                $language = $matches[2];
+                // TODO: fix this problem in a less 'hackish' way
+                // codeblocks always end with an empty new line (due to the regexp used)
+                // the current solution rtrims() the whole block. This would not work
+                // in the (very) rare situations where a code block must end with
+                // whitespaces, tabs or new lines
+                $code = rtrim($matches[3]);
 
                 if ('' == $language) {
                     $language = 'code';
