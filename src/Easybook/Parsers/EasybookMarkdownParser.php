@@ -333,7 +333,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      * Code Plugin. Therefore, it doesn't use the fenced code block parsing
      * of the PHP Markdown library.
      */
-    protected function doFencedCodeBlocks($text)
+    public function doFencedCodeBlocks($text)
     {
         return $text;
     }
