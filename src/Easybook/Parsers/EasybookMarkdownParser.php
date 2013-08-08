@@ -305,7 +305,15 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
                 $content = $matches[1];
                 # trim one level of quoting - trim whitespace-only lines
                 $content = preg_replace('/^[ ]*([ANWTEIQD])>[ ]?|^[ ]+$/m', '', $content);
-                $content = $parent->runBlockGamut($content); # recurse
+
+                // the following horrible hack is needed because the 'runBlockGamut'
+                // method is protected and closures in PHP 5.3 cannot access private
+                // or protected methods
+                $method = new \ReflectionMethod($parent, 'runBlockGamut');
+                $method->setAccessible(true);
+                $content = $method->invoke($parent, $content);
+                // When PHP 5.3 is no longer supported, use the following code:
+                // $content = $parent->runBlockGamut($content);
 
                 $content = preg_replace('/^/m', "  ", $content);
                 # These leading spaces cause problem with <pre> content,
@@ -322,7 +330,15 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
 
                 $type = $admonitions[trim($matches[2])];
 
-                return "\n". $parent->hashBlock("<div class=\"admonition $type\">\n$content\n</div>")."\n\n";
+                // the following horrible hack is needed because the 'hashBlock'
+                // method is protected and closures in PHP 5.3 cannot access private
+                // or protected methods
+                $method = new \ReflectionMethod($parent, 'hashBlock');
+                $method->setAccessible(true);
+
+                return "\n".$method->invoke($parent, "<div class=\"admonition $type\">\n$content\n</div>")."\n\n";
+                // When PHP 5.3 is no longer supported, use the following code:
+                // return "\n". $parent->hashBlock("<div class=\"admonition $type\">\n$content\n</div>")."\n\n";
             },
             $text
         );

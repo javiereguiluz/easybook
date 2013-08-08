@@ -80,6 +80,9 @@ class CodePlugin implements EventSubscriberInterface
      */
     private function parseEasybookTypeCodeBlocks(ParseEvent $event)
     {
+        // variable needed for PHP 5.3
+        $self = $this;
+
         $item = $event->getItem();
         // regexp copied from PHP-Markdown
         $item['original'] = preg_replace_callback('{
@@ -95,7 +98,7 @@ class CodePlugin implements EventSubscriberInterface
                     ))
                 )
             }xm',
-            function ($matches) use ($event) {
+            function ($matches) use ($self, $event) {
                 $code = $matches['code'];
                 $indent = $matches['indent'];
 
@@ -115,7 +118,7 @@ class CodePlugin implements EventSubscriberInterface
                     $code
                 );
 
-                $code = $this->highlightAndDecorateCode($code, $language, $event->app);
+                $code = $self->highlightAndDecorateCode($code, $language, $event->app);
 
                 // indent code block
                 return "\n$indent\n$indent" . str_replace("\n", "\n" . $indent, $code);
@@ -154,6 +157,9 @@ class CodePlugin implements EventSubscriberInterface
      */
     private function parseGithubTypeCodeBlocks(ParseEvent $event)
     {
+        // variable needed for PHP 5.3
+        $self = $this;
+
         $item = $event->getItem();
         // regexp adapted from PHP-Markdown
         $item['original'] = preg_replace_callback('{
@@ -179,7 +185,7 @@ class CodePlugin implements EventSubscriberInterface
                 # Closing marker.
                 \1 [ ]* \n
             }Uxm',
-            function ($matches) use ($event) {
+            function ($matches) use ($self, $event) {
                 $code = $matches[3];
                 $language = $matches[2];
 
@@ -187,7 +193,7 @@ class CodePlugin implements EventSubscriberInterface
                     $language = 'code';
                 }
 
-                $code = $this->highlightAndDecorateCode($code, $language, $event->app);
+                $code = $self->highlightAndDecorateCode($code, $language, $event->app);
 
                 return "\n\n" . $code;
             },
@@ -225,6 +231,9 @@ class CodePlugin implements EventSubscriberInterface
      */
     private function parseFencedTypeCodeBlocks(ParseEvent $event)
     {
+        // variable needed for PHP 5.3
+        $self = $this;
+
         $item = $event->getItem();
         // regexp adapted from PHP-Markdown
         $item['original'] = preg_replace_callback('{
@@ -250,7 +259,7 @@ class CodePlugin implements EventSubscriberInterface
                 # Closing marker.
                 \1 [ ]* \n
             }Uxm',
-            function ($matches) use ($event) {
+            function ($matches) use ($self, $event) {
                 $language = $matches[2];
                 // TODO: fix this problem in a less 'hackish' way
                 // codeblocks always end with an empty new line (due to the regexp used)
@@ -263,7 +272,7 @@ class CodePlugin implements EventSubscriberInterface
                     $language = 'code';
                 }
 
-                $code = $this->highlightAndDecorateCode($code, $language, $event->app);
+                $code = $self->highlightAndDecorateCode($code, $language, $event->app);
 
                 return "\n\n" . $code;
             },
@@ -283,7 +292,7 @@ class CodePlugin implements EventSubscriberInterface
      *
      * @return string The resulting code after the highlight and rendering process
      */
-    private function highlightAndDecorateCode($code, $language, Application $app)
+    public function highlightAndDecorateCode($code, $language, Application $app)
     {
         if ($app->edition('highlight_code')) {
             // highlight code if the edition wants to
