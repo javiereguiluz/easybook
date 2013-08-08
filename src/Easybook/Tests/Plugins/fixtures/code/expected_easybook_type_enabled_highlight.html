@@ -1,0 +1,141 @@
+<p>This code block should be properly parsed and highlighted:</p>
+
+<div class="code php">
+<pre class="php"><span class="kw2">class</span> Finder implements \IteratorAggregate<span class="sy0">,</span> \Countable
+<span class="br0">&#123;</span>
+    <span class="co4">/**
+     * Constructor.
+     */</span>
+    <span class="kw2">public</span> <span class="kw2">function</span> __construct<span class="br0">&#40;</span><span class="br0">&#41;</span>
+    <span class="br0">&#123;</span>
+        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">ignore</span> <span class="sy0">=</span> static<span class="sy0">::</span><span class="me2">IGNORE_VCS_FILES</span> <span class="sy0">|</span> static<span class="sy0">::</span><span class="me2">IGNORE_DOT_FILES</span><span class="sy0">;</span>
+        <span class="re0">$this</span>
+            <span class="sy0">-&gt;</span><span class="me1">addAdapter</span><span class="br0">&#40;</span><span class="kw2">new</span> GnuFindAdapter<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+            <span class="sy0">-&gt;</span><span class="me1">addAdapter</span><span class="br0">&#40;</span><span class="kw2">new</span> BsdFindAdapter<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+            <span class="sy0">-&gt;</span><span class="me1">addAdapter</span><span class="br0">&#40;</span><span class="kw2">new</span> PhpAdapter<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="sy0">-</span><span class="nu0">50</span><span class="br0">&#41;</span>
+            <span class="sy0">-&gt;</span><span class="me1">setAdapter</span><span class="br0">&#40;</span><span class="st_h">'php'</span><span class="br0">&#41;</span>
+        <span class="sy0">;</span>
+    <span class="br0">&#125;</span>
+    <span class="co1">// ...</span>
+<span class="br0">&#125;</span></pre>
+</div>
+
+<p>This is an expanded version of the previous code block and it should be wrongly
+parsed and highlighted, because it contains some empty lines without leading
+tabs or spaces:</p>
+
+<div class="code php">
+<pre class="php"><span class="kw2">&lt;?php</span></pre>
+</div>
+
+<div class="code code">
+<pre class="code">/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier &lt;fabien@symfony.com&gt;
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */</pre>
+</div>
+
+<div class="code code">
+<pre class="code">namespace Symfony\Component\Finder;</pre>
+</div>
+
+<div class="code code">
+<pre class="code">use Symfony\Component\Finder\Adapter\AdapterInterface;
+use Symfony\Component\Finder\Adapter\GnuFindAdapter;
+use Symfony\Component\Finder\Adapter\BsdFindAdapter;
+use Symfony\Component\Finder\Adapter\PhpAdapter;
+use Symfony\Component\Finder\Exception\ExceptionInterface;</pre>
+</div>
+
+<div class="code code">
+<pre class="code">class Finder implements \IteratorAggregate, \Countable
+{
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this-&gt;ignore = static::IGNORE_VCS_FILES | static::IGNORE_DOT_FILES;</pre>
+</div>
+
+<div class="code code">
+<pre class="code">        $this
+            -&gt;addAdapter(new GnuFindAdapter())
+            -&gt;addAdapter(new BsdFindAdapter())
+            -&gt;addAdapter(new PhpAdapter(), -50)
+            -&gt;setAdapter('php')
+        ;
+    }</pre>
+</div>
+
+<div class="code code">
+<pre class="code">    // ...
+}</pre>
+</div>
+
+<p>This is a code block with a generic code listing because it specifies no particular
+programming language:</p>
+
+<div class="code code">
+<pre class="code">// Bubble sort pseudocode implementation
+// see http://en.wikipedia.org/wiki/Bubble_sort#Pseudocode_implementation
+procedure bubbleSort( A : list of sortable items )
+   repeat
+     swapped = false
+     for i = 1 to length(A) - 1 inclusive do:
+       /* if this pair is out of order */
+       if A[i-1] &gt; A[i] then
+         /* swap them and remember something changed */
+         swap( A[i-1], A[i] )
+         swapped = true
+       end if
+     end for
+   until not swapped
+end procedure</pre>
+</div>
+
+<p>This code block uses the fenced code block style. Therefore, it shouldn't be
+parsed and it should be displayed as is:</p>
+
+<p>~~~ .twig
+{% for row in items|batch(3) %}
+    <div class=row>
+        {% for column in row %}
+            <div class=item>{{ column }}</div>
+        {% endfor %}
+    </div>
+{% endfor %}
+~~~</p>
+
+<p>And the following code listing uses the GitHub-style code block, so it should
+also be output as is, without parsing or highlighting:</p>
+
+<p><code>twig
+{% for row in items|batch(3) %}
+    &lt;div class=row&gt;
+        {% for column in row %}
+            &lt;div class=item&gt;{{ column }}&lt;/div&gt;
+        {% endfor %}
+    &lt;/div&gt;
+{% endfor %}</code></p>
+
+<p>The last code is a bit special, because it contains the special <code>[code php]</code> tag
+that, in this case, should not be interpreted, but displayed:</p>
+
+<div class="code code">
+<pre class="code">[code php]
+public function start($callback = null)
+{
+    if (null === $this-&gt;getCommandLine()) {
+        if (false === $php = $this-&gt;executableFinder-&gt;find()) {
+            throw new RuntimeException('Unable to find the PHP executable.');
+        }
+        $this-&gt;setCommandLine($php);
+    }
+    parent::start($callback);
+}</pre>
+</div>
