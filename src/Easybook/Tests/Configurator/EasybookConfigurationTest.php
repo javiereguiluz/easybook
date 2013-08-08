@@ -14,6 +14,7 @@ namespace Easybook\Tests\Configurator;
 use Symfony\Component\Yaml\Yaml;
 use Easybook\DependencyInjection\Application;
 use Easybook\Tests\TestCase;
+use Easybook\Util\Toolkit;
 
 class EasybookConfigurationTest extends TestCase
 {
@@ -37,8 +38,7 @@ class EasybookConfigurationTest extends TestCase
             ? $config['easybook']['parameters']
             : array();
 
-        $expectedConfiguration = array_merge($this->getEasybookDefaultParameters(), $easybookConfig);
-
+        $expectedConfiguration = Toolkit::array_deep_merge_and_replace($this->getEasybookDefaultParameters(), $easybookConfig);
         $this->assertEasybookConfiguration($expectedConfiguration);
     }
 
@@ -84,7 +84,10 @@ class EasybookConfigurationTest extends TestCase
             'app.debug'      => false,
             'app.charset'    => 'UTF-8',
             'app.name'       => 'easybook',
-            'parser.options' => array('markdown_syntax' => 'easybook'),
+            'parser.options' => array(
+                'markdown_syntax' => 'easybook',
+                'code_block_type' => 'easybook',
+            ),
             'prince.path'    => null,
             'prince.default_paths' => array(
                 '/usr/local/bin/prince',

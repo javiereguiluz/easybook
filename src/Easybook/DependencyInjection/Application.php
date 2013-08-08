@@ -175,6 +175,8 @@ class Application extends \Pimple
         $this['parser.options'] = array(
             // available syntaxes: 'original', 'php-markdown-extra', 'easybook'
             'markdown_syntax'  => 'easybook',
+            // available types: 'easybook', 'fenced', 'github'
+            'code_block_type'  => 'easybook',
         );
 
         $this['parser'] = $this->share(function ($app) {
@@ -754,7 +756,13 @@ class Application extends \Pimple
         }
 
         foreach ($bookFileConfig['easybook']['parameters'] as $option => $value) {
-            $this[$option] = $value;
+            if (is_array($value)) {
+                $previousArray = $this->offsetExists($option) ? $this[$option] : array();
+                $newArray = array_merge($previousArray, $value);
+                $this[$option] = $newArray;
+            } else {
+                $this[$option] = $value;
+            }
         }
     }
 

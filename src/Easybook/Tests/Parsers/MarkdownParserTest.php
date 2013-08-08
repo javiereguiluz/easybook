@@ -74,7 +74,10 @@ class MarkdownParserTest extends \PHPUnit_Framework_TestCase
 
     public function testEasybookMarkdown()
     {
-        $this->app['parser.options'] = array('markdown_syntax' => 'easybook');
+        $this->app['parser.options'] = array(
+            'markdown_syntax' => 'easybook',
+            'code_block_type' => 'easybook',
+        );
         $this->parser = new MarkdownParser($this->app);
 
         $docs = $this->app['finder']
