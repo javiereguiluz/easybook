@@ -11,6 +11,7 @@
 
 namespace Easybook\Plugins;
 
+use Easybook\DependencyInjection\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
@@ -26,6 +27,59 @@ class CodePlugin implements EventSubscriberInterface
     }
 
     public function onItemPreParse(ParseEvent $event)
+    {
+        $codeBlockType = $event->app['parser.options']['code_block_type'];
+
+        switch ($codeBlockType) {
+            case 'easybook':
+                $this->parseEasybookTypeCodeBlocks($event);
+                break;
+
+            case 'github':
+                $this->parseGithubTypeCodeBlocks($event);
+                break;
+
+            case 'fenced':
+                // Do nothing, because these code blocks are
+                // supported by the PHP Markdown library
+                break;
+        }
+    }
+
+    public function onItemPostParse(ParseEvent $event)
+    {
+        $item = $event->getItem();
+
+        // unescape yaml-style comments that before parsing could
+        // be interpreted as Markdown first-level headings
+        $item['content'] = str_replace('&#35;', '#', $item['content']);
+
+        $event->setItem($item);
+    }
+
+    /**
+     * It parses the code blocks of the item content that use the
+     * easybook style for code blocks:
+     *   * every line of code indented by 4 spaces or a tab
+     *   * (optionally) the firs line describes the language of the code
+     *
+     * Examples:
+     *
+     *     [php]
+     *     $lorem = 'ipsum';
+     *     // ...
+     *
+     *     [javascript]
+     *     var lorem = 'ipsum';
+     *     // ...
+     *
+     *     [code]
+     *     Generic code not associated with any language
+     *
+     * @param $event The event object that provides access to the $app and
+     *               the $item being parsed
+     */
+    private function parseEasybookTypeCodeBlocks($event)
     {
         $item = $event->getItem();
         // regexp copied from PHP-Markdown
@@ -62,47 +116,125 @@ class CodePlugin implements EventSubscriberInterface
                     $code
                 );
 
-                // highlight code if the edition wants to
-                if ($event->app->edition('highlight_code')) {
-                    $code = $event->app->highlight($code, $language);
-                } // escape code to show it instead of interpreting it
-                else {
-                    // yaml-style comments could be interpreted as Markdown headings
-                    // replace any starting # character by its HTML entity (&#35;)
-                    $code = '<pre>'
-                        . preg_replace('/^# (.*)/', "&#35; $1", htmlspecialchars($code))
-                        . '</pre>';
-                }
-
-                // the publishing edition wants to label codeblocks
-                // TODO
-
-                $code = $event->app->render('code.twig', array(
-                    'item' => array(
-                        'content'  => $code,
-                        'language' => $language,
-                        'number'   => '',
-                        'slug'     => ''
-                    )
-                ));
+                $code = $this->highlightAndDecorateCode($code, $language, $event->app);
 
                 // indent code block
                 return "\n$indent\n$indent" . str_replace("\n", "\n" . $indent, $code);
-
             },
             $item['original']
         );
         $event->setItem($item);
     }
 
-    public function onItemPostParse(ParseEvent $event)
+    /**
+     * It parses the code blocks of the item content that use the
+     * GitHub style for code blocks:
+     *   * the code listing starts with ```
+     *   * (optionally) followed by the programming language name
+     *   * the lines of code don't include any leading tab or whitespace
+     *   * the code listing ends with ```
+     *
+     * Examples:
+     *
+     *     ```php
+     *     $lorem = 'ipsum';
+     *     // ...
+     *     ```
+     *
+     *     ```javascript
+     *     var lorem = 'ipsum';
+     *     // ...
+     *     ```
+     *
+     *     ```
+     *     Generic code not associated with any language
+     *     ```
+     *
+     * @param $event The event object that provides access to the $app and
+     *               the $item being parsed
+     */
+    private function parseGithubTypeCodeBlocks($event)
     {
         $item = $event->getItem();
+        // regexp adapted from PHP-Markdown
+        $item['original'] = preg_replace_callback('{
+                (?:\n|\A)
+                # 1: Opening marker
+                (
+                    `{3} # Marker: three ` characters
+                )
+                [ ]*
+                (?:
+                    \.?([-_:a-zA-Z0-9]+) # 2: optional language name
+                )?
+                [ ]* \n # Whitespace and newline following marker.
 
-        // unescape yaml-style comments that before parsing could
-        // be interpreted as Markdown first-level headings
-        $item['content'] = str_replace('&#35;', '#', $item['content']);
+                # 4: Content
+                (
+                    (?>
+                        (?!\1 [ ]* \n)    # Not a closing marker.
+                        .*\n+
+                    )+
+                )
 
+                # Closing marker.
+                \1 [ ]* \n
+            }Uxm',
+            function ($matches) use ($event) {
+                $code = $matches[3];
+                $language = $matches[2];
+
+                if ('' == $language) {
+                    $language = 'code';
+                }
+
+                $code = $this->highlightAndDecorateCode($code, $language, $event->app);
+
+                return "\n\n" . $code;
+            },
+            $item['original']
+        );
         $event->setItem($item);
+    }
+
+    /**
+     * It highlights the given code using the given programming language syntax
+     * and decorates the result with the Twig template associated with the
+     * code fragments.
+     *
+     * @param $code            The source code to highlight and decorate
+     * @param $language        The programming language associated with the code
+     * @param Application $app The application object needed to highlight and decorate
+     *
+     * @return string The resulting code after the highlight and rendering process
+     */
+    private function highlightAndDecorateCode($code, $language, Application $app)
+    {
+        if ($app->edition('highlight_code')) {
+            // highlight code if the edition wants to
+            $code = $app->highlight($code, $language);
+        }
+        else {
+            // escape code to show it instead of interpreting it
+
+            // yaml-style comments could be interpreted as Markdown headings
+            // replace any starting # character by its HTML entity (&#35;)
+            $code = '<pre>'
+                . preg_replace('/^# (.*)/', "&#35; $1", htmlspecialchars($code))
+                . '</pre>';
+        }
+
+        // TODO: label code blocks
+
+        $code = $app->render('code.twig', array(
+            'item' => array(
+                'content'  => $code,
+                'language' => $language,
+                'number'   => '',
+                'slug'     => ''
+            )
+        ));
+
+        return $code;
     }
 }
