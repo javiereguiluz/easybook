@@ -25,11 +25,14 @@
 
 <div class="row">
     <div class="span9">
+{% block content %}
         <h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
         {{ item.content }}
+{% endblock %}
     </div>
 
     <div class="span3">
+{% block sidebar %}
         <div class="item local_toc">
             <h3>{{ app.getTitle('toc') }}</h3>
 
@@ -54,6 +57,7 @@
             {% endif %}
             </ul>
         </div>
+{% endblock %}
     </div>
 </div>
 {% endblock %}

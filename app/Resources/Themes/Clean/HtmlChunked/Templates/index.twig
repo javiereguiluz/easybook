@@ -20,18 +20,4 @@
     </ul>
 </div>
 {% endif %}
-
-{% if items.edition is defined %}
-<div class="item edition">
-    <h1>{{ items.edition.title }}</h1>
-    {{ items.edition.content }}
-</div>
-{% endif %}
-
-{% if items.license is defined %}
-<div class="item license">
-    <h1>{{ items.license.title }}</h1>
-    {{ items.license.content }}
-</div>
-{% endif %}
 {% endblock %}

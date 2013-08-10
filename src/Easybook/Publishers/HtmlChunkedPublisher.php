@@ -24,10 +24,8 @@ use Easybook\Events\BaseEvent;
  */
 class HtmlChunkedPublisher extends HtmlPublisher
 {
-    // Elements not included in this array (such as license, title, and author)
-    // won't generate an HTML page in the resulting book website
-    // TODO: this property should be easily configurable
-    public $elementsGeneratingPages = array('appendix', 'chapter');
+    // these elements are so special that they cannot define a TOC
+    private $elementsWithoutToc = array('cover', 'toc');
 
     /**
      * Overrides the base publisher method to avoid the decoration of the book items.
@@ -89,9 +87,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         $this->app['publishing.book.toc'] = $toc;
 
         foreach ($this->app['publishing.items'] as $item) {
-            $element = $item['config']['element'];
-
-            if (in_array($element, $this->elementsGeneratingPages)) {
+            if (!in_array($item['config']['element'], $this->elementsWithoutToc)) {
                 $chunkToc = $this->chunkItem($item, $toc, $hasCustomCss, $this->app->edition('chunk_level'));
 
                 // chunk_level = 2 usually results in several book sections merged
@@ -100,18 +96,12 @@ class HtmlChunkedPublisher extends HtmlPublisher
                 if (2 == $this->app->edition('chunk_level')) {
                     $toc = $chunkToc;
                 }
-            } elseif (in_array($element, array('license', 'edition', 'title', 'cover', 'author', 'toc'))) {
-                // some special book items, such as the license or the author information,
-                // are always reserved for the index page, instead of showing them in
-                // their own single page
-                // TODO: this behavior makes sense for most kind of books, but it should be configurable
-                $indexItems[$element] = $item;
             }
         }
 
         // generate index page
         $this->app->render('index.twig', array(
-                'items'          => $indexItems,
+                'items'          => $this->app['publishing.items'],
                 'toc'            => $toc,
                 'has_custom_css' => $hasCustomCss
             ),
@@ -137,6 +127,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         $flattenedToc = array();
 
         $bookItems = $this->normalizePageNames($this->app['publishing.items']);
+        $bookItems = $this->fixItemsWithEmptyTocs($bookItems);
 
         // calculate the URL of each book chunk and generate the flattened TOC
         $items = array();
@@ -161,10 +152,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
                 $itemToc[] = $chunk;
 
-                // only some book elements generate chunked HTML pages
-                if (in_array($item['config']['element'], $this->elementsGeneratingPages)) {
-                    $flattenedToc[] = $chunk;
-                }
+                $flattenedToc[] = $chunk;
             }
 
             $item['toc'] = $itemToc;
@@ -200,6 +188,42 @@ class HtmlChunkedPublisher extends HtmlPublisher
         }
 
         return $itemsWithNormalizedPageNames;
+    }
+
+    /**
+     * Special items such as 'lot' (list of tables) and 'lof' (list of figures)
+     * don't have a real content. Therefore, these items have an empty TOC
+     * that prevents them from appearing in the published book.
+     *
+     * This method ensures that every book item defines a TOC by adding a simple
+     * TOC to any item without one.
+     *
+     * @param  array $items The original book items.
+     *
+     * @return array        The book items with their new TOCs.
+     */
+    private function fixItemsWithEmptyTocs($items)
+    {
+        $itemsWithFixedTocs = array();
+
+        foreach ($items as $item) {
+            if (empty($item['toc']) && !in_array($item['config']['element'], $this->elementsWithoutToc)) {
+                $item['toc'] = array(
+                    array(
+                        'level'  => 1,
+                        'title'  => $item['title'],
+                        'slug'   => $item['slug'],
+                        'label'  => '',
+                        'url'    => $item['page_name'].'.html',
+                        'parent' => null,
+                    )
+                );
+            }
+
+            $itemsWithFixedTocs[] = $item;
+        }
+
+        return $itemsWithFixedTocs;
     }
 
     /**
