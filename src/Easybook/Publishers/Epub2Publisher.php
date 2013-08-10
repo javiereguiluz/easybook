@@ -279,7 +279,7 @@ class Epub2Publisher extends HtmlPublisher
                 ? $item['config']['element'].' '.$item['config']['number']
                 : $item['config']['element'];
 
-            $item['page_name'] = $this->app->slugify($itemPageName);
+            $item['page_name'] = $this->app->slugifyUniquely($itemPageName);
 
             $itemsWithNormalizedPageNames[] = $item;
         }
