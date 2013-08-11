@@ -114,10 +114,10 @@ class PublisherTest extends TestCase
                         
                         foreach ($genFiles as $genFile) {
                             $this->assertFileEquals(
-                                    $expected.'/'.$genFile->getRelativePathname(),
-                                    $genFile->getPathname(),
-                                    sprintf("'%s' file (into ZIP file '%s') not properly generated", 
-                                            $genFile->getRelativePathname(), $file->getPathName())
+                                $expected.'/'.$genFile->getRelativePathname(),
+                                $genFile->getPathname(),
+                                sprintf("ERROR on $book:\n '%s' file (into ZIP file '%s') not properly generated",
+                                         $genFile->getRelativePathname(), $file->getPathName())
                             );
                         }
                         

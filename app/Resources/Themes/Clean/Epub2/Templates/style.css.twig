@@ -2,7 +2,35 @@
 
 {% block theme_name        'clean' %}
 {% block theme_description 'simple and minimalistic' %}
-{% block theme_updated_at  '2/october/2012' %}
+{% block theme_updated_at  '11/august/2013' %}
+
+{# ==========================================================================
+   @typography
+   ========================================================================== #}
+{% block typography %}
+/* Custom fonts
+   ========================================================================= */
+/* Inconsolata : http://www.google.com/webfonts/specimen/Inconsolata */
+@font-face {
+    font-family: inconsolata;
+    font-style: normal;
+    font-weight: 400;
+    src: url("{{ resources_dir }}/fonts/Inconsolata.ttf")
+}
+
+{{ parent() }}
+{% endblock %}
+
+{# ==========================================================================
+   @code
+   ========================================================================== #}
+{% block code %}
+{{ parent() }}
+
+code, pre, pre span, pre * {
+    font-family: inconsolata, monospace !important;
+}
+{% endblock %}
 
 {# ==========================================================================
    @items

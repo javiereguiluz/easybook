@@ -116,6 +116,7 @@ class Epub2Publisher extends HtmlPublisher
 
         $bookImages = $this->prepareBookImages($bookTmpDir.'/book/OEBPS/images');
         $bookCover  = $this->prepareBookCoverImage($bookTmpDir.'/book/OEBPS/images');
+        $bookFonts  = $this->prepareBookFonts($bookTmpDir.'/book/OEBPS/fonts');
 
         // generate the book cover page
         $this->app->render('cover.twig', array('customCoverImage' => $bookCover),
@@ -126,7 +127,7 @@ class Epub2Publisher extends HtmlPublisher
         $this->app->render('content.opf.twig', array(
                 'cover'          => $bookCover,
                 'has_custom_css' => $hasCustomCss,
-                'fonts'          => array(),
+                'fonts'          => $bookFonts,
                 'images'         => $bookImages,
                 'items'          => $bookItems
             ),
@@ -256,6 +257,55 @@ class Epub2Publisher extends HtmlPublisher
         }
 
         return $cover;
+    }
+
+    /**
+     * It prepares the book fonts by copying them into the appropriate
+     * temporary directory. It also prepares an array with all the font
+     * data needed later to generate the full ebook contents manifest.
+     *
+     * For now, epub books only include the Inconsolata font to display
+     * their code listings.
+     *
+     * // TODO: books should be able to include their own font files
+     *
+     * @param  string $targetDir The directory where the fonts are copied.
+     *
+     * @return array             Font data needed to create the book manifest.
+     */
+    private function prepareBookFonts($targetDir)
+    {
+        if (!file_exists($targetDir)) {
+            throw new \RuntimeException(sprintf(
+                " ERROR: Books fonts couldn't be copied because \n"
+                    ." the given '%s' \n"
+                    ." directory doesn't exist.",
+                $targetDir
+            ));
+        }
+
+        $fontsDir = $this->app['app.dir.resources'].'/Fonts/Inconsolata';
+        $fontsData = array();
+
+        if (file_exists($fontsDir)) {
+            $fonts = $this->app['finder']->files()->name('*.ttf')->in($fontsDir);
+
+            $i = 1;
+            foreach ($fonts as $font) {
+                $this->app['filesystem']->copy(
+                    $font->getPathName(),
+                    $targetDir.'/'.$font->getFileName()
+                );
+
+                $fontsData[] = array(
+                    'id'        => 'font-'.$i++,
+                    'filePath'  => 'fonts/'.$font->getFileName(),
+                    'mediaType' => finfo_file(finfo_open(FILEINFO_MIME_TYPE), $font->getPathName())
+                );
+            }
+        }
+
+        return $fontsData;
     }
 
     /**
