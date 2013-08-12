@@ -7,7 +7,7 @@
 
   Author:       {% block theme_author %}javier.eguiluz@gmail.com{% endblock %}
 
-  Last updated: {% block theme_updated_at %}2/october/2012{% endblock %}
+  Last updated: {% block theme_updated_at %}12/august/2013{% endblock %}
 */
 
 {# Table of contents
@@ -774,7 +774,9 @@ div.twig .kw2         {# filters #}
 /* @common
    -------------------------------------------------------------------------- */
 .item {
+{% if edition.two_sided %}
     page-break-before: right;
+{% endif %}
     page: page_normal;
     prince-page-group: start; /* don't touch this! needed for 'page' property */
 }
