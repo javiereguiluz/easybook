@@ -24,3 +24,8 @@ Developers that helped **easybook** with promotion, ideas, code or bug reports.
   * [Daniel González](https://github.com/desarrolla2)
   * [Matthieu Codron](https://github.com/CircleCode)
   * [Luis Cordova](https://github.com/cordoval)
+  * [Oscar Cubo Medina](https://github.com/ocubom)
+  * [Hari K T](https://github.com/harikt)
+  * [Lionel Maccaud](https://github.com/lionel-m)
+  * [Romain Pellerin](https://github.com/romainPellerin)
+  * [Matthew Cocco](https://github.com/matthewcocco)
