@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Easybook\Tests\Commands;
+namespace Easybook\Tests\Publishers;
 
 use Easybook\DependencyInjection\Application;
 use Easybook\Publishers\Epub2Publisher;
