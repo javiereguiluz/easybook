@@ -186,7 +186,12 @@ class CodePlugin implements EventSubscriberInterface
                 \1 [ ]* \n
             }Uxm',
             function ($matches) use ($self, $event) {
-                $code = $matches[3];
+                // TODO: fix this problem in a less 'hackish' way
+                // codeblocks always end with an empty new line (due to the regexp used)
+                // the current solution rtrims() the whole block. This would not work
+                // in the (very) rare situations where a code block must end with
+                // whitespaces, tabs or new lines
+                $code = rtrim($matches[3]);
                 $language = $matches[2];
 
                 if ('' == $language) {
