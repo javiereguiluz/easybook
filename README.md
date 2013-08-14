@@ -3,9 +3,11 @@
 *«book publishing as easy as it should be»*
 
 **[easybook](http://easybook-project.org)** lets you easily publish books in
-various electronic formats (PDF, ePub, MOBI and HTML). It was originally designed to
-publish technical programming books, but you can use **easyboook** to publish
-any kind of book, manual or documentation website.
+various electronic formats (ePub, MOBI, PDF and HTML). It was originally designed to
+publish programming books, but you can use **easyboook** to publish any kind of
+book, manual or documentation website.
+
+![easybook worflow diagram](doc/easybook-doc-en/Contents/images/what_is_easybook.png)
 
 ## Installation ##
 
@@ -21,7 +23,7 @@ any kind of book, manual or documentation website.
 Regardless the way you install it, use **easybook** with the `book` command:
 
 ```
-$ cd easybook-installation-dir
+$ cd <easybook-installation-dir>
 $ ./book
 ```
 
@@ -76,20 +78,22 @@ $ curl -s http://getcomposer.org/installer | php
 
 ## License ##
 
-**easybook** is licensed under the MIT license.
+**easybook** is licensed under the [MIT license](LICENSE.md).
 
 ## Tests ##
 
 Execute the following command to test **easybook** (requires PHPUnit):
 
 ```
-$ cd easybook
+$ cd <easybook-installation-dir>
 $ phpunit
 ```
 
-Travis CI status: [![Travis CI status](https://secure.travis-ci.org/javiereguiluz/easybook.png?branch=master)](http://travis-ci.org/javiereguiluz/easybook)
+### Code Quality Assurance ###
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/34c47e7f-a523-4702-8310-ebec02a6a241/big.png)](https://insight.sensiolabs.com/projects/34c47e7f-a523-4702-8310-ebec02a6a241)
+| SensioLabs Insight | Travis CI | Scrutinizer CI
+| ------------------ | --------- | --------------
+| [![SensioLabsInsight](https://insight.sensiolabs.com/projects/34c47e7f-a523-4702-8310-ebec02a6a241/big.png)](https://insight.sensiolabs.com/projects/34c47e7f-a523-4702-8310-ebec02a6a241) | [![Travis CI status](https://secure.travis-ci.org/javiereguiluz/easybook.png?branch=master)](http://travis-ci.org/javiereguiluz/easybook) | [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/javiereguiluz/easybook/badges/quality-score.png?s=90c6ed79f22c90ee2c4761937b58ebe9c6b68889)](https://scrutinizer-ci.com/g/javiereguiluz/easybook/) [![Code Coverage](https://scrutinizer-ci.com/g/javiereguiluz/easybook/badges/coverage.png?s=9970dd759c959787f635a7129ed1d89a4281896a)](https://scrutinizer-ci.com/g/javiereguiluz/easybook/)
 
 ## Requirements ##
 
