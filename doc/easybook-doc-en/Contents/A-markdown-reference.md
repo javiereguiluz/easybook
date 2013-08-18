@@ -1,4 +1,4 @@
-# Markdown reference #
+# Markdown reference # {#markdown-reference}
 
 **easybook** uses Markdown as the standard markup language to create books and
 contents. In the future, **easybook** will support other markup languages such

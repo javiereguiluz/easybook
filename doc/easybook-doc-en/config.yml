@@ -15,10 +15,17 @@ book:
     contents:
         - { element: cover }
         - { element: toc   }
-        - { element: chapter,  number: 1, content: chapter1.md }
-        - { element: chapter,  number: 2, content: chapter2.md }
-        - { element: chapter,  number: 3, content: chapter3.md }
-        - { element: appendix, number: A, content: reference.md }
+        - { element: chapter,  number: 1,  content: 01-publishing-your-first-book.md }
+        - { element: chapter,  number: 2,  content: 02-book-contents-and-configuration.md }
+        - { element: chapter,  number: 3,  content: 03-editions.md }
+        - { element: chapter,  number: 4,  content: 04-themes.md }
+        - { element: chapter,  number: 5,  content: 05-publishing-html-books.md }
+        - { element: chapter,  number: 6,  content: 06-publishing-epub-books.md }
+        - { element: chapter,  number: 7,  content: 07-publishing-mobi-books.md }
+        - { element: chapter,  number: 8,  content: 08-publishing-pdf-books.md }
+        - { element: chapter,  number: 9,  content: 09-plugins.md }
+        - { element: chapter,  number: 10, content: 10-hacking-easybook.md }
+        - { element: appendix, number: A,  content: A-markdown-reference.md }
 
     editions:
         kindle:
