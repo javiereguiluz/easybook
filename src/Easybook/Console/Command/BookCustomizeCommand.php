@@ -29,7 +29,7 @@ class BookCustomizeCommand extends BaseCommand
                     'slug', InputArgument::REQUIRED, "Book slug (no spaces allowed)"
                 ),
                 new InputArgument(
-                    'edition', InputArgument::REQUIRED, "Edition to be customized"
+                    'edition', InputArgument::REQUIRED, "The name of the edition to be customized"
                 ),
                 new InputOption(
                     'dir', '', InputOption::VALUE_OPTIONAL, "Path of the documentation directory"
