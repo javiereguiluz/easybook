@@ -1,0 +1,17 @@
+{{ "{% extends 'layout.html.twig' %}" }}
+
+{{ "{% block body_id 'documentation' %}" }}
+{{ "{% block title %}Documentation{% endblock %}" }}
+
+{{ "{% block contents %}" }}
+<div class="span12 item toc">
+    <ul class="unstyled">
+{% for tocItem in toc if tocItem.level <= edition.toc.deep %}
+        <li class="{{ tocItem.config.element|default('') }} level-{{ tocItem.level }}">
+            <span>{{ tocItem.label }}</span>
+            <a href="./{{ tocItem.url }}">{{ tocItem.title }}</a>
+        </li>
+{% endfor %}
+    </ul>
+</div>
+{{ "{% endblock %}" }}

@@ -82,7 +82,7 @@ book:
         easybook-project.org:
             format:          html_chunked
             chunk_level:     2
-            images_base_dir: /img/doc-en/
+            images_base_dir: /images/doc-en/
             include_styles:  false
             highlight_cache: false
             highlight_code:  true

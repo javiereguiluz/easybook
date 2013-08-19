@@ -1,0 +1,16 @@
+label:
+    appendix:
+        - 'Appendix {{ item.number }}.'
+        - ''
+        - ''
+        - ''
+        - ''
+        - ''
+
+    chapter:
+        - 'Chapter {{ item.number }}.'
+        - '{{ item.counters[0:2]|join(".") }}.'
+        - '{{ item.counters[0:3]|join(".") }}.'
+        - '{{ item.counters[0:4]|join(".") }}.'
+        - '{{ item.counters[0:5]|join(".") }}.'
+        - '{{ item.counters[0:6]|join(".") }}.'

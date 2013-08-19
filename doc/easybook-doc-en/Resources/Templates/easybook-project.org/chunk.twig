@@ -1,0 +1,56 @@
+{{ "{% extends 'layout.html.twig' %}" }}
+
+{{ "{% block body_id 'documentation' %}" }}
+{{ "{% block title %}Documentation{% endblock %}" }}
+
+{{ "{% block contents %}" }}
+{% set urlBasePath = 2 == item.level ? '..' : '.' %}
+
+<div class="span9">
+    <h1 id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
+    {{ item.content|replace({
+        '{{': '&#123;{',
+        '}}': '}&#125;',
+        '{#': '&#123;#',
+        '#}': '#&#125;',
+        '{%': '&#123;%',
+        '%}': '%&#125;'
+    }) }}
+
+    <div class="navigation row">
+{% if previous %}
+        <a class="span4 prev" href="{{ urlBasePath }}/{{ previous.url }}">&larr; {{ app.getLabel('previous') }} <span>{{ previous.label }} {{ previous.title }}</span></a>
+{% else %}
+        <p class="span4 prev disabled">&larr; {{ app.getLabel('previous') }} <span></span></p>
+{% endif %}
+
+{% if next %}
+        <a class="span4 offset1 next" href="{{ urlBasePath }}/{{ next.url }}">{{ app.getLabel('next') }} &rarr; <span>{{ next.label }} {{ next.title }}</span></a>
+{% else %}
+        <p class="span4 offset1 next disabled">{{ app.getLabel('next') }} &rarr; <span></span></p>
+{% endif %}
+    </div>
+</div>
+
+<div class="span3">
+    <h3><a href="{{ "{{ path('documentation') }}" }}">{{ app.getTitle('toc') }}</a></h3>
+
+    <ul class="toc">
+    {% for tocItem in toc if tocItem.level <= edition.chunk_level|default(edition.toc.deep) %}
+    {% if tocItem.parent.slug|default(tocItem.slug) == item.parent.slug|default(item.slug) %}
+    {# unfold current chapter sections #}
+        <li class="level-{{ tocItem.level }} {{ tocItem.slug == item.slug ? 'active' : '' }}">
+            <a href="{{ urlBasePath }}/{{ tocItem.url }}">
+                <span>{{ 1 == edition.chunk_level ? tocItem.config.number : tocItem.label }}</span> {{ tocItem.title }}
+            </a>
+        </li>
+    {% elseif 1 == tocItem.level %}
+    {# list the rest of the chapters/appendixes without unfolding their sections #}
+        <li class="level-1">
+            <span>{{ tocItem.config.number }}.</span> <a href="{{ urlBasePath }}/{{ tocItem.url }}"> {{ tocItem.title }}</a>
+        </li>
+    {% endif %}
+    {% endfor %}
+    </ul>
+</div>
+{{ "{% endblock %}" }}
