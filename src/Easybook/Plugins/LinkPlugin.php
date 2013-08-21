@@ -12,7 +12,6 @@
 namespace Easybook\Plugins;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Finder\Finder;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 

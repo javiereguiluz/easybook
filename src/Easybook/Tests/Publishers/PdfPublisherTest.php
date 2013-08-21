@@ -12,7 +12,6 @@
 namespace Easybook\Tests\Publishers;
 
 use Easybook\DependencyInjection\Application;
-use Easybook\Publishers\PdfPublisher;
 
 class PdfPublisherTest extends \PHPUnit_Framework_TestCase
 {

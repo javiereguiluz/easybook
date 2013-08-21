@@ -11,7 +11,6 @@
 
 namespace Easybook\Tests\DependencyInjection;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 use Easybook\Tests\TestCase;
 use Easybook\DependencyInjection\Application;
