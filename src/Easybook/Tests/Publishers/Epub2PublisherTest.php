@@ -44,6 +44,8 @@ class Epub2PublisherTest extends \PHPUnit_Framework_TestCase
         foreach ($directoriesRequiredForEpubBooks as $expectedDirectory) {
             $this->assertFileExists($bookDir.'/'.$expectedDirectory);
         }
+
+        $this->app['filesystem']->remove($bookDir);
     }
 
     public function testPrepareBookCoverImageIfTheBookDefinesNoCoverImage()
