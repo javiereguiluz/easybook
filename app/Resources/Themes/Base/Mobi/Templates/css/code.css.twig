@@ -1,0 +1,26 @@
+/* ==========================================================================
+   @code
+   ========================================================================== */
+{% block code %}
+code, pre {
+    font-family: monospace !important;
+}
+
+pre {
+    border-left: 1px solid {{ color_silver }};
+    margin: 0 0 1em;
+    padding: 0 0 0 1em;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+    font: inherit;
+}
+{% block highlighting %}
+{# code highlighting doesn't work for ebooks: on e-ink readers, the colored
+code is difficult to read. On advanced readers, such as the iPad, the colored code
+isn't properly rendered with a monospaced font #}
+{% endblock %}
+{% endblock %}

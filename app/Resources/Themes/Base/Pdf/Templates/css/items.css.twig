@@ -1,0 +1,349 @@
+/* ==========================================================================
+   @items
+   ========================================================================== */
+{% block items %}
+{% block common %}
+/* @common
+   -------------------------------------------------------------------------- */
+.item {
+{% if edition.two_sided %}
+    page-break-before: right;
+{% endif %}
+    page: page_normal;
+    prince-page-group: start; /* don't touch this! needed for 'page' property */
+}
+
+.item h1 {
+    color: {{ color_black }};
+    font-size: 24pt;
+    margin-bottom: .5em;
+}
+
+{# Using multiple :blank CSS selectors does not work as expected. Use a Twig loop instead #}
+{% set page_names = ['no-header', 'no-footer', 'no-header-footer', 'page_normal', 'page_chapter', 'page_appendix'] %}
+{% for page in page_names %}
+@page {{ page }}:blank {
+    @top {
+        color: {{ color_gray }};
+        content: "{{ app.getLabel('blank') }}";
+        font-family: tex-heros, sans-serif;
+        margin-top: 20em;
+    }
+    @top-left  { content: ""; }
+    @top-right { content: ""; }
+}
+{% endfor %}
+
+.item.cover h1 {
+    string-set: book_title content();
+}
+.item.chapter h1 {
+    string-set: chapter_title content();
+}
+.item.chapter h2 {
+    string-set: chapter_section content();
+}
+.item.appendix h1 {
+    string-set: appendix_title content();
+}
+.item.appendix h2 {
+    string-set: appendix_section content();
+}
+{% endblock %}
+{% block acknowledgement %}
+/* @acknowledgement
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block afterword %}
+/* @afterword
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block appendix %}
+/* @appendix
+   -------------------------------------------------------------------------- */
+{% if edition.two_sided %}
+@page page_appendix:right {
+    @top-left     { content: string(book_title); }
+    @top-right    { content: string(appendix_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+
+@page page_appendix:left {
+    @top-left     { content: string(appendix_title, first); }
+    @top-right    { content: string(book_title); }
+    @bottom-right { }
+    @bottom-left  { content: counter(page); }
+}
+{% else %}
+@page page_appendix {
+    @top-left     { content: string(book_title); }
+    @top-right    { content: string(appendix_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+{% endif %}
+
+@page page_appendix:first {
+    @top       { content: '' !important; border: none; }
+    @top-left  { content: '' !important; border: none; }
+    @top-right { content: '' !important; border: none; }
+}
+
+.item.appendix {
+    page: page_appendix;
+    prince-page-group: start; /* don't touch this! needed for 'page' property */
+}
+
+.item.appendix a.internal::after {
+    content: " ({{ app.getLabel('page') }} " target-counter(attr(href), page) ")";
+}
+{% endblock %}
+{% block author %}
+/* @author
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block chapter %}
+/* @chapter
+   -------------------------------------------------------------------------- */
+{% if edition.two_sided %}
+@page page_chapter:right {
+    @top-left     { content: string(book_title); }
+    @top-right    { content: string(chapter_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+
+@page page_chapter:left {
+    @top-left     { content: string(chapter_title, first); }
+    @top-right    { content: string(book_title); }
+    @bottom-right { }
+    @bottom-left  { content: counter(page); }
+}
+{% else %}
+@page page_chapter {
+    @top-left     { content: string(book_title); }
+    @top-right    { content: string(chapter_title, first); }
+    @bottom-right { content: counter(page); }
+    @bottom-left  { }
+}
+{% endif %}
+
+@page page_chapter:first {
+    @top       { content: '' !important; border: none; }
+    @top-left  { content: '' !important; border: none; }
+    @top-right { content: '' !important; border: none; }
+}
+
+.item.chapter {
+    page: page_chapter;
+    prince-page-group: start; /* don't touch this! needed for 'page' property */
+}
+
+.item.chapter a.internal::after {
+    content: " ({{ app.getLabel('page') }} " target-counter(attr(href), page) ")";
+}
+{% endblock %}
+{% block conclusion %}
+/* @conclusion
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block cover %}
+/* @cover
+   -------------------------------------------------------------------------- */
+.item.cover {
+    page: cover;
+}
+.item.cover h1 {
+    color: {{ color_black }};
+    font-family: tex-heros, sans-serif;
+    font-size: 48pt;
+    hyphens: none;
+    line-height: 1.1;
+    margin-bottom: .25em;
+    padding: 3em 2em 0 0;
+    text-align: left;
+    text-transform: uppercase
+}
+.item.cover h2 {
+    color: {{ color_gray }};
+    font-family: tex-heros, sans-serif;
+    font-size: 24pt;
+    font-weight: normal;
+    text-align: left;
+    margin-top: 0;
+    text-transform: uppercase
+}
+
+{% endblock %}
+{% block dedication %}
+/* @dedication
+   -------------------------------------------------------------------------- */
+.item.dedication {
+    page: no-header;
+}
+.item.dedication p {
+    font-size: 16pt;
+    font-style: italic;
+    margin-top: 10em;
+    text-align: right;
+}
+{% endblock %}
+{% block edition %}
+/* @edition
+   -------------------------------------------------------------------------- */
+.item.edition {
+    page: no-header;
+    page-break-before: always;
+}
+{% endblock %}
+{% block epilogue %}
+/* @epilogue
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block foreword %}
+/* @foreword
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block glossary %}
+/* @glossary
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block introduction %}
+/* @introduction
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block license %}
+/* @license
+   -------------------------------------------------------------------------- */
+.item.license {
+    page: no-header;
+}
+{% endblock %}
+{% block lof %}
+/* @lof
+   -------------------------------------------------------------------------- */
+.item.lof {
+    page: no-header;
+}
+
+.item.lof ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.item.lof ul a {
+    border: none;
+    color: inherit !important;
+    text-decoration: none;
+}
+.item.lof a::after {
+    color: inherit;
+    content: leader('. ') target-counter(attr(href), page);
+    margin-left: .5em;
+}
+
+.item.lof ul li {
+    margin: 0 0 .5em 0;
+}
+
+.item.lof ul li span {
+    padding-right: .5em;
+}
+{% endblock %}
+{% block lot %}
+/* @lot
+   -------------------------------------------------------------------------- */
+.item.lot {
+    page: no-header;
+}
+
+.item.lot ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.item.lot ul a {
+    border: none;
+    color: inherit !important;
+    text-decoration: none;
+}
+.item.lot a::after {
+    color: inherit;
+    content: leader('. ') target-counter(attr(href), page);
+    margin-left: .5em;
+}
+
+.item.lot ul li {
+    margin: 0 0 .5em 0;
+}
+
+.item.lot ul li span {
+    padding-right: .5em;
+}
+{% endblock %}
+{% block part %}
+/* @part
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block preface %}
+/* @preface
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block prologue %}
+/* @prologue
+   -------------------------------------------------------------------------- */
+{% endblock %}
+{% block title %}
+/* @title
+   -------------------------------------------------------------------------- */
+.item.title {
+    page: no-header-footer;
+}
+{% endblock %}
+{% block toc %}
+/* @toc
+   -------------------------------------------------------------------------- */
+.item.toc {
+    page: no-header;
+}
+
+.item.toc ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.item.toc ul li,
+.item.toc ul li a,
+.item.toc ul li a code {
+    border: none;
+    color: inherit;
+    line-height: 1.1;
+    text-decoration: none;
+}
+.item.toc li a::after {
+    color: inherit;
+    content: leader('. ') target-counter(attr(href), page);
+}
+.item.toc ul li.level-1,
+.item.toc ul li.level-1 a {
+    font-size: 15pt;
+    font-weight: bold;
+}
+.item.toc ul li span {
+    font-weight: normal;
+    padding-right: .2em;
+}
+
+.item.toc ul li.level-2,
+.item.toc ul li.level-3,
+.item.toc ul li.level-4,
+.item.toc ul li.level-5,
+.item.toc ul li.level-6 {
+    font-size: 13pt;
+    margin-left: 1em;
+}
+{% endblock %}
+{% endblock %}

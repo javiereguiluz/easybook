@@ -1,0 +1,114 @@
+/* ==========================================================================
+   @tables
+   ========================================================================== */
+{% block tables %}
+{# copied from Twitter Bootstrap 2.1.1 #}
+table {
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 1em;
+  max-width: 100%;
+  width: 100%;
+}
+
+table th,
+table td {
+  padding: .5em;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid #DDDDDD;
+}
+
+table th {
+  font-weight: bold;
+}
+
+table thead th {
+  vertical-align: bottom;
+}
+
+table caption + thead tr:first-child th,
+table caption + thead tr:first-child td,
+table colgroup + thead tr:first-child th,
+table colgroup + thead tr:first-child td,
+table thead:first-child tr:first-child th,
+table thead:first-child tr:first-child td {
+  border-top: 0;
+}
+
+table tbody + tbody {
+  border-top: 2px solid #DDDDDD;
+}
+
+table.condensed th,
+table.condensed td {
+  padding: .25em;
+}
+
+table.bordered {
+  border: 1px solid #DDDDDD;
+  border-collapse: separate;
+  *border-collapse: collapse;
+  border-left: 0;
+}
+
+table.bordered th,
+table.bordered td {
+  border-left: 1px solid #dddddd;
+}
+
+table.bordered caption + thead tr:first-child th,
+table.bordered caption + tbody tr:first-child th,
+table.bordered caption + tbody tr:first-child td,
+table.bordered colgroup + thead tr:first-child th,
+table.bordered colgroup + tbody tr:first-child th,
+table.bordered colgroup + tbody tr:first-child td,
+table.bordered thead:first-child tr:first-child th,
+table.bordered tbody:first-child tr:first-child th,
+table.bordered tbody:first-child tr:first-child td {
+  border-top: 0;
+}
+
+table.striped tbody tr:nth-child(odd) td,
+table.striped tbody tr:nth-child(odd) th {
+  background-color: #F9F9F9;
+}
+
+table.hover tbody tr:hover td,
+table.hover tbody tr:hover th {
+  background-color: #F5F5F5;
+}
+
+table tbody tr.success td {
+  background-color: #dff0d8;
+}
+
+table tbody tr.error td {
+  background-color: #f2dede;
+}
+
+table tbody tr.warning td {
+  background-color: #fcf8e3;
+}
+
+table tbody tr.info td {
+  background-color: #d9edf7;
+}
+
+table-hover tbody tr.success:hover td {
+  background-color: #d0e9c6;
+}
+
+table-hover tbody tr.error:hover td {
+  background-color: #ebcccc;
+}
+
+table-hover tbody tr.warning:hover td {
+  background-color: #faf2cc;
+}
+
+table-hover tbody tr.info:hover td {
+  background-color: #c4e3f3;
+}
+{% endblock %}

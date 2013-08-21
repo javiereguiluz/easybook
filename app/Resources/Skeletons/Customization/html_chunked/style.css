@@ -19,7 +19,7 @@
 
 /* Table of contents
    -----------------------------------------------------------------------------
-   @reset ................ normalize elements
+   @normalize ............ normalize and reset elements
    @typography ........... colors, sizes, margins, paddings, and line heights
      @body ............... body
      @links .............. a, a:link, a:hover, a:visited, a:active
@@ -51,7 +51,7 @@
 */
 
 /* ==========================================================================
-   @reset
+   @normalize
    ========================================================================== */
 article,
 aside,

@@ -15,8 +15,10 @@
 
 
 /* ==========================================================================
-   @reset
+   @normalize
    ========================================================================== */
+/*! normalize.css v2.1.0 | MIT License | git.io/normalize */
+
 article,
 aside,
 details,
@@ -25,8 +27,10 @@ figure,
 footer,
 header,
 hgroup,
+main,
 nav,
-section {
+section,
+summary {
   display: block;
 }
 
@@ -34,29 +38,83 @@ audio,
 canvas,
 video {
   display: inline-block;
-  *display: inline;
-  *zoom: 1;
 }
 
 audio:not([controls]) {
   display: none;
+  height: 0;
+}
+
+[hidden] {
+  display: none;
 }
 
 html {
-  font-size: 100%;
+  font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
 
-a:focus {
-  outline: thin dotted #333;
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
+body {
+  margin: 0;
 }
 
-a:hover,
-a:active {
+a:focus {
+  outline: thin dotted;
+}
+
+a:active,
+a:hover {
   outline: 0;
+}
+
+h1 {
+  margin: 0.67em 0;
+  font-size: 2em;
+}
+
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+b,
+strong {
+  font-weight: bold;
+}
+
+dfn {
+  font-style: italic;
+}
+
+hr {
+  height: 0;
+  -moz-box-sizing: content-box;
+       box-sizing: content-box;
+}
+
+mark {
+  color: #000;
+  background: #ff0;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+  font-size: 1em;
+}
+
+pre {
+  white-space: pre-wrap;
+}
+
+q {
+  quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+small {
+  font-size: 80%;
 }
 
 sub,
@@ -75,8 +133,27 @@ sub {
   bottom: -0.25em;
 }
 
-#map_canvas img {
-  max-width: none;
+img {
+  border: 0;
+}
+
+svg:not(:root) {
+  overflow: hidden;
+}
+
+figure {
+  margin: 0;
+}
+
+fieldset {
+  padding: 0.35em 0.625em 0.75em;
+  margin: 0 2px;
+  border: 1px solid #c0c0c0;
+}
+
+legend {
+  padding: 0;
+  border: 0;
 }
 
 button,
@@ -84,28 +161,37 @@ input,
 select,
 textarea {
   margin: 0;
+  font-family: inherit;
   font-size: 100%;
-  vertical-align: middle;
 }
 
 button,
 input {
-  *overflow: visible;
   line-height: normal;
 }
 
-button::-moz-focus-inner,
-input::-moz-focus-inner {
-  padding: 0;
-  border: 0;
+button,
+select {
+  text-transform: none;
 }
 
 button,
-input[type="button"],
+html input[type="button"],
 input[type="reset"],
 input[type="submit"] {
   cursor: pointer;
   -webkit-appearance: button;
+}
+
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  padding: 0;
+  box-sizing: border-box;
 }
 
 input[type="search"] {
@@ -115,14 +201,25 @@ input[type="search"] {
   -webkit-appearance: textfield;
 }
 
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button {
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  padding: 0;
+  border: 0;
 }
 
 textarea {
   overflow: auto;
   vertical-align: top;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 /* ==========================================================================
@@ -134,11 +231,6 @@ body {
     background: #FFF;
     color: #222;
     font: 16px/1.6 "Helvetica Neue", Arial, sans-serif;
-}
-
-
-body {
-    margin: 0;
 }
 /* @links
    -------------------------------------------------------------------------- */
@@ -1929,45 +2021,6 @@ div.twig .kw2         { color: #4271AE; }
 .navbar-inverse .btn-navbar.active {
   background-color: #000000 \9;
 }
-
-
-.item .menu {
-    background: #222;
-    color: #777;
-    margin-bottom: 1em;
-    min-height: 50px;
-}
-
-.item .menu a {
-    color: #F5F5F5;
-    font-weight: 400;
-    line-height: 50px;
-    text-decoration: none;
-}
-.item .menu a.disabled {
-    color: #777 !important;
-}
-.item .menu a:hover {
-    text-decoration: underline;
-}
-
-.item .menu h1 {
-    margin-bottom: 0;
-    margin-top: 0;
-}
-.item .menu h1 a {
-    display: block;
-    font-size: 21px;
-    padding-left: .5em;
-}
-.item .menu p {
-    margin-bottom: 0;
-    margin-top: 0;
-}
-.item .menu p a {
-    margin: 0 .75em 0;
-}
-
 /* @breadcrumbs
    -------------------------------------------------------------------------- */
 .breadcrumb {
@@ -2144,68 +2197,16 @@ div.twig .kw2         { color: #4271AE; }
    -------------------------------------------------------------------------- */
 /* @appendix
    -------------------------------------------------------------------------- */
-
-
-.item.appendix h1 {
-    font-size: 28px;
-    margin-top: 0;
-}
-
-.item.appendix h1 span {
-    display: block;
-    font-size: 24px;
-    font-weight: normal;
-    line-height: 1.5;
-}
 /* @author
    -------------------------------------------------------------------------- */
 /* @chapter
    -------------------------------------------------------------------------- */
-
-
-.item.chapter h1 {
-    font-size: 28px;
-    margin-top: 0;
-}
-
-.item.chapter h1 span {
-    display: block;
-    font-size: 24px;
-    font-weight: normal;
-    line-height: 1.5;
-}
 /* @conclusion
    -------------------------------------------------------------------------- */
 /* @cover
    -------------------------------------------------------------------------- */
-
-
-.item.cover {
-    border-bottom: thick solid #DDD;
-    color: #222;
-    margin-bottom: 1.5em;
-    padding: 5em 200px 1.75em 0;
-}
-.item.cover h1 {
-    font-size: 64px;
-    line-height: 1;
-    letter-spacing: -2px;
-    margin: 0;
-}
-.item.cover h2 {
-    color: #777;
-    font-size: 28px;
-    font-weight: normal;
-    margin-top: .5em;
-}
 /* @dedication
    -------------------------------------------------------------------------- */
-
-
-.item.dedication {
-    font-style: italic;
-    text-align: center;
-}
 /* @edition
    -------------------------------------------------------------------------- */
 /* @epilogue
@@ -2220,172 +2221,18 @@ div.twig .kw2         { color: #4271AE; }
    -------------------------------------------------------------------------- */
 /* @lof
    -------------------------------------------------------------------------- */
-
-
-.item.lof ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.item.lof ul a {
-    text-decoration: none;
-}
-
-.item.lof ul li span {
-    padding-right: .3em;
-}
 /* @lot
    -------------------------------------------------------------------------- */
-
-
-.item.lot ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.item.lot ul a {
-    text-decoration: none;
-}
-
-.item.lot ul li span {
-    padding-right: .3em;
-}
 /* @part
    -------------------------------------------------------------------------- */
-
-
-.item.part {
-    border: solid #777;
-    border-width: medium 0;
-    padding: 0;
-}
-
-.item + .item.part {
-    margin-top: -2em;
-}
-
-.item.part h1 {
-    font-size: 36px;
-    margin: 0;
-    padding: 1em 0;
-    text-align: center;
-}
-.item.part h1 span {
-    color: #777;
-    font-size: 80%;
-    font-weight: normal;
-    padding-bottom: .25em;
-}
 /* @preface
    -------------------------------------------------------------------------- */
 /* @prologue
    -------------------------------------------------------------------------- */
-.item.title {
-    display: none;
-}
+/* @title
+   -------------------------------------------------------------------------- */
 /* @toc
    -------------------------------------------------------------------------- */
-
-.item.toc {
-    margin-bottom: 2em;
-    padding-left: 0;
-}
-
-.item.toc h1 {
-    font-size: 36px;
-    margin-bottom: .5em;
-}
-
-.item.toc ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    -moz-column-count: 2;
-    -moz-column-gap: 3em;
-    -moz-column-rule: 1px solid #DDD;
-    -webkit-column-count: 2;
-    -webkit-column-gap: 3em;
-    -webkit-column-rule: 1px solid #DDD;
-}
-
-.item.toc ul li,
-.item.toc ul li a {
-    font-size: 16px;
-    line-height: 1.2;
-    text-decoration: none;
-}
-.item.toc ul li a {
-    color: #152DC6;
-}
-.item.toc ul li a:hover {
-    color: #152DC6 !important;
-    text-decoration: underline;
-}
-.item.toc ul li.level-1,
-.item.toc ul li.level-1 a {
-    color: #222;
-    font-size: 21px;
-    font-weight: bold;
-}
-.item.toc ul li span {
-    color: #777;
-    padding-right: .3em;
-}
-.item.toc ul li.level-1 span {
-    font-weight: normal;
-}
-
-.item.toc ul li.level-2 {
-    margin-left: 1em;
-}
-.item.toc ul li.level-3,
-.item.toc ul li.level-4,
-.item.toc ul li.level-5,
-.item.toc ul li.level-6 {
-    margin-left: 3em;
-}
-
-.item .local_toc {
-    border: none;
-}
-
-.item .local_toc h3 {
-    color: #777;
-    font-size: 21px;
-    font-weight: normal;
-}
-
-.item .local_toc ul {
-    padding: 0;
-}
-
-.item .local_toc ul li {
-    font-size: 14px;
-}
-
-.item .local_toc ul li span {
-    font-weight: bold;
-}
-
-.item .local_toc ul li a {
-    text-decoration: none;
-}
-
-.item .local_toc ul li a:hover {
-    text-decoration: underline;
-}
-
-.item .local_toc ul li.level-1 {
-    border-top: 1px solid #DDD;
-    margin-top: .5em;
-    padding-top: .5em;
-}
-.item .local_toc h3 + ul li.level-1:first-child {
-    border-top: 0;
-    padding: 0;
-}
 
 /* ==========================================================================
    @responsive
@@ -2774,36 +2621,6 @@ div.twig .kw2         { color: #4271AE; }
         margin-left: 8.56353591160221%;
         *margin-left: 8.457152932878806%;
     }
-
-
-body {
-    font-size: 15px;
-}
-
-.item.cover h1 {
-    font-size: 48px;
-}
-.item.cover h2 {
-    font-size: 21px;
-}
-
-.item.toc h3 {
-    font-size: 16px;
-}
-.item.toc ul li.level-1, .item.toc ul li.level-1 a {
-    font-size: 18px;
-}
-.item.toc ul li, .item.toc ul li a {
-    font-size: 14px;
-}
-.item.toc li.level-1 span {
-    display: block;
-    font-size: 90%;
-}
-
-.item .menu p a {
-    margin: 0 .3em 0;
-}
 }
 
 @media (max-width: 767px) {
@@ -2851,97 +2668,10 @@ body {
        -moz-box-sizing: border-box;
             box-sizing: border-box;
   }
-
-
-.item.cover {
-    padding-right: 1em;
-}
-
-.item.cover h1 {
-    font-size: 36px;
-    letter-spacing: 0;
-}
-.item.cover h2 {
-    font-size: 21px;
-}
-
-.item.toc ul li.level-1, .item.toc ul li.level-1 a {
-    font-size: 16px;
-}
-.item.toc ul li, .item.toc ul li a {
-    font-size: 13px;
-}
-.item.toc li.level-1 span {
-    display: block;
-    font-size: 90%;
-}
-
-.item .menu h1 {
-    float: left;
-    margin-left: 20px;
-    width: auto;
-}
-.item .menu h1 a {
-    padding-left: 0;
-}
-.item .menu p {
-    float: right;
-    width: auto;
-}
-.item .menu p a {
-    margin: 0 .3em 0;
-}
 }
 
 @media (max-width: 480px) {
 /* @phones
    -------------------------------------------------------------------------- */
-
-
-body {
-    font-size: 14px;
 }
 
-h1 { font-size: 21px !important; } h1 span { font-size: inherit !important; }
-h2 { font-size: 18px !important; }
-h3 { font-size: 16px !important; }
-h4 { font-size: 16px !important; }
-h5 { font-size: 16px !important; }
-h6 { font-size: 16px !important; }
-
-.item.cover h1 {
-    font-size: 28px !important;
-}
-.item.cover h2 {
-    font-size: 18px !important;
-}
-
-.item.toc {
-    padding-left: .5em !important;
-}
-.item.toc h1 {
-    display: none;
-}
-.item.toc ul {
-    margin: 0 !important;
-    -moz-column-count: 1;
-    -webkit-column-count: 1;
-}
-
-.item .local_toc {
-    display: none;
-}
-
-.item .menu h1 {
-    display: none;
-}
-.item .menu p {
-    width: 100%;
-}
-.item .menu p a:first-child {
-    float: left;
-}
-.item .menu p a:last-child {
-    float: right;
-}
-}
