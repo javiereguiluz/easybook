@@ -27,7 +27,7 @@ class TablePluginTest extends TestCase
         $app = new Application();
 
         $app['publishing.book.slug'] = 'test_book';
-        $app['publishing.edition'] = 'test_edition';
+        $app['publishing.edition']   = 'test_edition';
         $app['publishing.book.config'] = array(
             'book' => array(
                 'slug'     => 'test_book',
@@ -49,7 +49,7 @@ class TablePluginTest extends TestCase
             'content' => file_get_contents($fixturesDir.'/'.$inputFilePath)
         ));
 
-        $plugin->onItemPostParse($event);
+        $plugin->decorateAndLabelTables($event);
         $item = $event->getItem();
 
         $this->assertEquals(

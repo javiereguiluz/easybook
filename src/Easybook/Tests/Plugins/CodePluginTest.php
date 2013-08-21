@@ -41,7 +41,7 @@ class CodePluginTest extends TestCase
         ));
 
         // execute pre-parse method of the plugin
-        $plugin->onItemPreParse($event);
+        $plugin->parseCodeBlocks($event);
         $item = $event->getItem();
 
         // parse the item original content
@@ -49,7 +49,7 @@ class CodePluginTest extends TestCase
 
         // execute post-parse method of the plugin
         $event->setItem($item);
-        $plugin->onItemPostParse($event);
+        $plugin->fixParsedCodeBlocks($event);
         $item = $event->getItem();
 
         $this->assertEquals(

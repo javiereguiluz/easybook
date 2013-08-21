@@ -34,9 +34,9 @@ class TimerPluginTest extends TestCase
         $event  = new BaseEvent($app);
         $plugin = new TimerPlugin();
 
-        $plugin->onStart($event);
+        $plugin->registerPublicationStart($event);
         usleep($elapsedMicroseconds);
-        $plugin->onFinish($event);
+        $plugin->registerPublicationEnd($event);
 
         $this->assertNotEquals(null, $app['app.timer.start']);
         $this->assertNotEquals(null, $app['app.timer.finish']);

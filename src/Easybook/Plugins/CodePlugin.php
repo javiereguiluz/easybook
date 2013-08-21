@@ -16,17 +16,28 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
 
+/**
+ * It parses and (optionally) highlights the syntax of the code listings.
+ */
 class CodePlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
         return array(
-            Events::PRE_PARSE  => array('onItemPreParse', -500),
-            Events::POST_PARSE => array('onItemPostParse', -500),
+            Events::PRE_PARSE  => array('parseCodeBlocks', -500),
+            Events::POST_PARSE => array('fixParsedCodeBlocks', -500),
         );
     }
 
-    public function onItemPreParse(ParseEvent $event)
+    /**
+     * It parses different code blocks types (Markdown classic, fenced
+     * and GitHub).
+     *
+     * @see 'Code block types' section in easybook-doc-en/05-publishing-html-books.md
+     *
+     * @param ParseEvent $event
+     */
+    public function parseCodeBlocks(ParseEvent $event)
     {
         $codeBlockType = $event->app['parser.options']['code_block_type'];
 
@@ -45,7 +56,12 @@ class CodePlugin implements EventSubscriberInterface
         }
     }
 
-    public function onItemPostParse(ParseEvent $event)
+    /**
+     * It fixes the resulting contents of the parsed code blocks.
+     *
+     * @param ParseEvent $event The object that contains the item being processed
+     */
+    public function fixParsedCodeBlocks(ParseEvent $event)
     {
         $item = $event->getItem();
 

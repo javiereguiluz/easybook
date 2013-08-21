@@ -15,26 +15,38 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
 
+/**
+ * It performs some operations on the book tables, such as
+ * decorating their contents and adding labels to them.
+ */
 class TablePlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
         return array(
-            Events::POST_PARSE => array('onItemPostParse', -500),
+            Events::POST_PARSE => array('decorateAndLabelTables', -500),
         );
     }
 
-    public function onItemPostParse(ParseEvent $event)
+    /**
+     * It decorates each table with a template and, if the edition configures it,
+     * with the appropriate auto-numbered label.
+     *
+     * @param ParseEvent $event The object that contains the item being processed
+     */
+    public function decorateAndLabelTables(ParseEvent $event)
     {
-        // decorate each table with a template (and add labels if needed)
         $item = $event->getItem();
-        $listOfTables = array();
-        $elementNumber = $item['config']['number'];
-        $counter = 0;
+
+        $addTableLabels   = in_array('table', $event->app->edition('labels') ?: array());
+        $parentItemNumber = $item['config']['number'];
+        $listOfTables     = array();
+        $counter          = 0;
+
         $item['content'] = preg_replace_callback(
-            '/(?<content><table.*\n<\/table>)/Ums',
-            function($matches) use ($event, $elementNumber, &$listOfTables, &$counter) {
-                // prepare item parameters for template and label
+            "/(?<content><table.*\n<\/table>)/Ums",
+            function($matches) use ($event, $addTableLabels, $parentItemNumber, &$listOfTables, &$counter) {
+                // prepare table parameters for template and label
                 $counter++;
                 $parameters = array(
                     'item' => array(
@@ -42,20 +54,20 @@ class TablePlugin implements EventSubscriberInterface
                         'content' => $matches['content'],
                         'label'   => '',
                         'number'  => $counter,
-                        'slug'    => $event->app->slugify('Table '.$elementNumber.'-'.$counter)
+                        'slug'    => $event->app->slugify('Table '.$parentItemNumber.'-'.$counter)
                     ),
                     'element' => array(
-                        'number' => $elementNumber
+                        'number' => $parentItemNumber
                     )
                 );
 
                 // the publishing edition wants to label tables
-                if (in_array('table', $event->app->edition('labels') ?: array())) {
+                if ($addTableLabels) {
                     $label = $event->app->getLabel('table', $parameters);
                     $parameters['item']['label'] = $label;
                 }
 
-                // add table details to list-of-images
+                // add table details to the list-of-tables
                 $listOfTables[] = $parameters;
 
                 return $event->app->render('table.twig', $parameters);
