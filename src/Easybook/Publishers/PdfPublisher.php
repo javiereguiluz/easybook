@@ -123,7 +123,7 @@ class PdfPublisher extends BasePublisher
      *
      * @return string The absolute path of the executable
      */
-    private function findPrinceXMLPath()
+    public function findPrinceXMLPath()
     {
         foreach ($this->app['prince.default_paths'] as $path) {
             if (file_exists($path)) {
@@ -134,44 +134,31 @@ class PdfPublisher extends BasePublisher
         // the executable couldn't be found in the common
         // installation directories. Ask the user for the path
         $isInteractive = null != $this->app['console.input'] && $this->app['console.input']->isInteractive();
-        if (!$isInteractive) {
-            $sampleYamlConfiguration = <<<YAML
-  easybook:
-      parameters:
-          prince.path: '/path/to/utils/PrinceXML/prince'
-
-  book:
-      title:  ...
-      author: ...
-      # ...
-YAML;
-            throw new \RuntimeException(sprintf(
-                "ERROR: The PrinceXML library needed to generate PDF books cannot be found.\n"
-                    ." Check that you have installed PrinceXML in a common directory \n"
-                    ." or set your custom PrinceXML path in the book's config.yml file:\n\n"
-                    ."%s",
-                $sampleYamlConfiguration
-            ));
+        if ($isInteractive) {
+            return $this->askForPrinceXMLPath();
         }
 
-        return $this->askForPrinceXMLPath();
+        throw new \RuntimeException(sprintf(
+            "ERROR: The PrinceXML library needed to generate PDF books cannot be found.\n"
+                ." Check that you have installed PrinceXML in a common directory \n"
+                ." or set your custom PrinceXML path in the book's config.yml file:\n\n"
+                ."%s",
+            $this->getSampleYamlConfiguration()
+        ));
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
-    private function askForPrinceXMLPath()
+    public function askForPrinceXMLPath()
     {
         $this->app['console.output']->write(sprintf(
-                " In order to generate PDF files, PrinceXML library must be installed. \n\n"
-                    ." We couldn't find PrinceXML executable in any of the following directories: \n"
-                    ."   -> %s \n\n"
-                    ." If you haven't installed it yet, you can download a fully-functional demo at: \n"
-                    ." %s \n\n"
-                    ." If you have installed in a custom directory, please type its full absolute path:\n > ",
-                implode($this->app['prince.default_paths'], "\n   -> "),
-                'http://www.princexml.com/download'
-            ));
+            " In order to generate PDF files, PrinceXML library must be installed. \n\n"
+                ." We couldn't find PrinceXML executable in any of the following directories: \n"
+                ."   -> %s \n\n"
+                ." If you haven't installed it yet, you can download a fully-functional demo at: \n"
+                ." %s \n\n"
+                ." If you have installed in a custom directory, please type its full absolute path:\n > ",
+            implode($this->app['prince.default_paths'], "\n   -> "),
+            'http://www.princexml.com/download'
+        ));
 
         $userGivenPath = trim(fgets(STDIN));
 
@@ -184,20 +171,40 @@ YAML;
     /*
      * It looks for custom book cover PDF. The search order is:
      *   1. <book>/Resources/Templates/<edition-name>/cover.pdf
-     *   2. <book>/Resources/Templates/<edition-format>/cover.pdf
+     *   2. <book>/Resources/Templates/pdf/cover.pdf
      *   3. <book>/Resources/Templates/cover.pdf
      *
      * @return null|string The filePath of the PDF cover or null if none exists
      */
-    private function getCustomCover()
+    public function getCustomCover()
     {
         $coverFileName = 'cover.pdf';
         $paths = array(
             $this->app['publishing.dir.templates'].'/'.$this->app['publishing.edition'],
-            $this->app['publishing.dir.templates'].'/'.$this->app->edition('format'),
+            $this->app['publishing.dir.templates'].'/pdf',
             $this->app['publishing.dir.templates']
         );
 
         return $this->app->getFirstExistingFile($coverFileName, $paths);
+    }
+
+    /**
+     * It returns the needed configuration to set up the custom PrinceXML path
+     * using YAML format.
+     *
+     * @return string The sample YAML configuration
+     */
+    private function getSampleYamlConfiguration()
+    {
+        return <<<YAML
+  easybook:
+      parameters:
+          prince.path: '/path/to/utils/PrinceXML/prince'
+
+  book:
+      title:  ...
+      author: ...
+      # ...
+YAML;
     }
 }
