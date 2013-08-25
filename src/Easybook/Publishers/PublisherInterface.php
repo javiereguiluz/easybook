@@ -11,7 +11,6 @@
 
 namespace Easybook\Publishers;
 
-
 interface PublisherInterface {
     /**
      * Checks whether this publisher works in the system where

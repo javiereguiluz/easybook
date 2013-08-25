@@ -11,8 +11,6 @@
 
 namespace Easybook\Events;
 
-use Easybook\Events\BaseEvent;
-
 class ParseEvent extends BaseEvent
 {
     public function getItem()

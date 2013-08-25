@@ -29,7 +29,7 @@ class BookPublishCommand extends BaseCommand
             ->setDescription('Publishes an edition of a book')
             ->setDefinition(array(
                 new InputArgument(
-                    'slug', InputArgument::REQUIRED, "Book slug (no spaces allowed)"
+                    'slug', InputArgument::REQUIRED, "Book slug (no spaces allowed, use dashes instead)"
                 ),
                 new InputArgument(
                     'edition', InputArgument::REQUIRED, "Edition to be published"

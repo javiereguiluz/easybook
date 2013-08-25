@@ -205,7 +205,7 @@ class Application extends \Pimple
 
         $this['twig.loader'] = $app->share(function() use ($app) {
             $theme  = ucfirst($app->edition('theme'));
-            
+
             // TODO: remove this hack when other themes are completed
             $theme = 'Clean';
 

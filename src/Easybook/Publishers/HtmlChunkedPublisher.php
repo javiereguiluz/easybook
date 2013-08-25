@@ -237,7 +237,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
      * @param  integer  $chunkLevel   The number of chunks the book is divided into:
      *                                  * 1 means each <h1> section generates an HTML page
      *                                  * 2 means each <h1> and <h2> sections generate an HTML page
-     *
+     * @throws \RuntimeException
      * @return  array                 The whole new (and flattened) book TOC
      */
     private function chunkItem($item, $bookToc, $hasCustomCss, $chunkLevel = 1)

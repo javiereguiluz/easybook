@@ -46,12 +46,13 @@ class CodePlugin implements EventSubscriberInterface
                 $this->parseEasybookTypeCodeBlocks($event);
                 break;
 
-            case 'github':
-                $this->parseGithubTypeCodeBlocks($event);
-                break;
-
             case 'fenced':
                 $this->parseFencedTypeCodeBlocks($event);
+                break;
+
+            case 'github':
+            default:
+                $this->parseGithubTypeCodeBlocks($event);
                 break;
         }
     }
