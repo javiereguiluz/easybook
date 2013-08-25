@@ -31,7 +31,7 @@ as explained in the updated chapter 3 of the documentation.
 
 ### Added support for Kindle readers and apps ###
 
-easybook can now generate Kindle-compatible ebooks, thanks to
+**easybook** can now generate Kindle-compatible ebooks, thanks to
 the new `mobi` format. In most cases, you should create a new
 edition extending your regular ePub edition (because
 their configuration options should be nearly identical).
@@ -63,7 +63,7 @@ book:
 ### Removed the `use_html_toc` option ###
 
 This was an option needed for .ePub books in order to transform
-them to .mobi books. Now that easybook can geenrate Kindle
+them to .mobi books. Now that easybook can generate Kindle
 compatible .mobi ebooks, this option is no longer needed.
 
 ### Custom CSS styles ###
@@ -103,11 +103,11 @@ If the command executes successfully, the following CSS will be created:
 ### New `images_base_dir` option ###
 
 **easybook** now allows to set the base directory for web images. The default
-value (`images/`) maintains the backwards compatibility.
+value (`images/`) maintains backwards compatibility.
 
 This setting is useful for web books embedded in websites. If you want for
 example to serve book images from the `/images/books/book1/assets/` directory,
-add the `images_base_dir` option to the apropriate edition:
+add the `images_base_dir` option to the appropriate edition:
 
 ```yml
 # config.yml
