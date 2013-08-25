@@ -86,7 +86,7 @@ class EasybookConfigurationTest extends TestCase
             'app.name'       => 'easybook',
             'parser.options' => array(
                 'markdown_syntax' => 'easybook',
-                'code_block_type' => 'easybook',
+                'code_block_type' => 'markdown',
             ),
             'prince.path'    => null,
             'prince.default_paths' => array(

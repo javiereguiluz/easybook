@@ -42,17 +42,17 @@ class CodePlugin implements EventSubscriberInterface
         $codeBlockType = $event->app['parser.options']['code_block_type'];
 
         switch ($codeBlockType) {
-            case 'easybook':
-                $this->parseEasybookTypeCodeBlocks($event);
-                break;
-
             case 'fenced':
                 $this->parseFencedTypeCodeBlocks($event);
                 break;
 
             case 'github':
-            default:
                 $this->parseGithubTypeCodeBlocks($event);
+                break;
+
+            case 'markdown':
+            default:
+                $this->parseMarkdownTypeCodeBlocks($event);
                 break;
         }
     }
@@ -75,7 +75,8 @@ class CodePlugin implements EventSubscriberInterface
 
     /**
      * It parses the code blocks of the item content that use the
-     * easybook style for code blocks:
+     * Markdown style for code blocks:
+     *
      *   * every line of code indented by 4 spaces or a tab
      *   * (optionally) the firs line describes the language of the code
      *
@@ -95,7 +96,7 @@ class CodePlugin implements EventSubscriberInterface
      * @param ParseEvent $event The event object that provides access to the $app and
      *                          the $item being parsed
      */
-    private function parseEasybookTypeCodeBlocks(ParseEvent $event)
+    private function parseMarkdownTypeCodeBlocks(ParseEvent $event)
     {
         // variable needed for PHP 5.3
         $self = $this;
