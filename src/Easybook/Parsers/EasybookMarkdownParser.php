@@ -11,7 +11,6 @@
 
 namespace Easybook\Parsers;
 
-use Easybook\Parsers\ParserInterface;
 use Easybook\DependencyInjection\Application;
 use Michelf\MarkdownExtra as ExtraMarkdownParser;
 

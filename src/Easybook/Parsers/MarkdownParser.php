@@ -11,11 +11,9 @@
 
 namespace Easybook\Parsers;
 
-use Easybook\Parsers\ParserInterface;
 use Easybook\DependencyInjection\Application;
 use Michelf\Markdown as OriginalMarkdownParser;
 use Michelf\MarkdownExtra as ExtraMarkdownParser;
-use Easybook\Parsers\EasybookMarkdownParser;
 
 /**
  * This class implements a full-featured Markdown parser.
@@ -31,9 +29,10 @@ class MarkdownParser implements ParserInterface
 
     /**
      * Transforms the original Markdown content into the desired output format.
-     * 
+     *
      * @param  string $content      The original content to be parsed
      * @param  string $outputFormat The desired output format (it only supports 'html' for now)
+     * @throws \Exception
      * @return string               The parsed content
      */
     public function transform($content, $outputFormat = 'html')

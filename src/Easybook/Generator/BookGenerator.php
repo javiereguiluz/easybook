@@ -71,13 +71,12 @@ class BookGenerator extends Generator
 
     /**
      * Generates files and directories
-     *
      */
     public function generate()
     {
         $this->filesystem->mkdir(array(
             $this->bookDirectory.'/Contents/images',
-            $this->bookDirectory.'/Output',
+            $this->bookDirectory.'/Output'
         ));
 
         foreach(array('chapter1.md', 'chapter2.md') as $file) {
