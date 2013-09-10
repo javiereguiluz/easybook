@@ -42,10 +42,18 @@
 {% set color_white  = '#FFFFFF' %}
 {% set color_blue   = '#152DC6' %}
 
-{{ include('css/normalize.css.twig') }}
-{{ include('css/typography.css.twig') }}
-{{ include('css/images.css.twig') }}
-{{ include('css/tables.css.twig') }}
-{{ include('css/code.css.twig') }}
-{{ include('css/layout.css.twig') }}
-{{ include('css/items.css.twig') }}
+{% use 'css/normalize.css.twig'  %}
+{% use 'css/typography.css.twig' %}
+{% use 'css/images.css.twig'     %}
+{% use 'css/tables.css.twig'     %}
+{% use 'css/code.css.twig'       %}
+{% use 'css/layout.css.twig'     %}
+{% use 'css/items.css.twig'      %}
+
+{{ block('normalize')  }}
+{{ block('typography') }}
+{{ block('images')     }}
+{{ block('tables')     }}
+{{ block('code')       }}
+{{ block('layout')     }}
+{{ block('items')      }}

@@ -14,6 +14,7 @@
 
 
 
+
 /* ==========================================================================
    @normalize
    ========================================================================== */
@@ -1073,22 +1074,79 @@ div.twig .kw2         { color: #4271AE; }
     margin-bottom: 2em;
     padding-bottom: 2em;
 }
+
+
+.item {
+    border-bottom: medium solid #DDD;
+}
 /* @acknowledgement
    -------------------------------------------------------------------------- */
 /* @afterword
    -------------------------------------------------------------------------- */
 /* @appendix
    -------------------------------------------------------------------------- */
+
+
+.item.appendix h1 {
+    font-size: 28px;
+    margin-top: 0;
+}
+
+.item.appendix h1 span {
+    display: block;
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 1.5;
+}
 /* @author
    -------------------------------------------------------------------------- */
 /* @chapter
    -------------------------------------------------------------------------- */
+
+
+.item.chapter h1 {
+    font-size: 28px;
+    margin-top: 0;
+}
+
+.item.chapter h1 span {
+    display: block;
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 1.5;
+}
 /* @conclusion
    -------------------------------------------------------------------------- */
 /* @cover
    -------------------------------------------------------------------------- */
+
+
+.item.cover {
+    border-bottom: thick solid #DDD;
+    color: #222;
+    margin-bottom: .5em;
+    padding: 1.5em 200px 1.75em 0;
+}
+.item.cover h1 {
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin: 0;
+}
+.item.cover h2 {
+    color: #777;
+    font-size: 28px;
+    font-weight: normal;
+    margin-top: .5em;
+}
 /* @dedication
    -------------------------------------------------------------------------- */
+
+
+.item.dedication {
+    font-style: italic;
+    text-align: center;
+}
 /* @edition
    -------------------------------------------------------------------------- */
 /* @epilogue
@@ -1107,14 +1165,80 @@ div.twig .kw2         { color: #4271AE; }
    -------------------------------------------------------------------------- */
 /* @part
    -------------------------------------------------------------------------- */
+
+
+.item.part {
+    border: solid #777;
+    border-width: medium 0;
+    padding: 0;
+}
+
+.item + .item.part {
+    margin-top: -2em;
+}
+
+.item.part h1 {
+    font-size: 36px;
+    margin: 0;
+    padding: 1em 0;
+    text-align: center;
+}
+.item.part h1 span {
+    color: #777;
+    font-size: 80%;
+    font-weight: normal;
+    padding-bottom: .25em;
+}
 /* @preface
    -------------------------------------------------------------------------- */
 /* @prologue
    -------------------------------------------------------------------------- */
-/* @title
-   -------------------------------------------------------------------------- */
+.item.title {
+    display: none;
+}
 /* @toc
    -------------------------------------------------------------------------- */
+
+
+.item.toc {
+    border: none;
+}
+
+.item.toc h1 {
+    color: #777;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.item.toc ul {
+    padding: 0;
+}
+
+.item.toc ul li {
+    font-size: 14px;
+}
+
+.item.toc ul li span {
+    font-weight: bold;
+}
+
+.item.toc ul li a {
+    text-decoration: none;
+}
+
+.item.toc ul li a:hover {
+    text-decoration: underline;
+}
+
+.item.toc ul li.level-1 {
+    border-top: 1px solid #DDD;
+    margin-top: .5em;
+    padding-top: .5em;
+}
+.item.toc h1 + ul li.level-1:first-child {
+    border-top: 0;
+    padding: 0;
+}
 
 /* ==========================================================================
    @responsive
@@ -1503,6 +1627,25 @@ div.twig .kw2         { color: #4271AE; }
         margin-left: 8.56353591160221%;
         *margin-left: 8.457152932878806%;
     }
+
+
+body {
+    font-size: 15px;
+}
+
+.item.cover h1 {
+    font-size: 48px;
+}
+.item.cover h2 {
+    font-size: 21px;
+}
+
+.item.toc h1 {
+    font-size: 16px;
+}
+.item.toc li {
+    font-size: 13px;
+}
 }
 
 @media (max-width: 767px) {
@@ -1550,10 +1693,45 @@ div.twig .kw2         { color: #4271AE; }
        -moz-box-sizing: border-box;
             box-sizing: border-box;
   }
+
+
+.item.cover {
+    padding-right: 1em;
+}
+
+.item.cover h1 {
+    font-size: 36px;
+    letter-spacing: 0;
+}
+.item.cover h2 {
+    font-size: 21px;
+}
 }
 
 @media (max-width: 480px) {
 /* @phones
    -------------------------------------------------------------------------- */
+
+
+body {
+    font-size: 14px;
 }
 
+h1 { font-size: 21px !important; } h1 span { font-size: inherit !important; }
+h2 { font-size: 18px !important; }
+h3 { font-size: 16px !important; }
+h4 { font-size: 16px !important; }
+h5 { font-size: 16px !important; }
+h6 { font-size: 16px !important; }
+
+.item.cover h1 {
+    font-size: 28px !important;
+}
+.item.cover h2 {
+    font-size: 18px !important;
+}
+
+.item.toc {
+    display: none;
+}
+}

@@ -60,7 +60,6 @@ class PublisherTest extends TestCase
 
         foreach ($books as $book) {
             $slug = $book->getFileName();
-
             if ('book5' == $slug && (version_compare(phpversion(), '5.4.0', '<') || !extension_loaded('intl'))) {
                 $this->markTestSkipped(
                     'This test requires PHP 5.4.0+ with the intl extension enabled (the book contains a lot of non-latin characters that need the native PHP transliterator)'

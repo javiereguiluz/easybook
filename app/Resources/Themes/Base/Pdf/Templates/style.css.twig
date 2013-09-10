@@ -50,3 +50,19 @@
 {{ include('css/code.css.twig') }}
 {{ include('css/layout.css.twig') }}
 {{ include('css/items.css.twig') }}
+
+{% use 'css/normalize.css.twig'  %}
+{% use 'css/typography.css.twig' %}
+{% use 'css/images.css.twig'     %}
+{% use 'css/tables.css.twig'     %}
+{% use 'css/code.css.twig'       %}
+{% use 'css/layout.css.twig'     %}
+{% use 'css/items.css.twig'      %}
+
+{{ block('normalize')  }}
+{{ block('typography') }}
+{{ block('images')     }}
+{{ block('tables')     }}
+{{ block('code')       }}
+{{ block('layout')     }}
+{{ block('items')      }}

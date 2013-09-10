@@ -14,6 +14,7 @@
 
 
 
+
 /* ==========================================================================
    @normalize
    ========================================================================== */
@@ -213,6 +214,11 @@ body {
     background: #FFF;
     color: #222;
     font: 16px/1.6 "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ATENCION ... estamos usando la plantilla correcta */
+body {
+    margin: 0;
 }
 /* @links
    -------------------------------------------------------------------------- */
@@ -2003,6 +2009,45 @@ div.twig .kw2         { color: #4271AE; }
 .navbar-inverse .btn-navbar.active {
   background-color: #000000 \9;
 }
+
+
+.item .menu {
+    background: #222;
+    color: #777;
+    margin-bottom: 1em;
+    min-height: 50px;
+}
+
+.item .menu a {
+    color: #F5F5F5;
+    font-weight: 400;
+    line-height: 50px;
+    text-decoration: none;
+}
+.item .menu a.disabled {
+    color: #777 !important;
+}
+.item .menu a:hover {
+    text-decoration: underline;
+}
+
+.item .menu h1 {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+.item .menu h1 a {
+    display: block;
+    font-size: 21px;
+    padding-left: .5em;
+}
+.item .menu p {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+.item .menu p a {
+    margin: 0 .75em 0;
+}
+
 /* @breadcrumbs
    -------------------------------------------------------------------------- */
 .breadcrumb {
@@ -2179,16 +2224,68 @@ div.twig .kw2         { color: #4271AE; }
    -------------------------------------------------------------------------- */
 /* @appendix
    -------------------------------------------------------------------------- */
+
+
+.item.appendix h1 {
+    font-size: 28px;
+    margin-top: 0;
+}
+
+.item.appendix h1 span {
+    display: block;
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 1.5;
+}
 /* @author
    -------------------------------------------------------------------------- */
 /* @chapter
    -------------------------------------------------------------------------- */
+
+
+.item.chapter h1 {
+    font-size: 28px;
+    margin-top: 0;
+}
+
+.item.chapter h1 span {
+    display: block;
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 1.5;
+}
 /* @conclusion
    -------------------------------------------------------------------------- */
 /* @cover
    -------------------------------------------------------------------------- */
+
+
+.item.cover {
+    border-bottom: thick solid #DDD;
+    color: #222;
+    margin-bottom: 1.5em;
+    padding: 5em 200px 1.75em 0;
+}
+.item.cover h1 {
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin: 0;
+}
+.item.cover h2 {
+    color: #777;
+    font-size: 28px;
+    font-weight: normal;
+    margin-top: .5em;
+}
 /* @dedication
    -------------------------------------------------------------------------- */
+
+
+.item.dedication {
+    font-style: italic;
+    text-align: center;
+}
 /* @edition
    -------------------------------------------------------------------------- */
 /* @epilogue
@@ -2203,18 +2300,172 @@ div.twig .kw2         { color: #4271AE; }
    -------------------------------------------------------------------------- */
 /* @lof
    -------------------------------------------------------------------------- */
+
+
+.item.lof ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.item.lof ul a {
+    text-decoration: none;
+}
+
+.item.lof ul li span {
+    padding-right: .3em;
+}
 /* @lot
    -------------------------------------------------------------------------- */
+
+
+.item.lot ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.item.lot ul a {
+    text-decoration: none;
+}
+
+.item.lot ul li span {
+    padding-right: .3em;
+}
 /* @part
    -------------------------------------------------------------------------- */
+
+
+.item.part {
+    border: solid #777;
+    border-width: medium 0;
+    padding: 0;
+}
+
+.item + .item.part {
+    margin-top: -2em;
+}
+
+.item.part h1 {
+    font-size: 36px;
+    margin: 0;
+    padding: 1em 0;
+    text-align: center;
+}
+.item.part h1 span {
+    color: #777;
+    font-size: 80%;
+    font-weight: normal;
+    padding-bottom: .25em;
+}
 /* @preface
    -------------------------------------------------------------------------- */
 /* @prologue
    -------------------------------------------------------------------------- */
-/* @title
-   -------------------------------------------------------------------------- */
+.item.title {
+    display: none;
+}
 /* @toc
    -------------------------------------------------------------------------- */
+
+.item.toc {
+    margin-bottom: 2em;
+    padding-left: 0;
+}
+
+.item.toc h1 {
+    font-size: 36px;
+    margin-bottom: .5em;
+}
+
+.item.toc ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    -moz-column-count: 2;
+    -moz-column-gap: 3em;
+    -moz-column-rule: 1px solid #DDD;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 3em;
+    -webkit-column-rule: 1px solid #DDD;
+}
+
+.item.toc ul li,
+.item.toc ul li a {
+    font-size: 16px;
+    line-height: 1.2;
+    text-decoration: none;
+}
+.item.toc ul li a {
+    color: #152DC6;
+}
+.item.toc ul li a:hover {
+    color: #152DC6 !important;
+    text-decoration: underline;
+}
+.item.toc ul li.level-1,
+.item.toc ul li.level-1 a {
+    color: #222;
+    font-size: 21px;
+    font-weight: bold;
+}
+.item.toc ul li span {
+    color: #777;
+    padding-right: .3em;
+}
+.item.toc ul li.level-1 span {
+    font-weight: normal;
+}
+
+.item.toc ul li.level-2 {
+    margin-left: 1em;
+}
+.item.toc ul li.level-3,
+.item.toc ul li.level-4,
+.item.toc ul li.level-5,
+.item.toc ul li.level-6 {
+    margin-left: 3em;
+}
+
+.item .local_toc {
+    border: none;
+}
+
+.item .local_toc h3 {
+    color: #777;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.item .local_toc ul {
+    padding: 0;
+}
+
+.item .local_toc ul li {
+    font-size: 14px;
+}
+
+.item .local_toc ul li span {
+    font-weight: bold;
+}
+
+.item .local_toc ul li a {
+    text-decoration: none;
+}
+
+.item .local_toc ul li a:hover {
+    text-decoration: underline;
+}
+
+.item .local_toc ul li.level-1 {
+    border-top: 1px solid #DDD;
+    margin-top: .5em;
+    padding-top: .5em;
+}
+.item .local_toc h3 + ul li.level-1:first-child {
+    border-top: 0;
+    padding: 0;
+}
 
 /* ==========================================================================
    @responsive
@@ -2603,6 +2854,36 @@ div.twig .kw2         { color: #4271AE; }
         margin-left: 8.56353591160221%;
         *margin-left: 8.457152932878806%;
     }
+
+
+body {
+    font-size: 15px;
+}
+
+.item.cover h1 {
+    font-size: 48px;
+}
+.item.cover h2 {
+    font-size: 21px;
+}
+
+.item.toc h3 {
+    font-size: 16px;
+}
+.item.toc ul li.level-1, .item.toc ul li.level-1 a {
+    font-size: 18px;
+}
+.item.toc ul li, .item.toc ul li a {
+    font-size: 14px;
+}
+.item.toc li.level-1 span {
+    display: block;
+    font-size: 90%;
+}
+
+.item .menu p a {
+    margin: 0 .3em 0;
+}
 }
 
 @media (max-width: 767px) {
@@ -2650,10 +2931,97 @@ div.twig .kw2         { color: #4271AE; }
        -moz-box-sizing: border-box;
             box-sizing: border-box;
   }
+
+
+.item.cover {
+    padding-right: 1em;
+}
+
+.item.cover h1 {
+    font-size: 36px;
+    letter-spacing: 0;
+}
+.item.cover h2 {
+    font-size: 21px;
+}
+
+.item.toc ul li.level-1, .item.toc ul li.level-1 a {
+    font-size: 16px;
+}
+.item.toc ul li, .item.toc ul li a {
+    font-size: 13px;
+}
+.item.toc li.level-1 span {
+    display: block;
+    font-size: 90%;
+}
+
+.item .menu h1 {
+    float: left;
+    margin-left: 20px;
+    width: auto;
+}
+.item .menu h1 a {
+    padding-left: 0;
+}
+.item .menu p {
+    float: right;
+    width: auto;
+}
+.item .menu p a {
+    margin: 0 .3em 0;
+}
 }
 
 @media (max-width: 480px) {
 /* @phones
    -------------------------------------------------------------------------- */
+
+
+body {
+    font-size: 14px;
 }
 
+h1 { font-size: 21px !important; } h1 span { font-size: inherit !important; }
+h2 { font-size: 18px !important; }
+h3 { font-size: 16px !important; }
+h4 { font-size: 16px !important; }
+h5 { font-size: 16px !important; }
+h6 { font-size: 16px !important; }
+
+.item.cover h1 {
+    font-size: 28px !important;
+}
+.item.cover h2 {
+    font-size: 18px !important;
+}
+
+.item.toc {
+    padding-left: .5em !important;
+}
+.item.toc h1 {
+    display: none;
+}
+.item.toc ul {
+    margin: 0 !important;
+    -moz-column-count: 1;
+    -webkit-column-count: 1;
+}
+
+.item .local_toc {
+    display: none;
+}
+
+.item .menu h1 {
+    display: none;
+}
+.item .menu p {
+    width: 100%;
+}
+.item .menu p a:first-child {
+    float: left;
+}
+.item .menu p a:last-child {
+    float: right;
+}
+}
