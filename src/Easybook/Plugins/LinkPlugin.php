@@ -14,6 +14,7 @@ namespace Easybook\Plugins;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
+use Easybook\Events\ParseEvent;
 
 /**
  * It performs some operations on the book links, such as fixing the URLs of
@@ -24,12 +25,13 @@ class LinkPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
+            Events::POST_PARSE => array('markInternalLinks'),
             Events::POST_PUBLISH => array('fixInternalLinks', -10),
         );
     }
 
     /**
-     * If fixes the internal links of the book (the links that point to chapters
+     * It fixes the internal links of the book (the links that point to chapters
      * and sections of the book).
      *
      * The author of the book always uses section ID as link values:
@@ -115,5 +117,31 @@ class LinkPlugin implements EventSubscriberInterface
 
             file_put_contents($bookPage->getPathname(), $htmlContent);
         }
+    }
+
+    /**
+     * It marks the internal links of the book used for cross-references. This
+     * allows to display the internal links differently than the regular links.
+     *
+     * @param ParseEvent $event The object that contains the item being processed
+     */
+    public function markInternalLinks(ParseEvent $event)
+    {
+        // Internal links are only marked for the PDF editions
+        if ('pdf' != $event->app->edition('format')) {
+            return;
+        }
+
+        $item = $event->getItem();
+
+        $item['content'] = preg_replace_callback(
+            '/<a (href="#.*".*)<\/a>/Us',
+            function ($matches) {
+                return sprintf('<a class="internal" %s</a>', $matches[1]);
+            },
+            $item['content']
+        );
+
+        $event->setItem($item);
     }
 }
