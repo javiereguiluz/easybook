@@ -331,8 +331,6 @@ class CodePlugin implements EventSubscriberInterface
                 . '</pre>';
         }
 
-        // TODO: label code blocks
-
         $code = $app->render('code.twig', array(
             'item' => array(
                 'content'  => $code,
