@@ -266,7 +266,7 @@ class Prince
                    $disallowAnnotate = false)
     {
         if ($keyBits != 40 && $keyBits != 128) {
-            throw new Exception("Invalid value for keyBits: $keyBits" .
+            throw new \Exception("Invalid value for keyBits: $keyBits" .
             " (must be 40 or 128)");
         }
 
@@ -502,8 +502,8 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new Exception("Failed to execute $pathAndArgs");
-    }
+            throw new \Exception("Failed to execute $pathAndArgs");
+        }
     }
 
     private function convert_internal_string_to_file($pathAndArgs, $xmlString, &$msgs)
@@ -529,7 +529,7 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new Exception("Failed to execute $pathAndArgs");
+            throw new \Exception("Failed to execute $pathAndArgs");
         }
     }
 
@@ -556,7 +556,7 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new Exception("Failed to execute $pathAndArgs");
+            throw new \Exception("Failed to execute $pathAndArgs");
         }
     }
 
@@ -584,7 +584,7 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new Exception("Failed to execute $pathAndArgs");
+            throw new \Exception("Failed to execute $pathAndArgs");
         }
     }
 
