@@ -225,6 +225,7 @@ HELP;
                 'editions' => array(
                     'print' => array(
                         'format'    => 'pdf',
+                        'theme'     => 'clean',
                         'two_sided' => $twoSided,
                     )
                 )

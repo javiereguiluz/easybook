@@ -35,7 +35,8 @@ class TablePluginTest extends TestCase
                 'editions' => array(
                     'test_edition' => array(
                         'format' => 'html',
-                        'labels' => $addLabels ? array('table') : array()
+                        'labels' => $addLabels ? array('table') : array(),
+                        'theme'  => 'clean',
                     )
                 )
             )

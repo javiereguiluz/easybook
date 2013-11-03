@@ -87,6 +87,7 @@ class CodePluginTest extends TestCase
                         'format'          => 'html',
                         'highlight_cache' => false,
                         'highlight_code'  => $enableCodeHightlight,
+                        'theme'           => 'clean',
                     )
                 )
             )
