@@ -355,8 +355,6 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
                 $method = new \ReflectionMethod($parent, 'runBlockGamut');
                 $method->setAccessible(true);
                 $content = $method->invoke($parent, $content);
-                // When PHP 5.3 is no longer supported, use the following code:
-                // $content = $parent->runBlockGamut($content);
 
                 $content = preg_replace('/^/m', "  ", $content);
                 # These leading spaces cause problem with <pre> content,
@@ -380,8 +378,6 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
                 $method->setAccessible(true);
 
                 return "\n".$method->invoke($parent, "<div class=\"admonition $type\">\n$content\n</div>")."\n\n";
-                // When PHP 5.3 is no longer supported, use the following code:
-                // return "\n". $parent->hashBlock("<div class=\"admonition $type\">\n$content\n</div>")."\n\n";
             },
             $text
         );

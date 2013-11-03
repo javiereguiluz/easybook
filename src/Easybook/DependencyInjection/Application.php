@@ -150,10 +150,6 @@ class Application extends \Pimple
                     $publisher = new Epub2Publisher($app);
                     break;
 
-                //case 'epub3':
-                //    $publisher = new Epub3Publisher($app);
-                //    break;
-
                 case 'mobi':
                     $publisher = new MobiPublisher($app);
                     break;
