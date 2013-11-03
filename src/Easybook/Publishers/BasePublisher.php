@@ -49,7 +49,6 @@ class BasePublisher implements PublisherInterface
      */
     protected function loadContents()
     {
-        // TODO: extensibility -> editions can redefine book contents (to remove or reorder items)
         foreach ($this->app->book('contents') as $itemConfig) {
             $item = $this->initializeItem($itemConfig);
 
