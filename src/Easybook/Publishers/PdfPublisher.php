@@ -91,7 +91,6 @@ class PdfPublisher extends BasePublisher
             $prince->addStyleSheet($customCss);
         }
 
-        // TODO: the name of the book file (book.pdf) must be configurable
         $errorMessages = array();
         $pdfBookFilePath = $this->app['publishing.dir.output'].'/book.pdf';
         $prince->convert_file_to_file($htmlBookFilePath, $pdfBookFilePath, $errorMessages);

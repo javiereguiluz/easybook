@@ -47,7 +47,6 @@ class HtmlPublisher extends BasePublisher
                 'items'          => $this->app['publishing.items'],
                 'has_custom_css' => $hasCustomCss
             ),
-            // TODO: the name of the book file (book.html) must be configurable
             $this->app['publishing.dir.output'].'/book.html'
         );
 

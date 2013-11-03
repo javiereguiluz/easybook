@@ -58,7 +58,6 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
     public function assembleBook()
     {
-        // TODO: the name of the chunked book directory (book/) must be configurable
         $this->app['publishing.dir.output'] = $this->app['publishing.dir.output'].'/book';
         $this->app['filesystem']->mkdir($this->app['publishing.dir.output']);
 

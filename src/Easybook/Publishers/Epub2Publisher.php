@@ -151,7 +151,6 @@ class Epub2Publisher extends HtmlPublisher
         $this->fixInternalLinks($bookTmpDir.'/book/OEBPS');
 
         // compress book contents as ZIP file and rename to .epub
-        // TODO: the name of the book file (book.epub) must be configurable
         $this->zipBookContents($bookTmpDir.'/book', $bookTmpDir.'/book.zip');
         $this->app['filesystem']->copy(
             $bookTmpDir.'/book.zip',
