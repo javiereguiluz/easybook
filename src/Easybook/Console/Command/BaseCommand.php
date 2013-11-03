@@ -16,10 +16,20 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Easybook\DependencyInjection\Application;
 
+/**
+ * The class from which any other easybook command extends. It provides
+ * a direct access to the dependency injection container represented by
+ * the $app variable.
+ */
 class BaseCommand extends Command
 {
     protected $app;
 
+    /**
+     * It provides direct access to the whole easybook dependency injection container.
+     *
+     * @return Application The object that represents the dependency injection container
+     */
     public function getApp()
     {
         return $this->app;
@@ -30,6 +40,11 @@ class BaseCommand extends Command
         $this->app = $this->getApplication()->getApp();
     }
 
+    /**
+     * Returns the text representation of the command.
+     *
+     * @return string The string that represents the command
+     */
     public function asText()
     {
         $app = $this->getApplication()->getApp();
