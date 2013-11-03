@@ -757,8 +757,6 @@ class Application extends \Pimple
 
         $config = $this['configurator']->processConfigurationValues();
         $this['publishing.book.config'] = $config;
-
-        $this['configurator']->validateConfiguration($config);
     }
 
     /**

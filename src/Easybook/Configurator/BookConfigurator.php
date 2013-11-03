@@ -221,14 +221,4 @@ class BookConfigurator
 
         return $bookConfig;
     }
-
-    /**
-     * It validates the final complete book configuration.
-     *
-     * @param array $config The configuration options of the book
-     */
-    public function validateConfiguration($config)
-    {
-        // TODO: validate book configuration against some sort of schema
-    }
 }
