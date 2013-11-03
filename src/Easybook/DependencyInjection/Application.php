@@ -182,7 +182,6 @@ class Application extends \Pimple
                 return new MarkdownParser($app);
             }
 
-            // TODO: extensibility -> support several format parsers (RST, Textile, ...)
             throw new \RuntimeException(sprintf(
                 'Unknown "%s" format for "%s" content (easybook only supports Markdown)',
                 $format,
