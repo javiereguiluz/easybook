@@ -60,7 +60,7 @@ class Slugger
     /**
      * Transliterates strings using the PHP 5.4.0+ built-in transliterator.
      *
-     * @param  string $sring The string to transliterate
+     * @param  string $string The string to transliterate
      *
      * @return string        The transliterated string
      */
@@ -73,7 +73,7 @@ class Slugger
      * Transliterates strings using a map of characters, for systems where
      * the PHP 5.4.0+ built-in transliterator isn't available.
      *
-     * @param  string $sring The string to transliterate
+     * @param  string $string The string to transliterate
      *
      * @return string        The transliterated string
      */

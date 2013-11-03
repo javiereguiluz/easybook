@@ -32,7 +32,6 @@ interface ParserInterface
      * content for publishing (e.g. HTML)
      *
      * @param string $content The original content to be parsed
-     * @param string $format  The format of the output parsed content (e.g. 'html', 'epub')
      * 
      * @return string The parsed content
      */

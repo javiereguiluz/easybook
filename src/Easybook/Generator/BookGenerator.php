@@ -62,7 +62,7 @@ class BookGenerator extends Generator
     /**
      * Returns the book directory.
      *
-     * @return string
+     * @return string The book directory
      */
     public function getBookDirectory()
     {
@@ -70,7 +70,8 @@ class BookGenerator extends Generator
     }
 
     /**
-     * Generates files and directories
+     * Generates the hierarchy of files and directories needed
+     * to publish a book.
      */
     public function generate()
     {

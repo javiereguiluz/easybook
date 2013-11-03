@@ -62,6 +62,7 @@ class MobiPublisher extends Epub2Publisher
      * Looks for the executable of the Amazon KindleGen library.
      *
      * @return string The absolute path of the executable
+     * @throws \RuntimeException If the KindleGen executable is not found
      */
     private function findKindleGenPath()
     {

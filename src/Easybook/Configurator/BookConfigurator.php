@@ -33,6 +33,12 @@ class BookConfigurator
     /**
      * It loads book configuration by merging all the different configuration
      * sources (CLI command options, YAML configuration file and default configuration).
+     *
+     * @param  string $bookDir                 The root dir of the book being published
+     * @param  string $configurationViaCommand The optional configuration set via the publish command
+     *
+     * @return array                           The complete book configuration resulted from merging
+     *                                         all the different configuration sources
      */
     public function loadBookConfiguration($bookDir = null, $configurationViaCommand = "")
     {
@@ -67,9 +73,10 @@ class BookConfigurator
     /**
      * It loads the configuration values set via the book's config.yml file.
      *
-     * @param $bookDir           The path to book configuration file config.yml
+     * @param string $bookDir    The root dir of the book being published
      *
      * @return array             The loaded configuration.
+     *
      * @throws \RuntimeException If no config.yml is present.
      */
     public function loadBookFileConfiguration($bookDir)
@@ -107,6 +114,8 @@ class BookConfigurator
     /**
      * It loads edition configuration by merging all the different configuration
      * sources (config.yml configuration, edition inheritance and default configuration).
+     *
+     * @return array The complete book configuration (this method only fills-in the edition configuration)
      */
     public function loadEditionConfiguration()
     {
@@ -181,10 +190,12 @@ class BookConfigurator
     }
 
     /**
-     * It parses all the configuration values as if they were Twig strings, because
+     * * It parses all the configuration values as if they were Twig strings, because
      * easybook allows to use Twig expressions as the value of options. For example:
      *
      * { "book": { "title": "{{ book.author }} diary", "author": "...", ... } }
+     *
+     * @return array The complete book configuration with all its dynamic/variable values resolved
      */
     public function processConfigurationValues()
     {

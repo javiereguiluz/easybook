@@ -103,7 +103,7 @@ class EasybookBenchmarkCommand extends BaseCommand
      *
      * @return array The results of this edition benchmark
      *
-     * @throws RuntimeException If the edition cannot be published
+     * @throws \RuntimeException If the edition cannot be published
      */
     private function benchmarkEdition($edition, $iterations)
     {
@@ -218,7 +218,7 @@ class EasybookBenchmarkCommand extends BaseCommand
      * Deletes any file/folder generated during the benchmark to restore
      * the original state of the system.
      *
-     * @throws RuntimeException If the published book cannot be deleted
+     * @throws \RuntimeException If the published book cannot be deleted
      */
     private function tearDown()
     {

@@ -11,6 +11,8 @@
 
 namespace Easybook\Publishers;
 
+use ZendPdf\PdfDocument;
+
 /**
  * It publishes the book as a PDF file. All the internal links are transformed
  * into clickable cross-section book links. These links even display automatically
@@ -108,8 +110,8 @@ class PdfPublisher extends BasePublisher
 
         // add the PDF cover if the book includes it
         if (null != $coverFilePath = $this->getCustomCover()) {
-            $pdfBook  = \ZendPdf\PdfDocument::load($pdfBookFilePath);
-            $pdfCover = \ZendPdf\PdfDocument::load($coverFilePath);
+            $pdfBook  = PdfDocument::load($pdfBookFilePath);
+            $pdfCover = PdfDocument::load($coverFilePath);
 
             $pdfCover = clone $pdfCover->pages[0];
             array_unshift($pdfBook->pages, $pdfCover);
@@ -122,6 +124,7 @@ class PdfPublisher extends BasePublisher
      * Looks for the executable of the PrinceXML library.
      *
      * @return string The absolute path of the executable
+     * @throws \RuntimeException If the PrinceXML executable is not found
      */
     public function findPrinceXMLPath()
     {

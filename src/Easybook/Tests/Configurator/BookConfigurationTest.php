@@ -105,7 +105,7 @@ class BookConfigurationTest extends TestCase
                 $bookConfiguration     = trim($matches[3]);
                 $expectedConfiguration = trim($matches[4]);
             } else {
-                throw new InvalidArgumentException(sprintf('Test "%s" is not valid.', str_replace($fixturesDir.'/', '', $file)));
+                throw new \InvalidArgumentException(sprintf('Test "%s" is not valid.', str_replace($fixturesDir.'/', '', $file)));
             }
 
             $tests[] = array($testMessage, $commandConfiguration, $bookConfiguration, $expectedConfiguration);

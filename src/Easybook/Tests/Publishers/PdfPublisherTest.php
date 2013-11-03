@@ -11,6 +11,7 @@
 
 namespace Easybook\Tests\Publishers;
 
+use Symfony\Component\Console\Input\ArrayInput;
 use Easybook\DependencyInjection\Application;
 use Easybook\Publishers\PdfPublisher;
 
@@ -46,7 +47,7 @@ HELP;
 
         $app['prince.path'] = null;
         $app['prince.default_paths'] = array();
-        $app['console.input'] = new \Symfony\Component\Console\Input\ArrayInput(array());
+        $app['console.input'] = new ArrayInput(array());
 
         $publisher = $this->getMock('Easybook\Publishers\PdfPublisher',
             array('askForPrinceXMLPath'),
@@ -70,7 +71,7 @@ HELP;
 
         $app['prince.path'] = null;
         $app['prince.default_paths'] = array();
-        $app['console.input'] = new \Symfony\Component\Console\Input\ArrayInput(array());
+        $app['console.input'] = new ArrayInput(array());
 
         $publisher = $this->getMock('Easybook\Publishers\PdfPublisher',
             array('askForPrinceXMLPath'),

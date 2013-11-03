@@ -18,9 +18,6 @@ use Easybook\DependencyInjection\Application;
 
 class BaseCommand extends Command
 {
-    /**
-     * @var Application
-     */
     protected $app;
 
     public function getApp()
@@ -43,6 +40,10 @@ class BaseCommand extends Command
         return $txt;
     }
 
+    /**
+     * Registers both the built-in easybook plugins and any other
+     * custom plugin defined by the book.
+     */
     public function registerPlugins()
     {
         // register easybook plugins
@@ -52,6 +53,13 @@ class BaseCommand extends Command
         $this->registerEventSubscribers($this->app['publishing.dir.plugins']);
     }
 
+    /**
+     * It looks for all the event subscribers defined for any of the classes
+     * found on the given directory.
+     *
+     * @param string $dir       The directory where the classes are looked for
+     * @param string $namespace The namespace of the classes tha define the event subscribers
+     */
     private function registerEventSubscribers($dir, $namespace = '')
     {
         if (!file_exists($dir)) {

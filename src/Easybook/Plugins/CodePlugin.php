@@ -309,8 +309,8 @@ class CodePlugin implements EventSubscriberInterface
      * and decorates the result with the Twig template associated with the
      * code fragments.
      *
-     * @param $code            The source code to highlight and decorate
-     * @param $language        The programming language associated with the code
+     * @param string $code     The source code to highlight and decorate
+     * @param string $language The programming language associated with the code
      * @param Application $app The application object needed to highlight and decorate
      *
      * @return string The resulting code after the highlight and rendering process

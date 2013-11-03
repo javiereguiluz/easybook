@@ -42,8 +42,14 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
     }
 
     /**
-     * Improves the performance of the original method. Copied from:
+     * It removes any \t character present in the given text content.
+     * This method overrides the original implementation to improve
+     * its performance. Code copied from:
      * http://github.com/KnpLabs/KnpMarkdownBundle/blob/master/Parser/MarkdownParser.php
+     *
+     * @param $text The original text with the tabular characters
+     *
+     * @return string The result of deleting the tabs from the original text
      */
     public function detab($text)
     {
@@ -68,6 +74,11 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      *
      * # My first header # {#chapter-title} -> <h1 id="chapter-title">My first header</h1>
      * # My first header #                  -> <h1 id="my-first-header">My first header</h1>
+     *
+     * @param string text The original Markdown content
+     *
+     * @return string The original content with the Markdown headings replaced
+     *                by the HTML headings with 'id' attributes
      */
     public function doHeaders($text) {
     #
@@ -110,6 +121,14 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         return $text;
     }
 
+    /**
+     * Callback method to transform the original Markdown headings
+     * into regular HTML headings (setext-style headers version).
+     *
+     * @param array $matches The array of headings to parse
+     *
+     * @return string The HTML contents of the parsed heading
+     */
     public function _doHeaders_callback_setext($matches) {
         if ($matches[3] == '-' && preg_match('{^- }', $matches[1])) {
             return $matches[0];
@@ -134,6 +153,14 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         return "\n" . $this->hashBlock($block) . "\n\n";
     }
 
+    /**
+     * Callback method to transform the original Markdown headings
+     * into regular HTML headings (atx-style headers version).
+     *
+     * @param array $matches The array of headings to parse
+     *
+     * @return string The HTML contents of the parsed heading
+     */
     public function _doHeaders_callback_atx($matches) {
         $level = strlen($matches[1]);
         $title = $this->runSpanGamut($matches[2]);
@@ -167,6 +194,10 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      *
      * // "alt text" has whitespaces both on the left and on the right -> the image is centered
      * ![ Test image ](figure1.png)
+     *
+     * @param array $matches The array of images to parse
+     *
+     * @return string The HTML string that represents the original Markdown image element
      */
     public function _doImages_reference_callback($matches) {
         $whole_match = $matches[1];
@@ -215,6 +246,14 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         return $result;
     }
 
+    /**
+     * It performs the same operations on images as the _doImages_reference_callback()
+     * method. The difference is that this callback is only applied to inline images.
+     *
+     * @param  array  $matches The array of images to parse
+     *
+     * @return string          The HTML string that represents the original Markdown image element
+     */
     public function _doImages_inline_callback($matches) {
         $alt_text    = $matches[2];
         $url         = $matches[3] == '' ? $matches[4] : $matches[3];
@@ -279,6 +318,11 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      *
      * Similar syntax for warnings (W>), tips (T>), errors (E>), information (I>)
      * questions (Q>) and discussions (D>).
+     *
+     * @param string text The original Markdown content
+     *
+     * @return string The original content with the Markdown admonitions replaced
+     *                by the corresponding HTML admonitions
      */
     public function doAdmonitions($text)
     {
@@ -346,7 +390,8 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
     /**
      * easybook supports three different code block types thanks to the
      * Code Plugin. Therefore, it doesn't use the fenced code block parsing
-     * of the PHP Markdown library.
+     * of the PHP Markdown library. This method overrides the original method
+     * to do nothing with these code blocks.
      */
     public function doFencedCodeBlocks($text)
     {

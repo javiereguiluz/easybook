@@ -11,6 +11,9 @@
 
 namespace Easybook\Events;
 
+/**
+ * Defines all the events dispatched by easybook
+ */
 final class EasybookEvents
 {
     const PRE_NEW       = 'book.new.start';

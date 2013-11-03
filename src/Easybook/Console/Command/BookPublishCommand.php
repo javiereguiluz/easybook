@@ -113,7 +113,7 @@ class BookPublishCommand extends BaseCommand
      *
      * @return void
      *
-     * @throws RuntimeException if any script execution produces an error.
+     * @throws \RuntimeException if any script execution produces an error.
      */
     private function runScripts($scripts)
     {

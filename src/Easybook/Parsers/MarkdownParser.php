@@ -56,6 +56,7 @@ class MarkdownParser implements ParserInterface
      * @param  string $content The original content to be parsed
      * @param  string $syntax  The Markdown syntax to use (original, PHP Extra, easybook, ...)
      * @return string          The parsed HTML output
+     * @throws \Exception      If the given $syntax is not supported
      */
     private function transformToHtml($content, $syntax)
     {

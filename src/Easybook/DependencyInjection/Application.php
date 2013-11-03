@@ -114,7 +114,7 @@ class Application extends \Pimple
         };
 
         // -- filesystem ------------------------------------------------------
-        $this['filesystem'] = $this->share(function ($app) {
+        $this['filesystem'] = $this->share(function () {
             return new Filesystem();
         });
 
@@ -416,6 +416,15 @@ class Application extends \Pimple
         $this->offsetSet($id, $value);
     }
 
+    /**
+     * Appends the given value to the content of the container element identified
+     * by the 'id' parameter. It only works for container elements that store arrays.
+     *
+     * @param  sintr $id    The id of the element that is modified
+     * @param  mixed $value The value to append to the original element
+     *
+     * @return array        The resulting array element (with the new value appended)
+     */
     public function append($id, $value)
     {
         $array = $this[$id];
@@ -431,6 +440,7 @@ class Application extends \Pimple
      * @param  string  $string    The string to slug
      * @param  string  $separator Used between words and to replace illegal characters
      * @param  string  $prefix    Prefix to be appended at the beginning of the slug
+     *
      * @return string             The generated slug
      */
     public function slugify($string, $separator = null, $prefix = null)
@@ -449,6 +459,7 @@ class Application extends \Pimple
      * @param  string  $string    The string to slug
      * @param  string  $separator Used between words and to replace illegal characters
      * @param  string  $prefix    Prefix to be appended at the beginning of the slug
+     *
      * @return string             The generated slug
      */
     public function slugifyUniquely($string, $separator = null, $prefix = null)
@@ -475,6 +486,7 @@ class Application extends \Pimple
      *
      * @param  string $element   The element type ('chapter', 'foreword', ...)
      * @param  array  $variables Optional variables used to render the label
+     *
      * @return string The label of the element or an empty string
      */
     public function getLabel($element, $variables = array())
@@ -497,6 +509,7 @@ class Application extends \Pimple
      * Shortcut method to get the title of any element type.
      *
      * @param  string $element The element type ('chapter', 'foreword', ...)
+     *
      * @return string The title of the element or an empty string
      */
     public function getTitle($element)
@@ -513,6 +526,8 @@ class Application extends \Pimple
      * 
      * @param  string $string    The original content to render
      * @param  array  $variables Optional variables passed to the template
+     *
+     * @return string The result of rendering the original string as a Twig template
      */
     public function renderString($string, $variables = array())
     {
@@ -538,6 +553,10 @@ class Application extends \Pimple
      * @param  array  $variables  Optional variables passed to the template
      * @param  string $targetFile Optional output file path. If set, the rendered
      *                            template is saved in this file.
+     *
+     * @return string The result of rendering the Twig template
+     *
+     *  @throws \RuntimeException  If the given template is not a Twig template
      */
     public function render($template, $variables = array(), $targetFile = null)
     {
@@ -569,7 +588,9 @@ class Application extends \Pimple
      *   2. <book>/Resources/Templates/<edition-format>/<templateName>
      *   3. <book>/Resources/Templates/<templateName>
      *
-     * It returns null if there is no custom template for $templateName.
+     * @param string $templateName The name of the template to look for
+     *
+     * @return string|null The path of the custom template or null if there is none
      */
     public function getCustomTemplate($templateName)
     {
@@ -588,7 +609,7 @@ class Application extends \Pimple
      *   2. <book>/Resources/Translations/<edition-format>/labels.<book-language>.yml
      *   3. <book>/Resources/Translations/labels.<book-language>.yml
      *
-     * It returns null if there is no custom labels for the book.
+     * @return string|null The path of the custom labels file or null if there is none
      */
     public function getCustomLabelsFile()
     {
@@ -608,7 +629,7 @@ class Application extends \Pimple
      *   2. <book>/Resources/Translations/<edition-format>/titles.<book-language>.yml
      *   3. <book>/Resources/Translations/titles.<book-language>.yml
      *
-     * It returns null if there is no custom labels for the book.
+     * @return string|null The path of the custom titles file or null if there is none
      */
     public function getCustomTitlesFile()
     {
@@ -628,7 +649,7 @@ class Application extends \Pimple
      *   2. <book>/Resources/Templates/<edition-format>/cover.jpg
      *   3. <book>/Resources/Templates/cover.jpg
      *
-     * It returns null if there is no custom cover image.
+     * @return string|null The path of the custom cover image or null if there is none
      */
     public function getCustomCoverImage()
     {
@@ -646,8 +667,9 @@ class Application extends \Pimple
      * Looks for a file in several paths and it returns the absolute filepath
      * of the first file occurrence or null if no file is found in those paths.
      * 
-     * @param  array $file  The file name
+     * @param  array $file  The name of the file to look for
      * @param  array $paths The paths where the file can exist
+     *
      * @return string|null  The absolute filepath of the first found file or
      *                      null if the file isn't found in any of those paths.
      */
@@ -667,7 +689,10 @@ class Application extends \Pimple
      *
      * @param  string $code     The source code to be highlighted
      * @param  string $language The name of the programming language used in the code
+     *
      * @return string           The highlighted code
+     *
+     * @throws \RuntimeException If the cache used to store the highlighted code isn't writable
      */
     public function highlight($code, $language = 'code')
     {
@@ -744,8 +769,6 @@ class Application extends \Pimple
      * It loads the full book configuration by combining all the different sources
      * (config.yml file, console command option and default values). It also loads
      * the edition configuration and resolves the edition inheritance (if used).
-     *
-     * @param string $configurationViaCommand The configuration options provided via the console command
      */
     public function loadEasybookConfiguration()
     {
@@ -777,6 +800,7 @@ class Application extends \Pimple
      *
      * @param  mixed $key      The configuration option key
      * @param  mixed $newValue The new value of the configuration option
+     *
      * @return mixed It only returns a value when the second argument is null
      */
     public function book($key, $newValue = null)
@@ -800,9 +824,10 @@ class Application extends \Pimple
      *   // sets 'US-letter' as the value of 'page_size' option
      *   $app->book('page_size', 'US-Letter');
      *
-     * @param  mixed $key   The configuration option key
-     * @param  mixed $value The new value of the configuration option
-     * @return mixed It only returns a value when the second argument is null
+     * @param  mixed $key      The configuration option key
+     * @param  mixed $newValue The new value of the configuration option
+     *
+     * @return mixed           It only returns a value when the second argument is null
      */
     public function edition($key, $newValue = null)
     {

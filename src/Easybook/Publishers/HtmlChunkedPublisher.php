@@ -245,7 +245,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         if (1 == $chunkLevel) {
             return $this->generateFirstLevelChunks($item, $bookToc, $hasCustomCss);
         } elseif (2 == $chunkLevel) {
-            return $this->generateSecondLevelChunks($item, $bookToc, $hasCustomCss);
+            return $this->generateSecondLevelChunks($item, $hasCustomCss);
         } else {
             throw new \RuntimeException("The 'chunk_level' option of the book can only be '1' or '2'");
         }
@@ -292,13 +292,12 @@ class HtmlChunkedPublisher extends HtmlPublisher
      * It generates several HTML pages for each book element.
      *
      * @param  array    $item         The item to be chunked.
-     * @param  array    $bookToc      The whole (and flattened) book TOC
      * @param  boolean  $hasCustomCss This flag is needed to render each chunk template
      *
      * @return  array                 The whole (and flattened) book TOC (it can be
      *                                modified inside this method)
      */
-    private function generateSecondLevelChunks($item, $bookToc, $hasCustomCss)
+    private function generateSecondLevelChunks($item, $hasCustomCss)
     {
         $chunks = $this->prepareItemChunks($item);
 
@@ -307,7 +306,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         $bookToc = $this->filterBookToc($bookToc, 2);
         $this->app['publishing.book.toc'] = $bookToc;
 
-        foreach ($chunks as $i => $chunk) {
+        foreach ($chunks as $chunk) {
             $itemPosition = $this->findItemPosition($chunk, $bookToc, 'url');
 
             if (1 == $chunk['level']) {
