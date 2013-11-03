@@ -48,7 +48,6 @@ class BookNewCommand extends BaseCommand
             $input->getOption('dir') ?: $this->app['app.dir.doc']
         );
 
-        // TODO: extensibility: user should be allowed to define the slug
         $slug = $this->app->slugify($title);
 
         $this->registerPlugins();
