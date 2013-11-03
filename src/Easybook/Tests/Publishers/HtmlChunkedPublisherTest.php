@@ -72,8 +72,6 @@ class HtmlChunkedPublisherTest extends \PHPUnit_Framework_TestCase
      */
     public function testFilterBookToc($maxLevel, $expectedBookToc)
     {
-        $publisher = new HtmlChunkedPublisher($this->app);
-
         $originalBookToc = array(
             array('slug' => 'item1', 'level' => 1),
             array('slug' => 'item2', 'level' => 2),
@@ -82,19 +80,11 @@ class HtmlChunkedPublisherTest extends \PHPUnit_Framework_TestCase
             array('slug' => 'item5', 'level' => 1),
         );
 
+        $publisher = new HtmlChunkedPublisher($this->app);
         $method = new \ReflectionMethod('Easybook\Publishers\HtmlChunkedPublisher', 'filterBookToc');
         $method->setAccessible(true);
 
-        // filter any element bellow '0' level
-        $expectedBookToc = array();
-        $filteredBookToc = $method->invoke($publisher, $originalBookToc, 0);
-        $this->assertEquals($expectedBookToc, $filteredBookToc);
-
-        $expectedBookToc = array(
-            array('slug' => 'item1', 'level' => 1),
-            array('slug' => 'item5', 'level' => 1),
-        );
-        $filteredBookToc = $method->invoke($publisher, $originalBookToc, 1);
+        $filteredBookToc = $method->invoke($publisher, $originalBookToc, $maxLevel);
         $this->assertEquals($expectedBookToc, $filteredBookToc);
     }
 
