@@ -101,25 +101,24 @@ class BasePublisher implements PublisherInterface
             ));
         }
 
+        // if the element content uses Twig (such as *.md.twig), parse
+        // the Twig template before parsing the Markdown contents
         if ('.twig' == substr($contentFilePath, -5)) {
-            // if the element content uses Twig (such as *.md.twig), parse
-            // the Twig template before parsing the Markdown contents
-
             try {
                 return $this->app->renderString(file_get_contents($contentFilePath));
             } catch (\Twig_Error_Syntax $e) {
                 // if there is a Twig parsing error, notify the user but don't
                 // stop the book publication
                 $this->app['console.output']->writeln(sprintf(
-                    " [WARNING] There was an error while parsing the \"%s\" file\n",
+                    " [WARNING] There was an error while parsing the contents of the\n \"%s\" file as a Twig template\n",
                     $contentFilePath
                 ));
             }
-        } else {
-            // if the element content only uses Markdown (*.md), load
-            // directly its contents in the $item 'original' property
-            return file_get_contents($contentFilePath);
         }
+
+        // if the element content only uses Markdown (*.md), load
+        // directly its contents in the $item['original'] property
+        return file_get_contents($contentFilePath);
     }
 
     /**
