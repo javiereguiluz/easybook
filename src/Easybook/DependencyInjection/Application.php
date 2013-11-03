@@ -483,7 +483,6 @@ class Application extends \Pimple
      */
     public function getLabel($element, $variables = array())
     {
-        // TODO: extensibility: each content should be able to override 'label' option
         $label = array_key_exists($element, $this['labels']['label'])
             ? $this['labels']['label'][$element]
             : '';
