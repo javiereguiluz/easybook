@@ -8,5 +8,5 @@ book:
     generator:
         name:         "easybook"
         version:      "{{ app.getVersion() }}"
-    contents:
-    editions:
+    contents:         ~
+    editions:         ~

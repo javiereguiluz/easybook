@@ -67,8 +67,9 @@ class BookConfigurator
     /**
      * It loads the configuration values set via the book's config.yml file.
      *
-     * @return array The loaded configuration.
+     * @param $bookDir           The path to book configuration file config.yml
      *
+     * @return array             The loaded configuration.
      * @throws \RuntimeException If no config.yml is present.
      */
     public function loadBookFileConfiguration($bookDir)
@@ -100,7 +101,7 @@ class BookConfigurator
     {
         $config = Yaml::parse(__DIR__.'/DefaultConfigurations/book.yml');
 
-        return $config ?: array();
+        return empty($config) ? array() : $config;
     }
 
     /**
