@@ -2,6 +2,15 @@
 
 ## Upgrade to easybook 5.0 ##
 
+### `Epub2` format is replaced by `Epub` format ###
+
+The previous versions of **easybook** always used the `epub` format but they
+allowed to use `epub2` as an alias. This `epub2` format is no longer supported
+and you must always use `epub`.
+
+**If you have created your own theme, you must rename its `Epub2/` directory
+to `Epub/` and everything will continue working as expected.**
+
 ### Configuring easybook parameters ###
 
 You can now override any **easybook** parameter easily in your books. Create a

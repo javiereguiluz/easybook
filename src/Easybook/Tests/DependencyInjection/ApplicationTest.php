@@ -177,11 +177,10 @@ class ApplicationTest extends TestCase
     public function getPublishers()
     {
         return array(
-            array('epub',  'Easybook\Publishers\Epub2Publisher'),
-            array('epub2', 'Easybook\Publishers\Epub2Publisher'),
-            array('mobi',  'Easybook\Publishers\MobiPublisher'),
-            array('pdf',   'Easybook\Publishers\PdfPublisher'),
-            array('html',  'Easybook\Publishers\HtmlPublisher'),
+            array('epub',         'Easybook\Publishers\Epub2Publisher'),
+            array('mobi',         'Easybook\Publishers\MobiPublisher'),
+            array('pdf',          'Easybook\Publishers\PdfPublisher'),
+            array('html',         'Easybook\Publishers\HtmlPublisher'),
             array('html_chunked', 'Easybook\Publishers\HtmlChunkedPublisher'),
         );
     }

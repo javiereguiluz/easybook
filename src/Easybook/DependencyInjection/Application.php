@@ -146,7 +146,6 @@ class Application extends \Pimple
                     break;
 
                 case 'epub':
-                case 'epub2':
                     $publisher = new Epub2Publisher($app);
                     break;
 
@@ -156,7 +155,7 @@ class Application extends \Pimple
 
                 default:
                     throw new \RuntimeException(sprintf(
-                        'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "epub2", "mobi")',
+                        'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "mobi")',
                         $outputFormat,
                         $app['publishing.edition']
                     ));
@@ -200,12 +199,7 @@ class Application extends \Pimple
 
         $this['twig.loader'] = $app->share(function() use ($app) {
             $theme  = ucfirst($app->edition('theme'));
-
             $format = Toolkit::camelize($app->edition('format'), true);
-            // TODO: fix the following hack
-            if ('Epub' == $format) {
-                $format = 'Epub2';
-            }
 
             $loader = new \Twig_Loader_Filesystem($app['app.dir.themes']);
 
