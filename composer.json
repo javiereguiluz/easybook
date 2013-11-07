@@ -18,7 +18,7 @@
 
     "require": {
         "michelf/php-markdown"     : "1.3.x-dev",
-        "easybook/geshi"           : "dev-master",
+        "easybook/geshi"           : "1.0.8.12",
         "pimple/pimple"            : "1.*",
         "symfony/console"          : "~2.3",
         "symfony/event-dispatcher" : "~2.3",
