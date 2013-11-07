@@ -268,8 +268,6 @@ class Epub2Publisher extends HtmlPublisher
      * For now, epub books only include the Inconsolata font to display
      * their code listings.
      *
-     * // TODO: books should be able to include their own font files
-     *
      * @param  string $targetDir The directory where the fonts are copied.
      *
      * @return array             Font data needed to create the book manifest.
