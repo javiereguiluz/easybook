@@ -12,7 +12,7 @@
 namespace Easybook\Util;
 
 /*
- * Prince - PHP interface (prince-php5-r10)
+ * Prince - PHP interface (prince-php5-r13)
  * Copyright 2005-2013 YesLogic Pty. Ltd.
  * http://www.princexml.com
  *
@@ -21,59 +21,36 @@ namespace Easybook\Util;
 class Prince
 {
     private $exePath;
-    private $styleSheets;
-    private $scripts;
-    private $fileAttachments;
-    private $licenseFile;
-    private $licenseKey;
-    private $inputType;
-    private $javascript;
-    private $baseURL;
-    private $doXInclude;
-    private $httpUser;
-    private $httpPassword;
-    private $httpProxy;
-    private $insecure;
-    private $logFile;
-    private $fileRoot;
-    private $embedFonts;
-    private $subsetFonts;
-    private $compress;
-    private $encrypt;
-    private $encryptInfo;
+    private $styleSheets     = '';
+    private $scripts         = '';
+    private $fileAttachments = '';
+    private $licenseFile     = '';
+    private $licenseKey      = '';
+    private $inputType       = 'auto';
+    private $javascript      = false;
+    private $baseURL         = '';
+    private $doXInclude      = true;
+    private $httpUser        = '';
+    private $httpPassword    = '';
+    private $httpProxy       = '';
+    private $insecure        = false;
+    private $logFile         = '';
+    private $fileRoot        = '';
+    private $embedFonts      = true;
+    private $subsetFonts     = true;
+    private $artificialFonts = true;
+    private $compress        = true;
+    private $pdfTitle        = '';
+    private $pdfSubject      = '';
+    private $pdfAuthor       = '';
+    private $pdfKeywords     = '';
+    private $pdfCreator      = '';
+    private $encrypt         = false;
+    private $encryptInfo     = '';
 
     public function __construct($exePath)
     {
         $this->exePath = $this->addDoubleQuotes(ltrim($exePath));
-        $this->styleSheets = '';
-        $this->scripts = '';
-        $this->fileAttachments = '';
-        $this->licenseFile = '';
-        $this->licenseKey = '';
-        $this->inputType = 'auto';
-        $this->javascript = false;
-        $this->baseURL = '';
-        $this->doXInclude = true;
-        $this->httpUser = '';
-        $this->httpPassword = '';
-        $this->httpProxy = '';
-        $this->insecure = false;
-        $this->logFile = '';
-        $this->fileRoot = '';
-        $this->embedFonts = true;
-        $this->subsetFonts = true;
-        $this->compress = true;
-        $this->encrypt = false;
-        $this->encryptInfo = '';
-    }
-
-    /**
-     * Method added by easybook to simplify testing
-     * @return string The executable path of PrinceXML
-     */
-    public function getExePath()
-    {
-        return $this->exePath;
     }
 
     // Add a CSS style sheet that will be applied to each document.
@@ -102,41 +79,41 @@ class Prince
         $this->scripts = '';
     }
 
-    //Add a file attachment that will be attached to the PDF file
-    //filePath: The filename of the file attachment.
+    // Add a file attachment that will be attached to the PDF file
+    // filePath: The filename of the file attachment.
     public function addFileAttachment($filePath)
     {
-        $this->fileAttachments .= '--attach=' . '"' . $filePath .  '" ';
+        $this->fileAttachments .= '--attach=' . '"' . $filePath . '" ';
     }
 
-    //Clear all of the file attachments.
+    // Clear all of the file attachments.
     public function clearFileAttachments()
     {
         $this->fileAttachments = '';
     }
 
-    //Specify the license file.
-    //file: The filename of the license file.
+    // Specify the license file.
+    // file: The filename of the license file.
     public function setLicenseFile($file)
     {
         $this->licenseFile = $file;
     }
 
-    //Specify the license key.
-    //key: The license key
+    // Specify the license key.
+    // key: The license key
     public function setLicenseKey($key)
     {
         $this->licenseKey = $key;
     }
 
-    //Specify the input type of the document.
-    //inputType: Can take a value of : "xml", "html" or "auto".
+    // Specify the input type of the document.
+    // inputType: Can take a value of : "xml", "html" or "auto".
     public function setInputType($inputType)
     {
         $this->inputType = $inputType;
     }
 
-    // Specify whether JavaScript found in documents should be run.
+    // Specify whether JavaScript found in documents should be run. 
     // js: True if document scripts should be run.
     public function setJavaScript($js)
     {
@@ -156,7 +133,7 @@ class Prince
 
     // Specify a file that Prince should use to log error/warning messages.
     // logFile: The filename that Prince should use to log error/warning
-    //      messages, or '' to disable logging.
+    //        messages, or '' to disable logging.
     public function setLog($logFile)
     {
         $this->logFile = $logFile;
@@ -182,35 +159,35 @@ class Prince
     // user: The username to use for basic HTTP authentication.
     public function setHttpUser($user)
     {
-        $this->httpUser = $this->cmdlineArgEscape2($this->cmdlineArgEscape1($user));
+        $this->httpUser = $this->cmdlineArgEscape($user);
     }
 
     // Specify a password to use when fetching remote resources over HTTP.
     // password: The password to use for basic HTTP authentication.
     public function setHttpPassword($password)
     {
-        $this->httpPassword = $this->cmdlineArgEscape2($this->cmdlineArgEscape1($password));
+        $this->httpPassword = $this->cmdlineArgEscape($password);
     }
 
-    //Specify the URL for the HTTP proxy server, if needed.
-    //proxy: The URL for the HTTP proxy server.
+    // Specify the URL for the HTTP proxy server, if needed.
+    // proxy: The URL for the HTTP proxy server.
     public function setHttpProxy($proxy)
     {
         $this->httpProxy = $proxy;
     }
 
-    //Specify whether to disable SSL verification.
-    //insecure: If set to true, SSL verification is disabled. (not recommended)
+    // Specify whether to disable SSL verification.
+    // insecure: If set to true, SSL verification is disabled. (not recommended)
     public function setInsecure($insecure)
     {
         $this->insecure = $insecure;
     }
 
-    //Specify the root directory for absolute filenames. This can be used
-    //when converting a local file that uses absolute paths to refer to web
-    //resources. For example, /images/logo.jpg can be
-    //rewritten to /usr/share/images/logo.jpg by specifying "/usr/share" as the root.
-    //fileRoot: The path to prepend to absolute filenames.
+    // Specify the root directory for absolute filenames. This can be used
+    // when converting a local file that uses absolute paths to refer to web
+    // resources. For example, /images/logo.jpg can be 
+    // rewritten to /usr/share/images/logo.jpg by specifying "/usr/share" as the root.
+    // fileRoot: The path to prepend to absolute filenames.
     public function setFileRoot($fileRoot)
     {
         $this->fileRoot = $fileRoot;
@@ -232,12 +209,50 @@ class Prince
         $this->subsetFonts = $subsetFonts;
     }
 
+    // Specify whether artificial bold/italic fonts should be generated if
+    // necessary. Artificial fonts are enabled by default.
+    // artificialFonts: False to disable artificial bold/italic fonts.
+    public function setArtificialFonts($artificialFonts)
+    {
+        $this->artificialFonts = $artificialFonts;
+    }
+
     // Specify whether compression should be applied to the output PDF file.
     // Compression will be applied by default unless explicitly disabled.
     // compress: False to disable PDF compression.
     public function setCompress($compress)
     {
         $this->compress = $compress;
+    }
+
+    // Specify the document title for PDF metadata.
+    public function setPDFTitle($pdfTitle)
+    {
+        $this->pdfTitle = $pdfTitle;
+    }
+
+    // Specify the document subject for PDF metadata.
+    public function setPDFSubject($pdfSubject)
+    {
+        $this->pdfSubject = $pdfSubject;
+    }
+
+    // Specify the document author for PDF metadata.
+    public function setPDFAuthor($pdfAuthor)
+    {
+        $this->pdfAuthor = $pdfAuthor;
+    }
+
+    // Specify the document keywords for PDF metadata.
+    public function setPDFKeywords($pdfKeywords)
+    {
+        $this->pdfKeywords = $pdfKeywords;
+    }
+
+    // Specify the document creator for PDF metadata.
+    public function setPDFCreator($pdfCreator)
+    {
+        $this->pdfCreator = $pdfCreator;
     }
 
     // Specify whether encryption should be applied to the output PDF file.
@@ -257,25 +272,18 @@ class Prince
     // disallowModify: True to disallow modification of the PDF file.
     // disallowCopy: True to disallow copying from the PDF file.
     // disallowAnnotate: True to disallow annotation of the PDF file.
-    public function setEncryptInfo($keyBits,
-                   $userPassword,
-                   $ownerPassword,
-                   $disallowPrint = false,
-                   $disallowModify = false,
-                   $disallowCopy = false,
-                   $disallowAnnotate = false)
-    {
+    public function setEncryptInfo($keyBits, $userPassword, $ownerPassword, $disallowPrint = false, $disallowModify = false, $disallowCopy = false, $disallowAnnotate = false) {
         if ($keyBits != 40 && $keyBits != 128) {
-            throw new \Exception("Invalid value for keyBits: $keyBits" .
-            " (must be 40 or 128)");
+            throw new Exception("Invalid value for keyBits: $keyBits" .
+                " (must be 40 or 128)");
         }
 
         $this->encrypt = true;
 
         $this->encryptInfo =
-        ' --key-bits ' . $keyBits .
-        ' --user-password="' . $this->cmdlineArgEscape2($this->cmdlineArgEscape1($userPassword)) .
-        '" --owner-password="' . $this->cmdlineArgEscape2($this->cmdlineArgEscape1($ownerPassword)) . '" ';
+            ' --key-bits ' . $keyBits .
+            ' --user-password="' . $this->cmdlineArgEscape($userPassword) .
+            '" --owner-password="' . $this->cmdlineArgEscape($ownerPassword) . '" ';
 
         if ($disallowPrint) {
             $this->encryptInfo .= '--disallow-print ';
@@ -321,7 +329,7 @@ class Prince
         return $this->convert_internal_file_to_file($pathAndArgs, $msgs);
     }
 
-    //Convert multiple XML or HTML files to a PDF file.
+    // Convert multiple XML or HTML files to a PDF file.
     // xmlPaths: An array of the input XML or HTML documents.
     // msgs: An optional array in which to return error and warning messages.
     // Returns true if a PDF file was generated successfully.
@@ -351,7 +359,7 @@ class Prince
         }
         $pathAndArgs .= '-o -';
 
-         return $this->convert_internal_file_to_passthru($pathAndArgs);
+        return $this->convert_internal_file_to_passthru($pathAndArgs);
     }
 
     // Convert an XML or HTML file to a PDF file, which will be passed
@@ -415,7 +423,7 @@ class Prince
 
         if ($this->inputType == "auto") {
         } else {
-            $cmdline .=  '-i "' . $this->inputType . '" ';
+            $cmdline .= '-i "' . $this->inputType . '" ';
         }
 
         if ($this->javascript) {
@@ -451,7 +459,7 @@ class Prince
         }
 
         if ($this->fileRoot != '') {
-             $cmdline .= '--fileroot="' . $this->fileRoot . '" ';
+            $cmdline .= '--fileroot="' . $this->fileRoot . '" ';
         }
 
         if ($this->licenseFile != '') {
@@ -470,8 +478,32 @@ class Prince
             $cmdline .= '--no-subset-fonts ';
         }
 
+        if ($this->artificialFonts == false) {
+            $cmdline .= '--no-artificial-fonts ';
+        }
+
         if ($this->compress == false) {
             $cmdline .= '--no-compress ';
+        }
+
+        if ($this->pdfTitle != '') {
+            $cmdline .= '--pdf-title="' . $this->cmdlineArgEscape($this->pdfTitle) . '" ';
+        }
+
+        if ($this->pdfSubject != '') {
+            $cmdline .= '--pdf-subject="' . $this->cmdlineArgEscape($this->pdfSubject) . '" ';
+        }
+
+        if ($this->pdfAuthor != '') {
+            $cmdline .= '--pdf-author="' . $this->cmdlineArgEscape($this->pdfAuthor) . '" ';
+        }
+
+        if ($this->pdfKeywords != '') {
+            $cmdline .= '--pdf-keywords="' . $this->cmdlineArgEscape($this->pdfKeywords) . '" ';
+        }
+
+        if ($this->pdfCreator != '') {
+            $cmdline .= '--pdf-creator="' . $this->cmdlineArgEscape($this->pdfCreator) . '" ';
         }
 
         if ($this->encrypt) {
@@ -481,13 +513,10 @@ class Prince
         return $cmdline;
     }
 
+
     private function convert_internal_file_to_file($pathAndArgs, &$msgs)
     {
-        $descriptorspec = array(
-                    0 => array("pipe", "r"),
-                    1 => array("pipe", "w"),
-                    2 => array("pipe", "w")
-                    );
+        $descriptorspec = $this->getDescriptors();
 
         $process = proc_open($pathAndArgs, $descriptorspec, $pipes);
 
@@ -502,17 +531,13 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new \Exception("Failed to execute $pathAndArgs");
+            throw new Exception("Failed to execute $pathAndArgs");
         }
     }
 
     private function convert_internal_string_to_file($pathAndArgs, $xmlString, &$msgs)
     {
-        $descriptorspec = array(
-                    0 => array("pipe", "r"),
-                    1 => array("pipe", "w"),
-                    2 => array("pipe", "w")
-                    );
+        $descriptorspec = $this->getDescriptors()
 
         $process = proc_open($pathAndArgs, $descriptorspec, $pipes);
 
@@ -529,17 +554,13 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new \Exception("Failed to execute $pathAndArgs");
+            throw new Exception("Failed to execute $pathAndArgs");
         }
     }
 
     private function convert_internal_file_to_passthru($pathAndArgs)
     {
-        $descriptorspec = array(
-                    0 => array("pipe", "r"),
-                    1 => array("pipe", "w"),
-                    2 => array("pipe", "w")
-                    );
+        $descriptorspec = $this->getDescriptors();
 
         $process = proc_open($pathAndArgs, $descriptorspec, $pipes);
 
@@ -556,17 +577,13 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new \Exception("Failed to execute $pathAndArgs");
+            throw new Exception("Failed to execute $pathAndArgs");
         }
     }
 
     private function convert_internal_string_to_passthru($pathAndArgs, $xmlString)
     {
-        $descriptorspec = array(
-                    0 => array("pipe", "r"),
-                    1 => array("pipe", "w"),
-                    2 => array("pipe", "w")
-                    );
+        $descriptorspec = $this->getDescriptors();
 
         $process = proc_open($pathAndArgs, $descriptorspec, $pipes);
 
@@ -584,60 +601,63 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new \Exception("Failed to execute $pathAndArgs");
+            throw new Exception("Failed to execute $pathAndArgs");
         }
     }
 
+    // $msgs = array(0 => $msg, ...);
+    //   $msg[0] = 'err' | 'wrn' | 'inf'
+    //   $msg[1] = filename / line number
+    //   $msg[2] = message text, trailing newline stripped
     private function readMessages($pipe, &$msgs)
     {
         while (!feof($pipe)) {
             $line = fgets($pipe);
 
             if ($line != false) {
-            $msgtag = substr($line, 0, 4);
-            $msgbody = rtrim(substr($line, 4));
+                $msgtag = substr($line, 0, 4);
+                $msgbody = rtrim(substr($line, 4));
 
-            if ($msgtag == 'fin|') {
-                return $msgbody;
-            } elseif ($msgtag == 'msg|') {
-                $msg = explode('|', $msgbody, 4);
-
-                // $msg[0] = 'err' | 'wrn' | 'inf'
-                // $msg[1] = filename / line number
-                // $msg[2] = message text, trailing newline stripped
-
-                $msgs[] = $msg;
-            } else {
-                // ignore other messages
-            }
+                if ($msgtag == 'fin|') {
+                    return $msgbody;
+                } else {
+                    if ($msgtag == 'msg|') {
+                        $msg = explode('|', $msgbody, 4);
+                        $msgs[] = $msg;
+                    } else {
+                        // ignore other messages
+                    }
+                }
             }
         }
 
         return '';
     }
 
-        //Puts double-quotes around space(s) in file path.
-    //This is needed if the file path is used in a command line.
+
+    // Puts double-quotes around space(s) in file path,
+    // and also around semicolon(;), comma(,), ampersand(&), up-arrow(^) and parentheses.
+    // This is needed if the file path is used in a command line.
     private function addDoubleQuotes($str)
     {
         $len = strlen($str);
 
         $outputStr = '';
-        $numSpaces = 0;
+        $numWeirdChars = 0;
         $subStrStart = 0;
         for ($i = 0; $i < $len; $i++) {
-            if ($str[$i] == ' ') {
-                if ($numSpaces == 0) {
+            if (in_array($str[$i], array(' ', ';', ',', '&', '^', '(', ')'))) {
+                if ($numWeirdChars == 0) {
                     $outputStr .= substr($str, $subStrStart, ($i - $subStrStart));
-                    $spaceStart = $i;
+                    $weirdCharsStart = $i;
                 }
-                $numSpaces += 1;
+                $numWeirdChars += 1;
             } else {
-                if ($numSpaces > 0) {
-                    $outputStr .=  chr(34) . substr($str, $spaceStart, $numSpaces) . chr(34);
+                if ($numWeirdChars > 0) {
+                    $outputStr .= chr(34) . substr($str, $weirdCharsStart, $numWeirdChars) . chr(34);
 
                     $subStrStart = $i;
-                    $numSpaces = 0;
+                    $numWeirdChars = 0;
                 }
             }
         }
@@ -646,8 +666,13 @@ class Prince
         return $outputStr;
     }
 
-    //In the input string $argStr, a double quote with zero or more preceding backslash(es)
-    //will be replaced with: n*backslash + doublequote => (2*n+1)*backslash + doublequote
+    private function cmdlineArgEscape($argStr)
+    {
+        return $this->cmdlineArgEscape2($this->cmdlineArgEscape1($argStr));
+    }
+
+    // In the input string $argStr, a double quote with zero or more preceding backslash(es)
+    // will be replaced with: n*backslash + doublequote => (2*n+1)*backslash + doublequote
     private function cmdlineArgEscape1($argStr)
     {
         //chr(34) is character double quote ( " ), chr(92) is character backslash ( \ ).
@@ -675,7 +700,7 @@ class Prince
                 for ($k = 0; $k < $numSlashes; $k++) {
                     $outputStr .= chr(92) . chr(92);
                 }
-                $outputStr  .= chr(92) . chr(34);
+                $outputStr .= chr(92) . chr(34);
 
                 $subStrStart = $i + 1;
             }
@@ -685,14 +710,15 @@ class Prince
         return $outputStr;
     }
 
-    //Double the number of trailing backslash(es):  n*trailing backslash => (2*n)*trailing backslash.
+    // Double the number of trailing backslash(es):
+    // n*trailing backslash => (2*n)*trailing backslash.
     private function cmdlineArgEscape2($argStr)
     {
         //chr(92) is character backslash ( \ ).
         $len = strlen($argStr);
 
         $numTrailingSlashes = 0;
-        for ($i = ($len - 1); $i  >= 0; $i--) {
+        for ($i = ($len - 1); $i >= 0; $i--) {
             if ($argStr[$i] == chr(92)) {
                 $numTrailingSlashes += 1;
             } else {
@@ -706,5 +732,14 @@ class Prince
         }
 
         return $argStr;
+    }
+
+    private function getDescriptors()
+    {
+        return array(
+            0 => array("pipe", "r"),
+            1 => array("pipe", "w"),
+            2 => array("pipe", "w")
+        );
     }
 }
