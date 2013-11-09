@@ -2,6 +2,56 @@
 
 ## Upgrade to easybook 5.0 ##
 
+### `ParserEvent` no longer supports magic methods ###
+
+The `ParseEvent $event` object dispatched with some events no longer supports
+the magic setter and getter methods. The reason is that this *feature* is
+considered a bad programming practice. Use the `get|setItemProperty()` methods
+instead:
+
+```php
+// BEFORE
+class MyPlugin implements EventSubscriberInterface
+{
+    static public function getSubscribedEvents()
+    {
+        return array(
+            Events::PRE_PARSE  => 'onItemPreParse',
+        );
+    }
+    
+    public function onItemPreParse(ParseEvent $event)
+    {
+        $txt = $event->getOriginal();
+
+        // ...
+        
+        $event->setOriginal($txt);
+    }
+}
+
+
+// AFTER
+class MyPlugin implements EventSubscriberInterface
+{
+    static public function getSubscribedEvents()
+    {
+        return array(
+            Events::PRE_PARSE  => 'onItemPreParse',
+        );
+    }
+    
+    public function onItemPreParse(ParseEvent $event)
+    {
+        $txt = $event->getItemProperty('original');
+
+        // ...
+        
+        $event->setItemProperty('original', $txt);
+    }
+}
+```
+
 ### `Epub2` format is replaced by `Epub` format ###
 
 The previous versions of **easybook** always used the `epub` format but they

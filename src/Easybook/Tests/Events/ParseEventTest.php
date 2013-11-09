@@ -54,43 +54,42 @@ class ParseEventTest extends TestCase
     /**
      * @dataProvider getTestGetMethodData
      */
-    public function testGetMethod($getMethod, $expectedResult)
+    public function testGetMethod($key, $expectedValue)
     {
-        $this->assertEquals($expectedResult, $this->event->{$getMethod}());
+        $this->assertEquals($expectedValue, $this->event->getItemProperty($key));
     }
 
     public function getTestGetMethodData()
     {
         return array(
-            array('getKey1', 'value1'),
-            array('getKey2', 'value2'),
-            array('getKey3', 'value3'),
-            array('getCompound_key_1', 'value1'),
-            array('getCompound_key_2', 'value2'),
-            array('getCompound_key_3', 'value3'),
+            array('key1',           'value1'),
+            array('key2',           'value2'),
+            array('key3',           'value3'),
+            array('compound_key_1', 'value1'),
+            array('compound_key_2', 'value2'),
+            array('compound_key_3', 'value3'),
         );
     }
 
     /**
      * @dataProvider getTestSetMethodData
      */
-    public function testSetMethod($setMethod, $expectedResult)
+    public function testSetMethod($key, $expectedValue)
     {
-        $this->event->{$setMethod}($expectedResult);
+        $this->event->setItemProperty($key, $expectedValue);
 
-        $getMethod = str_replace('set', 'get', $setMethod);
-        $this->assertEquals($expectedResult, $this->event->{$getMethod}());
+        $this->assertEquals($expectedValue, $this->event->getItemProperty($key));
     }
 
     public function getTestSetMethodData()
     {
         return array(
-            array('setKey1', 'new_value1'),
-            array('setKey2', 'new_value2'),
-            array('setKey3', 'new_value3'),
-            array('setCompound_key_1', 'new_value1'),
-            array('setCompound_key_2', 'new_value2'),
-            array('setCompound_key_3', 'new_value3'),
+            array('key1',           'new_value1'),
+            array('key2',           'new_value2'),
+            array('key3',           'new_value3'),
+            array('compound_key_1', 'new_value1'),
+            array('compound_key_2', 'new_value2'),
+            array('compound_key_3', 'new_value3'),
         );
     }
 
@@ -99,12 +98,11 @@ class ParseEventTest extends TestCase
      */
     public function testUnsupportedMethod($method)
     {
-        try {
-            $value = $this->event->{$method}();
-        } catch (\BadMethodCallException $e) {
-            $this->assertInstanceOf('BadMethodCallException', $e);
-            $this->assertContains('(the method name must start with either "get" or "set")', $e->getMessage());
-        }
+        $methodVariable = array($this->event, $method);
+        $this->assertFalse(
+            is_callable(array($this->event, $method)),
+            "The '$method()' $method isn't a valid callable of ParseEvent object."
+        );
     }
 
     public function getTestUnsupportedMethod()
@@ -113,15 +111,27 @@ class ParseEventTest extends TestCase
             array('key1'),
             array('key2'),
             array('key3'),
+            array('getkey1'),
+            array('getkey2'),
+            array('getkey3'),
             array('Key1'),
             array('Key2'),
             array('Key3'),
+            array('getKey1'),
+            array('getKey2'),
+            array('getKey3'),
             array('compound_key_1'),
             array('compound_key_2'),
             array('compound_key_3'),
+            array('setcompound_key_1'),
+            array('setcompound_key_2'),
+            array('setcompound_key_3'),
             array('CompoundKey1'),
             array('CompoundKey2'),
             array('CompoundKey3'),
+            array('setCompoundKey1'),
+            array('setCompoundKey2'),
+            array('setCompoundKey3'),
             array('ThisMethodDoesNotExist'),
         );
     }

@@ -18,10 +18,10 @@ class ParserPlugin implements EventSubscriberInterface
         $txt = str_replace(
             '**easybook**',
             '*eAsYbOoK*',
-            $event->getOriginal()
+            $event->getItemProperty('original')
         );
 
-        $event->setOriginal($txt);
+        $event->setItemProperty('original', $txt);
     }
 
     public function onItemPostParse(ParseEvent $event)
@@ -29,9 +29,9 @@ class ParserPlugin implements EventSubscriberInterface
         $html = str_replace(
             '<em>eAsYbOoK</em>',
             '<strong class="branding">easybook</strong>',
-            $event->getContent()
+            $event->getItemProperty('content')
         );
 
-        $event->setContent($html);
+        $event->setItemProperty('content', $html);
     }
 }

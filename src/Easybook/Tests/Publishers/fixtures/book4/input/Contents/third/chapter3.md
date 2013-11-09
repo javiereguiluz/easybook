@@ -130,10 +130,10 @@ The following example shows a plugin that modifies the contents of the book befo
             $txt = str_replace(
                 'easybook',
                 '**easybook**',
-                $event->getOriginal()
+                $event->getItemProperty('original')
             );
             
-            $event->setOriginal($txt);
+            $event->setItemProperty('original', $txt);
         }
         
         public function onItemPostParse(ParseEvent $event)
@@ -141,16 +141,16 @@ The following example shows a plugin that modifies the contents of the book befo
             $html = str_replace(
                 '<strong>easybook</strong>',
                 '<strong class="branding">easybook</strong>',
-                $event->getContent()
+                $event->getItemProperty('content')
             );
             
-            $event->setContent($html);
+            $event->setItemProperty('content', $html);
         }
     }
 
 The event object received by plugins related to content parsing is of type `ParseEvent`. In addition to application access (`$event->app`), this object has getters and setters for all the properties of the parsing object.
 
-The event `Events::PRE_PARSE` is notified before the conversion, so you only have access to the original content (`getOriginal()`). In contrast, the event `Events::POST_PARSE` is notified after the conversion, so it doesn't make sense to modify the original content but the converted content (`getContent()`).
+The event `Events::PRE_PARSE` is notified before the conversion, so you only have access to the original content (`getItemProperty('original')`). In contrast, the event `Events::POST_PARSE` is notified after the conversion, so it doesn't make sense to modify the original content but the converted content (`getItemProperty('content')`).
 
 ## Advanced features ##
 

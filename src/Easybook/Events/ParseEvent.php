@@ -40,52 +40,28 @@ class ParseEvent extends BaseEvent
         $this->app['publishing.active_item'] = $item;
     }
 
-    /*
-     * Magic getters and setters for any 'item' value
-     *
-     * @return mixed The value of the given item property
-     *
-     *  @throws \BadMethodCallException If the requested method is not a getter or a setter
-     */
-    public function __call($method, $arguments)
-    {
-        if ('get' == substr($method, 0, 3)) {
-            $id = lcfirst(substr($method, 3));
-
-            return $this->getItemProperty($id);
-        } elseif ('set' == substr($method, 0, 3)) {
-            $id = lcfirst(substr($method, 3));
-            $value = $arguments[0];
-
-            $this->setItemProperty($id, $value);
-        } else {
-            throw new \BadMethodCallException(sprintf(
-                'Undefined "%s" method (the method name must start with either "get" or "set")',
-                $method
-            ));
-        }
-    }
-
     /**
      * Getter for any of the properties of the item being published
      *
+     * @param string $key The name of the requested item property
+     *
      * @return mixed The value of the requested property
      */
-    private function getItemProperty($id)
+    public function getItemProperty($key)
     {
-        return $this->app['publishing.active_item'][$id];
+        return $this->app['publishing.active_item'][$key];
     }
 
     /**
      * Setter for any of the properties of the item being published.
      *
-     * @param string $id    The id of the property to modify
-     * @param mixed  $value The new value of the property
+     * @param string $key    The name of the property to modify
+     * @param mixed  $value  The new value of the property
      */
-    private function setItemProperty($id, $value)
+    public function setItemProperty($key, $value)
     {
         $item = $this->app['publishing.active_item'];
-        $item[$id] = $value;
+        $item[$key] = $value;
 
         $this->app['publishing.active_item'] = $item;
     }

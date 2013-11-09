@@ -184,23 +184,13 @@ This class defines four methods:
   * `getItem()`, it returns the active item that it's being parsed.
   * `setItem(array $item)`, it allows you to replace the active item being 
     parsed with your own item.
-  * `getItemProperty($id)`, it returns the value of the given `$id` property
+  * `getItemProperty($key)`, it returns the value of the given `$key` property
     of the item. To get for example the original Markdown content of the item
     being parsed, use `$event->getItemProperty('original')`
-  * `setItemProperty($id, $value)`, it modifies the value of the `$id` property
-    of the item with the `$value` content. To replace for example the original Markdown content of the item being parsed, use
+  * `setItemProperty($key, $value)`, it modifies the value of the `$key` property
+    of the item with the `$value` content. To replace for example the original
+    Markdown content of the item being parsed, use
     `$event->setItemProperty('original', '...')`
-
-In addition, it defines the PHP `__call()` magic method to expose *getters* and
-*setters* for every item property:
-
-~~~ .php
-// gets the original Markdown content of the item
-$markdown = $event->getOriginal();
-
-// modifies the original Markdown content of the item
-$event->setOriginal('...');
-~~~
 
 ## Creating an advanced plugin ##
 
