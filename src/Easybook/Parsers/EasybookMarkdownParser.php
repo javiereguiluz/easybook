@@ -326,6 +326,18 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      */
     public function doAdmonitions($text)
     {
+        $text = preg_replace_callback('/
+            (
+                (?>^[ ]*([ANWTEIQD])>[ ]?.+\n)+
+            )
+            /xm',
+            array(&$this, '_doAdmonitions_callback'), $text
+        );
+
+        return $text;
+    }
+
+    public function _doAdmonitions_callback($matches) {
         $admonitions = array(
             'A' => 'aside',
             'N' => 'note',
@@ -337,50 +349,35 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
             'D' => 'discussion'
         );
 
-        $parent = $this;
+        $content = $matches[1];
 
-        return preg_replace_callback('/
-            (
-                (?>^[ ]*([ANWTEIQD])>[ ]?.+\n)+
-            )
-            /xm',
-            function($matches) use ($parent, $admonitions) {
-                $content = $matches[1];
-                # trim one level of quoting - trim whitespace-only lines
-                $content = preg_replace('/^[ ]*([ANWTEIQD])>[ ]?|^[ ]+$/m', '', $content);
-
-                // the following horrible hack is needed because the 'runBlockGamut'
-                // method is protected and closures in PHP 5.3 cannot access private
-                // or protected methods
-                $method = new \ReflectionMethod($parent, 'runBlockGamut');
-                $method->setAccessible(true);
-                $content = $method->invoke($parent, $content);
-
-                $content = preg_replace('/^/m', "  ", $content);
-                # These leading spaces cause problem with <pre> content,
-                # so we need to fix that:
-                $content = preg_replace_callback(
-                    '{(\s*<pre>.+?</pre>)}sx',
-                    function($submatches) {
-                        $pre = $submatches[1];
-                        $pre = preg_replace('/^  /m', '', $pre);
-                        return $pre;
-                    },
-                    $content
-                );
-
-                $type = $admonitions[trim($matches[2])];
-
-                // the following horrible hack is needed because the 'hashBlock'
-                // method is protected and closures in PHP 5.3 cannot access private
-                // or protected methods
-                $method = new \ReflectionMethod($parent, 'hashBlock');
-                $method->setAccessible(true);
-
-                return "\n".$method->invoke($parent, "<div class=\"admonition $type\">\n$content\n</div>")."\n\n";
-            },
-            $text
+        # trim one level of quoting - trim whitespace-only lines
+        $content = preg_replace(
+            '/^[ ]*(['.implode('', array_keys($admonitions)).'])>[ ]?|^[ ]+$/m',
+            '',
+            $content
         );
+
+        $content = $this->runBlockGamut($content);
+
+        $content = preg_replace('/^/m', "  ", $content);
+
+        # These leading spaces cause problem with <pre> content,
+        # so we need to fix that:
+        $content = preg_replace_callback(
+            '{(\s*<pre>.+?</pre>)}sx',
+            function($submatches) {
+                $pre = $submatches[1];
+                $pre = preg_replace('/^  /m', '', $pre);
+
+                return $pre;
+            },
+            $content
+        );
+
+        $type = $admonitions[trim($matches[2])];
+
+        return "\n".$this->hashBlock("<div class=\"admonition $type\">\n$content\n</div>")."\n\n";
     }
 
     /**
