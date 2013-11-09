@@ -63,9 +63,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
-            $this->app->render('@theme/style.css.twig', array(
-                    'resources_dir' => $this->app['app.dir.resources'].'/'
-                ),
+            $this->app->render(
+                '@theme/style.css.twig',
+                array('resources_dir' => $this->app['app.dir.resources'].'/'),
                 $this->app['publishing.dir.output'].'/css/easybook.css'
             );
         }
@@ -95,11 +95,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
         }
 
         // generate index page
-        $this->app->render('index.twig', array(
-                'items'          => $this->app['publishing.items'],
-                'toc'            => $toc,
-                'has_custom_css' => $hasCustomCss
-            ),
+        $this->app->render(
+            'index.twig',
+            array('items' => $this->app['publishing.items'], 'toc' => $toc, 'has_custom_css' => $hasCustomCss),
             $this->app['publishing.dir.output'].'/index.html'
         );
 
