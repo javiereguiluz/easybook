@@ -98,7 +98,6 @@ class ParseEventTest extends TestCase
      */
     public function testUnsupportedMethod($method)
     {
-        $methodVariable = array($this->event, $method);
         $this->assertFalse(
             is_callable(array($this->event, $method)),
             "The '$method()' $method isn't a valid callable of ParseEvent object."
