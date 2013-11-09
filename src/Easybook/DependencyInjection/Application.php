@@ -16,16 +16,15 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 use Easybook\Configurator\BookConfigurator;
-use Easybook\Publishers\PdfPublisher;
-use Easybook\Publishers\HtmlPublisher;
-use Easybook\Publishers\HtmlChunkedPublisher;
-use Easybook\Publishers\Epub2Publisher;
-use Easybook\Publishers\MobiPublisher;
-use Easybook\Parsers\MarkdownParser;
-use Easybook\Util\Prince;
-use Easybook\Util\Slugger;
+use Easybook\DependencyInjection\ServiceProviderInterface;
+use Easybook\Providers\GeshiServiceProvider;
+use Easybook\Providers\KindleGenServiceProvider;
+use Easybook\Providers\ParserServiceProvider;
+use Easybook\Providers\PrinceXMLServiceProvider;
+use Easybook\Providers\PublisherServiceProvider;
+use Easybook\Providers\SluggerServiceProvider;
+use Easybook\Providers\TwigServiceProvider;
 use Easybook\Util\Toolkit;
-use Easybook\Util\TwigCssExtension;
 use Easybook\Util\Validator;
 
 class Application extends \Pimple
@@ -128,213 +127,13 @@ class Application extends \Pimple
             return new Validator($app);
         });
 
-        // -- publisher -------------------------------------------------------
-        $this['publisher'] = $this->share(function ($app) {
-            $outputFormat = $app->edition('format');
-
-            switch (strtolower($outputFormat)) {
-                case 'pdf':
-                    $publisher = new PdfPublisher($app);
-                    break;
-
-                case 'html':
-                    $publisher = new HtmlPublisher($app);
-                    break;
-
-                case 'html_chunked':
-                    $publisher = new HtmlChunkedPublisher($app);
-                    break;
-
-                case 'epub':
-                    $publisher = new Epub2Publisher($app);
-                    break;
-
-                case 'mobi':
-                    $publisher = new MobiPublisher($app);
-                    break;
-
-                default:
-                    throw new \RuntimeException(sprintf(
-                        'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "mobi")',
-                        $outputFormat,
-                        $app['publishing.edition']
-                    ));
-            }
-
-            $publisher->checkIfThisPublisherIsSupported();
-
-            return $publisher;
-        });
-
-        // -- parser ----------------------------------------------------------
-        $this['parser.options'] = array(
-            // available syntaxes: 'original', 'php-markdown-extra', 'easybook'
-            'markdown_syntax'  => 'easybook',
-            // available types: 'markdown', 'fenced', 'github'
-            'code_block_type'  => 'markdown',
-        );
-
-        $this['parser'] = $this->share(function ($app) {
-            $format = strtolower($app['publishing.active_item']['config']['format']);
-
-            if (in_array($format, array('md', 'mdown', 'markdown'))) {
-                return new MarkdownParser($app);
-            }
-
-            throw new \RuntimeException(sprintf(
-                'Unknown "%s" format for "%s" content (easybook only supports Markdown)',
-                $format,
-                $app['publishing.active_item']['config']['content']
-            ));
-        });
-
-        // -- twig ------------------------------------------------------------
-        $this['twig.options'] = array(
-            'autoescape'       => false,
-            // 'cache'         => $app['app.dir.cache'].'/Twig',
-            'charset'          => $this['app.charset'],
-            'debug'            => $this['app.debug'],
-            'strict_variables' => $this['app.debug'],
-        );
-
-        $this['twig.loader'] = $app->share(function() use ($app) {
-            $theme  = ucfirst($app->edition('theme'));
-            $format = Toolkit::camelize($app->edition('format'), true);
-
-            $loader = new \Twig_Loader_Filesystem($app['app.dir.themes']);
-
-            // Base theme (common styles per edition type)
-            // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
-            $baseThemeDir = sprintf('%s/Base/%s/Templates', $app['app.dir.themes'], $format);
-            $loader->addPath($baseThemeDir);
-            $loader->addPath($baseThemeDir, 'theme');
-            $loader->addPath($baseThemeDir, 'theme_base');
-
-            // Book theme (configured per edition in 'config.yml')
-            // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
-            $bookThemeDir = sprintf('%s/%s/%s/Templates', $app['app.dir.themes'], $theme, $format);
-            $loader->prependPath($bookThemeDir);
-            $loader->prependPath($bookThemeDir, 'theme');
-
-            $userTemplatePaths = array(
-                // <book-dir>/Resources/Templates/<template-name>.twig
-                $app['publishing.dir.templates'],
-                // <book-dir>/Resources/Templates/<edition-type>/<template-name>.twig
-                sprintf('%s/%s', $app['publishing.dir.templates'], strtolower($format)),
-                // <book-dir>/Resources/Templates/<edition-name>/<template-name>.twig
-                sprintf('%s/%s', $app['publishing.dir.templates'], $app['publishing.edition']),
-            );
-
-            foreach ($userTemplatePaths as $path) {
-                if (file_exists($path)) {
-                    $loader->prependPath($path);
-                }
-            }
-
-            $defaultContentPaths = array(
-                // <easybook>/app/Resources/Themes/Base/<edition-type>/Contents/<template-name>.twig
-                sprintf('%s/Base/%s/Contents', $app['app.dir.themes'], $format),
-                // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Contents/<template-name>.twig
-                sprintf('%s/%s/%s/Contents', $app['app.dir.themes'], $theme, $format),
-            );
-
-            foreach ($defaultContentPaths as $path) {
-                if (file_exists($path)) {
-                    $loader->prependPath($path, 'content');
-                }
-            }
-
-            return $loader;
-        });
-
-        $this['twig'] = $app->share(function() use ($app) {
-            $twig = new \Twig_Environment($app['twig.loader'], $app['twig.options']);
-            $twig->addExtension(new TwigCssExtension());
-
-            $twig->addGlobal('app', $app);
-
-            if (null != $bookConfig = $app['publishing.book.config']) {
-                $twig->addGlobal('book', $bookConfig['book']);
-
-                $publishingEdition = $app['publishing.edition'];
-                $editions = $app->book('editions');
-                $twig->addGlobal('edition', $editions[$publishingEdition]);
-            }
-
-            return $twig;
-        });
-
-        // -- princeXML -------------------------------------------------------
-        $this['prince.path'] = null;
-
-        // the common installation dirs for PrinceXML in several OS
-        $this['prince.default_paths'] = array(
-            '/usr/local/bin/prince',                         # Mac OS X
-            '/usr/bin/prince',                               # Linux
-            'C:\Program Files\Prince\engine\bin\prince.exe'  # Windows
-        );
-
-        $this['prince'] = $app->share(function () use ($app) {
-            $princePath = $app['prince.path'] ?: $app->findPrinceXmlExecutable();
-            // ask the user about the location of the executable
-            if (null == $princePath) {
-                $princePath = $app->askForPrinceXMLExecutablePath();
-
-                if (!file_exists($princePath)) {
-                    throw new \RuntimeException(sprintf(
-                         "We couldn't find the PrinceXML executable in the given directory (%s)", $princePath
-                    ));
-                }
-            }
-
-            $prince = new Prince($princePath);
-            $prince->setHtml(true);
-
-            return $prince;
-        });
-
-        // -- KindleGen -------------------------------------------------------
-        $this['kindlegen.path'] = null;
-
-        // the common installation dirs for KindleGen in several OS
-        $this['kindlegen.default_paths'] = array(
-            # Mac OS X & Linux
-            '/usr/local/bin/kindlegen',
-            '/usr/bin/kindlegen',
-            # Windows
-            'c:\KindleGen\kindlegen'
-        );
-
-        // -c0: no compression
-        // -c1: standard DOC compression
-        // -c2: Kindle huffdic compression
-        // -verbose: (even more) verbose output
-        // -western: force Windows-1252 charset
-        // -gif: transform book images to GIF
-        $this['kindlegen.command_options'] = '-c1';
-
-        // -- slugger ---------------------------------------------------------
-        $this['slugger.options'] = array(
-            'separator' => '-',   // used between words and instead of illegal characters
-            'prefix'    => '',    // prefix to be appended at the beginning of the slug
-        );
-        // stores all the generated slugs to ensure slug uniqueness
-        $this['slugger.generated_slugs'] = array();
-
-        $this['slugger'] = $app->share(function () use ($app) {
-            return new Slugger($app['slugger.options']);
-        });
-
-        // -- code syntax highlighter -----------------------------------------
-        $this['geshi'] = function () use ($app) {
-            $geshi = new \GeSHi();
-            $geshi->enable_classes(); // this must be the first method (see Geshi doc)
-            $geshi->set_encoding($app['app.charset']);
-            $geshi->enable_line_numbers(GESHI_NO_LINE_NUMBERS);
-            $geshi->enable_keyword_links(false);
-
-            return $geshi;
-        };
+        $this->register(new PublisherServiceProvider());
+        $this->register(new ParserServiceProvider());
+        $this->register(new TwigServiceProvider());
+        $this->register(new PrinceXMLServiceProvider());
+        $this->register(new KindleGenServiceProvider());
+        $this->register(new SluggerServiceProvider());
+        $this->register(new GeshiServiceProvider());
 
         // -- labels ---------------------------------------------------------
         $this['labels'] = $app->share(function () use ($app) {
@@ -418,6 +217,19 @@ class Application extends \Pimple
         $this[$id] = $array;
 
         return $array;
+    }
+
+    /**
+     * Registers a service provider.
+     *
+     * Code inspired by Silex\Application:register() method
+     * (c) Fabien Potencier <fabien@symfony.com> (MIT license)
+     *
+     * @param ServiceProviderInterface $provider A ServiceProviderInterface instance
+     */
+    public function register(ServiceProviderInterface $provider)
+    {
+        $provider->register($this);
     }
 
     /**
@@ -694,7 +506,7 @@ class Application extends \Pimple
             }
         }
 
-        // highlight the code useing GeSHi library
+        // highlight the code using GeSHi library
         $geshi = $this['geshi'];
         if ('html' == $language) { $language = 'html5'; }
 
