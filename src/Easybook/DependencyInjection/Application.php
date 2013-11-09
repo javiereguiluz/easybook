@@ -561,9 +561,7 @@ class Application extends \Pimple
     }
 
     /**
-     * It loads the full book configuration by combining all the different sources
-     * (config.yml file, console command option and default values). It also loads
-     * the edition configuration and resolves the edition inheritance (if used).
+     * It loads the (optional) easybook configuration parameters defined by the book.
      */
     public function loadEasybookConfiguration()
     {

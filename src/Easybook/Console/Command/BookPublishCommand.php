@@ -50,11 +50,9 @@ class BookPublishCommand extends BaseCommand
         $edition = $input->getArgument('edition');
         $dir     = $input->getOption('dir') ?: $this->app['app.dir.doc'];
 
-        $dialog  = $this->getHelperSet()->get('dialog');
-
         $this->app['console.input']  = $input;
         $this->app['console.output'] = $output;
-        $this->app['console.dialog'] = $dialog;
+        $this->app['console.dialog'] = $this->getHelperSet()->get('dialog');
 
         // validate book dir and add some useful values to the app configuration
         $bookDir = $this->app['validator']->validateBookDir($slug, $dir);
