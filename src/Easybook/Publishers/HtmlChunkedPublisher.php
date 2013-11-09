@@ -63,9 +63,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
-            $this->app->render(
-                '@theme/style.css.twig',
-                array('resources_dir' => $this->app['app.dir.resources'].'/'),
+            $this->app->render('@theme/style.css.twig', array(
+                    'resources_dir' => $this->app['app.dir.resources'].'/'
+                ),
                 $this->app['publishing.dir.output'].'/css/easybook.css'
             );
         }
@@ -74,11 +74,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app['filesystem']->copy(
-                $customCss,
-                $this->app['publishing.dir.output'].'/css/styles.css',
-                true
-            );
+            $this->app['filesystem']->copy($customCss, $this->app['publishing.dir.output'].'/css/styles.css',true);
         }
 
         // generate the chunks (HTML pages) of the published book
@@ -109,10 +105,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
         // copy book images
         if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {
-            $this->app['filesystem']->mirror(
-                $imagesDir,
-                $this->app['publishing.dir.output'].'/images'
-            );
+            $this->app['filesystem']->mirror($imagesDir, $this->app['publishing.dir.output'].'/images');
         }
     }
 
