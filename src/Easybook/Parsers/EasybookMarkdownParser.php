@@ -24,11 +24,23 @@ use Michelf\MarkdownExtra as ExtraMarkdownParser;
 class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterface
 {
     private $app;
+    private $admonitionTypes;
 
     public function __construct(Application $app)
     {
         $this->app = $app;
         $this->app['publishing.active_item.toc'] = array();
+
+        $this->admonitionTypes = array(
+            'A' => 'aside',
+            'N' => 'note',
+            'W' => 'warning',
+            'T' => 'tip',
+            'E' => 'error',
+            'I' => 'information',
+            'Q' => 'question',
+            'D' => 'discussion'
+        );
 
         $this->span_gamut += array(
             'doPageBreaks' => 20
@@ -328,32 +340,22 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
     {
         $text = preg_replace_callback('/
             (
-                (?>^[ ]*([ANWTEIQD])>[ ]?.+\n)+
+                (?>^[ ]*(['.implode('', array_keys($this->admonitionTypes)).'])>[ ]?.+\n)+
             )
             /xm',
-            array(&$this, '_doAdmonitions_callback'), $text
+            array(&$this, '_doAdmonitions_callback'),
+            $text
         );
 
         return $text;
     }
 
     public function _doAdmonitions_callback($matches) {
-        $admonitions = array(
-            'A' => 'aside',
-            'N' => 'note',
-            'W' => 'warning',
-            'T' => 'tip',
-            'E' => 'error',
-            'I' => 'information',
-            'Q' => 'question',
-            'D' => 'discussion'
-        );
-
         $content = $matches[1];
 
         # trim one level of quoting - trim whitespace-only lines
         $content = preg_replace(
-            '/^[ ]*(['.implode('', array_keys($admonitions)).'])>[ ]?|^[ ]+$/m',
+            '/^[ ]*(['.implode('', array_keys($this->admonitionTypes)).'])>[ ]?|^[ ]+$/m',
             '',
             $content
         );
@@ -375,7 +377,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
             $content
         );
 
-        $type = $admonitions[trim($matches[2])];
+        $type = $this->admonitionTypes[trim($matches[2])];
 
         return "\n".$this->hashBlock("<div class=\"admonition $type\">\n$content\n</div>")."\n\n";
     }
