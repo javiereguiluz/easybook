@@ -2,6 +2,14 @@
 
 ## Upgrade to easybook 5.0 ##
 
+### The directory for the code highlighting cache has changed ###
+
+This internal change should not affect to any **easybook** user.
+The directory where the highlighted code is cached now is called
+`CodeHighlighter/` instead of `GeSHi/`. This is needed to prepare
+**easybook** to support more code highlighting libraries in addition
+to the current GeSHi library.
+
 ### `ParserEvent` no longer supports magic methods ###
 
 The `ParseEvent $event` object dispatched with some events no longer supports

@@ -16,8 +16,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 use Easybook\Configurator\BookConfigurator;
-use Easybook\DependencyInjection\ServiceProviderInterface;
-use Easybook\Providers\GeshiServiceProvider;
+use Easybook\Providers\CodeHighlighterServiceProvider;
 use Easybook\Providers\KindleGenServiceProvider;
 use Easybook\Providers\ParserServiceProvider;
 use Easybook\Providers\PrinceXMLServiceProvider;
@@ -133,7 +132,7 @@ class Application extends \Pimple
         $this->register(new PrinceXMLServiceProvider());
         $this->register(new KindleGenServiceProvider());
         $this->register(new SluggerServiceProvider());
-        $this->register(new GeshiServiceProvider());
+        $this->register(new CodeHighlighterServiceProvider());
 
         // -- labels ---------------------------------------------------------
         $this['labels'] = $app->share(function () use ($app) {
@@ -493,39 +492,7 @@ class Application extends \Pimple
      */
     public function highlight($code, $language = 'code')
     {
-        // check if the code exists in the cache
-        if ($this->edition('highlight_cache')) {
-            // inspired by Twig_Environment -> getCacheFileName()
-            // see https://github.com/fabpot/Twig/blob/master/lib/Twig/Environment.php
-            $hash = md5($language.$code);
-            $cacheDir = $this['app.dir.cache'].'/GeSHi/'.substr($hash, 0, 2).'/'.substr($hash, 2, 2);
-            $cacheFilename = $cacheDir.'/'.substr($hash, 4).'.txt';
-
-            if (file_exists($cacheFilename)) {
-                return file_get_contents($cacheFilename);
-            }
-        }
-
-        // highlight the code using GeSHi library
-        $geshi = $this['geshi'];
-        if ('html' == $language) { $language = 'html5'; }
-
-        $geshi->set_source($code);
-        $geshi->set_language($language);
-        $highlightedCode = $geshi->parse_code();
-
-        // save the highlighted code in the cache
-        if ($this->edition('highlight_cache')) {
-            // @codeCoverageIgnoreStart
-            $this['filesystem']->mkdir($cacheDir);
-
-            if (false === @file_put_contents($cacheFilename, $highlightedCode)) {
-                throw new \RuntimeException(sprintf("ERROR: Failed to write cache file \n'%s'.", $cacheFilename));
-            }
-            // @codeCoverageIgnoreEnd
-        }
-
-        return $highlightedCode;
+        return $this['highlighter']->highlight($code, $language);
     }
 
     /**
