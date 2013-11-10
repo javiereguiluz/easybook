@@ -95,7 +95,7 @@ class PdfPublisher extends BasePublisher
         $prince->convert_file_to_file($htmlBookFilePath, $pdfBookFilePath, $errorMessages);
         $this->displayPdfConversionErrors($errorMessages);
 
-        $this->addBookCover($pdfBookFilePath);
+        $this->addBookCover($pdfBookFilePath, $this->getCustomCover());
     }
 
     /**
@@ -175,20 +175,19 @@ class PdfPublisher extends BasePublisher
      * If the book defines a custom PDF cover, this method prepends it
      * to the PDF book.
      *
-     * @param string $pdfBookFilePath The path of the original PDF book without the cover
+     * @param string $bookFilePath  The path of the original PDF book without the cover
+     * @param string $coverFilePath The path of the PDF file which will be displayed as the cover of the book
      */
-    public function addBookCover($pdfBookFilePath)
+    public function addBookCover($bookFilePath, $coverFilePath)
     {
-        $coverFilePath = $this->getCustomCover();
-
-        if (null != $coverFilePath) {
-            $pdfBook  = PdfDocument::load($pdfBookFilePath);
+        if (!empty($coverFilePath)) {
+            $pdfBook  = PdfDocument::load($bookFilePath);
             $pdfCover = PdfDocument::load($coverFilePath);
 
             $pdfCover = clone $pdfCover->pages[0];
             array_unshift($pdfBook->pages, $pdfCover);
 
-            $pdfBook->save($pdfBookFilePath, true);
+            $pdfBook->save($bookFilePath, true);
         }
     }
 
