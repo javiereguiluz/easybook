@@ -34,7 +34,7 @@ class EasybookConfigurationTest extends TestCase
         $this->app = $this->getApplication($configFileName);
 
         $config = $this->app['configurator']->loadBookFileConfiguration(null);
-        $easybookConfig = array_key_exists('easybook', $config)
+        $easybookConfig = isset($config['easybook'])
             ? $config['easybook']['parameters']
             : array();
 

@@ -122,7 +122,7 @@ class BookConfigurator
         $bookConfiguration = $this->app['publishing.book.config'];
         $edition = $this->app['publishing.edition'];
 
-        if (!array_key_exists($edition, $bookConfiguration['book']['editions'])) {
+        if (!isset($bookConfiguration['book']['editions'][$edition])) {
             throw new \RuntimeException(sprintf(
                 "ERROR: The '%s' edition isn't defined for\n"
                     ."'%s' book.",
@@ -160,7 +160,7 @@ class BookConfigurator
         $parentEditionConfig = array();
 
         if (null != $parentEdition) {
-            if (!array_key_exists($parentEdition, $bookEditions)) {
+            if (!isset($bookEditions[$parentEdition])) {
                 throw new \UnexpectedValueException(sprintf(
                     " ERROR: '%s' edition extends nonexistent '%s' edition"
                         ."\n\n"

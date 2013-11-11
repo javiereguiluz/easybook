@@ -99,7 +99,7 @@ class LinkPlugin implements EventSubscriberInterface
             $htmlContent = preg_replace_callback(
                 '/<a href="(?<uri>#.*)"(.*)<\/a>/Us',
                 function ($matches) use ($chunkLevel, $linkMapper) {
-                    if (array_key_exists($matches['uri'], $linkMapper)) {
+                    if (isset($linkMapper[$matches['uri']])) {
                         $newUri = $linkMapper[$matches['uri']];
                         $urlBasePath = (2 == $chunkLevel) ? '../' : './';
                     } else {

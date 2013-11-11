@@ -324,7 +324,7 @@ class Epub2Publisher extends HtmlPublisher
         $itemsWithNormalizedPageNames = array();
 
         foreach ($items as $item) {
-            $itemPageName = array_key_exists('number', $item['config'])
+            $itemPageName = isset($item['config']['number'])
                 ? $item['config']['element'].' '.$item['config']['number']
                 : $item['config']['element'];
 
@@ -446,7 +446,7 @@ class Epub2Publisher extends HtmlPublisher
             $htmlContent = preg_replace_callback(
                 '/<a href="(?<uri>#.*)"(.*)<\/a>/Us',
                 function ($matches) use ($internalLinkMapper) {
-                    if (array_key_exists($matches['uri'], $internalLinkMapper)) {
+                    if (isset($internalLinkMapper[$matches['uri']])) {
                         $newUri = $internalLinkMapper[$matches['uri']];
                     } else {
                         $newUri = $matches['uri'];

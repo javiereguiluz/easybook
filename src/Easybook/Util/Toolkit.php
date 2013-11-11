@@ -49,10 +49,7 @@ class Toolkit
             }
 
             foreach ($array as $key => $value) {
-                if (is_array($value)
-                    && array_key_exists($key, $merged)
-                    && is_array($merged[$key])
-                ) {
+                if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
                     $merged[$key] = call_user_func(
                         __CLASS__.'::'.__FUNCTION__,
                         $merged[$key],

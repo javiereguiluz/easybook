@@ -92,7 +92,7 @@ class TwigCssExtension extends \Twig_Extension
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function($matches) use ($factor) {
-                $unit = array_key_exists('unit', $matches) ? $matches['unit'] : 'px';
+                $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
 
                 return ($matches['value'] + $factor).$unit;
             },
@@ -110,7 +110,7 @@ class TwigCssExtension extends \Twig_Extension
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function($matches) use ($factor) {
-                $unit = array_key_exists('unit', $matches) ? $matches['unit'] : 'px';
+                $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
 
                 return ($matches['value'] - $factor).$unit;
             },
@@ -128,7 +128,7 @@ class TwigCssExtension extends \Twig_Extension
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function($matches) use ($factor) {
-                $unit = array_key_exists('unit', $matches) ? $matches['unit'] : 'px';
+                $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
 
                 return ($matches['value'] * $factor).$unit;
             },
@@ -150,7 +150,7 @@ class TwigCssExtension extends \Twig_Extension
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function($matches) use ($factor) {
-                $unit = array_key_exists('unit', $matches) ? $matches['unit'] : 'px';
+                $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
 
                 return ($matches['value'] / $factor).$unit;
             },

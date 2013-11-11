@@ -288,7 +288,7 @@ class Application extends \Pimple
      */
     public function getLabel($element, $variables = array())
     {
-        $label = array_key_exists($element, $this['labels']['label'])
+        $label = isset($this['labels']['label'][$element])
             ? $this['labels']['label'][$element]
             : '';
 
@@ -310,7 +310,7 @@ class Application extends \Pimple
      */
     public function getTitle($element)
     {
-        return array_key_exists($element, $this['titles']['title'])
+        return isset($this['titles']['title'][$element])
             ? $this['titles']['title'][$element]
             : '';
     }
@@ -534,7 +534,7 @@ class Application extends \Pimple
     {
         $bookFileConfig = $this['configurator']->loadBookFileConfiguration($this['publishing.dir.book']);
 
-        if (!array_key_exists('easybook', $bookFileConfig)) {
+        if (!isset($bookFileConfig['easybook'])) {
             return;
         }
 
@@ -568,7 +568,7 @@ class Application extends \Pimple
         $bookConfig = $this['publishing.book.config'];
 
         if (null == $newValue) {
-            return array_key_exists($key, $bookConfig['book']) ? $bookConfig['book'][$key] : null;
+            return isset($bookConfig['book'][$key]) ? $bookConfig['book'][$key] : null;
         } else {
             $bookConfig['book'][$key] = $newValue;
             $this['publishing.book.config'] = $bookConfig;
@@ -595,7 +595,7 @@ class Application extends \Pimple
         $publishingEdition = $this['publishing.edition'];
 
         if (null == $newValue) {
-            return array_key_exists($key, $bookConfig['book']['editions'][$publishingEdition])
+            return isset($bookConfig['book']['editions'][$publishingEdition][$key])
                 ? $bookConfig['book']['editions'][$publishingEdition][$key]
                 : null;
         } else {

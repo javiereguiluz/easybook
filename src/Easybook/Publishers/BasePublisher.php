@@ -55,7 +55,7 @@ class BasePublisher implements PublisherInterface
             // for now, easybook only supports Markdown format
             $item['config']['format'] = 'md';
 
-            if (array_key_exists('content', $itemConfig)) {
+            if (isset($itemConfig['content'])) {
                 // the element defines its own content file (usually chapters and appendices)
                 $item['original'] = $this->loadItemContent($itemConfig['content'], $itemConfig['element']);
             } else {

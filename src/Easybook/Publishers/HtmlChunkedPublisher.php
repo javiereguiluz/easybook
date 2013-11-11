@@ -124,13 +124,13 @@ class HtmlChunkedPublisher extends HtmlPublisher
         foreach ($bookItems as $item) {
             $itemToc = array();
             foreach ($item['toc'] as $chunk) {
-                if (array_key_exists('level', $chunk) && 1 == $chunk['level']) {
+                if (isset($chunk['level']) && 1 == $chunk['level']) {
                     $chunk['url']    = sprintf('%s.html', $item['page_name']);
                     $chunk['parent'] = null;
                     $chunk['config'] = $item['config']; // needed for templates
 
                     $parentChunk = $chunk;
-                } elseif (array_key_exists('level', $chunk) && 2 == $chunk['level']) {
+                } elseif (isset($chunk['level']) && 2 == $chunk['level']) {
                     if (1 == $this->app->edition('chunk_level')) {
                         $chunk['url'] = sprintf('%s.html#%s', $item['page_name'], $chunk['slug']);
                     } elseif (2 == $this->app->edition('chunk_level')) {
@@ -391,7 +391,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                     // extract the slug of this chunk from its <h2> heading
                     preg_match('/<h2.*id="(?<slug>.*)".*<\/h2>/', $chunk, $match);
 
-                    if (array_key_exists('slug', $match)
+                    if (isset($match['slug'])
                         && $match['slug'] == $itemChunk['slug']
                         && 2 == $itemChunk['level']) {
                         $itemChunk['html_title'] = $originalItemChunks[$j];
@@ -479,7 +479,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
     {
         $position = -1;
         foreach ($bookToc as $i => $entry) {
-            if (array_key_exists($criteria, $item) && $item[$criteria] == $entry[$criteria]) {
+            if (isset($item[$criteria]) && $item[$criteria] == $entry[$criteria]) {
                 $position = $i;
                 break;
             }
@@ -499,7 +499,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
      */
     private function getPreviousChunk($currentPosition, $bookToc)
     {
-        $previousChunk = array_key_exists($currentPosition-1, $bookToc)
+        $previousChunk = isset($bookToc[$currentPosition-1])
             ? $bookToc[$currentPosition-1]
             : array(
                 'level' => 1,
@@ -522,7 +522,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
      */
     private function getNextChunk($currentPosition, $bookToc)
     {
-        $nextChunk = array_key_exists($currentPosition+1, $bookToc)
+        $nextChunk = isset($bookToc[$currentPosition+1])
             ? $bookToc[$currentPosition+1]
             : null;
 
