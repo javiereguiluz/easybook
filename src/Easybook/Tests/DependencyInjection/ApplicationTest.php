@@ -330,4 +330,38 @@ class ApplicationTest extends TestCase
         $this->assertEquals('isbn', $publishingId['scheme']);
         $this->assertEquals('9782918390060', $publishingId['value']);
     }
+
+    /**
+     * @dataProvider getValuesForGetAndSetMethods
+     */
+    public function testGetMethod($key, $expectedValue)
+    {
+        $app = new Application();
+        $app[$key] = $expectedValue;
+
+        $this->assertEquals($expectedValue, $app->get($key));
+    }
+
+    /**
+     * @dataProvider getValuesForGetAndSetMethods
+     */
+    public function testSetMethod($key, $expectedValue)
+    {
+        $app = new Application();
+
+        $app->set($key, $expectedValue);
+        $this->assertEquals($expectedValue, $app[$key]);
+    }
+
+    public function getValuesForGetAndSetMethods()
+    {
+        return array(
+            array('key1', null),
+            array('key2', true),
+            array('key3', 'string'),
+            array('key4', 3),
+            array('key5', 3.141592),
+            array('key6', array(1, 2, 3))
+        );
+    }
 }
