@@ -197,11 +197,12 @@ class PdfPublisher extends BasePublisher
      *   2. <book>/Resources/Templates/pdf/cover.pdf
      *   3. <book>/Resources/Templates/cover.pdf
      *
+     * @param string $coverFileName The name of the PDF file that defines the book cover
+     *
      * @return null|string The filePath of the PDF cover or null if none exists
      */
-    public function getCustomCover()
+    public function getCustomCover($coverFileName = 'cover.pdf')
     {
-        $coverFileName = 'cover.pdf';
         $paths = array(
             $this->app['publishing.dir.templates'].'/'.$this->app['publishing.edition'],
             $this->app['publishing.dir.templates'].'/pdf',
