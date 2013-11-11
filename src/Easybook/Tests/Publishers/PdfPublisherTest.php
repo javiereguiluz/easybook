@@ -14,6 +14,9 @@ namespace Easybook\Tests\Publishers;
 use Symfony\Component\Console\Input\ArrayInput;
 use Easybook\DependencyInjection\Application;
 use Easybook\Publishers\PdfPublisher;
+use ZendPdf\PdfDocument;
+use ZendPdf\Font;
+use ZendPdf\Page;
 
 class PdfPublisherTest extends \PHPUnit_Framework_TestCase
 {
@@ -231,5 +234,58 @@ HELP;
                 )
             )
         );
+    }
+
+    public function testAddBookCover()
+    {
+        $app = new Application();
+
+        $tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_');
+        $app['filesystem']->mkdir($tmpDir);
+
+        $coverFilePath = $tmpDir.'/cover.pdf';
+        $bookFilePath  = $tmpDir.'/book.pdf';
+
+        $this->createPdfFile($coverFilePath, 'EASYBOOK COVER');
+        $this->createPdfFile($bookFilePath, 'easybook contents');
+
+        $publisher = new PdfPublisher($app);
+        $publisher->addBookCover($bookFilePath, $coverFilePath);
+
+        $resultingPdfBook = PdfDocument::load($bookFilePath);
+
+        $this->assertCount(2, $resultingPdfBook->pages,
+            'The cover page has been added to the book.');
+
+        $this->assertFileExists($coverFilePath,
+            'The cover PDF file is NOT deleted after adding it to the book.');
+
+        $this->assertContains(
+            'EASYBOOK COVER',
+            $resultingPdfBook->render(),
+            'The resulting book contains the cover text.'
+        );
+        $this->assertContains(
+            'easybook contents',
+            $resultingPdfBook->render(),
+            'The resulting book contains the original book contents.'
+        );
+
+        $app['filesystem']->remove($tmpDir);
+    }
+
+    private function createPdfFile($filePath, $contents)
+    {
+        $pdf = new PdfDocument();
+
+        $page = new Page(Page::SIZE_A4);
+
+        $font = Font::fontWithName(Font::FONT_HELVETICA);
+        $page->setFont($font, 18);
+        $page->drawText($contents, 50, 780);
+
+        $pdf->pages[] = $page;
+
+        $pdf->save($filePath);
     }
 }
