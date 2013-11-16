@@ -30,3 +30,4 @@ Developers that helped **easybook** with promotion, ideas, code or bug reports.
   * [Romain Pellerin](https://github.com/romainPellerin)
   * [Matthew Cocco](https://github.com/matthewcocco)
   * [Davee Nguyen](https://github.com/vibrantdavee)
+  * Silvia Lopera (bug report via email)
