@@ -537,7 +537,7 @@ class Prince
 
     private function convert_internal_string_to_file($pathAndArgs, $xmlString, &$msgs)
     {
-        $descriptorspec = $this->getDescriptors()
+        $descriptorspec = $this->getDescriptors();
 
         $process = proc_open($pathAndArgs, $descriptorspec, $pipes);
 
