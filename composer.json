@@ -11,13 +11,13 @@
             "homepage": "http://javiereguiluz.com"
         },
         {
-            "name": "Contributors",
+            "name":     "Contributors",
             "homepage": "http://github.com/javiereguiluz/easybook/blob/master/CONTRIBUTORS.md"
         }
     ],
 
     "require": {
-        "michelf/php-markdown"     : "1.3.x-dev",
+        "michelf/php-markdown"     : "1.3.*@dev",
         "easybook/geshi"           : "1.0.8.12",
         "pimple/pimple"            : "1.*",
         "symfony/console"          : "~2.3",
@@ -27,12 +27,10 @@
         "symfony/process"          : "~2.3",
         "symfony/yaml"             : "~2.3",
         "twig/twig"                : "~1.0",
-        "zendframework/zendpdf"    : "2.0.x-dev"
+        "zendframework/zendpdf"    : "2.0.*@dev"
     },
 
     "autoload": {
         "psr-0": { "Easybook": "src/" }
-    },
-
-    "minimum-stability": "dev"
+    }
 }
