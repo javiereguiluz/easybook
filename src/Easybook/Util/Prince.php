@@ -274,7 +274,7 @@ class Prince
     // disallowAnnotate: True to disallow annotation of the PDF file.
     public function setEncryptInfo($keyBits, $userPassword, $ownerPassword, $disallowPrint = false, $disallowModify = false, $disallowCopy = false, $disallowAnnotate = false) {
         if ($keyBits != 40 && $keyBits != 128) {
-            throw new Exception("Invalid value for keyBits: $keyBits" .
+            throw new \Exception("Invalid value for keyBits: $keyBits" .
                 " (must be 40 or 128)");
         }
 
@@ -531,7 +531,7 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new Exception("Failed to execute $pathAndArgs");
+            throw new \Exception("Failed to execute $pathAndArgs");
         }
     }
 
@@ -554,7 +554,7 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new Exception("Failed to execute $pathAndArgs");
+            throw new \Exception("Failed to execute $pathAndArgs");
         }
     }
 
@@ -577,7 +577,7 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new Exception("Failed to execute $pathAndArgs");
+            throw new \Exception("Failed to execute $pathAndArgs");
         }
     }
 
@@ -601,7 +601,7 @@ class Prince
 
             return ($result == 'success');
         } else {
-            throw new Exception("Failed to execute $pathAndArgs");
+            throw new \Exception("Failed to execute $pathAndArgs");
         }
     }
 
