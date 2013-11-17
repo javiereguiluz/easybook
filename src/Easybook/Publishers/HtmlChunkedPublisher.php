@@ -63,8 +63,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
-            $this->app->render(
-                '@theme/style.css.twig',
+            $this->app->render('@theme/style.css.twig',
                 array('resources_dir' => $this->app['app.dir.resources'].'/'),
                 $this->app['publishing.dir.output'].'/css/easybook.css'
             );
@@ -95,8 +94,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         }
 
         // generate index page
-        $this->app->render(
-            'index.twig',
+        $this->app->render('index.twig',
             array('items' => $this->app['publishing.items'], 'toc' => $toc, 'has_custom_css' => $hasCustomCss),
             $this->app['publishing.dir.output'].'/index.html'
         );
@@ -391,9 +389,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
                     // extract the slug of this chunk from its <h2> heading
                     preg_match('/<h2.*id="(?<slug>.*)".*<\/h2>/', $chunk, $match);
 
-                    if (isset($match['slug'])
-                        && $match['slug'] == $itemChunk['slug']
-                        && 2 == $itemChunk['level']) {
+                    if (isset($match['slug']) && $match['slug'] == $itemChunk['slug'] && 2 == $itemChunk['level']) {
                         $itemChunk['html_title'] = $originalItemChunks[$j];
                         $itemChunk['content']    = $originalItemChunks[$j+1];
 
@@ -501,11 +497,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
     {
         $previousChunk = isset($bookToc[$currentPosition-1])
             ? $bookToc[$currentPosition-1]
-            : array(
-                'level' => 1,
-                'slug'  => 'index',
-                'url'   => 'index.html'
-            );
+            : array('level' => 1, 'slug' => 'index', 'url' => 'index.html');
 
         return $previousChunk;
     }
