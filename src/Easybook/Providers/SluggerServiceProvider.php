@@ -13,7 +13,6 @@ namespace Easybook\Providers;
 
 use Easybook\DependencyInjection\Application;
 use Easybook\DependencyInjection\ServiceProviderInterface;
-use Easybook\Util\Slugger;
 
 class SluggerServiceProvider implements ServiceProviderInterface
 {
@@ -23,11 +22,16 @@ class SluggerServiceProvider implements ServiceProviderInterface
             'separator' => '-',   // used between words and instead of illegal characters
             'prefix'    => '',    // prefix to be appended at the beginning of the slug
         );
+
         // stores all the generated slugs to ensure slug uniqueness
         $app['slugger.generated_slugs'] = array();
 
         $app['slugger'] = $app->share(function () use ($app) {
-            return new Slugger($app['slugger.options']);
+            if (function_exists('transliterator_transliterate')) {
+                return new \Easybook\Utf8Slugger($app['slugger.options']['separator']);
+            } else {
+                return new \Easybook\Slugger($app['slugger.options']['separator']);
+            }
         });
     }
 }

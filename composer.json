@@ -18,6 +18,7 @@
 
     "require": {
         "easybook/geshi"           : "1.0.8.12",
+        "easybook/slugger"         : "1.0.0",
         "michelf/php-markdown"     : "1.4",
         "pimple/pimple"            : "1.1.1",
         "symfony/console"          : "2.4.2",

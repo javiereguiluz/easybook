@@ -242,7 +242,12 @@ class Application extends \Pimple
      */
     public function slugify($string, $separator = null, $prefix = null)
     {
-        $slug = $this['slugger']->slugify($string, $separator, $prefix);
+        $slug = $this['slugger']->slugify($string, $separator);
+
+        if (null != $prefix) {
+            $slug = $prefix.$separator.$slug;
+        }
+
         $this->append('slugger.generated_slugs', $slug);
 
         return $slug;
@@ -267,6 +272,10 @@ class Application extends \Pimple
         $prefix    = $prefix    ?: $defaultOptions['prefix'];
 
         $slug = $this->slugify($string, $separator, $prefix);
+
+        if (null != $prefix) {
+            $slug = $prefix.$separator.$slug;
+        }
 
         // ensure the uniqueness of the slug
         $occurrences = array_count_values($this['slugger.generated_slugs']);
