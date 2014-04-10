@@ -77,7 +77,7 @@ edition format and others are specific to each format.
     chapters and appendices. In addition to the regular content types, you can
     use two special values called `figure` and `table` to add labels for book
     images and tables. If you don't want to show labels in your book, set an
-    empty value for this option: `labels: []`.
+    empty value for this option: `labels: ~`.
   * `toc`, sets the options of the table of contents. It's ignored unless the
     book has at least one `toc` element type. It has two options:
     * `deep`, the maximum heading level included in the TOC (`1` is the lowest
