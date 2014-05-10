@@ -104,6 +104,8 @@ class MarkdownParserTest extends \PHPUnit_Framework_TestCase
             $expected = file_get_contents($expectedFilepath);
 
             $this->assertEquals($expected, $parsed, $message.' '.$doc->getRelativePathname());
+
+            $this->app['slugger.generated_slugs'] = array();
         }
     }
 }
