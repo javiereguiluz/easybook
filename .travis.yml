@@ -4,6 +4,13 @@ php:
   - 5.3
   - 5.4
   - 5.5
+  - 5.6
+  - hhvm
 
-before_script:
-  - COMPOSER_ROOT_VERSION=dev-master composer install
+before_install:
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar --dev install
+
+matrix:
+    allow_failures:
+        - php: hhvm
