@@ -122,17 +122,28 @@ class HtmlChunkedPublisher extends HtmlPublisher
         foreach ($bookItems as $item) {
             $itemToc = array();
             foreach ($item['toc'] as $chunk) {
+                // first-level headers
                 if (isset($chunk['level']) && 1 == $chunk['level']) {
                     $chunk['url']    = sprintf('%s.html', $item['page_name']);
                     $chunk['parent'] = null;
                     $chunk['config'] = $item['config']; // needed for templates
 
                     $parentChunk = $chunk;
+                // second-level headers
                 } elseif (isset($chunk['level']) && 2 == $chunk['level']) {
                     if (1 == $this->app->edition('chunk_level')) {
                         $chunk['url'] = sprintf('%s.html#%s', $item['page_name'], $chunk['slug']);
                     } elseif (2 == $this->app->edition('chunk_level')) {
                         $chunk['url'] = sprintf('%s/%s.html', $item['page_name'], $chunk['slug']);
+                    }
+
+                    $chunk['parent'] = $parentChunk;
+                // third to sixth level headers
+                } elseif (isset($chunk['level'])) {
+                    if (1 == $this->app->edition('chunk_level')) {
+                        $chunk['url'] = sprintf('%s.html#%s', $item['page_name'], $chunk['slug']);
+                    } elseif (2 == $this->app->edition('chunk_level')) {
+                        $chunk['url'] = sprintf('%s/%s.html#%s', $item['page_name'], $parentChunk['slug'], $chunk['slug']);
                     }
 
                     $chunk['parent'] = $parentChunk;
