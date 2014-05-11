@@ -23,12 +23,43 @@ class ParserPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
+            Events::PRE_PARSE => array(
+                array('normalizeMarkdownHeaders', -1000),
+            ),
             Events::POST_PARSE => array(
                 array('fixHtmlCode', -1000),
                 array('setItemTitle', -1000),
                 array('addSectionLabels', -1000),
             ),
         );
+    }
+
+    /**
+     * It modifies the original Markdown content to replace the SetExt-style
+     * headers by ATX-style headers. This is necessary to avoid problems with
+     * auto-numbering of sections when mixing both styles in a single book.
+     *
+     * @param ParseEvent $event The object that contains the item being processed
+     */
+    public function normalizeMarkdownHeaders(ParseEvent $event)
+    {
+        $item = $event->getItem();
+
+        $item['original'] = preg_replace_callback(
+            '{
+                (^.+?)                              # $1: Header text
+                (?:[ ]+\{\#([-_:a-zA-Z0-9]+)\})?    # $2: Id attribute
+                [ ]*\n(=+|-+)[ ]*\n+                # $3: Header footer
+            }Umx',
+            function ($matches) {
+                $level = '=' === $matches[3]{0} ? 1 : 2;
+
+                return sprintf('%s %s%s', str_repeat('#', $level), $matches[1], $matches[2]);
+            },
+            $item['original']
+        );
+
+        $event->setItem($item);
     }
 
     /**

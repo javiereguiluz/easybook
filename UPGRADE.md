@@ -2,6 +2,42 @@
 
 ## Upgrade to easybook 5.0 ##
 
+### The Markdown headers are now normalized internally ###
+
+Markdown format support two styles of headers:
+
+```
+Setext-style headers:
+
+    Header 1  {#header1}
+    ========
+
+    Header 2  {#header2}
+    --------
+
+atx-style headers:
+
+  # Header 1        {#header1}
+  ## Header 2       {#header2}
+  ## Header 2 with closing hashes ##  {#header3}
+  ...
+  ###### Header 6   {#header2}
+```
+
+You can use both of them indistinctly, but there can be problems with section
+auto-numbering when mixing both styles. As the underlying Markdown parser don't
+respect the order of the headings with different styles, the solution would be
+too cumbersome.
+
+Therefore, to avoid any further problems, **easybook** now replaces the Setext
+style headers for ax-style headers. This change is both automatic and internal,
+meaning that you don't have to change anything in your books. Everything will
+keep working as before. The only difference is that you can now use any header
+style, even mixing them in the same book, and everything will work fine.
+
+This change won't affect you unless you are a very advanced developer which
+has modified **easybook** internals.
+
 ### The directory for the code highlighting cache has changed ###
 
 This internal change should not affect to any **easybook** user.

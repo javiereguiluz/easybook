@@ -140,6 +140,11 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      * @param array $matches The array of headings to parse
      *
      * @return string The HTML contents of the parsed heading
+     *
+     * @deprecated Setext-style headers are not allowed. easybook automatically
+     *             transforms them to atx-style headers. This error message
+     *             will only be displayed when you have hacked easybook internals
+     *             and have maintained the Setext-style headers.
      */
     public function _doHeaders_callback_setext($matches) {
         if ($matches[3] == '-' && preg_match('{^- }', $matches[1])) {
