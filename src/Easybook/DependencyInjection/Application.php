@@ -32,6 +32,8 @@ class Application extends \Pimple
 
     public function __construct()
     {
+        parent::__construct();
+        
         $app = $this;
 
         // -- global generic parameters ---------------------------------------
@@ -107,9 +109,9 @@ class Application extends \Pimple
         };
 
         // -- finder ----------------------------------------------------------
-        $this['finder'] = function () {
+        $this['finder'] = $this->factory(function () {
             return new Finder();
-        };
+        });
 
         // -- filesystem ------------------------------------------------------
         $this['filesystem'] = function () {
