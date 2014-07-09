@@ -23,7 +23,7 @@ class PublisherServiceProvider implements ServiceProviderInterface
 {
     public function register(Application $app)
     {
-        $app['publisher'] = $app->share(function ($app) {
+        $app['publisher'] = function ($app) {
             $outputFormat = $app->edition('format');
 
             switch (strtolower($outputFormat)) {
@@ -64,6 +64,6 @@ class PublisherServiceProvider implements ServiceProviderInterface
             }
 
             return $publisher;
-        });
+        };
     }
 }

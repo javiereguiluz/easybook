@@ -26,7 +26,7 @@ class ParserServiceProvider implements ServiceProviderInterface
             'code_block_type'  => 'markdown',
         );
 
-        $app['parser'] = $app->share(function ($app) {
+        $app['parser'] = function ($app) {
             $format = strtolower($app['publishing.active_item']['config']['format']);
 
             if (in_array($format, array('md', 'mdown', 'markdown'))) {
@@ -38,6 +38,6 @@ class ParserServiceProvider implements ServiceProviderInterface
                 $format,
                 $app['publishing.active_item']['config']['content']
             ));
-        });
+        };
     }
 }
