@@ -91,7 +91,7 @@ class PdfPublisher extends BasePublisher
         }
 
         $errorMessages = array();
-        $pdfBookFilePath = $this->app['publishing.dir.output'].'/book.pdf';
+        $pdfBookFilePath = sprintf("%s/%s.pdf", $this->app['publishing.dir.output'], $this->app['publishing.book.output']);
         $prince->convert_file_to_file($htmlBookFilePath, $pdfBookFilePath, $errorMessages);
         $this->displayPdfConversionErrors($errorMessages);
 

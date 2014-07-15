@@ -41,13 +41,14 @@ class HtmlPublisher extends BasePublisher
         }
 
         // implode all the contents to create the whole book
+        $htmlFilePath = sprintf("%s/%s.html", $this->app['publishing.dir.output'], $this->app['publishing.book.output']);
         $this->app->render(
             'book.twig',
             array(
                 'items'          => $this->app['publishing.items'],
                 'has_custom_css' => $hasCustomCss
             ),
-            $this->app['publishing.dir.output'].'/book.html'
+            $htmlFilePath
         );
 
 
