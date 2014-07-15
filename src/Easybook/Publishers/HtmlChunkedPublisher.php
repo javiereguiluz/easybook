@@ -58,7 +58,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
     public function assembleBook()
     {
-        $this->app['publishing.dir.output'] = $this->app['publishing.dir.output'].'/book';
+        $this->app['publishing.dir.output']  .= '/' . $this->app['publishing.book.output'];
         $this->app['filesystem']->mkdir($this->app['publishing.dir.output']);
 
         // generate easybook CSS file

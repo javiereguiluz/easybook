@@ -152,9 +152,10 @@ class Epub2Publisher extends HtmlPublisher
 
         // compress book contents as ZIP file and rename to .epub
         $this->zipBookContents($bookTmpDir.'/book', $bookTmpDir.'/book.zip');
+        $epubFilePath = sprintf("%s/%s.epub", $this->app['publishing.dir.output'], $this->app['publishing.book.output']);
         $this->app['filesystem']->copy(
             $bookTmpDir.'/book.zip',
-            $this->app['publishing.dir.output'].'/book.epub',
+            $epubFilePath,
             true
         );
 
