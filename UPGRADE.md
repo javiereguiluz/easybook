@@ -21,7 +21,7 @@ atx-style headers:
   ## Header 2       {#header2}
   ## Header 2 with closing hashes ##  {#header3}
   ...
-  ###### Header 6   {#header2}
+  ###### Header 6   {#header6}
 ```
 
 You can use both of them indistinctly, but there can be problems with section
