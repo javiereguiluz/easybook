@@ -93,7 +93,7 @@ class BasePublisher implements PublisherInterface
                 "The '%s' content associated with '%s' element doesn't exist\n"
                     ."or is not readable.\n\n"
                     ."Check that '%s'\n"
-                    ."file exists and check its permissions.",
+                    .'file exists and check its permissions.',
                 $contentFileName,
                 $itemType,
                 realpath($this->app['publishing.dir.contents']).'/'.$contentFileName
@@ -123,7 +123,7 @@ class BasePublisher implements PublisherInterface
     /**
      * Tries to load the default content defined by easybook for this item type.
      *
-     * @param string  $itemType The type of item (e.g. 'cover', 'license', 'title')
+     * @param string $itemType The type of item (e.g. 'cover', 'license', 'title')
      *
      * @return string The default content or an empty string if it doesn't exist
      */
@@ -133,8 +133,7 @@ class BasePublisher implements PublisherInterface
 
         try {
             return $this->app->render('@content/'.$contentFileName);
-        }
-        catch (\Twig_Error_Loader $e) {
+        } catch (\Twig_Error_Loader $e) {
             // if Twig throws a Twig_Error_Loader exception,
             // there is no default content
             return '';
@@ -162,7 +161,7 @@ class BasePublisher implements PublisherInterface
             $item = $this->app['publishing.active_item'];
 
             $item['content'] = $this->app['parser']->transform($item['original']);
-            $item['toc']     = $this->app['publishing.active_item.toc'];
+            $item['toc'] = $this->app['publishing.active_item.toc'];
 
             $this->app['publishing.active_item'] = $item;
 
@@ -227,10 +226,10 @@ class BasePublisher implements PublisherInterface
 
     /**
      * It initializes an array with the configuration options and data of each
-     * book element (a chapter, an appendix, the table of contens, etc.)
+     * book element (a chapter, an appendix, the table of contens, etc.).
      *
-     * @param  array $itemConfig The configuration options set in the config.yml
-     *                           file for this item.
+     * @param array $itemConfig The configuration options set in the config.yml
+     *                          file for this item.
      *
      * @return array An array with all the configuration options and data for the item
      */
@@ -244,23 +243,23 @@ class BasePublisher implements PublisherInterface
             // the type of this content (`chapter`, `appendix`, `toc`, `license`, ...)
             'element' => '',
             // the format in which contents are written ('md' for Markdown)
-            'format'  => '',
+            'format' => '',
             // the number/letter of the content (useful for `chapter`, `part` and `appendix`)
-            'number'  => '',
+            'number' => '',
             // the title of the content defined in `config.yml` (usually only `part` defines it)
-            'title'   => '',
+            'title' => '',
         ), $itemConfig);
 
         $item['original'] = '';      // original content as written by book author (Markdown usually)
-        $item['content']  = '';      // transformed content of the item (HTML usually)
-        $item['label']    = '';      // the label of this item ('Chapter XX', 'Appendix XX', ...)
-        $item['title']    = '';      // the title of the item without any label ('Lorem ipsum dolor')
-        $item['slug']     = '';      // the slug of the title
-        $item['toc']      = array(); // the table of contents of this item
+        $item['content'] = '';      // transformed content of the item (HTML usually)
+        $item['label'] = '';      // the label of this item ('Chapter XX', 'Appendix XX', ...)
+        $item['title'] = '';      // the title of the item without any label ('Lorem ipsum dolor')
+        $item['slug'] = '';      // the slug of the title
+        $item['toc'] = array(); // the table of contents of this item
 
         if (!empty($item['config']['title'])) {
             $item['title'] = $item['config']['title'];
-            $item['slug']  = $this->app->slugify($item['title']);
+            $item['slug'] = $this->app->slugify($item['title']);
         }
 
         return $item;

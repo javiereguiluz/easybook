@@ -34,16 +34,16 @@ class BookConfigurator
      * It loads book configuration by merging all the different configuration
      * sources (CLI command options, YAML configuration file and default configuration).
      *
-     * @param  string $bookDir                 The root dir of the book being published
-     * @param  string $configurationViaCommand The optional configuration set via the publish command
+     * @param string $bookDir                 The root dir of the book being published
+     * @param string $configurationViaCommand The optional configuration set via the publish command
      *
-     * @return array                           The complete book configuration resulted from merging
-     *                                         all the different configuration sources
+     * @return array The complete book configuration resulted from merging
+     *               all the different configuration sources
      */
-    public function loadBookConfiguration($bookDir = null, $configurationViaCommand = "")
+    public function loadBookConfiguration($bookDir = null, $configurationViaCommand = '')
     {
-        $configurationViaCommand  = $this->loadCommandConfiguration($configurationViaCommand);
-        $configurationViaFile     = $this->loadBookFileConfiguration($bookDir);
+        $configurationViaCommand = $this->loadCommandConfiguration($configurationViaCommand);
+        $configurationViaFile = $this->loadBookFileConfiguration($bookDir);
         $configurationViaDefaults = $this->loadDefaultBookConfiguration();
 
         $bookConfiguration = array_replace_recursive(
@@ -73,9 +73,9 @@ class BookConfigurator
     /**
      * It loads the configuration values set via the book's config.yml file.
      *
-     * @param string $bookDir    The root dir of the book being published
+     * @param string $bookDir The root dir of the book being published
      *
-     * @return array             The loaded configuration.
+     * @return array The loaded configuration.
      *
      * @throws \RuntimeException If no config.yml is present.
      */
@@ -130,9 +130,9 @@ class BookConfigurator
             ));
         }
 
-        $editionConfig       = $bookConfiguration['book']['editions'][$edition] ?: array();
+        $editionConfig = $bookConfiguration['book']['editions'][$edition] ?: array();
         $parentEditionConfig = $this->loadParentEditionConfiguration();
-        $defaultConfig       = $this->loadDefaultEditionConfiguration();
+        $defaultConfig = $this->loadDefaultEditionConfiguration();
 
         $configuration = array_replace_recursive(
             $defaultConfig, $parentEditionConfig, $editionConfig
@@ -166,7 +166,7 @@ class BookConfigurator
                         ."\n\n"
                         ."Check in '%s' file \n"
                         ."that the value of 'extends' option in '%s' edition is a valid \n"
-                        ."edition of the book",
+                        .'edition of the book',
                     $edition, $parentEdition, realpath($this->app['publishing.dir.book'].'/config.yml'), $edition
                 ));
             }
@@ -191,7 +191,7 @@ class BookConfigurator
 
     /**
      * * It parses all the configuration values as if they were Twig strings, because
-     * easybook allows to use Twig expressions as the value of options. For example:
+     * easybook allows to use Twig expressions as the value of options. For example:.
      *
      * { "book": { "title": "{{ book.author }} diary", "author": "...", ... } }
      *
@@ -216,7 +216,6 @@ class BookConfigurator
                     }
                 }
             }
-
         }
 
         return $bookConfig;

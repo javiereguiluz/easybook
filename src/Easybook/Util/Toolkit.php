@@ -27,7 +27,7 @@ class Toolkit
     public static function array_deep_merge_and_replace()
     {
         if (func_num_args() < 2) {
-            trigger_error(__FUNCTION__ .' needs two or more array arguments', E_USER_WARNING);
+            trigger_error(__FUNCTION__.' needs two or more array arguments', E_USER_WARNING);
 
             return;
         }
@@ -39,7 +39,7 @@ class Toolkit
             $array = array_shift($arrays);
 
             if (!is_array($array)) {
-                trigger_error(__FUNCTION__ .' encountered a non array argument', E_USER_WARNING);
+                trigger_error(__FUNCTION__.' encountered a non array argument', E_USER_WARNING);
 
                 return;
             }
@@ -105,10 +105,10 @@ class Toolkit
 
                 if (is_dir($file)) {
                     if ($file != $parent) {
-                        $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+                        $zip->addEmptyDir(str_replace($source.'/', '', $file.'/'));
                     }
                 } elseif (is_file($file)) {
-                    $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+                    $zip->addFromString(str_replace($source.'/', '', $file), file_get_contents($file));
                 }
             }
         } elseif (is_file($source)) {
@@ -117,27 +117,27 @@ class Toolkit
 
         return $zip->close();
     }
-    
+
     /*
      * Unzips a ZIP file
-     * 
+     *
      * @param  string $file
      * @param  string $destination directory to unzip into
      * @return boolean success
      */
     public static function unzip($file, $destination)
     {
-        $zip = new \ZipArchive;
-        
+        $zip = new \ZipArchive();
+
         $file = str_replace('\\', '/', realpath($file));
-        
+
         if (!$zip->open($file)) {
             return false;
         }
-        
+
         if (!$zip->extractTo($destination)) {
             return false;
-        } 
+        }
 
         return $zip->close();
     }
@@ -159,7 +159,7 @@ class Toolkit
     }
 
     /**
-     * Camelizes a string: 'updated_at' -> 'updatedAt'
+     * Camelizes a string: 'updated_at' -> 'updatedAt'.
      *
      * @param string $string     A string to camelize
      * @param bool   $upperFirst If true, the first letter is also uppercased

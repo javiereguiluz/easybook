@@ -21,9 +21,9 @@ class ParserServiceProvider implements ServiceProviderInterface
     {
         $app['parser.options'] = array(
             // available syntaxes: 'original', 'php-markdown-extra', 'easybook'
-            'markdown_syntax'  => 'easybook',
+            'markdown_syntax' => 'easybook',
             // available types: 'markdown', 'fenced', 'github'
-            'code_block_type'  => 'markdown',
+            'code_block_type' => 'markdown',
         );
 
         $app['parser'] = function ($app) {

@@ -29,16 +29,16 @@ class BookPublishCommand extends BaseCommand
             ->setDescription('Publishes an edition of a book')
             ->setDefinition(array(
                 new InputArgument(
-                    'slug', InputArgument::REQUIRED, "Book slug (no spaces allowed, use dashes instead)"
+                    'slug', InputArgument::REQUIRED, 'Book slug (no spaces allowed, use dashes instead)'
                 ),
                 new InputArgument(
-                    'edition', InputArgument::REQUIRED, "Edition to be published"
+                    'edition', InputArgument::REQUIRED, 'Edition to be published'
                 ),
                 new InputOption(
-                    'dir', '', InputOption::VALUE_OPTIONAL, "Path of the documentation directory"
+                    'dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory'
                 ),
                 new InputOption(
-                    'configuration', '', InputOption::VALUE_OPTIONAL, "Additional book configuration options", ""
+                    'configuration', '', InputOption::VALUE_OPTIONAL, 'Additional book configuration options', ''
                 ),
             ))
             ->setHelp(file_get_contents(__DIR__.'/Resources/BookPublishCommandHelp.txt'));
@@ -46,24 +46,24 @@ class BookPublishCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $slug    = $input->getArgument('slug');
+        $slug = $input->getArgument('slug');
         $edition = $input->getArgument('edition');
-        $dir     = $input->getOption('dir') ?: $this->app['app.dir.doc'];
+        $dir = $input->getOption('dir') ?: $this->app['app.dir.doc'];
 
-        $this->app['console.input']  = $input;
+        $this->app['console.input'] = $input;
         $this->app['console.output'] = $output;
         $this->app['console.dialog'] = $this->getHelperSet()->get('dialog');
 
         // validate book dir and add some useful values to the app configuration
         $bookDir = $this->app['validator']->validateBookDir($slug, $dir);
 
-        $this->app['publishing.dir.book']      = $bookDir;
-        $this->app['publishing.dir.contents']  = $bookDir.'/Contents';
+        $this->app['publishing.dir.book'] = $bookDir;
+        $this->app['publishing.dir.contents'] = $bookDir.'/Contents';
         $this->app['publishing.dir.resources'] = $bookDir.'/Resources';
-        $this->app['publishing.dir.plugins']   = $bookDir.'/Resources/Plugins';
+        $this->app['publishing.dir.plugins'] = $bookDir.'/Resources/Plugins';
         $this->app['publishing.dir.templates'] = $bookDir.'/Resources/Templates';
-        $this->app['publishing.book.slug']     = $slug;
-        $this->app['publishing.edition']       = $edition;
+        $this->app['publishing.book.slug'] = $slug;
+        $this->app['publishing.edition'] = $edition;
 
         // load book configuration
         $this->app->loadBookConfiguration($input->getOption('configuration'));
@@ -100,16 +100,14 @@ class BookPublishCommand extends BaseCommand
             sprintf(
                 " The publishing process took <info>%s seconds</info>\n",
                 number_format($this->app['app.timer.finish'] - $this->app['app.timer.start'], 1)
-            )
+            ),
         ));
     }
 
     /**
      * Run the given scripts before/after the book publication.
      *
-     * @param  array|string $scripts The list of scripts to be executed
-     *
-     * @return void
+     * @param array|string $scripts The list of scripts to be executed
      *
      * @throws \RuntimeException if any script execution produces an error.
      */
@@ -148,7 +146,7 @@ class BookPublishCommand extends BaseCommand
     {
         $output->writeln($this->app['app.signature']);
 
-        $slug    = $input->getArgument('slug');
+        $slug = $input->getArgument('slug');
         $edition = $input->getArgument('edition');
 
         if (!empty($slug) && !empty($edition)) {
@@ -158,7 +156,7 @@ class BookPublishCommand extends BaseCommand
         $output->writeln(array(
             '',
             ' Welcome to the <comment>easybook</comment> interactive book publisher',
-            ''
+            '',
         ));
 
         $dialog = $this->getHelperSet()->get('dialog');
@@ -167,7 +165,7 @@ class BookPublishCommand extends BaseCommand
         $slug = $input->getArgument('slug') ?: $dialog->askAndValidate($output,
             array(
                 " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n",
-                " > "
+                ' > ',
             ),
             function ($slug) {
                 return Validator::validateBookSlug($slug);
@@ -179,7 +177,7 @@ class BookPublishCommand extends BaseCommand
         $edition = $input->getArgument('edition') ?: $dialog->askAndValidate($output,
             array(
                 " Please, type the name of the <info>edition</info> to be published (e.g. <comment>web</comment>)\n",
-                " > "
+                ' > ',
             ),
             function ($edition) {
                 return Validator::validateEditionSlug($edition);

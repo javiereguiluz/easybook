@@ -38,27 +38,27 @@ class TablePlugin implements EventSubscriberInterface
     {
         $item = $event->getItem();
 
-        $addTableLabels   = in_array('table', $event->app->edition('labels') ?: array());
+        $addTableLabels = in_array('table', $event->app->edition('labels') ?: array());
         $parentItemNumber = $item['config']['number'];
-        $listOfTables     = array();
-        $counter          = 0;
+        $listOfTables = array();
+        $counter = 0;
 
         $item['content'] = preg_replace_callback(
             "/(?<content><table.*\n<\/table>)/Ums",
-            function($matches) use ($event, $addTableLabels, $parentItemNumber, &$listOfTables, &$counter) {
+            function ($matches) use ($event, $addTableLabels, $parentItemNumber, &$listOfTables, &$counter) {
                 // prepare table parameters for template and label
                 $counter++;
                 $parameters = array(
                     'item' => array(
                         'caption' => '',
                         'content' => $matches['content'],
-                        'label'   => '',
-                        'number'  => $counter,
-                        'slug'    => $event->app->slugify('Table '.$parentItemNumber.'-'.$counter)
+                        'label' => '',
+                        'number' => $counter,
+                        'slug' => $event->app->slugify('Table '.$parentItemNumber.'-'.$counter),
                     ),
                     'element' => array(
-                        'number' => $parentItemNumber
-                    )
+                        'number' => $parentItemNumber,
+                    ),
                 );
 
                 // the publishing edition wants to label tables

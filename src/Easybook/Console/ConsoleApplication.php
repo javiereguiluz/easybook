@@ -46,7 +46,7 @@ class ConsoleApplication extends SymfonyConsoleApplication
         $help = array(
             $this->app['app.signature'],
             '<info>easybook</info> is the <comment>easiest</comment> and <comment>fastest</comment> tool to generate',
-            'technical documentation, books, manuals and websites.'
+            'technical documentation, books, manuals and websites.',
         );
 
         return implode("\n", $help);

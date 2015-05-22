@@ -53,24 +53,24 @@ class ToolkitTest extends TestCase
                     array('a' => 1, 'b' => 2, 'c' => 3),
                     array('a' => 10),
                 ),
-                array('a' => 10, 'b' => 2, 'c' => 3)
+                array('a' => 10, 'b' => 2, 'c' => 3),
             ),
 
             array(
                 array(
                     array('a' => 1, 'b' => 2, 'c' => 3),
                     array('a' => 10),
-                    array('a' => 100, 'c' => 300)
+                    array('a' => 100, 'c' => 300),
                 ),
-                array('a' => 100, 'b' => 2, 'c' => 300)
+                array('a' => 100, 'b' => 2, 'c' => 300),
             ),
 
             array(
                 array(
                     array('a' => array('b' => 2, 'c' => 3)),
-                    array('a' => 10)
+                    array('a' => 10),
                 ),
-                array('a' => 10)
+                array('a' => 10),
             ),
 
             array(
@@ -79,7 +79,7 @@ class ToolkitTest extends TestCase
                     array('a' => array('b' => 20)),
                     array('a' => array('c' => 300)),
                 ),
-                array('a' => array('b' => 20, 'c' => 300))
+                array('a' => array('b' => 20, 'c' => 300)),
             ),
 
             array(
@@ -88,7 +88,7 @@ class ToolkitTest extends TestCase
                     array('a' => array('b' => array('c' => 30))),
                     array('a' => array('b' => array('d' => 400))),
                 ),
-                array('a' => array('b' => array('c' => 30, 'd' => 400), 'c' => 3))
+                array('a' => array('b' => array('c' => 30, 'd' => 400), 'c' => 3)),
             ),
 
             array(

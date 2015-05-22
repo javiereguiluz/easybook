@@ -49,11 +49,11 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = $this->console->find('new');
 
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
         $tester->execute(array(
             'command' => $command->getName(),
-            'title'   => 'The Origin of Species',
-            '--dir'   => $this->tmpDir
+            'title' => 'The Origin of Species',
+            '--dir' => $this->tmpDir,
         ));
 
         $app = $command->getApp();
@@ -74,12 +74,12 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         $helper = new HelperSet(array(new FormatterHelper(), $dialog));
         $command->setHelperSet($helper);
 
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
         $tester->execute(array(
             'command' => $command->getName(),
-            '--dir'   => $this->tmpDir
+            '--dir' => $this->tmpDir,
         ), array(
-            'interactive' => true
+            'interactive' => true,
         ));
 
         $app = $command->getApp();
@@ -124,11 +124,11 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
     public function testNonInteractiveCommand()
     {
         $command = $this->console->find('new');
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
         $tester->execute(array(
             'command' => $command->getName(),
-            'title'   => 'The Origin of Species',
-            '--dir'   => $this->tmpDir
+            'title' => 'The Origin of Species',
+            '--dir' => $this->tmpDir,
         ));
 
         $this->assertRegExp(
@@ -150,7 +150,7 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
             'Contents/chapter1.md',
             'Contents/chapter2.md',
             'Contents/images',
-            'Output'
+            'Output',
         );
         foreach ($files as $file) {
             $this->assertFileExists(
@@ -235,13 +235,13 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         // --- test second book generation ------------------------------------
         $tester->execute(array(
             'command' => $command->getName(),
-            'title'   => 'The Origin of Species',
-            '--dir'   => $this->tmpDir
+            'title' => 'The Origin of Species',
+            '--dir' => $this->tmpDir,
         ));
         $tester->execute(array(
             'command' => $command->getName(),
-            'title'   => 'The Origin of Species',
-            '--dir'   => $this->tmpDir
+            'title' => 'The Origin of Species',
+            '--dir' => $this->tmpDir,
         ));
 
         $this->assertRegExp(
@@ -263,11 +263,11 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
     public function testNonexistentDir()
     {
         $command = $this->console->find('new');
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
         $tester->execute(array(
             'command' => $command->getName(),
-            'title'   => 'The Origin of Species',
-            '--dir'   => './'.uniqid('non_existent_dir')
+            'title' => 'The Origin of Species',
+            '--dir' => './'.uniqid('non_existent_dir'),
         ));
     }
 

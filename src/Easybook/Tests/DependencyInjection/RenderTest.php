@@ -17,7 +17,7 @@ use Easybook\DependencyInjection\Application;
 
 /**
  * Tests related to the render() method of the
- * Easybook\DependencyInjection\Application class
+ * Easybook\DependencyInjection\Application class.
  */
 class RenderTest extends TestCase
 {
@@ -37,7 +37,7 @@ class RenderTest extends TestCase
         $this->app['twig.loader'] = new \Twig_Loader_Filesystem($this->templateDir);
 
         $this->app['publishing.book.config'] = array('book' => array(
-            'title' => 'Custom Test Book Title'
+            'title' => 'Custom Test Book Title',
         ));
     }
 
@@ -97,7 +97,7 @@ class RenderTest extends TestCase
     public function testTemplateRenderedAsAFile()
     {
         $templateFileName = 'template.twig';
-        $targetFileName   = 'rendered.txt';
+        $targetFileName = 'rendered.txt';
         $expectedFileName = 'expected.txt';
 
         file_put_contents($this->templateDir.'/'.$templateFileName,

@@ -1,4 +1,5 @@
 <?php
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
@@ -8,7 +9,7 @@ class ParserPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::PRE_PARSE  => 'onItemPreParse',
+            Events::PRE_PARSE => 'onItemPreParse',
             Events::POST_PARSE => 'onItemPostParse',
         );
     }

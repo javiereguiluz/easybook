@@ -73,7 +73,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app['filesystem']->copy($customCss, $this->app['publishing.dir.output'].'/css/styles.css',true);
+            $this->app['filesystem']->copy($customCss, $this->app['publishing.dir.output'].'/css/styles.css', true);
         }
 
         // generate the chunks (HTML pages) of the published book
@@ -124,7 +124,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
             foreach ($item['toc'] as $chunk) {
                 // first-level headers
                 if (isset($chunk['level']) && 1 == $chunk['level']) {
-                    $chunk['url']    = sprintf('%s.html', $item['page_name']);
+                    $chunk['url'] = sprintf('%s.html', $item['page_name']);
                     $chunk['parent'] = null;
                     $chunk['config'] = $item['config']; // needed for templates
 
@@ -171,9 +171,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
      * This method creates a new property for each item called 'page_name' which
      * stores the normalized page name that should have this item.
      *
-     * @param  array $items The original book items.
+     * @param array $items The original book items.
      *
-     * @return array        The book items with their new 'page_name' property.
+     * @return array The book items with their new 'page_name' property.
      */
     private function normalizePageNames($items)
     {
@@ -197,9 +197,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
      * This method ensures that every book item defines a TOC by adding a simple
      * TOC to any item without one.
      *
-     * @param  array $items The original book items.
+     * @param array $items The original book items.
      *
-     * @return array        The book items with their new TOCs.
+     * @return array The book items with their new TOCs.
      */
     private function fixItemsWithEmptyTocs($items)
     {
@@ -209,13 +209,13 @@ class HtmlChunkedPublisher extends HtmlPublisher
             if (empty($item['toc']) && !in_array($item['config']['element'], $this->elementsWithoutToc)) {
                 $item['toc'] = array(
                     array(
-                        'level'  => 1,
-                        'title'  => $item['title'],
-                        'slug'   => $item['slug'],
-                        'label'  => '',
-                        'url'    => $item['page_name'].'.html',
+                        'level' => 1,
+                        'title' => $item['title'],
+                        'slug' => $item['slug'],
+                        'label' => '',
+                        'url' => $item['page_name'].'.html',
                         'parent' => null,
-                    )
+                    ),
                 );
             }
 
@@ -230,14 +230,16 @@ class HtmlChunkedPublisher extends HtmlPublisher
      * pages). This operation is quite complex because some exceptions are taken
      * into account to generate a better looking book.
      *
-     * @param  array    $item         The item to be chunked.
-     * @param  array    $bookToc      The full (and flatten) book TOC (table of contents)
-     * @param  boolean  $hasCustomCss This flag is needed to render each chunk template
-     * @param  integer  $chunkLevel   The number of chunks the book is divided into:
-     *                                  * 1 means each <h1> section generates an HTML page
-     *                                  * 2 means each <h1> and <h2> sections generate an HTML page
+     * @param array $item         The item to be chunked.
+     * @param array $bookToc      The full (and flatten) book TOC (table of contents)
+     * @param bool  $hasCustomCss This flag is needed to render each chunk template
+     * @param int   $chunkLevel   The number of chunks the book is divided into:
+     *                            * 1 means each <h1> section generates an HTML page
+     *                            * 2 means each <h1> and <h2> sections generate an HTML page
+     *
      * @throws \RuntimeException
-     * @return  array                 The whole new (and flattened) book TOC
+     *
+     * @return array The whole new (and flattened) book TOC
      */
     private function chunkItem($item, $bookToc, $hasCustomCss, $chunkLevel = 1)
     {
@@ -253,12 +255,12 @@ class HtmlChunkedPublisher extends HtmlPublisher
     /**
      * It generates one HTML page for each book element.
      *
-     * @param  array    $item         The item to be chunked.
-     * @param  array    $bookToc      The whole (and flattened) book TOC
-     * @param  boolean  $hasCustomCss This flag is needed to render each chunk template
+     * @param array $item         The item to be chunked.
+     * @param array $bookToc      The whole (and flattened) book TOC
+     * @param bool  $hasCustomCss This flag is needed to render each chunk template
      *
-     * @return  array                 The whole (and flattened) book TOC (it can be
-     *                                modified inside this method)
+     * @return array The whole (and flattened) book TOC (it can be
+     *               modified inside this method)
      */
     private function generateFirstLevelChunks($item, $bookToc, $hasCustomCss)
     {
@@ -267,10 +269,10 @@ class HtmlChunkedPublisher extends HtmlPublisher
         $itemPosition = $this->findItemPosition($item, $bookToc);
 
         $templateVariables = array(
-            'item'     => $item,
-            'toc'      => $bookToc,
+            'item' => $item,
+            'toc' => $bookToc,
             'previous' => $this->getPreviousChunk($itemPosition, $bookToc),
-            'next'     => $this->getNextChunk($itemPosition, $bookToc),
+            'next' => $this->getNextChunk($itemPosition, $bookToc),
             'has_custom_css' => $hasCustomCss,
         );
 
@@ -290,11 +292,11 @@ class HtmlChunkedPublisher extends HtmlPublisher
     /**
      * It generates several HTML pages for each book element.
      *
-     * @param  array    $item         The item to be chunked.
-     * @param  boolean  $hasCustomCss This flag is needed to render each chunk template
+     * @param array $item         The item to be chunked.
+     * @param bool  $hasCustomCss This flag is needed to render each chunk template
      *
-     * @return  array                 The whole (and flattened) book TOC (it can be
-     *                                modified inside this method)
+     * @return array The whole (and flattened) book TOC (it can be
+     *               modified inside this method)
      */
     private function generateSecondLevelChunks($item, $hasCustomCss)
     {
@@ -320,10 +322,10 @@ class HtmlChunkedPublisher extends HtmlPublisher
             }
 
             $templateVariables = array(
-                'item'     => $chunk,
-                'toc'      => $bookToc,
+                'item' => $chunk,
+                'toc' => $bookToc,
                 'previous' => $this->getPreviousChunk($itemPosition, $bookToc),
-                'next'     => $this->getNextChunk($itemPosition, $bookToc),
+                'next' => $this->getNextChunk($itemPosition, $bookToc),
                 'has_custom_css' => $hasCustomCss,
             );
 
@@ -372,9 +374,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
      *                                          <h2>1.2 Other ipsum lorem</h2>
      *                                          Lorem ...
      *
-     * @param  array $item The item to be split into chunks
+     * @param array $item The item to be split into chunks
      *
-     * @return array       The chunks the item has been split into
+     * @return array The chunks the item has been split into
      */
     private function prepareItemChunks($item)
     {
@@ -402,7 +404,7 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
                     if (isset($match['slug']) && $match['slug'] == $itemChunk['slug'] && 2 == $itemChunk['level']) {
                         $itemChunk['html_title'] = $originalItemChunks[$j];
-                        $itemChunk['content']    = $originalItemChunks[$j+1];
+                        $itemChunk['content'] = $originalItemChunks[$j + 1];
 
                         $itemChunks[$i] = $itemChunk;
                     }
@@ -455,10 +457,10 @@ class HtmlChunkedPublisher extends HtmlPublisher
      * It filters the given book toc to remove any element with a 'level'
      * greater than the given $maxLevel value.
      *
-     * @param  array  $toc       The book TOC to filter
-     * @param  integer $maxLevel Any item with a 'level' higher than this will be removed
+     * @param array $toc      The book TOC to filter
+     * @param int   $maxLevel Any item with a 'level' higher than this will be removed
      *
-     * @return array             The filtered toc.
+     * @return array The filtered toc.
      */
     private function filterBookToc($toc, $maxLevel = 1)
     {
@@ -476,11 +478,11 @@ class HtmlChunkedPublisher extends HtmlPublisher
     /**
      * It finds the position of the current item in the book TOC.
      *
-     * @param  array $item      The item 
-     * @param  array $bookToc   The whole (flattened) book TOC
-     * @param  string $criteria The item field whose value is used to detect the item position
+     * @param array  $item     The item
+     * @param array  $bookToc  The whole (flattened) book TOC
+     * @param string $criteria The item field whose value is used to detect the item position
      *
-     * @return integer          The numeric position of the item inside the book TOC
+     * @return int The numeric position of the item inside the book TOC
      */
     private function findItemPosition($item, $bookToc, $criteria = 'slug')
     {
@@ -499,15 +501,15 @@ class HtmlChunkedPublisher extends HtmlPublisher
      * It returns the previous item according to the current item position and
      * the book toc.
      *
-     * @param  integer $currentPosition The position of the current item
-     * @param  array   $bookToc         The whole (flattened) book toc
+     * @param int   $currentPosition The position of the current item
+     * @param array $bookToc         The whole (flattened) book toc
      *
-     * @return array                    The item that goes before the current item
+     * @return array The item that goes before the current item
      */
     private function getPreviousChunk($currentPosition, $bookToc)
     {
-        $previousChunk = isset($bookToc[$currentPosition-1])
-            ? $bookToc[$currentPosition-1]
+        $previousChunk = isset($bookToc[$currentPosition - 1])
+            ? $bookToc[$currentPosition - 1]
             : array('level' => 1, 'slug' => 'index', 'url' => 'index.html');
 
         return $previousChunk;
@@ -517,16 +519,16 @@ class HtmlChunkedPublisher extends HtmlPublisher
      * It returns the next item according to the current item position and the
      * book toc.
      *
-     * @param  integer $currentPosition The position of the current item
-     * @param  array   $bookToc         The whole (flattened) book toc
+     * @param int   $currentPosition The position of the current item
+     * @param array $bookToc         The whole (flattened) book toc
      *
-     * @return array|null               The item that should follow the current item
-     *                                  or null if this is the last chunk
+     * @return array|null The item that should follow the current item
+     *                    or null if this is the last chunk
      */
     private function getNextChunk($currentPosition, $bookToc)
     {
-        $nextChunk = isset($bookToc[$currentPosition+1])
-            ? $bookToc[$currentPosition+1]
+        $nextChunk = isset($bookToc[$currentPosition + 1])
+            ? $bookToc[$currentPosition + 1]
             : null;
 
         return $nextChunk;

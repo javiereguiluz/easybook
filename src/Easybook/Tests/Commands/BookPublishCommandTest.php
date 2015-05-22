@@ -42,11 +42,11 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
 
         // generate a sample book before testing its publication
         $command = $this->console->find('new');
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
         $tester->execute(array(
             'command' => $command->getName(),
-            'title'   => 'The Origin of Species',
-            '--dir'   => $this->tmpDir
+            'title' => 'The Origin of Species',
+            '--dir' => $this->tmpDir,
         ));
     }
 
@@ -59,12 +59,12 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = $this->console->find('publish');
 
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
         $tester->execute(array(
             'command' => $command->getName(),
-            'slug'    => 'the-origin-of-species',
+            'slug' => 'the-origin-of-species',
             'edition' => 'web',
-            '--dir'   => $this->tmpDir,
+            '--dir' => $this->tmpDir,
         ));
 
         $app = $command->getApp();
@@ -85,12 +85,12 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         $helper = new HelperSet(array(new FormatterHelper(), $dialog));
         $command->setHelperSet($helper);
 
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
         $tester->execute(array(
             'command' => $command->getName(),
-            '--dir'   => $this->tmpDir
+            '--dir' => $this->tmpDir,
         ), array(
-            'interactive' => true
+            'interactive' => true,
         ));
 
         $app = $command->getApp();
@@ -144,14 +144,14 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
     public function testNonInteractiveCommand($edition, $publishedBookFilePath, $maxTimeElapsed)
     {
         $command = $this->console->find('publish');
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
 
         $start = microtime(true);
         $tester->execute(array(
             'command' => $command->getName(),
-            'slug'    => 'the-origin-of-species',
+            'slug' => 'the-origin-of-species',
             'edition' => $edition,
-            '--dir'   => $this->tmpDir
+            '--dir' => $this->tmpDir,
         ));
         $finish = microtime(true);
 
@@ -184,17 +184,17 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
     public function testNonInteractionInvalidBookAndEdition()
     {
         $command = $this->console->find('publish');
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
 
         try {
             $tester->execute(array(
                 'command' => $command->getName(),
-                'slug'    => uniqid('non_existent_book_'),
+                'slug' => uniqid('non_existent_book_'),
                 'edition' => uniqid('non_existent_edition_'),
-                '--dir'   => $this->tmpDir,
-                '--no-interaction' => true
+                '--dir' => $this->tmpDir,
+                '--no-interaction' => true,
             ), array(
-                'interactive' => false
+                'interactive' => false,
             ));
         } catch (\RuntimeException $e) {
             $this->assertInstanceOf('\RuntimeException', $e);
@@ -205,17 +205,17 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
     public function testNonInteractionInvalidEdition()
     {
         $command = $this->console->find('publish');
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
 
         try {
             $tester->execute(array(
                 'command' => $command->getName(),
-                'slug'    => 'the-origin-of-species',
+                'slug' => 'the-origin-of-species',
                 'edition' => uniqid('non_existent_edition_'),
-                '--dir'   => $this->tmpDir,
-                '--no-interaction' => true
+                '--dir' => $this->tmpDir,
+                '--no-interaction' => true,
             ), array(
-                'interactive' => false
+                'interactive' => false,
             ));
         } catch (\RuntimeException $e) {
             $this->assertInstanceOf('\RuntimeException', $e);
@@ -226,7 +226,7 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
     public function testBeforeAndAfterPublishScripts()
     {
         if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
-            $this->markTestSkipped("This test executes commands not available for Windows systems.");
+            $this->markTestSkipped('This test executes commands not available for Windows systems.');
         }
 
         $bookConfigurationViaCommand = array(
@@ -235,34 +235,34 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
                 'editions' => array(
                     'web' => array(
                         'before_publish' => array(
-                            "touch before_publish_script.txt",
+                            'touch before_publish_script.txt',
                             "echo '123' > before_publish_script.txt",
                             "touch {{ 'other' ~ '_before_publish_script' ~ '.txt' }}",
                             "echo '{{ book.title|upper }}' > other_before_publish_script.txt",
                         ),
                         'after_publish' => array(
-                            "touch after_publish_script.txt",
+                            'touch after_publish_script.txt',
                             "echo '456' > after_publish_script.txt",
                             "touch {{ 'other' ~ '_after_publish_script' ~ '.txt' }}",
                             "echo '{{ book.title[0:9]|upper }}' > other_after_publish_script.txt",
                         ),
-                    )
-                )
-            )
+                    ),
+                ),
+            ),
         );
 
         $command = $this->console->find('publish');
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
 
         $tester->execute(array(
             'command' => $command->getName(),
-            'slug'    => 'the-origin-of-species',
+            'slug' => 'the-origin-of-species',
             'edition' => 'web',
-            '--dir'   => $this->tmpDir,
+            '--dir' => $this->tmpDir,
             '--no-interaction' => true,
-            '--configuration'  => json_encode($bookConfigurationViaCommand)
+            '--configuration' => json_encode($bookConfigurationViaCommand),
         ), array(
-            'interactive' => false
+            'interactive' => false,
         ));
 
         $bookDir = $this->tmpDir.'/the-origin-of-species';
@@ -285,26 +285,26 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
                 'editions' => array(
                     'web' => array(
                         'before_publish' => array(
-                            uniqid('this_command_does_not_exist_')
-                        )
-                    )
-                )
-            )
+                            uniqid('this_command_does_not_exist_'),
+                        ),
+                    ),
+                ),
+            ),
         );
 
         $command = $this->console->find('publish');
-        $tester  = new CommandTester($command);
+        $tester = new CommandTester($command);
 
         try {
             $tester->execute(array(
                 'command' => $command->getName(),
-                'slug'    => 'the-origin-of-species',
+                'slug' => 'the-origin-of-species',
                 'edition' => 'web',
-                '--dir'   => $this->tmpDir,
+                '--dir' => $this->tmpDir,
                 '--no-interaction' => true,
-                '--configuration'  => json_encode($bookConfigurationViaCommand)
+                '--configuration' => json_encode($bookConfigurationViaCommand),
             ), array(
-                'interactive' => false
+                'interactive' => false,
             ));
         } catch (\RuntimeException $e) {
             $this->assertInstanceOf('\RuntimeException', $e);

@@ -102,6 +102,7 @@ class PdfPublisher extends BasePublisher
      * Looks for the executable of the PrinceXML library.
      *
      * @return string The absolute path of the executable
+     *
      * @throws \RuntimeException If the PrinceXML executable is not found
      */
     public function findPrinceXMLPath()
@@ -123,7 +124,7 @@ class PdfPublisher extends BasePublisher
             "ERROR: The PrinceXML library needed to generate PDF books cannot be found.\n"
                 ." Check that you have installed PrinceXML in a common directory \n"
                 ." or set your custom PrinceXML path in the book's config.yml file:\n\n"
-                ."%s",
+                .'%s',
             $this->getSampleYamlConfiguration()
         ));
     }
@@ -181,7 +182,7 @@ class PdfPublisher extends BasePublisher
     public function addBookCover($bookFilePath, $coverFilePath)
     {
         if (!empty($coverFilePath)) {
-            $pdfBook  = PdfDocument::load($bookFilePath);
+            $pdfBook = PdfDocument::load($bookFilePath);
             $pdfCover = PdfDocument::load($coverFilePath);
 
             $pdfCover = clone $pdfCover->pages[0];
@@ -206,7 +207,7 @@ class PdfPublisher extends BasePublisher
         $paths = array(
             $this->app['publishing.dir.templates'].'/'.$this->app['publishing.edition'],
             $this->app['publishing.dir.templates'].'/pdf',
-            $this->app['publishing.dir.templates']
+            $this->app['publishing.dir.templates'],
         );
 
         return $this->app->getFirstExistingFile($coverFileName, $paths);

@@ -12,7 +12,6 @@
 namespace Easybook\Tests\Publishers;
 
 use Easybook\Util\Toolkit;
-
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Filesystem\Filesystem;
@@ -80,9 +79,9 @@ class PublisherTest extends TestCase
                 // publish each book edition
                 $input = new ArrayInput(array(
                     'command' => 'publish',
-                    'slug'    => $slug,
+                    'slug' => $slug,
                     'edition' => $editionName,
-                    '--dir'   => $this->tmpDir
+                    '--dir' => $this->tmpDir,
                 ));
 
                 $console->find('publish')->run($input, new NullOutput());
@@ -121,8 +120,7 @@ class PublisherTest extends TestCase
                         }
 
                         // assert that all required files are generated
-                        $this->checkForMissingFiles($expected,$generated);
-
+                        $this->checkForMissingFiles($expected, $generated);
                     } else {
                         $this->assertFileEquals(
                             __DIR__.'/fixtures/'.$slug.'/expected/'.$editionName.'/'.$file->getRelativePathname(),

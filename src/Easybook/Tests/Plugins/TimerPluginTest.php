@@ -30,8 +30,8 @@ class TimerPluginTest extends TestCase
     {
         $elapsedMicroseconds = 100;
 
-        $app    = new Application();
-        $event  = new BaseEvent($app);
+        $app = new Application();
+        $event = new BaseEvent($app);
         $plugin = new TimerPlugin();
 
         $plugin->registerPublicationStart($event);

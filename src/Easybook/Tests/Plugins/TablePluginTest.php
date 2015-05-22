@@ -27,27 +27,27 @@ class TablePluginTest extends TestCase
         $app = new Application();
 
         $app['publishing.book.slug'] = 'test_book';
-        $app['publishing.edition']   = 'test_edition';
+        $app['publishing.edition'] = 'test_edition';
         $app['publishing.book.config'] = array(
             'book' => array(
-                'slug'     => 'test_book',
+                'slug' => 'test_book',
                 'language' => 'en',
                 'editions' => array(
                     'test_edition' => array(
                         'format' => 'html',
                         'labels' => $addLabels ? array('table') : array(),
-                        'theme'  => 'clean',
-                    )
-                )
-            )
+                        'theme' => 'clean',
+                    ),
+                ),
+            ),
         );
 
-        $event  = new ParseEvent($app);
+        $event = new ParseEvent($app);
         $plugin = new TablePlugin();
 
         $event->setItem(array(
-            'config'  => array('number' => $itemNumber),
-            'content' => file_get_contents($fixturesDir.'/'.$inputFilePath)
+            'config' => array('number' => $itemNumber),
+            'content' => file_get_contents($fixturesDir.'/'.$inputFilePath),
         ));
 
         $plugin->decorateAndLabelTables($event);
@@ -61,7 +61,7 @@ class TablePluginTest extends TestCase
         if (count($app['publishing.list.tables']) > 0) {
             foreach ($app['publishing.list.tables'] as $i => $table) {
                 $this->assertRegexp('/<table.*<\/table>/s', $table[$i]['item']['content']);
-                
+
                 if ($addLabels) {
                     $this->assertEquals($expectedLabels[$i], $table[$i]['item']['label']);
                 }
@@ -77,7 +77,7 @@ class TablePluginTest extends TestCase
                 'expected_1_1.html',
                 1,
                 true,
-                array('Table 1.1', 'Table 1.2')
+                array('Table 1.1', 'Table 1.2'),
             ),
 
             array(
@@ -85,7 +85,7 @@ class TablePluginTest extends TestCase
                 'expected_1_2.html',
                 2,
                 true,
-                array('Table 2.1', 'Table 2.2')
+                array('Table 2.1', 'Table 2.2'),
             ),
 
             array(
@@ -93,7 +93,7 @@ class TablePluginTest extends TestCase
                 'expected_1_1.html',
                 1,
                 false,
-                array()
+                array(),
             ),
 
             array(
@@ -101,7 +101,7 @@ class TablePluginTest extends TestCase
                 'expected_2.html',
                 1,
                 false,
-                array()
+                array(),
             ),
 
             array(
@@ -109,7 +109,7 @@ class TablePluginTest extends TestCase
                 'expected_3.html',
                 'A',
                 true,
-                array('Table A.1')
+                array('Table A.1'),
             ),
         );
     }

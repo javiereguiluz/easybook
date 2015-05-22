@@ -29,35 +29,35 @@ class HtmlChunkedPublisherTest extends \PHPUnit_Framework_TestCase
 
         $originalItems = array(
             array(
-                'slug'  => 'Lorem ipsum dolor sit amet',
+                'slug' => 'Lorem ipsum dolor sit amet',
                 'label' => 'Chapter 1',
             ),
             array(
-                'slug'  => 'Another lorem ipsum dolor sit amet',
-                'label' => 'Appendix A'
+                'slug' => 'Another lorem ipsum dolor sit amet',
+                'label' => 'Appendix A',
             ),
             array(
-                'slug'  => 'Yet another lorem ipsum dolor sit amet',
-                'label' => null
-            )
+                'slug' => 'Yet another lorem ipsum dolor sit amet',
+                'label' => null,
+            ),
         );
 
         $expectedItems = array(
             array(
-                'slug'      => 'Lorem ipsum dolor sit amet',
-                'label'     => 'Chapter 1',
+                'slug' => 'Lorem ipsum dolor sit amet',
+                'label' => 'Chapter 1',
                 'page_name' => 'chapter-1',
             ),
             array(
-                'slug'      => 'Another lorem ipsum dolor sit amet',
-                'label'     => 'Appendix A',
+                'slug' => 'Another lorem ipsum dolor sit amet',
+                'label' => 'Appendix A',
                 'page_name' => 'appendix-a',
             ),
             array(
-                'slug'      => 'Yet another lorem ipsum dolor sit amet',
-                'label'     => null,
+                'slug' => 'Yet another lorem ipsum dolor sit amet',
+                'label' => null,
                 'page_name' => 'yet-another-lorem-ipsum-dolor-sit-amet',
-            )
+            ),
         );
 
         $method = new \ReflectionMethod('Easybook\Publishers\HtmlChunkedPublisher', 'normalizePageNames');
@@ -93,7 +93,7 @@ class HtmlChunkedPublisherTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 0,
-                array()
+                array(),
             ),
 
             array(
@@ -101,7 +101,7 @@ class HtmlChunkedPublisherTest extends \PHPUnit_Framework_TestCase
                 array(
                     array('slug' => 'item1', 'level' => 1),
                     array('slug' => 'item5', 'level' => 1),
-                )
+                ),
             ),
 
             array(
@@ -111,7 +111,7 @@ class HtmlChunkedPublisherTest extends \PHPUnit_Framework_TestCase
                     array('slug' => 'item2', 'level' => 2),
                     array('slug' => 'item4', 'level' => 2),
                     array('slug' => 'item5', 'level' => 1),
-                )
+                ),
             ),
 
             array(
@@ -122,7 +122,7 @@ class HtmlChunkedPublisherTest extends \PHPUnit_Framework_TestCase
                     array('slug' => 'item3', 'level' => 3),
                     array('slug' => 'item4', 'level' => 2),
                     array('slug' => 'item5', 'level' => 1),
-                )
+                ),
             ),
 
             array(
@@ -133,7 +133,7 @@ class HtmlChunkedPublisherTest extends \PHPUnit_Framework_TestCase
                     array('slug' => 'item3', 'level' => 3),
                     array('slug' => 'item4', 'level' => 2),
                     array('slug' => 'item5', 'level' => 1),
-                )
+                ),
             ),
         );
     }

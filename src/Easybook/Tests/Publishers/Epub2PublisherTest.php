@@ -109,10 +109,10 @@ class Epub2PublisherTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         $coverImage = array(
-            'height'    => $height,
-            'width'     => $width,
-            'filePath'  => 'images/'.$fileName,
-            'mediaType' => 'image/'.$mimeType
+            'height' => $height,
+            'width' => $width,
+            'filePath' => 'images/'.$fileName,
+            'mediaType' => 'image/'.$mimeType,
         );
 
         $this->assertEquals($coverImage, $method->invoke($publisher, $tmpDir));

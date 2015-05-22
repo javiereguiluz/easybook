@@ -42,7 +42,7 @@ class MobiPublisher extends Epub2Publisher
 
         $epubFilePath = $this->app['publishing.dir.output'].'/book.epub';
 
-        $command = sprintf("%s %s -o book.mobi %s",
+        $command = sprintf('%s %s -o book.mobi %s',
             $this->app['kindlegen.path'],
             $this->app['kindlegen.command_options'],
             $epubFilePath
@@ -61,6 +61,7 @@ class MobiPublisher extends Epub2Publisher
      * Looks for the executable of the Amazon KindleGen library.
      *
      * @return string The absolute path of the executable
+     *
      * @throws \RuntimeException If the KindleGen executable is not found
      */
     private function findKindleGenPath()
@@ -89,7 +90,7 @@ YAML;
                 "ERROR: The KindleGen library needed to generate MOBI books cannot be found.\n"
                     ." Check that you have installed KindleGen in a common directory \n"
                     ." or set your custom KindleGen path in the book's config.yml file:\n\n"
-                    ."%s",
+                    .'%s',
                 $sampleYamlConfiguration
             ));
         }

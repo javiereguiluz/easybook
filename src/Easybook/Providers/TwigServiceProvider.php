@@ -21,15 +21,15 @@ class TwigServiceProvider implements ServiceProviderInterface
     public function register(Container $app)
     {
         $app['twig.options'] = array(
-            'autoescape'       => false,
+            'autoescape' => false,
             // 'cache'         => $app['app.dir.cache'].'/Twig',
-            'charset'          => $app['app.charset'],
-            'debug'            => $app['app.debug'],
+            'charset' => $app['app.charset'],
+            'debug' => $app['app.debug'],
             'strict_variables' => $app['app.debug'],
         );
 
-        $app['twig.loader'] = function() use ($app) {
-            $theme  = ucfirst($app->edition('theme'));
+        $app['twig.loader'] = function () use ($app) {
+            $theme = ucfirst($app->edition('theme'));
             $format = Toolkit::camelize($app->edition('format'), true);
 
             $loader = new \Twig_Loader_Filesystem($app['app.dir.themes']);
@@ -78,7 +78,7 @@ class TwigServiceProvider implements ServiceProviderInterface
             return $loader;
         };
 
-        $app['twig'] = function() use ($app) {
+        $app['twig'] = function () use ($app) {
             $twig = new \Twig_Environment($app['twig.loader'], $app['twig.options']);
             $twig->addExtension(new TwigCssExtension());
 

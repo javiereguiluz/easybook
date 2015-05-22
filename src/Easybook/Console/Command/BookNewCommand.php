@@ -29,10 +29,10 @@ class BookNewCommand extends BaseCommand
             ->setDescription('Creates a new empty book')
             ->setDefinition(array(
                 new InputArgument(
-                    'title', InputArgument::REQUIRED, "Book title"
+                    'title', InputArgument::REQUIRED, 'Book title'
                 ),
                 new InputOption(
-                    'dir', '', InputOption::VALUE_OPTIONAL, "Path of the documentation directory"
+                    'dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory'
                 ),
             ))
             ->setHelp(file_get_contents(__DIR__.'/Resources/BookNewCommandHelp.txt'));
@@ -59,7 +59,7 @@ class BookNewCommand extends BaseCommand
         $generator->setBookDirectory($dir.'/'.$slug);
         $generator->setConfiguration(array(
             'generator' => array(
-                'name'    => $this->app['app.name'],
+                'name' => $this->app['app.name'],
                 'version' => $this->app->getVersion(),
             ),
             'title' => $title,
@@ -72,7 +72,7 @@ class BookNewCommand extends BaseCommand
             '',
             ' <bg=green;fg=black> OK </> You can start writing your book in the following directory:',
             ' <comment>'.realpath($generator->getBookDirectory()).'</comment>',
-            ''
+            '',
         ));
     }
 
@@ -88,7 +88,7 @@ class BookNewCommand extends BaseCommand
         $output->writeln(array(
             '',
             ' Welcome to the <comment>easybook</comment> interactive book generator',
-            ''
+            '',
         ));
 
         $dialog = $this->getHelperSet()->get('dialog');
@@ -97,7 +97,7 @@ class BookNewCommand extends BaseCommand
         $title = $input->getArgument('title') ?: $dialog->askAndValidate(
             $output,
             "\n Please, type the <info>title</info> of the book"
-            ." (e.g. <comment>The Origin of Species</comment>)"
+            .' (e.g. <comment>The Origin of Species</comment>)'
             ."\n > ",
             function ($title) {
                 return Validator::validateNonEmptyString('title', $title);

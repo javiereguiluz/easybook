@@ -17,7 +17,7 @@ use Michelf\MarkdownExtra as ExtraMarkdownParser;
 /**
  * This class implements the exclusive 'easybook' syntax that augments the
  * original Markdown basic syntax.
- * 
+ *
  * In addition, it overrides some PHP Markdown Extra methods to improve
  * performance.
  */
@@ -39,15 +39,15 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
             'E' => 'error',
             'I' => 'information',
             'Q' => 'question',
-            'D' => 'discussion'
+            'D' => 'discussion',
         );
 
         $this->span_gamut += array(
-            'doPageBreaks' => 20
+            'doPageBreaks' => 20,
         );
 
         $this->block_gamut += array(
-            'doAdmonitions' => 55
+            'doAdmonitions' => 55,
         );
 
         parent::__construct();
@@ -57,7 +57,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      * It removes any \t character present in the given text content.
      * This method overrides the original implementation to improve
      * its performance. Code copied from:
-     * http://github.com/KnpLabs/KnpMarkdownBundle/blob/master/Parser/MarkdownParser.php
+     * http://github.com/KnpLabs/KnpMarkdownBundle/blob/master/Parser/MarkdownParser.php.
      *
      * @param $text The original text with the tabular characters
      *
@@ -70,7 +70,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
 
     /**
      * Improves the performance of the original method. Copied from:
-     * http://github.com/KnpLabs/KnpMarkdownBundle/blob/master/Parser/MarkdownParser.php
+     * http://github.com/KnpLabs/KnpMarkdownBundle/blob/master/Parser/MarkdownParser.php.
      */
     public function _initDetab()
     {
@@ -79,7 +79,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
 
     /**
      * easybook automatically adds 'id' attributes to generated headings.
-     * 
+     *
      * If the heading defines its 'id' via ' {#my-custom-id}' syntax, easybook
      * maintains it. If the heading doesn't define an 'id', easybook generates
      * a unique 'id'  based on the slugged title:
@@ -92,14 +92,15 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      * @return string The original content with the Markdown headings replaced
      *                by the HTML headings with 'id' attributes
      */
-    public function doHeaders($text) {
-    #
+    public function doHeaders($text)
+    {
+        #
     # Redefined to add id attribute support.
     #
         # Setext-style headers:
         #     Header 1  {#header1}
         #     ========
-        #  
+        #
         #     Header 2  {#header2}
         #     --------
         #
@@ -146,28 +147,30 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      *             will only be displayed when you have hacked easybook internals
      *             and have maintained the Setext-style headers.
      */
-    public function _doHeaders_callback_setext($matches) {
+    public function _doHeaders_callback_setext($matches)
+    {
         if ($matches[3] == '-' && preg_match('{^- }', $matches[1])) {
             return $matches[0];
         }
-        $level = $matches[3]{0} == '=' ? 1 : 2;
-        
+        $level = $matches[3]{0}
+        == '=' ? 1 : 2;
+
         # added by easybook
         $title = $this->runSpanGamut($matches[1]);
-        $id    = isset($matches[2]) ? $matches[2] : '';
+        $id = isset($matches[2]) ? $matches[2] : '';
         if ('' == $id || null == $id) {
             $id = $this->app->slugifyUniquely($this->unhash($title));
         }
 
         $block = "<h$level id=\"$id\">".$title."</h$level>";
-        
+
         $this->app->append('publishing.active_item.toc', array(
             'level' => $level,
             'title' => $this->unhash($title),
-            'slug'  => $id
+            'slug' => $id,
         ));
-        
-        return "\n" . $this->hashBlock($block) . "\n\n";
+
+        return "\n".$this->hashBlock($block)."\n\n";
     }
 
     /**
@@ -178,10 +181,11 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      *
      * @return string The HTML contents of the parsed heading
      */
-    public function _doHeaders_callback_atx($matches) {
+    public function _doHeaders_callback_atx($matches)
+    {
         $level = strlen($matches[1]);
         $title = $this->runSpanGamut($matches[2]);
-        $id    = isset($matches[3]) ? $matches[3] : '';
+        $id = isset($matches[3]) ? $matches[3] : '';
         if ('' == $id || null == $id) {
             $id = $this->app->slugifyUniquely($this->unhash($title));
         }
@@ -191,15 +195,15 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         $this->app->append('publishing.active_item.toc', array(
             'level' => $level,
             'title' => $this->unhash($title),
-            'slug'  => $id
+            'slug' => $id,
         ));
-        
-        return "\n" . $this->hashBlock($block) . "\n\n";
+
+        return "\n".$this->hashBlock($block)."\n\n";
     }
 
     /**
-     * easybook allows to set image alignment using a syntax trick:
-     * 
+     * easybook allows to set image alignment using a syntax trick:.
+     *
      * // regular image not aligned
      * ![Test image](figure1.png)
      *
@@ -216,25 +220,24 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      *
      * @return string The HTML string that represents the original Markdown image element
      */
-    public function _doImages_reference_callback($matches) {
+    public function _doImages_reference_callback($matches)
+    {
         $whole_match = $matches[1];
-        $alt_text    = $matches[2];
-        $link_id     = strtolower($matches[3]);
+        $alt_text = $matches[2];
+        $link_id = strtolower($matches[3]);
 
         $align = '';
         if (' ' == substr($alt_text, 0, 1)) {
             if (' ' == substr($alt_text, -1)) {
                 $align = 'center';
-            }
-            else {
+            } else {
                 $align = 'left';
             }
-        }
-        elseif (' ' == substr($alt_text, -1)) {
+        } elseif (' ' == substr($alt_text, -1)) {
             $align = 'right';
         }
 
-        if ($link_id == "") {
+        if ($link_id == '') {
             $link_id = strtolower($alt_text); # for shortcut links like ![this][].
         }
 
@@ -254,8 +257,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
             }
 
             $result = $this->hashPart($result);
-        }
-        else {
+        } else {
             # If there's no such link ID, leave intact:
             $result = $whole_match;
         }
@@ -267,25 +269,24 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      * It performs the same operations on images as the _doImages_reference_callback()
      * method. The difference is that this callback is only applied to inline images.
      *
-     * @param  array  $matches The array of images to parse
+     * @param array $matches The array of images to parse
      *
-     * @return string          The HTML string that represents the original Markdown image element
+     * @return string The HTML string that represents the original Markdown image element
      */
-    public function _doImages_inline_callback($matches) {
-        $alt_text    = $matches[2];
-        $url         = $matches[3] == '' ? $matches[4] : $matches[3];
-        $title       =& $matches[7];
+    public function _doImages_inline_callback($matches)
+    {
+        $alt_text = $matches[2];
+        $url = $matches[3] == '' ? $matches[4] : $matches[3];
+        $title = &$matches[7];
 
         $align = '';
         if (' ' == substr($alt_text, 0, 1)) {
             if (' ' == substr($alt_text, -1)) {
                 $align = 'center';
-            }
-            else {
+            } else {
                 $align = 'left';
             }
-        }
-        elseif (' ' == substr($alt_text, -1)) {
+        } elseif (' ' == substr($alt_text, -1)) {
             $align = 'right';
         }
 
@@ -307,7 +308,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
     }
 
     /**
-     * easybook supports the following formats to force page breaks:
+     * easybook supports the following formats to force page breaks:.
      *
      *   {pagebreak}   (the format used by leanpub)
      *   <!--BREAK-->  (the format used by marked)
@@ -323,7 +324,7 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
 
     /**
      * easybook supports several kinds of admonitions. Their syntax is very
-     * similar to blockquotes and it's based on LeanPub and Marked:
+     * similar to blockquotes and it's based on LeanPub and Marked:.
      *
      * Asides / Sidebars:
      *   A> ...
@@ -355,7 +356,8 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         return $text;
     }
 
-    public function _doAdmonitions_callback($matches) {
+    public function _doAdmonitions_callback($matches)
+    {
         $content = $matches[1];
 
         # trim one level of quoting - trim whitespace-only lines
@@ -367,13 +369,13 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
 
         $content = $this->runBlockGamut($content);
 
-        $content = preg_replace('/^/m', "  ", $content);
+        $content = preg_replace('/^/m', '  ', $content);
 
         # These leading spaces cause problem with <pre> content,
         # so we need to fix that:
         $content = preg_replace_callback(
             '{(\s*<pre>.+?</pre>)}sx',
-            function($submatches) {
+            function ($submatches) {
                 $pre = $submatches[1];
                 $pre = preg_replace('/^  /m', '', $pre);
 

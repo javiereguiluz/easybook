@@ -20,7 +20,7 @@ class ParseEvent extends BaseEvent
 {
     /**
      * Getter for the specific item that is being published at
-     * the moment (e.g. a book chapter)
+     * the moment (e.g. a book chapter).
      *
      * @return array The item data
      */
@@ -31,7 +31,7 @@ class ParseEvent extends BaseEvent
 
     /**
      * Setter to modify the item that is being published at
-     * the moment (e.g. a book chapter)
+     * the moment (e.g. a book chapter).
      *
      * @param array $item The item that replaces the old item data
      */
@@ -41,7 +41,7 @@ class ParseEvent extends BaseEvent
     }
 
     /**
-     * Getter for any of the properties of the item being published
+     * Getter for any of the properties of the item being published.
      *
      * @param string $key The name of the requested item property
      *
@@ -55,8 +55,8 @@ class ParseEvent extends BaseEvent
     /**
      * Setter for any of the properties of the item being published.
      *
-     * @param string $key    The name of the property to modify
-     * @param mixed  $value  The new value of the property
+     * @param string $key   The name of the property to modify
+     * @param mixed  $value The new value of the property
      */
     public function setItemProperty($key, $value)
     {
