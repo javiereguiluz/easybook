@@ -81,7 +81,7 @@ class BookNewCommand extends BaseCommand
         $output->writeln($this->app['app.signature']);
 
         $title = $input->getArgument('title');
-        if (null != $title && '' != $title) {
+        if (null !== $title && '' !== $title) {
             return;
         }
 

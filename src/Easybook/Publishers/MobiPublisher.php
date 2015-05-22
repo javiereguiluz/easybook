@@ -25,7 +25,7 @@ class MobiPublisher extends Epub2Publisher
 
     public function checkIfThisPublisherIsSupported()
     {
-        if (null != $this->app['kindlegen.path'] && file_exists($this->app['kindlegen.path'])) {
+        if (null !== $this->app['kindlegen.path'] && file_exists($this->app['kindlegen.path'])) {
             $kindleGenPath = $this->app['kindlegen.path'];
         } else {
             $kindleGenPath = $this->findKindleGenPath();
@@ -33,7 +33,7 @@ class MobiPublisher extends Epub2Publisher
 
         $this->app['kindlegen.path'] = $kindleGenPath;
 
-        return null != $kindleGenPath && file_exists($kindleGenPath);
+        return null !== $kindleGenPath && file_exists($kindleGenPath);
     }
 
     public function assembleBook()
@@ -74,7 +74,7 @@ class MobiPublisher extends Epub2Publisher
 
         // the executable couldn't be found in the common
         // installation directories. Ask the user for the path
-        $isInteractive = null != $this->app['console.input'] && $this->app['console.input']->isInteractive();
+        $isInteractive = null !== $this->app['console.input'] && $this->app['console.input']->isInteractive();
         if (!$isInteractive) {
             $sampleYamlConfiguration = <<<YAML
   easybook:

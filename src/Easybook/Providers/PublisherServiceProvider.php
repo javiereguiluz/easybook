@@ -55,7 +55,7 @@ class PublisherServiceProvider implements ServiceProviderInterface
                     ));
             }
 
-            if (true != $publisher->checkIfThisPublisherIsSupported()) {
+            if (true !== $publisher->checkIfThisPublisherIsSupported()) {
                 throw new \RuntimeException(sprintf(
                     "Your system doesn't support publishing books with the '%s' format\n"
                     .'Check the easybook documentation to know the dependencies required by this format.',

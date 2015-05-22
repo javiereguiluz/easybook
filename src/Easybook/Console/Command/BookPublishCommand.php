@@ -113,7 +113,7 @@ class BookPublishCommand extends BaseCommand
      */
     private function runScripts($scripts)
     {
-        if (null == $scripts) {
+        if (null === $scripts) {
             return;
         }
 

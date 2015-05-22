@@ -84,7 +84,7 @@ class TwigServiceProvider implements ServiceProviderInterface
 
             $twig->addGlobal('app', $app);
 
-            if (null != $bookConfig = $app['publishing.book.config']) {
+            if (null !== $bookConfig = $app['publishing.book.config']) {
                 $twig->addGlobal('book', $bookConfig['book']);
 
                 $publishingEdition = $app['publishing.edition'];

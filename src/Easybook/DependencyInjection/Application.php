@@ -92,7 +92,7 @@ class Application extends Container
         $this['publishing.list.tables'] = array();
 
         $this['publishing.edition.id'] = function ($app) {
-            if (null != $isbn = $app->edition('isbn')) {
+            if (null !== $isbn = $app->edition('isbn')) {
                 return array('scheme' => 'isbn', 'value' => $isbn);
             }
 
@@ -144,7 +144,7 @@ class Application extends Container
             );
 
             // books can define their own labels files
-            if (null != $customLabelsFile = $app->getCustomLabelsFile()) {
+            if (null !== $customLabelsFile = $app->getCustomLabelsFile()) {
                 $customLabels = Yaml::parse($customLabelsFile);
 
                 return Toolkit::array_deep_merge_and_replace($labels, $customLabels);
@@ -160,7 +160,7 @@ class Application extends Container
             );
 
             // books can define their own titles files
-            if (null != $customTitlesFile = $app->getCustomTitlesFile()) {
+            if (null !== $customTitlesFile = $app->getCustomTitlesFile()) {
                 $customTitles = Yaml::parse($customTitlesFile);
 
                 return Toolkit::array_deep_merge_and_replace($titles, $customTitles);
@@ -234,7 +234,7 @@ class Application extends Container
     {
         $slug = $this['slugger']->slugify($string, $separator);
 
-        if (null != $prefix) {
+        if (null !== $prefix) {
             $slug = $prefix.$separator.$slug;
         }
 
@@ -259,17 +259,17 @@ class Application extends Container
         $defaultOptions = $this['slugger.options'];
 
         $separator = $separator ?: $defaultOptions['separator'];
-        $prefix = $prefix    ?: $defaultOptions['prefix'];
+        $prefix = $prefix ?: $defaultOptions['prefix'];
 
         $slug = $this->slugify($string, $separator, $prefix);
 
-        if (null != $prefix) {
+        if (null !== $prefix) {
             $slug = $prefix.$separator.$slug;
         }
 
         // ensure the uniqueness of the slug
         $occurrences = array_count_values($this['slugger.generated_slugs']);
-        $count = $occurrences[$slug];
+        $count = isset($occurrences[$slug]) ? $occurrences[$slug] : 0;
         if ($count > 1) {
             $slug .= $separator.$count;
         }
@@ -330,7 +330,7 @@ class Application extends Container
 
         $twig->addGlobal('app', $this);
 
-        if (null != $bookConfig = $this['publishing.book.config']) {
+        if (null !== $bookConfig = $this['publishing.book.config']) {
             $twig->addGlobal('book', $bookConfig['book']);
 
             $publishingEdition = $this['publishing.edition'];
@@ -364,7 +364,7 @@ class Application extends Container
 
         $rendered = $this['twig']->render($template, $variables);
 
-        if (null != $targetFile) {
+        if (null !== $targetFile) {
             if (!is_dir($dir = dirname($targetFile))) {
                 $this['filesystem']->mkdir($dir);
             }
@@ -566,7 +566,7 @@ class Application extends Container
     {
         $bookConfig = $this['publishing.book.config'];
 
-        if (null == $newValue) {
+        if (null === $newValue) {
             return isset($bookConfig['book'][$key]) ? $bookConfig['book'][$key] : null;
         } else {
             $bookConfig['book'][$key] = $newValue;
@@ -593,7 +593,7 @@ class Application extends Container
         $bookConfig = $this['publishing.book.config'];
         $publishingEdition = $this['publishing.edition'];
 
-        if (null == $newValue) {
+        if (null === $newValue) {
             return isset($bookConfig['book']['editions'][$publishingEdition][$key])
                 ? $bookConfig['book']['editions'][$publishingEdition][$key]
                 : null;
