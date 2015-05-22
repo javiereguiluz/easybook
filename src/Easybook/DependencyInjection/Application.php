@@ -207,8 +207,8 @@ class Application extends Container
      * Appends the given value to the content of the container element identified
      * by the 'id' parameter. It only works for container elements that store arrays.
      *
-     * @param sintr $id    The id of the element that is modified
-     * @param mixed $value The value to append to the original element
+     * @param string $id    The id of the element that is modified
+     * @param mixed  $value The value to append to the original element
      *
      * @return array The resulting array element (with the new value appended)
      */
@@ -462,13 +462,13 @@ class Application extends Container
      * Looks for a file in several paths and it returns the absolute filepath
      * of the first file occurrence or null if no file is found in those paths.
      *
-     * @param array $file  The name of the file to look for
-     * @param array $paths The paths where the file can exist
+     * @param string $file  The name of the file to look for
+     * @param array  $paths The paths where the file can exist
      *
      * @return string|null The absolute filepath of the first found file or
      *                     null if the file isn't found in any of those paths.
      */
-    public function getFirstExistingFile($file, $paths)
+    public function getFirstExistingFile($file, array $paths)
     {
         foreach ($paths as $path) {
             if (file_exists($path.'/'.$file)) {
