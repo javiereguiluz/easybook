@@ -110,15 +110,15 @@ class EasybookBenchmarkCommand extends BaseCommand
         $results = array();
 
         $publishBookCommand = sprintf(
-            "./book publish --dir=%s sherlock-holmes %s",
+            './book publish --dir=%s sherlock-holmes %s',
             __DIR__.'/../../../../app/Resources/Books/',
             $edition
         );
 
-        for ($i=0; $i<$iterations; $i++) {
+        for ($i = 0; $i < $iterations; $i++) {
             $process = new Process($publishBookCommand);
 
-            $start  = microtime(true);
+            $start = microtime(true);
             $process->run();
             $finish = microtime(true);
 
@@ -128,7 +128,7 @@ class EasybookBenchmarkCommand extends BaseCommand
                         ." an error while publishing the book with this command:\n"
                         ." %s\n\n"
                         ." Command result:\n"
-                        ." %s",
+                        .' %s',
                     $publishBookCommand,
                     $process->getOutput()
                 ));
@@ -140,9 +140,9 @@ class EasybookBenchmarkCommand extends BaseCommand
 
             $results[] = array(
                 'format' => $edition,
-                'time'   => $elapsedTime,
+                'time' => $elapsedTime,
                 'memory' => $consumedMemory,
-                'score'  => $score,
+                'score' => $score,
             );
         }
 
@@ -162,9 +162,9 @@ class EasybookBenchmarkCommand extends BaseCommand
         $meanResults = array();
 
         foreach ($results as $edition => $editionResults) {
-            $totalTime   = 0;
+            $totalTime = 0;
             $totalMemory = 0;
-            $totalScore  = 0;
+            $totalScore = 0;
 
             $iterations = count($editionResults);
 
@@ -176,9 +176,9 @@ class EasybookBenchmarkCommand extends BaseCommand
 
             $meanResults[$edition] = array(
                 'edition' => $edition,
-                'time'    => number_format($totalTime/$iterations, 2, '.', ','),
-                'memory'  => number_format($totalMemory/$iterations, 2, '.', ','),
-                'score'   => number_format($totalScore/$iterations, 2, '.', ','),
+                'time' => number_format($totalTime / $iterations, 2, '.', ','),
+                'memory' => number_format($totalMemory / $iterations, 2, '.', ','),
+                'score' => number_format($totalScore / $iterations, 2, '.', ','),
             );
         }
 
@@ -235,7 +235,7 @@ class EasybookBenchmarkCommand extends BaseCommand
             throw new \RuntimeException(sprintf(
                 "[ERROR] The benchmark didn't terminate in a clean way \n"
                     ." because the published book couldn't be deleted:\n\n"
-                    ." %s",
+                    .' %s',
                 $process->getOutput()
             ));
         }
@@ -249,19 +249,19 @@ class EasybookBenchmarkCommand extends BaseCommand
      * @param int    $consumedMemory The memory consumed during the benchmark in bytes.
      * @param string $edition        The name of the edition being published
      *
-     * @return float  The score of the benchmark in a 0..100 scale
+     * @return float The score of the benchmark in a 0..100 scale
      */
     private function getScore($elapsedTime, $consumedMemory, $edition)
     {
         $maxAcceptableValue = array(//   msec.              bytes
-            'ebook'   => array('time' => 3000,  'memory' => 3 * 1024 * 1024),
-            'kindle'  => array('time' => 6000,  'memory' => 6 * 1024 * 1024),
-            'print'   => array('time' => 20000, 'memory' => 9 * 1024 * 1024),
-            'web'     => array('time' => 3000,  'memory' => 3 * 1024 * 1024),
+            'ebook' => array('time' => 3000,  'memory' => 3 * 1024 * 1024),
+            'kindle' => array('time' => 6000,  'memory' => 6 * 1024 * 1024),
+            'print' => array('time' => 20000, 'memory' => 9 * 1024 * 1024),
+            'web' => array('time' => 3000,  'memory' => 3 * 1024 * 1024),
             'website' => array('time' => 3000,  'memory' => 3 * 1024 * 1024),
         );
 
-        $timeScore   = min($elapsedTime, $maxAcceptableValue[$edition]['time']) / $maxAcceptableValue[$edition]['time'];
+        $timeScore = min($elapsedTime, $maxAcceptableValue[$edition]['time']) / $maxAcceptableValue[$edition]['time'];
         $memoryScore = min($consumedMemory, $maxAcceptableValue[$edition]['memory']) / $maxAcceptableValue[$edition]['memory'];
 
         // in our case, speed is preferable over memory consumption

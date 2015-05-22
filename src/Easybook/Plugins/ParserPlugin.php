@@ -92,7 +92,7 @@ class ParserPlugin implements EventSubscriberInterface
 
             // the title of the content can only be a <h1> heading
             if (1 == $firstItemSection['level']) {
-                $item['slug']  = $firstItemSection['slug'];
+                $item['slug'] = $firstItemSection['slug'];
                 $item['title'] = $firstItemSection['title'];
 
                 // strip the title from the parsed content, because the book templates
@@ -109,7 +109,7 @@ class ParserPlugin implements EventSubscriberInterface
         // the default title if necessary
         if ('' == $item['title']) {
             $item['title'] = $event->app->getTitle($item['config']['element']);
-            $item['slug']  = $event->app->slugify($item['title']);
+            $item['slug'] = $event->app->slugify($item['title']);
         }
 
         $event->setItem($item);
@@ -141,17 +141,17 @@ class ParserPlugin implements EventSubscriberInterface
                 }
 
                 // reset the counters for the higher heading levels
-                for ($i = $level+1; $i <= 6; $i++) {
+                for ($i = $level + 1; $i <= 6; $i++) {
                     $counters[$i] = 0;
                 }
 
                 $parameters = array_merge($item['config'], array(
                     'counters' => $counters,
-                    'level'    => $level
+                    'level' => $level,
                 ));
 
                 $label = $event->app->getLabel($item['config']['element'], array(
-                    'item' => $parameters
+                    'item' => $parameters,
                 ));
             } else {
                 $label = '';
@@ -170,7 +170,7 @@ class ParserPlugin implements EventSubscriberInterface
             // that's the case for the titles with markup code inside (* ` ** etc.)
             // thus, the replacement must be done based on a fuzzy title that
             // doesn't include the title text
-            $fuzzyTitle = "/<h".$entry['level']." id=\"".$entry['slug']."\">.*<\/h".$entry['level'].">\n\n/";
+            $fuzzyTitle = '/<h'.$entry['level'].' id="'.$entry['slug']."\">.*<\/h".$entry['level'].">\n\n/";
 
             $labeledTitle = sprintf("<h%s id=\"%s\">%s%s</h%s>\n\n",
                 $entry['level'],

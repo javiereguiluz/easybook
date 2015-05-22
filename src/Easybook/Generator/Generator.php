@@ -23,8 +23,8 @@ abstract class Generator
      * Renders a Twig template with the given parameters.
      *
      * @param $skeletonDir        The directory where the templates are located
-     * @param string $template    The name of the template to render
-     * @param array  $parameters  The parameters passed to the template
+     * @param string $template   The name of the template to render
+     * @param array  $parameters The parameters passed to the template
      *
      * @return string The contents of the rendered template
      */
@@ -32,10 +32,10 @@ abstract class Generator
     {
         $loader = new \Twig_Loader_Filesystem($skeletonDir);
         $twig = new \Twig_Environment($loader, array(
-            'debug'            => true,
-            'cache'            => false,
+            'debug' => true,
+            'cache' => false,
             'strict_variables' => true,
-            'autoescape'       => false,
+            'autoescape' => false,
         ));
 
         return $twig->render($template, $parameters);
@@ -46,10 +46,10 @@ abstract class Generator
      * result if the given filepath.
      *
      * @param $skeletonDir        The directory where the templates are located
-     * @param string $template    The name of the template to render
-     * @param string $target      The path of the file where the contents of the parsed
-     *                            template are stored
-     * @param array  $parameters  The parameters passed to the template
+     * @param string $template   The name of the template to render
+     * @param string $target     The path of the file where the contents of the parsed
+     *                           template are stored
+     * @param array  $parameters The parameters passed to the template
      *
      * @return int The number of bytes that were written to the file, or false on failure.
      */

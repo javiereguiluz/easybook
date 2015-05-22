@@ -21,23 +21,23 @@ class CodePluginTest extends TestCase
     /**
      * @dataProvider  getCodeBlockConfiguration
      *
-     * @param string  $inputFilePath        The contents to be parsed
-     * @param string  $expectedFilePath     The expected result of parsing the contents
-     * @param string  $codeBlockType        The type of code block used in the content
-     * @param boolean $enableCodeHightlight Whether or not code listings should be highlighted
+     * @param string $inputFilePath        The contents to be parsed
+     * @param string $expectedFilePath     The expected result of parsing the contents
+     * @param string $codeBlockType        The type of code block used in the content
+     * @param bool   $enableCodeHightlight Whether or not code listings should be highlighted
      */
     public function testCodeBlocksTypes($inputFilePath, $expectedFilePath, $codeBlockType, $enableCodeHightlight)
     {
         $fixturesDir = __DIR__.'/fixtures/code/';
 
-        $app    = $this->getApp($codeBlockType, $enableCodeHightlight);
+        $app = $this->getApp($codeBlockType, $enableCodeHightlight);
         $plugin = new CodePlugin();
-        $event  = new ParseEvent($app);
+        $event = new ParseEvent($app);
 
         $event->setItem(array(
-            'config'   => array('format' => 'md'),
+            'config' => array('format' => 'md'),
             'original' => file_get_contents($fixturesDir.'/'.$inputFilePath),
-            'content'  => '',
+            'content' => '',
         ));
 
         // execute pre-parse method of the plugin
@@ -76,27 +76,27 @@ class CodePluginTest extends TestCase
     {
         $app = new Application();
 
-        $app['publishing.book.slug']   = 'test_book';
-        $app['publishing.edition']     = 'test_edition';
+        $app['publishing.book.slug'] = 'test_book';
+        $app['publishing.edition'] = 'test_edition';
         $app['publishing.book.config'] = array(
             'book' => array(
-                'slug'     => 'test_book',
+                'slug' => 'test_book',
                 'language' => 'en',
                 'editions' => array(
                     'test_edition' => array(
-                        'format'          => 'html',
+                        'format' => 'html',
                         'highlight_cache' => false,
-                        'highlight_code'  => $enableCodeHightlight,
-                        'theme'           => 'clean',
-                    )
-                )
-            )
+                        'highlight_code' => $enableCodeHightlight,
+                        'theme' => 'clean',
+                    ),
+                ),
+            ),
         );
 
         // don't try to optimize the following code or you'll end up
         // with this error: 'Indirect modification of overloaded element'
         $parserOptions = $app['parser.options'];
-        $parserOptions['code_block_type'] =  $codeBlockType;
+        $parserOptions['code_block_type'] = $codeBlockType;
         $app['parser.options'] = $parserOptions;
 
         return $app;

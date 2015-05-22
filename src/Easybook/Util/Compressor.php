@@ -17,7 +17,7 @@ use Symfony\Component\Finder\Finder;
 use Easybook\DependencyInjection\Application;
 
 /**
- * Compresses easybook essential files into a single ZIP file
+ * Compresses easybook essential files into a single ZIP file.
  */
 class Compressor
 {
@@ -50,7 +50,7 @@ class Compressor
 
     public function build($zipFile = null)
     {
-        $this->zipFile = $zipFile ?: sprintf("%s/easybook-%s.zip", $this->rootDir, $this->version);
+        $this->zipFile = $zipFile ?: sprintf('%s/easybook-%s.zip', $this->rootDir, $this->version);
         if (file_exists($this->zipFile)) {
             unlink($this->zipFile);
         }
@@ -72,7 +72,7 @@ class Compressor
         $this->filesystem->remove($this->packageDir);
 
         echo sprintf("\n %d files added\n\n %s (%.2f MB) package built successfully\n\n",
-            $this->fileCount, $this->zipFile, filesize($this->zipFile) / (1024*1024)
+            $this->fileCount, $this->zipFile, filesize($this->zipFile) / (1024 * 1024)
         );
     }
 
@@ -113,7 +113,7 @@ class Compressor
             ->exclude('Resources')
             ->in(array(
                 $this->rootDir.'/doc/easybook-doc-en',
-                $this->rootDir.'/doc/easybook-doc-es'
+                $this->rootDir.'/doc/easybook-doc-es',
             ))
         ;
 
@@ -169,7 +169,7 @@ class Compressor
                 'twig/bin',
                 'twig/doc',
                 'twig/ext',
-                'twig/test'
+                'twig/test',
             ))
             ->in($this->rootDir.'/vendor')
         ;
@@ -188,8 +188,8 @@ class Compressor
     /**
      * It adds the given file to the final ZIP package.
      *
-     * @param \SplFileInfo $file The file to be added
-     * @param bool $verbose      If true, it shows progress by printing a dot for each added file
+     * @param \SplFileInfo $file    The file to be added
+     * @param bool         $verbose If true, it shows progress by printing a dot for each added file
      */
     private function addFile(\SplFileInfo $file, $verbose = true)
     {

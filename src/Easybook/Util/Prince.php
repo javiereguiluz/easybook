@@ -21,32 +21,32 @@ namespace Easybook\Util;
 class Prince
 {
     private $exePath;
-    private $styleSheets     = '';
-    private $scripts         = '';
+    private $styleSheets = '';
+    private $scripts = '';
     private $fileAttachments = '';
-    private $licenseFile     = '';
-    private $licenseKey      = '';
-    private $inputType       = 'auto';
-    private $javascript      = false;
-    private $baseURL         = '';
-    private $doXInclude      = true;
-    private $httpUser        = '';
-    private $httpPassword    = '';
-    private $httpProxy       = '';
-    private $insecure        = false;
-    private $logFile         = '';
-    private $fileRoot        = '';
-    private $embedFonts      = true;
-    private $subsetFonts     = true;
+    private $licenseFile = '';
+    private $licenseKey = '';
+    private $inputType = 'auto';
+    private $javascript = false;
+    private $baseURL = '';
+    private $doXInclude = true;
+    private $httpUser = '';
+    private $httpPassword = '';
+    private $httpProxy = '';
+    private $insecure = false;
+    private $logFile = '';
+    private $fileRoot = '';
+    private $embedFonts = true;
+    private $subsetFonts = true;
     private $artificialFonts = true;
-    private $compress        = true;
-    private $pdfTitle        = '';
-    private $pdfSubject      = '';
-    private $pdfAuthor       = '';
-    private $pdfKeywords     = '';
-    private $pdfCreator      = '';
-    private $encrypt         = false;
-    private $encryptInfo     = '';
+    private $compress = true;
+    private $pdfTitle = '';
+    private $pdfSubject = '';
+    private $pdfAuthor = '';
+    private $pdfKeywords = '';
+    private $pdfCreator = '';
+    private $encrypt = false;
+    private $encryptInfo = '';
 
     public function __construct($exePath)
     {
@@ -57,7 +57,7 @@ class Prince
     // cssPath: The filename of the CSS style sheet.
     public function addStyleSheet($cssPath)
     {
-        $this->styleSheets .= '-s "' . $cssPath . '" ';
+        $this->styleSheets .= '-s "'.$cssPath.'" ';
     }
 
     // Clear all of the CSS style sheets.
@@ -70,7 +70,7 @@ class Prince
     // jsPath: The filename of the script.
     public function addScript($jsPath)
     {
-        $this->scripts .= '--script "' . $jsPath . '" ';
+        $this->scripts .= '--script "'.$jsPath.'" ';
     }
 
     // Clear all of the scripts.
@@ -83,7 +83,7 @@ class Prince
     // filePath: The filename of the file attachment.
     public function addFileAttachment($filePath)
     {
-        $this->fileAttachments .= '--attach=' . '"' . $filePath . '" ';
+        $this->fileAttachments .= '--attach='.'"'.$filePath.'" ';
     }
 
     // Clear all of the file attachments.
@@ -113,7 +113,7 @@ class Prince
         $this->inputType = $inputType;
     }
 
-    // Specify whether JavaScript found in documents should be run. 
+    // Specify whether JavaScript found in documents should be run.
     // js: True if document scripts should be run.
     public function setJavaScript($js)
     {
@@ -125,9 +125,9 @@ class Prince
     public function setHTML($html)
     {
         if ($html) {
-            $this->inputType = "html";
+            $this->inputType = 'html';
         } else {
-            $this->inputType = "xml";
+            $this->inputType = 'xml';
         }
     }
 
@@ -185,7 +185,7 @@ class Prince
 
     // Specify the root directory for absolute filenames. This can be used
     // when converting a local file that uses absolute paths to refer to web
-    // resources. For example, /images/logo.jpg can be 
+    // resources. For example, /images/logo.jpg can be
     // rewritten to /usr/share/images/logo.jpg by specifying "/usr/share" as the root.
     // fileRoot: The path to prepend to absolute filenames.
     public function setFileRoot($fileRoot)
@@ -272,18 +272,19 @@ class Prince
     // disallowModify: True to disallow modification of the PDF file.
     // disallowCopy: True to disallow copying from the PDF file.
     // disallowAnnotate: True to disallow annotation of the PDF file.
-    public function setEncryptInfo($keyBits, $userPassword, $ownerPassword, $disallowPrint = false, $disallowModify = false, $disallowCopy = false, $disallowAnnotate = false) {
+    public function setEncryptInfo($keyBits, $userPassword, $ownerPassword, $disallowPrint = false, $disallowModify = false, $disallowCopy = false, $disallowAnnotate = false)
+    {
         if ($keyBits != 40 && $keyBits != 128) {
-            throw new \Exception("Invalid value for keyBits: $keyBits" .
-                " (must be 40 or 128)");
+            throw new \Exception("Invalid value for keyBits: $keyBits".
+                ' (must be 40 or 128)');
         }
 
         $this->encrypt = true;
 
         $this->encryptInfo =
-            ' --key-bits ' . $keyBits .
-            ' --user-password="' . $this->cmdlineArgEscape($userPassword) .
-            '" --owner-password="' . $this->cmdlineArgEscape($ownerPassword) . '" ';
+            ' --key-bits '.$keyBits.
+            ' --user-password="'.$this->cmdlineArgEscape($userPassword).
+            '" --owner-password="'.$this->cmdlineArgEscape($ownerPassword).'" ';
 
         if ($disallowPrint) {
             $this->encryptInfo .= '--disallow-print ';
@@ -311,7 +312,7 @@ class Prince
     public function convert_file($xmlPath, &$msgs = array())
     {
         $pathAndArgs = $this->getCommandLine();
-        $pathAndArgs .= '"' . $xmlPath . '"';
+        $pathAndArgs .= '"'.$xmlPath.'"';
 
         return $this->convert_internal_file_to_file($pathAndArgs, $msgs);
     }
@@ -324,7 +325,7 @@ class Prince
     public function convert_file_to_file($xmlPath, $pdfPath, &$msgs = array())
     {
         $pathAndArgs = $this->getCommandLine();
-        $pathAndArgs .= '"' . $xmlPath . '" -o "' . $pdfPath . '"';
+        $pathAndArgs .= '"'.$xmlPath.'" -o "'.$pdfPath.'"';
 
         return $this->convert_internal_file_to_file($pathAndArgs, $msgs);
     }
@@ -338,9 +339,9 @@ class Prince
         $pathAndArgs = $this->getCommandLine();
 
         foreach ($xmlPaths as $xmlPath) {
-            $pathAndArgs .= '"' . $xmlPath . '" ';
+            $pathAndArgs .= '"'.$xmlPath.'" ';
         }
-        $pathAndArgs .= '-o "' . $pdfPath . '"';
+        $pathAndArgs .= '-o "'.$pdfPath.'"';
 
         return $this->convert_internal_file_to_file($pathAndArgs, $msgs);
     }
@@ -355,7 +356,7 @@ class Prince
         $pathAndArgs .= '--silent ';
 
         foreach ($xmlPaths as $xmlPath) {
-            $pathAndArgs .= '"' . $xmlPath . '" ';
+            $pathAndArgs .= '"'.$xmlPath.'" ';
         }
         $pathAndArgs .= '-o -';
 
@@ -369,7 +370,7 @@ class Prince
     public function convert_file_to_passthru($xmlPath)
     {
         $pathAndArgs = $this->getCommandLine();
-        $pathAndArgs .= '--silent "' . $xmlPath . '" -o -';
+        $pathAndArgs .= '--silent "'.$xmlPath.'" -o -';
 
         return $this->convert_internal_file_to_passthru($pathAndArgs);
     }
@@ -394,7 +395,7 @@ class Prince
     public function convert_string_to_file($xmlString, $pdfPath, &$msgs = array())
     {
         $pathAndArgs = $this->getCommandLine();
-        $pathAndArgs .= ' - -o "' . $pdfPath . '"';
+        $pathAndArgs .= ' - -o "'.$pdfPath.'"';
 
         return $this->convert_internal_string_to_file($pathAndArgs, $xmlString, $msgs);
     }
@@ -419,11 +420,11 @@ class Prince
 
     private function getCommandLine()
     {
-        $cmdline = $this->exePath . ' --server ' . $this->styleSheets . $this->scripts . $this->fileAttachments;
+        $cmdline = $this->exePath.' --server '.$this->styleSheets.$this->scripts.$this->fileAttachments;
 
-        if ($this->inputType == "auto") {
+        if ($this->inputType == 'auto') {
         } else {
-            $cmdline .= '-i "' . $this->inputType . '" ';
+            $cmdline .= '-i "'.$this->inputType.'" ';
         }
 
         if ($this->javascript) {
@@ -431,7 +432,7 @@ class Prince
         }
 
         if ($this->baseURL != '') {
-            $cmdline .= '--baseurl="' . $this->baseURL . '" ';
+            $cmdline .= '--baseurl="'.$this->baseURL.'" ';
         }
 
         if ($this->doXInclude == false) {
@@ -439,15 +440,15 @@ class Prince
         }
 
         if ($this->httpUser != '') {
-            $cmdline .= '--http-user="' . $this->httpUser . '" ';
+            $cmdline .= '--http-user="'.$this->httpUser.'" ';
         }
 
         if ($this->httpPassword != '') {
-            $cmdline .= '--http-password="' . $this->httpPassword . '" ';
+            $cmdline .= '--http-password="'.$this->httpPassword.'" ';
         }
 
         if ($this->httpProxy != '') {
-            $cmdline .= '--http-proxy="' . $this->httpProxy . '" ';
+            $cmdline .= '--http-proxy="'.$this->httpProxy.'" ';
         }
 
         if ($this->insecure) {
@@ -455,19 +456,19 @@ class Prince
         }
 
         if ($this->logFile != '') {
-            $cmdline .= '--log="' . $this->logFile . '" ';
+            $cmdline .= '--log="'.$this->logFile.'" ';
         }
 
         if ($this->fileRoot != '') {
-            $cmdline .= '--fileroot="' . $this->fileRoot . '" ';
+            $cmdline .= '--fileroot="'.$this->fileRoot.'" ';
         }
 
         if ($this->licenseFile != '') {
-            $cmdline .= '--license-file="' . $this->licenseFile . '" ';
+            $cmdline .= '--license-file="'.$this->licenseFile.'" ';
         }
 
         if ($this->licenseKey != '') {
-            $cmdline .= '--license-key="' . $this->licenseKey . '" ';
+            $cmdline .= '--license-key="'.$this->licenseKey.'" ';
         }
 
         if ($this->embedFonts == false) {
@@ -487,32 +488,31 @@ class Prince
         }
 
         if ($this->pdfTitle != '') {
-            $cmdline .= '--pdf-title="' . $this->cmdlineArgEscape($this->pdfTitle) . '" ';
+            $cmdline .= '--pdf-title="'.$this->cmdlineArgEscape($this->pdfTitle).'" ';
         }
 
         if ($this->pdfSubject != '') {
-            $cmdline .= '--pdf-subject="' . $this->cmdlineArgEscape($this->pdfSubject) . '" ';
+            $cmdline .= '--pdf-subject="'.$this->cmdlineArgEscape($this->pdfSubject).'" ';
         }
 
         if ($this->pdfAuthor != '') {
-            $cmdline .= '--pdf-author="' . $this->cmdlineArgEscape($this->pdfAuthor) . '" ';
+            $cmdline .= '--pdf-author="'.$this->cmdlineArgEscape($this->pdfAuthor).'" ';
         }
 
         if ($this->pdfKeywords != '') {
-            $cmdline .= '--pdf-keywords="' . $this->cmdlineArgEscape($this->pdfKeywords) . '" ';
+            $cmdline .= '--pdf-keywords="'.$this->cmdlineArgEscape($this->pdfKeywords).'" ';
         }
 
         if ($this->pdfCreator != '') {
-            $cmdline .= '--pdf-creator="' . $this->cmdlineArgEscape($this->pdfCreator) . '" ';
+            $cmdline .= '--pdf-creator="'.$this->cmdlineArgEscape($this->pdfCreator).'" ';
         }
 
         if ($this->encrypt) {
-            $cmdline .= '--encrypt ' . $this->encryptInfo;
+            $cmdline .= '--encrypt '.$this->encryptInfo;
         }
 
         return $cmdline;
     }
-
 
     private function convert_internal_file_to_file($pathAndArgs, &$msgs)
     {
@@ -634,7 +634,6 @@ class Prince
         return '';
     }
 
-
     // Puts double-quotes around space(s) in file path,
     // and also around semicolon(;), comma(,), ampersand(&), up-arrow(^) and parentheses.
     // This is needed if the file path is used in a command line.
@@ -654,7 +653,7 @@ class Prince
                 $numWeirdChars += 1;
             } else {
                 if ($numWeirdChars > 0) {
-                    $outputStr .= chr(34) . substr($str, $weirdCharsStart, $numWeirdChars) . chr(34);
+                    $outputStr .= chr(34).substr($str, $weirdCharsStart, $numWeirdChars).chr(34);
 
                     $subStrStart = $i;
                     $numWeirdChars = 0;
@@ -698,9 +697,9 @@ class Prince
                 $outputStr .= substr($argStr, $subStrStart, ($i - $numSlashes - $subStrStart));
 
                 for ($k = 0; $k < $numSlashes; $k++) {
-                    $outputStr .= chr(92) . chr(92);
+                    $outputStr .= chr(92).chr(92);
                 }
-                $outputStr .= chr(92) . chr(34);
+                $outputStr .= chr(92).chr(34);
 
                 $subStrStart = $i + 1;
             }
@@ -737,9 +736,9 @@ class Prince
     private function getDescriptors()
     {
         return array(
-            0 => array("pipe", "r"),
-            1 => array("pipe", "w"),
-            2 => array("pipe", "w")
+            0 => array('pipe', 'r'),
+            1 => array('pipe', 'w'),
+            2 => array('pipe', 'w'),
         );
     }
 }

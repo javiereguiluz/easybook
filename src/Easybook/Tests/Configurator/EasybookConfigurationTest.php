@@ -81,29 +81,29 @@ class EasybookConfigurationTest extends TestCase
     private function getEasybookDefaultParameters()
     {
         return array(
-            'app.debug'      => false,
-            'app.charset'    => 'UTF-8',
-            'app.name'       => 'easybook',
+            'app.debug' => false,
+            'app.charset' => 'UTF-8',
+            'app.name' => 'easybook',
             'parser.options' => array(
                 'markdown_syntax' => 'easybook',
                 'code_block_type' => 'markdown',
             ),
-            'prince.path'    => null,
+            'prince.path' => null,
             'prince.default_paths' => array(
                 '/usr/local/bin/prince',
                 '/usr/bin/prince',
-                'C:\Program Files\Prince\engine\bin\prince.exe'
+                'C:\Program Files\Prince\engine\bin\prince.exe',
             ),
             'kindlegen.path' => null,
             'kindlegen.default_paths' => array(
                 '/usr/local/bin/kindlegen',
                 '/usr/bin/kindlegen',
-                'c:\KindleGen\kindlegen'
+                'c:\KindleGen\kindlegen',
             ),
             'kindlegen.command_options' => '-c1',
             'slugger.options' => array(
                 'separator' => '-',
-                'prefix'    => '',
+                'prefix' => '',
             ),
         );
     }

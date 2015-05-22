@@ -26,16 +26,18 @@ class CodeHighlighter
     /**
      * Highlights the given code according to the specified programming language.
      *
-     * @param  string $code     The source code to be highlighted
-     * @param  string $language The name of the programming language used in the code
+     * @param string $code     The source code to be highlighted
+     * @param string $language The name of the programming language used in the code
      *
-     * @return string           The highlighted code
+     * @return string The highlighted code
      *
      * @throws \RuntimeException If the cache used to store the highlighted code isn't writable
      */
     public function highlight($code, $language)
     {
-        if ('html' == $language) { $language = 'html5'; }
+        if ('html' == $language) {
+            $language = 'html5';
+        }
 
         // check if the code exists in the cache
         if ($this->app->edition('highlight_cache')) {

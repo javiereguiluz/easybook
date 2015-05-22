@@ -30,10 +30,12 @@ class MarkdownParser implements ParserInterface
     /**
      * Transforms the original Markdown content into the desired output format.
      *
-     * @param  string $content      The original content to be parsed
-     * @param  string $outputFormat The desired output format (it only supports 'html' for now)
+     * @param string $content      The original content to be parsed
+     * @param string $outputFormat The desired output format (it only supports 'html' for now)
+     *
      * @throws \Exception
-     * @return string               The parsed content
+     *
+     * @return string The parsed content
      */
     public function transform($content, $outputFormat = 'html')
     {
@@ -46,22 +48,24 @@ class MarkdownParser implements ParserInterface
         }
 
         $syntax = $this->app['parser.options']['markdown_syntax'];
-        
+
         return $this->transformToHtml($content, $syntax);
     }
 
     /**
      * Transforms Markdown input to HTML output.
-     * 
-     * @param  string $content The original content to be parsed
-     * @param  string $syntax  The Markdown syntax to use (original, PHP Extra, easybook, ...)
-     * @return string          The parsed HTML output
-     * @throws \Exception      If the given $syntax is not supported
+     *
+     * @param string $content The original content to be parsed
+     * @param string $syntax  The Markdown syntax to use (original, PHP Extra, easybook, ...)
+     *
+     * @return string The parsed HTML output
+     *
+     * @throws \Exception If the given $syntax is not supported
      */
     private function transformToHtml($content, $syntax)
     {
         $supportedSyntaxes = array('original', 'php-markdown-extra', 'easybook');
-        
+
         if (!in_array($syntax, $supportedSyntaxes)) {
             throw new \Exception(sprintf('Unknown "%s" Markdown syntax (options available: %s)',
                 $syntax, implode(', ', $supportedSyntaxes)

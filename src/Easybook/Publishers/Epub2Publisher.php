@@ -99,7 +99,7 @@ class Epub2Publisher extends HtmlPublisher
         foreach ($bookItems as $item) {
             $renderedTemplatePath = $bookTmpDir.'/book/OEBPS/'.$item['page_name'].'.html';
             $templateVariables = array(
-                'item'           => $item,
+                'item' => $item,
                 'has_custom_css' => $hasCustomCss,
             );
 
@@ -116,8 +116,8 @@ class Epub2Publisher extends HtmlPublisher
         }
 
         $bookImages = $this->prepareBookImages($bookTmpDir.'/book/OEBPS/images');
-        $bookCover  = $this->prepareBookCoverImage($bookTmpDir.'/book/OEBPS/images');
-        $bookFonts  = $this->prepareBookFonts($bookTmpDir.'/book/OEBPS/fonts');
+        $bookCover = $this->prepareBookCoverImage($bookTmpDir.'/book/OEBPS/images');
+        $bookFonts = $this->prepareBookFonts($bookTmpDir.'/book/OEBPS/fonts');
 
         // generate the book cover page
         $this->app->render('cover.twig', array('customCoverImage' => $bookCover),
@@ -126,11 +126,11 @@ class Epub2Publisher extends HtmlPublisher
 
         // generate the OPF file (the ebook manifest)
         $this->app->render('content.opf.twig', array(
-                'cover'          => $bookCover,
+                'cover' => $bookCover,
                 'has_custom_css' => $hasCustomCss,
-                'fonts'          => $bookFonts,
-                'images'         => $bookImages,
-                'items'          => $bookItems
+                'fonts' => $bookFonts,
+                'images' => $bookImages,
+                'items' => $bookItems,
             ),
             $bookTmpDir.'/book/OEBPS/content.opf'
         );
@@ -139,7 +139,7 @@ class Epub2Publisher extends HtmlPublisher
         $this->app->render('toc.ncx.twig', array('items' => $bookItems),
             $bookTmpDir.'/book/OEBPS/toc.ncx'
         );
-        
+
         // generate container.xml and mimetype files
         $this->app->render('container.xml.twig', array(),
             $bookTmpDir.'/book/META-INF/container.xml'
@@ -192,9 +192,10 @@ class Epub2Publisher extends HtmlPublisher
      * temporary directory. It also prepares an array with all the images
      * data needed later to generate the full ebook contents manifest.
      *
-     * @param  string $targetDir The directory where the images are copied.
+     * @param string $targetDir The directory where the images are copied.
      *
-     * @return array             Images data needed to create the book manifest.
+     * @return array Images data needed to create the book manifest.
+     *
      * @throws \RuntimeException If the $targetDir doesn't exist.
      */
     private function prepareBookImages($targetDir)
@@ -222,9 +223,9 @@ class Epub2Publisher extends HtmlPublisher
                 );
 
                 $imagesData[] = array(
-                    'id'        => 'figure-'.$i++,
-                    'filePath'  => 'images/'.$image->getFileName(),
-                    'mediaType' => 'image/'.pathinfo($image->getFilename(), PATHINFO_EXTENSION)
+                    'id' => 'figure-'.$i++,
+                    'filePath' => 'images/'.$image->getFileName(),
+                    'mediaType' => 'image/'.pathinfo($image->getFilename(), PATHINFO_EXTENSION),
                 );
             }
         }
@@ -235,10 +236,10 @@ class Epub2Publisher extends HtmlPublisher
     /**
      * It prepares the book cover image (if the book defines one).
      *
-     * @param  string $targetDir The directory where the cover image is copied.
+     * @param string $targetDir The directory where the cover image is copied.
      *
-     * @return array|null        Book cover image data or null if the book doesn't
-     *                           include a cover image.
+     * @return array|null Book cover image data or null if the book doesn't
+     *                    include a cover image.
      */
     private function prepareBookCoverImage($targetDir)
     {
@@ -248,10 +249,10 @@ class Epub2Publisher extends HtmlPublisher
             list($width, $height, $type) = getimagesize($image);
 
             $cover = array(
-                'height'    => $height,
-                'width'     => $width,
-                'filePath'  => 'images/'.basename($image),
-                'mediaType' => image_type_to_mime_type($type)
+                'height' => $height,
+                'width' => $width,
+                'filePath' => 'images/'.basename($image),
+                'mediaType' => image_type_to_mime_type($type),
             );
 
             $this->app['filesystem']->copy($image, $targetDir.'/'.basename($image));
@@ -268,9 +269,9 @@ class Epub2Publisher extends HtmlPublisher
      * For now, epub books only include the Inconsolata font to display
      * their code listings.
      *
-     * @param  string $targetDir The directory where the fonts are copied.
+     * @param string $targetDir The directory where the fonts are copied.
      *
-     * @return array             Font data needed to create the book manifest.
+     * @return array Font data needed to create the book manifest.
      */
     private function prepareBookFonts($targetDir)
     {
@@ -297,9 +298,9 @@ class Epub2Publisher extends HtmlPublisher
                 );
 
                 $fontsData[] = array(
-                    'id'        => 'font-'.$i++,
-                    'filePath'  => 'fonts/'.$font->getFileName(),
-                    'mediaType' => finfo_file(finfo_open(FILEINFO_MIME_TYPE), $font->getPathName())
+                    'id' => 'font-'.$i++,
+                    'filePath' => 'fonts/'.$font->getFileName(),
+                    'mediaType' => finfo_file(finfo_open(FILEINFO_MIME_TYPE), $font->getPathName()),
                 );
             }
         }
@@ -315,9 +316,9 @@ class Epub2Publisher extends HtmlPublisher
      * This method creates a new property for each item called 'page_name' which
      * stores the normalized page name that should have this chunk.
      *
-     * @param  array $items The original book items.
+     * @param array $items The original book items.
      *
-     * @return array        The book items with their new 'page_name' property.
+     * @return array The book items with their new 'page_name' property.
      */
     private function normalizePageNames($items)
     {
@@ -381,14 +382,14 @@ class Epub2Publisher extends HtmlPublisher
     /**
      * It generates the compressed file required for the ePub book.
      * To compress the contents, it uses the 'zip' command of the
-     * Operating System to execute the following:
+     * Operating System to execute the following:.
      *
      *   $ cd /path/to/ebook/contents
      *   $ zip -X0 book.zip mimetype
      *   $ zip -rX9 book.zip * -x mimetype
      *
-     * @param  string $directory  Book contents directory
-     * @param  string $zip_file   The path of the generated ZIP file
+     * @param string $directory Book contents directory
+     * @param string $zip_file  The path of the generated ZIP file
      */
     private function zipBookContentsNatively($directory, $zip_file)
     {
@@ -415,8 +416,8 @@ class Epub2Publisher extends HtmlPublisher
      * It generates the compressed file required for the ePub book.
      * To compress the contents, it uses the 'Zip' PHP extension.
      *
-     * @param  string $directory  Book contents directory
-     * @param  string $zip_file   The path of the generated ZIP file
+     * @param string $directory Book contents directory
+     * @param string $zip_file  The path of the generated ZIP file
      */
     private function zipBookContentsWithPhpExtension($directory, $zip_file)
     {
@@ -438,8 +439,8 @@ class Epub2Publisher extends HtmlPublisher
      * ./chapter.html#section-slug are wrong and chapter.html or
      * chapter.html#section-slug are right.
      *
-     * @param  string $chunksDir The directory where the book's HTML page/chunks
-     *                           are stored
+     * @param string $chunksDir The directory where the book's HTML page/chunks
+     *                          are stored
      */
     private function fixInternalLinks($chunksDir)
     {

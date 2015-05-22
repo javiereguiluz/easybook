@@ -77,10 +77,10 @@ class BookGenerator extends Generator
     {
         $this->filesystem->mkdir(array(
             $this->bookDirectory.'/Contents/images',
-            $this->bookDirectory.'/Output'
+            $this->bookDirectory.'/Output',
         ));
 
-        foreach(array('chapter1.md', 'chapter2.md') as $file) {
+        foreach (array('chapter1.md', 'chapter2.md') as $file) {
             $file = 'Contents/'.$file;
             $this->filesystem->copy(
                 $this->skeletonDirectory.'/'.$file,

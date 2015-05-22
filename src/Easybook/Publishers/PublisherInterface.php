@@ -11,7 +11,8 @@
 
 namespace Easybook\Publishers;
 
-interface PublisherInterface {
+interface PublisherInterface
+{
     /**
      * Checks whether this publisher works in the system where
      * easybook is being executed. This method is useful for
@@ -24,7 +25,7 @@ interface PublisherInterface {
 
     /**
      * It defines the complete workflow followed to publish a book (load its
-     * contents, transform them into HTML files, etc.)
+     * contents, transform them into HTML files, etc.).
      */
     public function publishBook();
 }

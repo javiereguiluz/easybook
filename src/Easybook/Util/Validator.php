@@ -42,7 +42,7 @@ class Validator
     {
         if (null == $dir || '' == trim($dir)) {
             // it throws an exception for invalid values because it's used in console commands
-            throw new \InvalidArgumentException("ERROR: The directory cannot be empty.");
+            throw new \InvalidArgumentException('ERROR: The directory cannot be empty.');
         }
 
         if (!is_dir($dir)) {
@@ -66,7 +66,7 @@ class Validator
         if (!preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
             // it throws an exception for invalid values because it's used in console commands
             throw new \InvalidArgumentException(
-                "ERROR: The slug can only contain letters, numbers and dashes (no spaces)"
+                'ERROR: The slug can only contain letters, numbers and dashes (no spaces)'
             );
         }
 
@@ -79,7 +79,7 @@ class Validator
     public function validateBookDir($slug, $baseDir)
     {
         $attempts = 6;
-        $bookDir  = $baseDir.'/'.$slug;
+        $bookDir = $baseDir.'/'.$slug;
 
         $isInteractive = $this->app['console.input']->isInteractive();
         if (!$isInteractive && !file_exists($bookDir)) {
@@ -103,16 +103,16 @@ class Validator
             }
 
             $this->app['console.output']->writeln(array(
-                "",
+                '',
                 " <bg=red;fg=white> ERROR </> The given <info>$slug</info> slug doesn't match any book in",
-                " <comment>".realpath($baseDir)."/</comment> directory"
+                ' <comment>'.realpath($baseDir).'/</comment> directory',
             ));
 
             $slug = $this->app['console.dialog']->ask(
                 $this->app['console.output'],
                 array(
                     "\n Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n"
-                    ." > "
+                    .' > ',
                 )
             );
 
@@ -129,7 +129,7 @@ class Validator
     {
         if (!preg_match('/^[a-zA-Z0-9\-\_]+$/', $slug)) {
             throw new \InvalidArgumentException(
-                "ERROR: The edition name can only contain letters, numbers and dashes (no spaces)"
+                'ERROR: The edition name can only contain letters, numbers and dashes (no spaces)'
             );
         }
 
@@ -176,15 +176,15 @@ class Validator
      * names are invalid, this method ask again several times before throwing
      * an exception.
      *
-     * @return string  The name of the edition to be published
+     * @return string The name of the edition to be published
      *
      * @throws \RuntimeException If there are too many failed attempts
      */
     private function askForPublishingEdition()
     {
         $attempts = 6;
-        $bookDir  = $this->app['publishing.dir.book'];
-        $edition  = null;
+        $bookDir = $this->app['publishing.dir.book'];
+        $edition = null;
 
         // check that the book has defined the given edition or ask for another edition
         while (!array_key_exists($edition, $this->app->book('editions')) && $attempts--) {
@@ -198,19 +198,19 @@ class Validator
             }
 
             $this->app['console.output']->writeln(array(
-                "",
+                '',
                 " <bg=red;fg=white> ERROR </> The <info>$edition</info> edition isn't defined for "
-                ."<comment>".$this->app->book('title')."</comment> book",
-                "",
-                " Check that <comment>".realpath($bookDir.'/config.yml')."</comment> file",
-                " defines a <info>$edition</info> edition under the <info>editions</info> option."
+                .'<comment>'.$this->app->book('title').'</comment> book',
+                '',
+                ' Check that <comment>'.realpath($bookDir.'/config.yml').'</comment> file',
+                " defines a <info>$edition</info> edition under the <info>editions</info> option.",
             ));
 
             $edition = $this->app['console.dialog']->ask(
                 $this->app['console.output'],
                 array(
                     "\n Please, type the name of the <info>edition</info> to be published:\n"
-                    ." > "
+                    .' > ',
                 )
             );
         }

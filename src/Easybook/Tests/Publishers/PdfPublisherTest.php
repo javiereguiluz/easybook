@@ -135,7 +135,7 @@ HELP;
         $app['filesystem']->mkdir(array(
             $app['publishing.dir.templates'],
             $app['publishing.dir.templates'].'/print',
-            $app['publishing.dir.templates'].'/pdf'
+            $app['publishing.dir.templates'].'/pdf',
         ));
 
         foreach ($existingCoverFiles as $cover) {
@@ -157,35 +157,35 @@ HELP;
         return array(
             array(
                 array('print/cover.pdf', 'pdf/cover.pdf', 'cover.pdf'),
-                'print/cover.pdf'
+                'print/cover.pdf',
             ),
             array(
                 array('print/cover.jpg', 'pdf/cover.pdf', 'cover.pdf'),
-                'pdf/cover.pdf'
+                'pdf/cover.pdf',
             ),
             array(
                 array('print/cover.jpg', 'pdf/cover.png', 'cover.pdf'),
-                'cover.pdf'
+                'cover.pdf',
             ),
             array(
                 array('pdf/cover.pdf', 'cover.pdf'),
-                'pdf/cover.pdf'
+                'pdf/cover.pdf',
             ),
             array(
                 array('print/cover.pdf'),
-                'print/cover.pdf'
+                'print/cover.pdf',
             ),
             array(
                 array('pdf/cover.pdf'),
-                'pdf/cover.pdf'
+                'pdf/cover.pdf',
             ),
             array(
                 array('cover.pdf'),
-                'cover.pdf'
+                'cover.pdf',
             ),
             array(
                 array('print/cover.png'),
-                ''
+                '',
             ),
         );
     }
@@ -194,7 +194,7 @@ HELP;
     {
         $app = new Application();
         $app['publishing.book.config'] = $this->getBookConfig(false);
-        $app['publishing.edition']     = 'print';
+        $app['publishing.edition'] = 'print';
 
         $bookCss = $app->render('@theme/style.css.twig');
 
@@ -209,14 +209,14 @@ HELP;
     {
         $app = new Application();
         $app['publishing.book.config'] = $this->getBookConfig(true);
-        $app['publishing.edition']     = 'print';
+        $app['publishing.edition'] = 'print';
 
         $bookCss = $app->render('@theme/style.css.twig');
 
         $this->assertContains(
             ".item {\n    page-break-before: right;",
             $bookCss,
-            "Two-sided books include blank pages when needed."
+            'Two-sided books include blank pages when needed.'
         );
     }
 
@@ -227,12 +227,12 @@ HELP;
                 'language' => 'en',
                 'editions' => array(
                     'print' => array(
-                        'format'    => 'pdf',
-                        'theme'     => 'clean',
+                        'format' => 'pdf',
+                        'theme' => 'clean',
                         'two_sided' => $twoSided,
-                    )
-                )
-            )
+                    ),
+                ),
+            ),
         );
     }
 
@@ -244,7 +244,7 @@ HELP;
         $app['filesystem']->mkdir($tmpDir);
 
         $coverFilePath = $tmpDir.'/cover.pdf';
-        $bookFilePath  = $tmpDir.'/book.pdf';
+        $bookFilePath = $tmpDir.'/book.pdf';
 
         $this->createPdfFile($coverFilePath, 'EASYBOOK COVER');
         $this->createPdfFile($bookFilePath, 'easybook contents');

@@ -29,7 +29,7 @@ class BaseEvent extends Event
 
     /**
      * Getter for the specific item that is being published at
-     * the moment (e.g. a book chapter)
+     * the moment (e.g. a book chapter).
      *
      * @return array The item data
      */
@@ -40,7 +40,7 @@ class BaseEvent extends Event
 
     /**
      * Setter to modify the item that is being published at
-     * the moment (e.g. a book chapter)
+     * the moment (e.g. a book chapter).
      *
      * @param array $item The item that replaces the old item data
      */

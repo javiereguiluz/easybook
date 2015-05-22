@@ -24,7 +24,7 @@ class CodePlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::PRE_PARSE  => array('parseCodeBlocks', -500),
+            Events::PRE_PARSE => array('parseCodeBlocks', -500),
             Events::POST_PARSE => array('fixParsedCodeBlocks', -500),
         );
     }
@@ -75,7 +75,7 @@ class CodePlugin implements EventSubscriberInterface
 
     /**
      * It parses the code blocks of the item content that use the
-     * Markdown style for code blocks:
+     * Markdown style for code blocks:.
      *
      *   * every line of code indented by 4 spaces or a tab
      *   * (optionally) the firs line describes the language of the code
@@ -121,7 +121,7 @@ class CodePlugin implements EventSubscriberInterface
                 $indent = $matches['indent'];
 
                 // outdent codeblock
-                $code = preg_replace('/^(' . $indent . '[ ]{4})/m', '', $code);
+                $code = preg_replace('/^('.$indent.'[ ]{4})/m', '', $code);
 
                 // if present, strip code language declaration ([php], [js], ...)
                 $language = 'code';
@@ -139,7 +139,7 @@ class CodePlugin implements EventSubscriberInterface
                 $code = $self->highlightAndDecorateCode($code, $language, $event->app);
 
                 // indent code block
-                return "\n$indent\n$indent" . str_replace("\n", "\n" . $indent, $code);
+                return "\n$indent\n$indent".str_replace("\n", "\n".$indent, $code);
             },
             $item['original']
         );
@@ -152,7 +152,7 @@ class CodePlugin implements EventSubscriberInterface
      *   * the code listing starts with ```
      *   * (optionally) followed by the programming language name
      *   * the lines of code don't include any leading tab or whitespace
-     *   * the code listing ends with ```
+     *   * the code listing ends with ```.
      *
      * Examples:
      *
@@ -218,7 +218,7 @@ class CodePlugin implements EventSubscriberInterface
 
                 $code = $self->highlightAndDecorateCode($code, $language, $event->app);
 
-                return "\n\n" . $code;
+                return "\n\n".$code;
             },
             $item['original']
         );
@@ -231,7 +231,7 @@ class CodePlugin implements EventSubscriberInterface
      *   * the code listing starts with at least three ~~~
      *   * (optionally) followed by a whitespace + a dot + the programming language name
      *   * the lines of code don't include any leading tab or whitespace
-     *   * the code listing ends with the same number of opening ~~~
+     *   * the code listing ends with the same number of opening ~~~.
      *
      * Examples:
      *
@@ -297,7 +297,7 @@ class CodePlugin implements EventSubscriberInterface
 
                 $code = $self->highlightAndDecorateCode($code, $language, $event->app);
 
-                return "\n\n" . $code;
+                return "\n\n".$code;
             },
             $item['original']
         );
@@ -309,9 +309,9 @@ class CodePlugin implements EventSubscriberInterface
      * and decorates the result with the Twig template associated with the
      * code fragments.
      *
-     * @param string $code     The source code to highlight and decorate
-     * @param string $language The programming language associated with the code
-     * @param Application $app The application object needed to highlight and decorate
+     * @param string      $code     The source code to highlight and decorate
+     * @param string      $language The programming language associated with the code
+     * @param Application $app      The application object needed to highlight and decorate
      *
      * @return string The resulting code after the highlight and rendering process
      */
@@ -320,24 +320,23 @@ class CodePlugin implements EventSubscriberInterface
         if ($app->edition('highlight_code')) {
             // highlight code if the edition wants to
             $code = $app->highlight($code, $language);
-        }
-        else {
+        } else {
             // escape code to show it instead of interpreting it
 
             // yaml-style comments could be interpreted as Markdown headings
             // replace any starting # character by its HTML entity (&#35;)
             $code = '<pre>'
-                . preg_replace('/^# (.*)/', "&#35; $1", htmlspecialchars($code))
-                . '</pre>';
+                .preg_replace('/^# (.*)/', '&#35; $1', htmlspecialchars($code))
+                .'</pre>';
         }
 
         $code = $app->render('code.twig', array(
             'item' => array(
-                'content'  => $code,
+                'content' => $code,
                 'language' => $language,
-                'number'   => '',
-                'slug'     => ''
-            )
+                'number' => '',
+                'slug' => '',
+            ),
         ));
 
         return $code;

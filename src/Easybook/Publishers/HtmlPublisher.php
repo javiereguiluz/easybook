@@ -44,12 +44,11 @@ class HtmlPublisher extends BasePublisher
         $this->app->render(
             'book.twig',
             array(
-                'items'          => $this->app['publishing.items'],
-                'has_custom_css' => $hasCustomCss
+                'items' => $this->app['publishing.items'],
+                'has_custom_css' => $hasCustomCss,
             ),
             $this->app['publishing.dir.output'].'/book.html'
         );
-
 
         // copy book images
         if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {

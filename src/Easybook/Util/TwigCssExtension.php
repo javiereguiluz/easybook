@@ -16,13 +16,13 @@ class TwigCssExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'lighten'       => new \Twig_Function_Method($this, 'lighten'),
-            'darken'        => new \Twig_Function_Method($this, 'darken'),
-            'fade'          => new \Twig_Function_Method($this, 'fade'),
-            'css_add'       => new \Twig_Function_Method($this, 'css_add'),
+            'lighten' => new \Twig_Function_Method($this, 'lighten'),
+            'darken' => new \Twig_Function_Method($this, 'darken'),
+            'fade' => new \Twig_Function_Method($this, 'fade'),
+            'css_add' => new \Twig_Function_Method($this, 'css_add'),
             'css_substract' => new \Twig_Function_Method($this, 'css_substract'),
-            'css_multiply'  => new \Twig_Function_Method($this, 'css_multiply'),
-            'css_divide'    => new \Twig_Function_Method($this, 'css_divide'),
+            'css_multiply' => new \Twig_Function_Method($this, 'css_multiply'),
+            'css_divide' => new \Twig_Function_Method($this, 'css_divide'),
 
         );
     }
@@ -91,7 +91,7 @@ class TwigCssExtension extends \Twig_Extension
     {
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
-            function($matches) use ($factor) {
+            function ($matches) use ($factor) {
                 $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
 
                 return ($matches['value'] + $factor).$unit;
@@ -109,7 +109,7 @@ class TwigCssExtension extends \Twig_Extension
     {
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
-            function($matches) use ($factor) {
+            function ($matches) use ($factor) {
                 $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
 
                 return ($matches['value'] - $factor).$unit;
@@ -127,7 +127,7 @@ class TwigCssExtension extends \Twig_Extension
     {
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
-            function($matches) use ($factor) {
+            function ($matches) use ($factor) {
                 $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
 
                 return ($matches['value'] * $factor).$unit;
@@ -149,7 +149,7 @@ class TwigCssExtension extends \Twig_Extension
 
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
-            function($matches) use ($factor) {
+            function ($matches) use ($factor) {
                 $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
 
                 return ($matches['value'] / $factor).$unit;
@@ -166,7 +166,12 @@ class TwigCssExtension extends \Twig_Extension
 
         // expand shorthand notation #36A -> #3366AA
         if (3 == strlen($hex)) {
-            $hex = $hex{0}.$hex{0}.$hex{1}.$hex{1}.$hex{2}.$hex{2};
+            $hex = $hex{0}
+            .$hex{0}
+            .$hex{1}
+            .$hex{1}
+            .$hex{2}
+            .$hex{2};
         }
 
         // expanded hex colors can only have 6 characters
@@ -175,7 +180,7 @@ class TwigCssExtension extends \Twig_Extension
         return array(
             hexdec(substr($hex, 0, 2)),
             hexdec(substr($hex, 2, 2)),
-            hexdec(substr($hex, 4, 2))
+            hexdec(substr($hex, 4, 2)),
         );
     }
 
@@ -206,9 +211,15 @@ class TwigCssExtension extends \Twig_Extension
         $h = 0;
 
         if ($delta > 0) {
-            if ($max == $r && $max != $g) { $h += ($g - $b) / $delta;       }
-            if ($max == $g && $max != $b) { $h += (2 + ($b - $r) / $delta); }
-            if ($max == $b && $max != $r) { $h += (4 + ($r - $g) / $delta); }
+            if ($max == $r && $max != $g) {
+                $h += ($g - $b) / $delta;
+            }
+            if ($max == $g && $max != $b) {
+                $h += (2 + ($b - $r) / $delta);
+            }
+            if ($max == $b && $max != $r) {
+                $h += (4 + ($r - $g) / $delta);
+            }
             $h /= 6;
         }
 
@@ -220,14 +231,20 @@ class TwigCssExtension extends \Twig_Extension
     {
         list($h, $s, $l) = $hsl;
 
-        $m2 = ($l <= 0.5) ? $l * ( $s + 1 ) : $l + $s - $l * $s;
+        $m2 = ($l <= 0.5) ? $l * ($s + 1) : $l + $s - $l * $s;
         $m1 = $l * 2 - $m2;
 
         $hue = function ($base) use ($m1, $m2) {
-            $base = ($base < 0) ? $base + 1 : ( ($base > 1) ? $base - 1 : $base );
-            if ($base * 6 < 1) { return $m1 + ($m2 - $m1) * $base * 6; }
-            if ($base * 2 < 1) { return $m2; }
-            if ($base * 3 < 2) { return $m1 + ($m2 - $m1) * (0.66666 - $base) * 6; }
+            $base = ($base < 0) ? $base + 1 : (($base > 1) ? $base - 1 : $base);
+            if ($base * 6 < 1) {
+                return $m1 + ($m2 - $m1) * $base * 6;
+            }
+            if ($base * 2 < 1) {
+                return $m2;
+            }
+            if ($base * 3 < 2) {
+                return $m1 + ($m2 - $m1) * (0.66666 - $base) * 6;
+            }
 
             return $m1;
         };
@@ -235,7 +252,7 @@ class TwigCssExtension extends \Twig_Extension
         return array(
             $hue($h + 0.33333) * 255,
             $hue($h) * 255,
-            $hue($h - 0.33333) * 255
+            $hue($h - 0.33333) * 255,
         );
     }
 

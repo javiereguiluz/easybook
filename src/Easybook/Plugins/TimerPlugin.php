@@ -24,7 +24,7 @@ class TimerPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::PRE_PUBLISH  => 'registerPublicationStart',
+            Events::PRE_PUBLISH => 'registerPublicationStart',
             Events::POST_PUBLISH => 'registerPublicationEnd',
         );
     }

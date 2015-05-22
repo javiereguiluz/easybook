@@ -84,7 +84,8 @@ class BookConfigurationTest extends TestCase
     }
 
     /**
-     * code adapted from Twig_Test_IntegrationTestCase class
+     * code adapted from Twig_Test_IntegrationTestCase class.
+     *
      * @see http://github.com/fabpot/Twig/blob/master/lib/Twig/Test/IntegrationTestCase.php
      */
     public function getTests($dir)
@@ -100,9 +101,9 @@ class BookConfigurationTest extends TestCase
             $test = file_get_contents($file->getRealpath());
 
             if (preg_match('/--TEST--(.*)--COMMAND_CONFIG--(.*)--BOOK_CONFIG--(.*)--EXPECT--(.*)/sx', $test, $matches)) {
-                $testMessage           = trim($matches[1]);
-                $commandConfiguration  = trim($matches[2]);
-                $bookConfiguration     = trim($matches[3]);
+                $testMessage = trim($matches[1]);
+                $commandConfiguration = trim($matches[2]);
+                $bookConfiguration = trim($matches[3]);
                 $expectedConfiguration = trim($matches[4]);
             } else {
                 throw new \InvalidArgumentException(sprintf('Test "%s" is not valid.', str_replace($fixturesDir.'/', '', $file)));

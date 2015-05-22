@@ -20,7 +20,7 @@ class SluggerServiceProvider implements ServiceProviderInterface
     {
         $app['slugger.options'] = array(
             'separator' => '-',   // used between words and instead of illegal characters
-            'prefix'    => '',    // prefix to be appended at the beginning of the slug
+            'prefix' => '',    // prefix to be appended at the beginning of the slug
         );
 
         // stores all the generated slugs to ensure slug uniqueness

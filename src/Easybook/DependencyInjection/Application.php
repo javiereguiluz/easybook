@@ -38,9 +38,9 @@ class Application extends Container
         $app = $this;
 
         // -- global generic parameters ---------------------------------------
-        $this['app.debug']     = false;
-        $this['app.charset']   = 'UTF-8';
-        $this['app.name']      = 'easybook';
+        $this['app.debug'] = false;
+        $this['app.charset'] = 'UTF-8';
+        $this['app.name'] = 'easybook';
         $this['app.signature'] = "\n"
         ."                     |              |    \n"
         ." ,---.,---.,---.,   .|---.,---.,---.|__/ \n"
@@ -49,47 +49,47 @@ class Application extends Container
         ."                `---'\n";
 
         // -- global directories location -------------------------------------
-        $this['app.dir.base']         = realpath(__DIR__.'/../../../');
-        $this['app.dir.cache']        = $this['app.dir.base'].'/app/Cache';
-        $this['app.dir.doc']          = $this['app.dir.base'].'/doc';
-        $this['app.dir.resources']    = $this['app.dir.base'].'/app/Resources';
-        $this['app.dir.plugins']      = $this['app.dir.base'].'/src/Easybook/Plugins';
+        $this['app.dir.base'] = realpath(__DIR__.'/../../../');
+        $this['app.dir.cache'] = $this['app.dir.base'].'/app/Cache';
+        $this['app.dir.doc'] = $this['app.dir.base'].'/doc';
+        $this['app.dir.resources'] = $this['app.dir.base'].'/app/Resources';
+        $this['app.dir.plugins'] = $this['app.dir.base'].'/src/Easybook/Plugins';
         $this['app.dir.translations'] = $this['app.dir.resources'].'/Translations';
-        $this['app.dir.skeletons']    = $this['app.dir.resources'].'/Skeletons';
-        $this['app.dir.themes']       = $this['app.dir.resources'].'/Themes';
+        $this['app.dir.skeletons'] = $this['app.dir.resources'].'/Skeletons';
+        $this['app.dir.themes'] = $this['app.dir.resources'].'/Themes';
 
         // -- console ---------------------------------------------------------
-        $this['console.input']  = null;
+        $this['console.input'] = null;
         $this['console.output'] = null;
         $this['console.dialog'] = null;
 
         // -- timer -----------------------------------------------------------
-        $this['app.timer.start']  = 0.0;
+        $this['app.timer.start'] = 0.0;
         $this['app.timer.finish'] = 0.0;
 
         // -- publishing process variables ------------------------------------
         // holds the app theme dir for the current edition
-        $this['publishing.dir.app_theme']   = '';
-        $this['publishing.dir.book']        = '';
-        $this['publishing.dir.contents']    = '';
-        $this['publishing.dir.resources']   = '';
-        $this['publishing.dir.plugins']     = '';
-        $this['publishing.dir.templates']   = '';
-        $this['publishing.dir.output']      = '';
-        $this['publishing.edition']         = '';
-        $this['publishing.items']           = array();
+        $this['publishing.dir.app_theme'] = '';
+        $this['publishing.dir.book'] = '';
+        $this['publishing.dir.contents'] = '';
+        $this['publishing.dir.resources'] = '';
+        $this['publishing.dir.plugins'] = '';
+        $this['publishing.dir.templates'] = '';
+        $this['publishing.dir.output'] = '';
+        $this['publishing.edition'] = '';
+        $this['publishing.items'] = array();
         // the specific item currently being parsed/modified/decorated/...
-        $this['publishing.active_item']     = array();
+        $this['publishing.active_item'] = array();
         $this['publishing.active_item.toc'] = array();
-        $this['publishing.book.config']     = array('book' => array());
-        $this['publishing.book.slug']       = '';
-        $this['publishing.book.items']      = array();
+        $this['publishing.book.config'] = array('book' => array());
+        $this['publishing.book.slug'] = '';
+        $this['publishing.book.items'] = array();
         // the real TOC used to generate the book (needed for html_chunked editions)
-        $this['publishing.book.toc']        = array();
+        $this['publishing.book.toc'] = array();
         // holds all the internal links (used in html_chunked and epub editions)
-        $this['publishing.links']           = array();
-        $this['publishing.list.images']     = array();
-        $this['publishing.list.tables']     = array();
+        $this['publishing.links'] = array();
+        $this['publishing.list.images'] = array();
+        $this['publishing.list.tables'] = array();
 
         $this['publishing.edition.id'] = function ($app) {
             if (null != $isbn = $app->edition('isbn')) {
@@ -170,7 +170,7 @@ class Application extends Container
         };
     }
 
-    public final function getVersion()
+    final public function getVersion()
     {
         return static::VERSION;
     }
@@ -207,10 +207,10 @@ class Application extends Container
      * Appends the given value to the content of the container element identified
      * by the 'id' parameter. It only works for container elements that store arrays.
      *
-     * @param  sintr $id    The id of the element that is modified
-     * @param  mixed $value The value to append to the original element
+     * @param sintr $id    The id of the element that is modified
+     * @param mixed $value The value to append to the original element
      *
-     * @return array        The resulting array element (with the new value appended)
+     * @return array The resulting array element (with the new value appended)
      */
     public function append($id, $value)
     {
@@ -224,11 +224,11 @@ class Application extends Container
     /**
      * Transforms the string into a web-safe slug.
      *
-     * @param  string  $string    The string to slug
-     * @param  string  $separator Used between words and to replace illegal characters
-     * @param  string  $prefix    Prefix to be appended at the beginning of the slug
+     * @param string $string    The string to slug
+     * @param string $separator Used between words and to replace illegal characters
+     * @param string $prefix    Prefix to be appended at the beginning of the slug
      *
-     * @return string             The generated slug
+     * @return string The generated slug
      */
     public function slugify($string, $separator = null, $prefix = null)
     {
@@ -248,18 +248,18 @@ class Application extends Container
      * the generated slug is unique for the entire book (to do so, it stores
      * every slug generated since the beginning of the script execution).
      *
-     * @param  string  $string    The string to slug
-     * @param  string  $separator Used between words and to replace illegal characters
-     * @param  string  $prefix    Prefix to be appended at the beginning of the slug
+     * @param string $string    The string to slug
+     * @param string $separator Used between words and to replace illegal characters
+     * @param string $prefix    Prefix to be appended at the beginning of the slug
      *
-     * @return string             The generated slug
+     * @return string The generated slug
      */
     public function slugifyUniquely($string, $separator = null, $prefix = null)
     {
         $defaultOptions = $this['slugger.options'];
 
         $separator = $separator ?: $defaultOptions['separator'];
-        $prefix    = $prefix    ?: $defaultOptions['prefix'];
+        $prefix = $prefix    ?: $defaultOptions['prefix'];
 
         $slug = $this->slugify($string, $separator, $prefix);
 
@@ -280,8 +280,8 @@ class Application extends Container
     /**
      * Shortcut method to get the label of any element type.
      *
-     * @param  string $element   The element type ('chapter', 'foreword', ...)
-     * @param  array  $variables Optional variables used to render the label
+     * @param string $element   The element type ('chapter', 'foreword', ...)
+     * @param array  $variables Optional variables used to render the label
      *
      * @return string The label of the element or an empty string
      */
@@ -293,7 +293,7 @@ class Application extends Container
 
         // some elements (mostly chapters and appendices) have a different label for each level (h1, ..., h6)
         if (is_array($label)) {
-            $index = $variables['item']['level']-1;
+            $index = $variables['item']['level'] - 1;
             $label = $label[$index];
         }
 
@@ -303,7 +303,7 @@ class Application extends Container
     /**
      * Shortcut method to get the title of any element type.
      *
-     * @param  string $element The element type ('chapter', 'foreword', ...)
+     * @param string $element The element type ('chapter', 'foreword', ...)
      *
      * @return string The title of the element or an empty string
      */
@@ -319,8 +319,8 @@ class Application extends Container
      * variables called 'book' and 'edition', which offer direct access to any
      * book or edition configuration option.
      *
-     * @param  string $string    The original content to render
-     * @param  array  $variables Optional variables passed to the template
+     * @param string $string    The original content to render
+     * @param array  $variables Optional variables passed to the template
      *
      * @return string The result of rendering the original string as a Twig template
      */
@@ -344,10 +344,10 @@ class Application extends Container
     /**
      * Renders any template (currently only supports Twig templates).
      *
-     * @param  string $template   The template name (it can include a namespace)
-     * @param  array  $variables  Optional variables passed to the template
-     * @param  string $targetFile Optional output file path. If set, the rendered
-     *                            template is saved in this file.
+     * @param string $template   The template name (it can include a namespace)
+     * @param array  $variables  Optional variables passed to the template
+     * @param string $targetFile Optional output file path. If set, the rendered
+     *                           template is saved in this file.
      *
      * @return string The result of rendering the Twig template
      *
@@ -392,7 +392,7 @@ class Application extends Container
         $paths = array(
             $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
             $this['publishing.dir.templates'].'/'.$this->edition('format'),
-            $this['publishing.dir.templates']
+            $this['publishing.dir.templates'],
         );
 
         return $this->getFirstExistingFile($templateName, $paths);
@@ -412,7 +412,7 @@ class Application extends Container
         $paths = array(
             $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
             $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
-            $this['publishing.dir.resources'].'/Translations'
+            $this['publishing.dir.resources'].'/Translations',
         );
 
         return $this->getFirstExistingFile($labelsFileName, $paths);
@@ -432,7 +432,7 @@ class Application extends Container
         $paths = array(
             $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
             $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
-            $this['publishing.dir.resources'].'/Translations'
+            $this['publishing.dir.resources'].'/Translations',
         );
 
         return $this->getFirstExistingFile($titlesFileName, $paths);
@@ -452,7 +452,7 @@ class Application extends Container
         $paths = array(
             $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
             $this['publishing.dir.templates'].'/'.$this->edition('format'),
-            $this['publishing.dir.templates']
+            $this['publishing.dir.templates'],
         );
 
         return $this->getFirstExistingFile($coverFileName, $paths);
@@ -462,11 +462,11 @@ class Application extends Container
      * Looks for a file in several paths and it returns the absolute filepath
      * of the first file occurrence or null if no file is found in those paths.
      *
-     * @param  array $file  The name of the file to look for
-     * @param  array $paths The paths where the file can exist
+     * @param array $file  The name of the file to look for
+     * @param array $paths The paths where the file can exist
      *
-     * @return string|null  The absolute filepath of the first found file or
-     *                      null if the file isn't found in any of those paths.
+     * @return string|null The absolute filepath of the first found file or
+     *                     null if the file isn't found in any of those paths.
      */
     public function getFirstExistingFile($file, $paths)
     {
@@ -476,16 +476,16 @@ class Application extends Container
             }
         }
 
-        return null;
+        return;
     }
 
     /**
      * Highlights the given code according to the specified programming language.
      *
-     * @param  string $code     The source code to be highlighted
-     * @param  string $language The name of the programming language used in the code
+     * @param string $code     The source code to be highlighted
+     * @param string $language The name of the programming language used in the code
      *
-     * @return string           The highlighted code
+     * @return string The highlighted code
      *
      * @throws \RuntimeException If the cache used to store the highlighted code isn't writable
      */
@@ -512,7 +512,7 @@ class Application extends Container
      *
      * @param string $configurationViaCommand The configuration options provided via the console command
      */
-    public function loadBookConfiguration($configurationViaCommand = "")
+    public function loadBookConfiguration($configurationViaCommand = '')
     {
         $config = $this['configurator']->loadBookConfiguration($this['publishing.dir.book'], $configurationViaCommand);
         $this['publishing.book.config'] = $config;
@@ -549,7 +549,7 @@ class Application extends Container
     }
 
     /**
-     * Shortcut to get/set book configuration options:
+     * Shortcut to get/set book configuration options:.
      *
      *   // returns 'author' option value
      *   $app->book('author');
@@ -557,8 +557,8 @@ class Application extends Container
      *   // sets 'New author' as the value of 'author' option
      *   $app->book('author', 'New author');
      *
-     * @param  mixed $key      The configuration option key
-     * @param  mixed $newValue The new value of the configuration option
+     * @param mixed $key      The configuration option key
+     * @param mixed $newValue The new value of the configuration option
      *
      * @return mixed It only returns a value when the second argument is null
      */
@@ -575,7 +575,7 @@ class Application extends Container
     }
 
     /**
-     * Shortcut to get/set edition configuration options:
+     * Shortcut to get/set edition configuration options:.
      *
      *   // returns 'page_size' option value
      *   $app->edition('page_size');
@@ -583,10 +583,10 @@ class Application extends Container
      *   // sets 'US-letter' as the value of 'page_size' option
      *   $app->edition('page_size', 'US-Letter');
      *
-     * @param  mixed $key      The configuration option key
-     * @param  mixed $newValue The new value of the configuration option
+     * @param mixed $key      The configuration option key
+     * @param mixed $newValue The new value of the configuration option
      *
-     * @return mixed           It only returns a value when the second argument is null
+     * @return mixed It only returns a value when the second argument is null
      */
     public function edition($key, $newValue = null)
     {

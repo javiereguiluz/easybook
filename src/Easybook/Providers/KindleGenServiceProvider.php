@@ -26,7 +26,7 @@ class KindleGenServiceProvider implements ServiceProviderInterface
             '/usr/local/bin/kindlegen',
             '/usr/bin/kindlegen',
             # Windows
-            'c:\KindleGen\kindlegen'
+            'c:\KindleGen\kindlegen',
         );
 
         // -c0: no compression

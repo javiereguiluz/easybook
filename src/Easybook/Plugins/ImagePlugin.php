@@ -69,10 +69,10 @@ class ImagePlugin implements EventSubscriberInterface
     {
         $item = $event->getItem();
 
-        $addImageLabels   = in_array('figure', $event->app->edition('labels') ?: array());
+        $addImageLabels = in_array('figure', $event->app->edition('labels') ?: array());
         $parentItemNumber = $item['config']['number'];
-        $listOfImages     = array();
-        $counter          = 0;
+        $listOfImages = array();
+        $counter = 0;
 
         $item['content'] = preg_replace_callback(
             // the regexp matches:
@@ -82,20 +82,20 @@ class ImagePlugin implements EventSubscriberInterface
             //        <img (...optional...) alt="..." (...optional...) />
             //      </div>
             '/(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>[^"]*)".*\/>)(<\/div>)?(<\/p>)?/',
-            function($matches) use ($event, $addImageLabels, $parentItemNumber, &$listOfImages, &$counter) {
+            function ($matches) use ($event, $addImageLabels, $parentItemNumber, &$listOfImages, &$counter) {
                 // prepare figure parameters for the template and the label
                 $parameters = array(
                     'item' => array(
-                        'align'   => $matches['align'],
+                        'align' => $matches['align'],
                         'caption' => $matches['title'],
                         'content' => $matches['content'],
-                        'label'   => '',
-                        'number'  => null,
-                        'slug'    => ''
+                        'label' => '',
+                        'number' => null,
+                        'slug' => '',
                     ),
                     'element' => array(
-                        'number' => $parentItemNumber
-                    )
+                        'number' => $parentItemNumber,
+                    ),
                 );
 
                 // '*' in title means this is a decorative image instead of
@@ -103,7 +103,7 @@ class ImagePlugin implements EventSubscriberInterface
                 if ('*' != $matches['title']) {
                     $counter++;
                     $parameters['item']['number'] = $counter;
-                    $parameters['item']['slug']   = $event->app->slugify('Figure '.$parentItemNumber.'-'.$counter);
+                    $parameters['item']['slug'] = $event->app->slugify('Figure '.$parentItemNumber.'-'.$counter);
 
                     // the publishing edition wants to label figures/images
                     if ($addImageLabels) {
