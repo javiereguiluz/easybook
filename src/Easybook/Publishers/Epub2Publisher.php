@@ -245,7 +245,7 @@ class Epub2Publisher extends HtmlPublisher
     {
         $cover = null;
 
-        if (null != $image = $this->app->getCustomCoverImage()) {
+        if (null !== $image = $this->app->getCustomCoverImage()) {
             list($width, $height, $type) = getimagesize($image);
 
             $cover = array(
