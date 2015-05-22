@@ -48,11 +48,12 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
             'title'   => 'The Origin of Species',
             '--dir'   => $this->tmpDir
         ));
+
     }
 
     public function tearDown()
     {
-        $this->filesystem->remove($this->tmpDir);
+        //$this->filesystem->remove($this->tmpDir);
     }
 
     public function testCommandDisplaysApplicationSignature()

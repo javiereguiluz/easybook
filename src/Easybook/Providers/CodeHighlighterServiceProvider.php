@@ -11,21 +11,21 @@
 
 namespace Easybook\Providers;
 
-use Easybook\DependencyInjection\Application;
-use Easybook\DependencyInjection\ServiceProviderInterface;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use Easybook\Util\CodeHighlighter;
 
 class CodeHighlighterServiceProvider implements ServiceProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $app)
     {
         if (empty($app['geshi'])) {
             $geshi = new GeshiServiceProvider();
             $geshi->register($app);
         }
 
-        $app['highlighter'] = $app->share(function () use ($app) {
+        $app['highlighter'] = function () use ($app) {
             return new CodeHighlighter($app);
-        });
+        };
     }
 }

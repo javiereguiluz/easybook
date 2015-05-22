@@ -52,7 +52,7 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $this->filesystem->remove($this->tmpDir);
+        //$this->filesystem->remove($this->tmpDir);
     }
 
     public function testCommandDisplaysApplicationSignature()
