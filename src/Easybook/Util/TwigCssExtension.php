@@ -19,10 +19,10 @@ class TwigCssExtension extends \Twig_Extension
             'lighten' => new \Twig_Function_Method($this, 'lighten'),
             'darken' => new \Twig_Function_Method($this, 'darken'),
             'fade' => new \Twig_Function_Method($this, 'fade'),
-            'css_add' => new \Twig_Function_Method($this, 'css_add'),
-            'css_substract' => new \Twig_Function_Method($this, 'css_substract'),
-            'css_multiply' => new \Twig_Function_Method($this, 'css_multiply'),
-            'css_divide' => new \Twig_Function_Method($this, 'css_divide'),
+            'css_add' => new \Twig_Function_Method($this, 'cssAdd'),
+            'css_substract' => new \Twig_Function_Method($this, 'cssSubstract'),
+            'css_multiply' => new \Twig_Function_Method($this, 'cssMultiply'),
+            'css_divide' => new \Twig_Function_Method($this, 'cssDivide'),
 
         );
     }
@@ -87,7 +87,7 @@ class TwigCssExtension extends \Twig_Extension
      * Examples: css_add('250px', 30) => returns '280px'
      *           css_add('8in', 12)   => returns '20in'
      */
-    public function css_add($length, $factor)
+    public function cssAdd($length, $factor)
     {
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
@@ -105,7 +105,7 @@ class TwigCssExtension extends \Twig_Extension
      * Examples: css_substract('250px', 50) => returns '200px'
      *           css_substract('8in', 2)   => returns '6in'
      */
-    public function css_substract($length, $factor)
+    public function cssSubstract($length, $factor)
     {
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
@@ -123,7 +123,7 @@ class TwigCssExtension extends \Twig_Extension
      * Examples: css_multiply('250px', 2) => returns '500px'
      *           css_multiply('8in', 4)   => returns '32in'
      */
-    public function css_multiply($length, $factor)
+    public function cssMultiply($length, $factor)
     {
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
@@ -141,7 +141,7 @@ class TwigCssExtension extends \Twig_Extension
      * Examples: css_divide('250px', 2) => returns '125px'
      *           css_divide('80in', 4)  => returns '20in'
      */
-    public function css_divide($length, $factor)
+    public function cssDivide($length, $factor)
     {
         if (0 == $factor) {
             return 0;
