@@ -28,7 +28,7 @@ use Easybook\Util\Validator;
 
 class Application extends \Pimple
 {
-    const VERSION = '5.0-DEV';
+    const VERSION = '4.9.0';
 
     public function __construct()
     {
@@ -328,7 +328,7 @@ class Application extends \Pimple
      * Renders any string as a Twig template. It automatically injects two global
      * variables called 'book' and 'edition', which offer direct access to any
      * book or edition configuration option.
-     * 
+     *
      * @param  string $string    The original content to render
      * @param  array  $variables Optional variables passed to the template
      *
@@ -353,7 +353,7 @@ class Application extends \Pimple
 
     /**
      * Renders any template (currently only supports Twig templates).
-     * 
+     *
      * @param  string $template   The template name (it can include a namespace)
      * @param  array  $variables  Optional variables passed to the template
      * @param  string $targetFile Optional output file path. If set, the rendered
@@ -471,7 +471,7 @@ class Application extends \Pimple
     /**
      * Looks for a file in several paths and it returns the absolute filepath
      * of the first file occurrence or null if no file is found in those paths.
-     * 
+     *
      * @param  array $file  The name of the file to look for
      * @param  array $paths The paths where the file can exist
      *
