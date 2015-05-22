@@ -24,8 +24,8 @@ class CodeHighlighterServiceProvider implements ServiceProviderInterface
             $geshi->register($app);
         }
 
-        $app['highlighter'] = $app->share(function () use ($app) {
+        $app['highlighter'] = function () use ($app) {
             return new CodeHighlighter($app);
-        });
+        };
     }
 }

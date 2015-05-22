@@ -28,7 +28,7 @@ class TwigServiceProvider implements ServiceProviderInterface
             'strict_variables' => $app['app.debug'],
         );
 
-        $app['twig.loader'] = $app->share(function() use ($app) {
+        $app['twig.loader'] = function() use ($app) {
             $theme  = ucfirst($app->edition('theme'));
             $format = Toolkit::camelize($app->edition('format'), true);
 
@@ -76,9 +76,9 @@ class TwigServiceProvider implements ServiceProviderInterface
             }
 
             return $loader;
-        });
+        };
 
-        $app['twig'] = $app->share(function() use ($app) {
+        $app['twig'] = function() use ($app) {
             $twig = new \Twig_Environment($app['twig.loader'], $app['twig.options']);
             $twig->addExtension(new TwigCssExtension());
 
@@ -93,6 +93,6 @@ class TwigServiceProvider implements ServiceProviderInterface
             }
 
             return $twig;
-        });
+        };
     }
 }

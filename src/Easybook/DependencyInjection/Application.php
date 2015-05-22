@@ -32,6 +32,8 @@ class Application extends \Pimple
 
     public function __construct()
     {
+        parent::__construct();
+        
         $app = $this;
 
         // -- global generic parameters ---------------------------------------
@@ -88,43 +90,43 @@ class Application extends \Pimple
         $this['publishing.list.images']     = array();
         $this['publishing.list.tables']     = array();
 
-        $this['publishing.edition.id'] = $this->share(function ($app) {
+        $this['publishing.edition.id'] = function ($app) {
             if (null != $isbn = $app->edition('isbn')) {
                 return array('scheme' => 'isbn', 'value' => $isbn);
             }
 
             // for ISBN-less books, generate a unique RFC 4211 UUID v4 ID
             return array('scheme' => 'URN', 'value' => Toolkit::uuid());
-        });
+        };
         // maintained for backwards compatibility
-        $this['publishing.id'] = $this->share(function () {
+        $this['publishing.id'] = function () {
             trigger_error('The "publishing.id" option is deprecated since version 5.0 and will be removed in the future. Use "publishing.edition.id" instead.', E_USER_DEPRECATED);
-        });
-
-        // -- event dispatcher ------------------------------------------------
-        $this['dispatcher'] = $this->share(function () {
-            return new EventDispatcher();
-        });
-
-        // -- finder ----------------------------------------------------------
-        $this['finder'] = function () {
-            return new Finder();
         };
 
-        // -- filesystem ------------------------------------------------------
-        $this['filesystem'] = $this->share(function () {
-            return new Filesystem();
+        // -- event dispatcher ------------------------------------------------
+        $this['dispatcher'] = function () {
+            return new EventDispatcher();
+        };
+
+        // -- finder ----------------------------------------------------------
+        $this['finder'] = $this->factory(function () {
+            return new Finder();
         });
+
+        // -- filesystem ------------------------------------------------------
+        $this['filesystem'] = function () {
+            return new Filesystem();
+        };
 
         // -- configurator ----------------------------------------------------
-        $this['configurator'] = $this->share(function ($app) {
+        $this['configurator'] = function ($app) {
             return new BookConfigurator($app);
-        });
+        };
 
         // -- validator -------------------------------------------------------
-        $this['validator'] = $this->share(function ($app) {
+        $this['validator'] = function ($app) {
             return new Validator($app);
-        });
+        };
 
         $this->register(new PublisherServiceProvider());
         $this->register(new ParserServiceProvider());
@@ -135,7 +137,7 @@ class Application extends \Pimple
         $this->register(new CodeHighlighterServiceProvider());
 
         // -- labels ---------------------------------------------------------
-        $this['labels'] = $app->share(function () use ($app) {
+        $this['labels'] = function () use ($app) {
             $labels = Yaml::parse(
                 $app['app.dir.translations'].'/labels.'.$app->book('language').'.yml'
             );
@@ -148,10 +150,10 @@ class Application extends \Pimple
             }
 
             return $labels;
-        });
+        };
 
         // -- titles ----------------------------------------------------------
-        $this['titles'] = $app->share(function () use ($app) {
+        $this['titles'] = function () use ($app) {
             $titles = Yaml::parse(
                 $app['app.dir.translations'].'/titles.'.$app->book('language').'.yml'
             );
@@ -164,7 +166,7 @@ class Application extends \Pimple
             }
 
             return $titles;
-        });
+        };
     }
 
     public final function getVersion()

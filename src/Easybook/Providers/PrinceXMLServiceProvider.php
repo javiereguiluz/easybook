@@ -28,7 +28,7 @@ class PrinceXMLServiceProvider implements ServiceProviderInterface
             'C:\Program Files\Prince\engine\bin\prince.exe'  # Windows
         );
 
-        $app['prince'] = $app->share(function () use ($app) {
+        $app['prince'] = function () use ($app) {
             $princePath = $app['prince.path'] ?: $app->findPrinceXmlExecutable();
             // ask the user about the location of the executable
             if (null == $princePath) {
@@ -45,6 +45,6 @@ class PrinceXMLServiceProvider implements ServiceProviderInterface
             $prince->setHtml(true);
 
             return $prince;
-        });
+        };
     }
 }
