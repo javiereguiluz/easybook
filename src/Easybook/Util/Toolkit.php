@@ -35,7 +35,7 @@ class Toolkit
         $arrays = func_get_args();
         $merged = array();
 
-        while ($arrays) {
+        while (!empty($arrays)) {
             $array = array_shift($arrays);
 
             if (!is_array($array)) {
@@ -44,7 +44,7 @@ class Toolkit
                 return;
             }
 
-            if (!$array) {
+            if (empty($array)) {
                 continue;
             }
 
