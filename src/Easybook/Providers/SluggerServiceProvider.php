@@ -11,12 +11,12 @@
 
 namespace Easybook\Providers;
 
-use Easybook\DependencyInjection\Application;
-use Easybook\DependencyInjection\ServiceProviderInterface;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 
 class SluggerServiceProvider implements ServiceProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $app)
     {
         $app['slugger.options'] = array(
             'separator' => '-',   // used between words and instead of illegal characters

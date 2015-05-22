@@ -11,8 +11,8 @@
 
 namespace Easybook\Providers;
 
-use Easybook\DependencyInjection\Application;
-use Easybook\DependencyInjection\ServiceProviderInterface;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use Easybook\Publishers\Epub2Publisher;
 use Easybook\Publishers\HtmlPublisher;
 use Easybook\Publishers\HtmlChunkedPublisher;
@@ -21,7 +21,7 @@ use Easybook\Publishers\PdfPublisher;
 
 class PublisherServiceProvider implements ServiceProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $app)
     {
         $app['publisher'] = function ($app) {
             $outputFormat = $app->edition('format');

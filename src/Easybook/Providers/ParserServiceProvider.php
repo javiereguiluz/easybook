@@ -11,13 +11,13 @@
 
 namespace Easybook\Providers;
 
-use Easybook\DependencyInjection\Application;
-use Easybook\DependencyInjection\ServiceProviderInterface;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use Easybook\Parsers\MarkdownParser;
 
 class ParserServiceProvider implements ServiceProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $app)
     {
         $app['parser.options'] = array(
             // available syntaxes: 'original', 'php-markdown-extra', 'easybook'

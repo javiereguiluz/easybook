@@ -28,7 +28,7 @@ class RenderTest extends TestCase
     public function setUp()
     {
         $this->app = new Application();
-        
+
         // setup temp dir for generated files
         $this->templateDir = $this->app['app.dir.cache'].'/'.uniqid('phpunit_', true);
         $this->filesystem = new Filesystem();
@@ -43,7 +43,7 @@ class RenderTest extends TestCase
 
     public function tearDown()
     {
-        $this->filesystem->remove($this->templateDir);
+        //$this->filesystem->remove($this->templateDir);
     }
 
     public function testNonTwigTemplate()

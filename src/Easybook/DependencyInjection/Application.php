@@ -11,6 +11,7 @@
 
 namespace Easybook\DependencyInjection;
 
+use Pimple\Container;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
@@ -26,14 +27,14 @@ use Easybook\Providers\TwigServiceProvider;
 use Easybook\Util\Toolkit;
 use Easybook\Util\Validator;
 
-class Application extends \Pimple
+class Application extends Container
 {
     const VERSION = '5.0-DEV';
 
     public function __construct()
     {
         parent::__construct();
-        
+
         $app = $this;
 
         // -- global generic parameters ---------------------------------------
@@ -114,9 +115,9 @@ class Application extends \Pimple
         });
 
         // -- filesystem ------------------------------------------------------
-        $this['filesystem'] = function () {
+        $this['filesystem'] = $this->factory(function () {
             return new Filesystem();
-        };
+        });
 
         // -- configurator ----------------------------------------------------
         $this['configurator'] = function ($app) {
@@ -221,19 +222,6 @@ class Application extends \Pimple
     }
 
     /**
-     * Registers a service provider.
-     *
-     * Code inspired by Silex\Application:register() method
-     * (c) Fabien Potencier <fabien@symfony.com> (MIT license)
-     *
-     * @param ServiceProviderInterface $provider A ServiceProviderInterface instance
-     */
-    public function register(ServiceProviderInterface $provider)
-    {
-        $provider->register($this);
-    }
-
-    /**
      * Transforms the string into a web-safe slug.
      *
      * @param  string  $string    The string to slug
@@ -330,7 +318,7 @@ class Application extends \Pimple
      * Renders any string as a Twig template. It automatically injects two global
      * variables called 'book' and 'edition', which offer direct access to any
      * book or edition configuration option.
-     * 
+     *
      * @param  string $string    The original content to render
      * @param  array  $variables Optional variables passed to the template
      *
@@ -355,7 +343,7 @@ class Application extends \Pimple
 
     /**
      * Renders any template (currently only supports Twig templates).
-     * 
+     *
      * @param  string $template   The template name (it can include a namespace)
      * @param  array  $variables  Optional variables passed to the template
      * @param  string $targetFile Optional output file path. If set, the rendered
@@ -473,7 +461,7 @@ class Application extends \Pimple
     /**
      * Looks for a file in several paths and it returns the absolute filepath
      * of the first file occurrence or null if no file is found in those paths.
-     * 
+     *
      * @param  array $file  The name of the file to look for
      * @param  array $paths The paths where the file can exist
      *
@@ -593,7 +581,7 @@ class Application extends \Pimple
      *   $app->edition('page_size');
      *
      *   // sets 'US-letter' as the value of 'page_size' option
-     *   $app->book('page_size', 'US-Letter');
+     *   $app->edition('page_size', 'US-Letter');
      *
      * @param  mixed $key      The configuration option key
      * @param  mixed $newValue The new value of the configuration option
