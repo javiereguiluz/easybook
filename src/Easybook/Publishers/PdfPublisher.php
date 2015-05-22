@@ -23,7 +23,7 @@ class PdfPublisher extends BasePublisher
 {
     public function checkIfThisPublisherIsSupported()
     {
-        if (null != $this->app['prince.path'] && file_exists($this->app['prince.path'])) {
+        if (null !== $this->app['prince.path'] && file_exists($this->app['prince.path'])) {
             $princeXMLPath = $this->app['prince.path'];
         } else {
             $princeXMLPath = $this->findPrinceXMLPath();
@@ -31,7 +31,7 @@ class PdfPublisher extends BasePublisher
 
         $this->app['prince.path'] = $princeXMLPath;
 
-        return null != $princeXMLPath && file_exists($princeXMLPath);
+        return null !== $princeXMLPath && file_exists($princeXMLPath);
     }
 
     public function loadContents()
@@ -41,7 +41,7 @@ class PdfPublisher extends BasePublisher
         // if the book includes its own cover as a PDF file,
         // remove the default 'cover' element to prevent
         // publishing a book with two covers
-        if (null != $this->getCustomCover()) {
+        if (null !== $this->getCustomCover()) {
             $bookItems = array();
 
             // remove any element of type 'cover' from the
@@ -115,7 +115,7 @@ class PdfPublisher extends BasePublisher
 
         // the executable couldn't be found in the common
         // installation directories. Ask the user for the path
-        $isInteractive = null != $this->app['console.input'] && $this->app['console.input']->isInteractive();
+        $isInteractive = null !== $this->app['console.input'] && $this->app['console.input']->isInteractive();
         if ($isInteractive) {
             return $this->askForPrinceXMLPath();
         }

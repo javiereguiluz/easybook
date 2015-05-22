@@ -274,7 +274,7 @@ class Prince
     // disallowAnnotate: True to disallow annotation of the PDF file.
     public function setEncryptInfo($keyBits, $userPassword, $ownerPassword, $disallowPrint = false, $disallowModify = false, $disallowCopy = false, $disallowAnnotate = false)
     {
-        if ($keyBits != 40 && $keyBits != 128) {
+        if ($keyBits !== 40 && $keyBits !== 128) {
             throw new \Exception("Invalid value for keyBits: $keyBits".
                 ' (must be 40 or 128)');
         }
@@ -422,7 +422,7 @@ class Prince
     {
         $cmdline = $this->exePath.' --server '.$this->styleSheets.$this->scripts.$this->fileAttachments;
 
-        if ($this->inputType == 'auto') {
+        if ($this->inputType === 'auto') {
         } else {
             $cmdline .= '-i "'.$this->inputType.'" ';
         }
@@ -431,23 +431,23 @@ class Prince
             $cmdline .= '--javascript ';
         }
 
-        if ($this->baseURL != '') {
+        if ($this->baseURL !== '') {
             $cmdline .= '--baseurl="'.$this->baseURL.'" ';
         }
 
-        if ($this->doXInclude == false) {
+        if ($this->doXInclude === false) {
             $cmdline .= '--no-xinclude ';
         }
 
-        if ($this->httpUser != '') {
+        if ($this->httpUser !== '') {
             $cmdline .= '--http-user="'.$this->httpUser.'" ';
         }
 
-        if ($this->httpPassword != '') {
+        if ($this->httpPassword !== '') {
             $cmdline .= '--http-password="'.$this->httpPassword.'" ';
         }
 
-        if ($this->httpProxy != '') {
+        if ($this->httpProxy !== '') {
             $cmdline .= '--http-proxy="'.$this->httpProxy.'" ';
         }
 
@@ -455,55 +455,55 @@ class Prince
             $cmdline .= '--insecure ';
         }
 
-        if ($this->logFile != '') {
+        if ($this->logFile !== '') {
             $cmdline .= '--log="'.$this->logFile.'" ';
         }
 
-        if ($this->fileRoot != '') {
+        if ($this->fileRoot !== '') {
             $cmdline .= '--fileroot="'.$this->fileRoot.'" ';
         }
 
-        if ($this->licenseFile != '') {
+        if ($this->licenseFile !== '') {
             $cmdline .= '--license-file="'.$this->licenseFile.'" ';
         }
 
-        if ($this->licenseKey != '') {
+        if ($this->licenseKey !== '') {
             $cmdline .= '--license-key="'.$this->licenseKey.'" ';
         }
 
-        if ($this->embedFonts == false) {
+        if ($this->embedFonts === false) {
             $cmdline .= '--no-embed-fonts ';
         }
 
-        if ($this->subsetFonts == false) {
+        if ($this->subsetFonts === false) {
             $cmdline .= '--no-subset-fonts ';
         }
 
-        if ($this->artificialFonts == false) {
+        if ($this->artificialFonts === false) {
             $cmdline .= '--no-artificial-fonts ';
         }
 
-        if ($this->compress == false) {
+        if ($this->compress === false) {
             $cmdline .= '--no-compress ';
         }
 
-        if ($this->pdfTitle != '') {
+        if ($this->pdfTitle !== '') {
             $cmdline .= '--pdf-title="'.$this->cmdlineArgEscape($this->pdfTitle).'" ';
         }
 
-        if ($this->pdfSubject != '') {
+        if ($this->pdfSubject !== '') {
             $cmdline .= '--pdf-subject="'.$this->cmdlineArgEscape($this->pdfSubject).'" ';
         }
 
-        if ($this->pdfAuthor != '') {
+        if ($this->pdfAuthor !== '') {
             $cmdline .= '--pdf-author="'.$this->cmdlineArgEscape($this->pdfAuthor).'" ';
         }
 
-        if ($this->pdfKeywords != '') {
+        if ($this->pdfKeywords !== '') {
             $cmdline .= '--pdf-keywords="'.$this->cmdlineArgEscape($this->pdfKeywords).'" ';
         }
 
-        if ($this->pdfCreator != '') {
+        if ($this->pdfCreator !== '') {
             $cmdline .= '--pdf-creator="'.$this->cmdlineArgEscape($this->pdfCreator).'" ';
         }
 
@@ -529,7 +529,7 @@ class Prince
 
             proc_close($process);
 
-            return ($result == 'success');
+            return ($result === 'success');
         } else {
             throw new \Exception("Failed to execute $pathAndArgs");
         }
@@ -552,7 +552,7 @@ class Prince
 
             proc_close($process);
 
-            return ($result == 'success');
+            return ($result === 'success');
         } else {
             throw new \Exception("Failed to execute $pathAndArgs");
         }
@@ -575,7 +575,7 @@ class Prince
 
             proc_close($process);
 
-            return ($result == 'success');
+            return ($result === 'success');
         } else {
             throw new \Exception("Failed to execute $pathAndArgs");
         }
@@ -599,7 +599,7 @@ class Prince
 
             proc_close($process);
 
-            return ($result == 'success');
+            return ($result === 'success');
         } else {
             throw new \Exception("Failed to execute $pathAndArgs");
         }
@@ -614,14 +614,14 @@ class Prince
         while (!feof($pipe)) {
             $line = fgets($pipe);
 
-            if ($line != false) {
+            if ($line !== false) {
                 $msgtag = substr($line, 0, 4);
                 $msgbody = rtrim(substr($line, 4));
 
-                if ($msgtag == 'fin|') {
+                if ($msgtag === 'fin|') {
                     return $msgbody;
                 } else {
-                    if ($msgtag == 'msg|') {
+                    if ($msgtag === 'msg|') {
                         $msg = explode('|', $msgbody, 4);
                         $msgs[] = $msg;
                     } else {
@@ -646,7 +646,7 @@ class Prince
         $subStrStart = 0;
         for ($i = 0; $i < $len; $i++) {
             if (in_array($str[$i], array(' ', ';', ',', '&', '^', '(', ')'))) {
-                if ($numWeirdChars == 0) {
+                if ($numWeirdChars === 0) {
                     $outputStr .= substr($str, $subStrStart, ($i - $subStrStart));
                     $weirdCharsStart = $i;
                 }
@@ -682,11 +682,11 @@ class Prince
         $subStrStart = 0;
 
         for ($i = 0; $i < $len; $i++) {
-            if ($argStr[$i] == chr(34)) {
+            if ($argStr[$i] === chr(34)) {
                 $numSlashes = 0;
                 $j = $i - 1;
                 while ($j >= 0) {
-                    if ($argStr[$j] == chr(92)) {
+                    if ($argStr[$j] === chr(92)) {
                         $numSlashes += 1;
                         $j -= 1;
                     } else {
@@ -718,7 +718,7 @@ class Prince
 
         $numTrailingSlashes = 0;
         for ($i = ($len - 1); $i >= 0; $i--) {
-            if ($argStr[$i] == chr(92)) {
+            if ($argStr[$i] === chr(92)) {
                 $numTrailingSlashes += 1;
             } else {
                 break;

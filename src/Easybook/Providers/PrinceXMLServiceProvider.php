@@ -31,7 +31,7 @@ class PrinceXMLServiceProvider implements ServiceProviderInterface
         $app['prince'] = function () use ($app) {
             $princePath = $app['prince.path'] ?: $app->findPrinceXmlExecutable();
             // ask the user about the location of the executable
-            if (null == $princePath) {
+            if (null === $princePath) {
                 $princePath = $app->askForPrinceXMLExecutablePath();
 
                 if (!file_exists($princePath)) {

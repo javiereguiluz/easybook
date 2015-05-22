@@ -159,7 +159,7 @@ class BookConfigurator
         $parentEdition = $this->app->edition('extends');
         $parentEditionConfig = array();
 
-        if (null != $parentEdition) {
+        if (null !== $parentEdition) {
             if (!isset($bookEditions[$parentEdition])) {
                 throw new \UnexpectedValueException(sprintf(
                     " ERROR: '%s' edition extends nonexistent '%s' edition"
