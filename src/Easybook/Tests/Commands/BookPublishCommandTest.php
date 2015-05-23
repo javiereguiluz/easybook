@@ -55,16 +55,6 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         $this->filesystem->remove($this->tmpDir);
     }
 
-    // public function testCommandDisplaysApplicationSignature()
-    // {
-    //     $tester = $this->publishBook();
-    //     $app = $this->console->getApp();
-
-    //     $this->assertContains($app['app.signature'], $tester->getDisplay(),
-    //         'The command text description displays the application signature.'
-    //     );
-    // }
-
     public function testInteractiveCommand()
     {
         $command = $this->console->find('publish');
