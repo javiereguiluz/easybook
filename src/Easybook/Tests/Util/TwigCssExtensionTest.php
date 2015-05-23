@@ -147,7 +147,7 @@ class TwigCssExtensionTest extends TestCase
     {
         $this->assertEquals(
             $expectedLength,
-            $this->extension->css_add($length, $factor)
+            $this->extension->cssAdd($length, $factor)
         );
     }
 
@@ -184,7 +184,7 @@ class TwigCssExtensionTest extends TestCase
     {
         $this->assertEquals(
             $expectedLength,
-            $this->extension->css_substract($length, $factor)
+            $this->extension->cssSubstract($length, $factor)
         );
     }
 
@@ -221,7 +221,7 @@ class TwigCssExtensionTest extends TestCase
     {
         $this->assertEquals(
             $expectedLength,
-            $this->extension->css_multiply($length, $factor)
+            $this->extension->cssMultiply($length, $factor)
         );
     }
 
@@ -258,7 +258,7 @@ class TwigCssExtensionTest extends TestCase
     {
         $this->assertEquals(
             $expectedLength,
-            $this->extension->css_divide($length, $factor)
+            $this->extension->cssDivide($length, $factor)
         );
     }
 
