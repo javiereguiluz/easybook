@@ -30,7 +30,7 @@ class Validator
      */
     public static function validateNonEmptyString($name, $value)
     {
-        if (null == $value || '' == trim($value)) {
+        if (null === $value || '' === trim($value)) {
             // it throws an exception for invalid values because it's used in console commands
             throw new \InvalidArgumentException("ERROR: The $name cannot be empty.");
         }
@@ -40,7 +40,7 @@ class Validator
 
     public static function validateDirExistsAndWritable($dir)
     {
-        if (null == $dir || '' == trim($dir)) {
+        if (null === $dir || '' === trim($dir)) {
             // it throws an exception for invalid values because it's used in console commands
             throw new \InvalidArgumentException('ERROR: The directory cannot be empty.');
         }

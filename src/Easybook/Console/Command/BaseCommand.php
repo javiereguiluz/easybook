@@ -23,6 +23,9 @@ use Easybook\DependencyInjection\Application;
  */
 class BaseCommand extends Command
 {
+    /**
+     * @var Application
+     */
     protected $app;
 
     /**

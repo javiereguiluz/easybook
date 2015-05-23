@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fbe9143d5c137e82eb6bad5b7c5944fa",
+    "hash": "8602721077a0798803dd3d13930492f4",
     "packages": [
         {
             "name": "easybook/geshi",
@@ -51,36 +51,6 @@
                 "syntax"
             ],
             "time": "2013-11-07 14:45:36"
-        },
-        {
-            "name": "easybook/slugger",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/easybook/slugger.git",
-                "reference": "40609cd6b6019c5f194affe01f88c049f428e04e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/easybook/slugger/zipball/40609cd6b6019c5f194affe01f88c049f428e04e",
-                "reference": "40609cd6b6019c5f194affe01f88c049f428e04e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Easybook": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A fast and easy to use slugger with full UTF-8 support.",
-            "time": "2014-04-08 20:29:46"
         },
         {
             "name": "javiereguiluz/easyslugger",
