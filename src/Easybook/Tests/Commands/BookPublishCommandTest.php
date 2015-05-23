@@ -52,27 +52,18 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        //$this->filesystem->remove($this->tmpDir);
+        $this->filesystem->remove($this->tmpDir);
     }
 
-    public function testCommandDisplaysApplicationSignature()
-    {
-        $command = $this->console->find('publish');
+    // public function testCommandDisplaysApplicationSignature()
+    // {
+    //     $tester = $this->publishBook();
+    //     $app = $this->console->getApp();
 
-        $tester = new CommandTester($command);
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'slug' => 'the-origin-of-species',
-            'edition' => 'web',
-            '--dir' => $this->tmpDir,
-        ));
-
-        $app = $command->getApp();
-
-        $this->assertContains($app['app.signature'], $command->asText(),
-            'The command text description displays the application signature.'
-        );
-    }
+    //     $this->assertContains($app['app.signature'], $tester->getDisplay(),
+    //         'The command text description displays the application signature.'
+    //     );
+    // }
 
     public function testInteractiveCommand()
     {
@@ -143,16 +134,8 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
      */
     public function testNonInteractiveCommand($edition, $publishedBookFilePath, $maxTimeElapsed)
     {
-        $command = $this->console->find('publish');
-        $tester = new CommandTester($command);
-
         $start = microtime(true);
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'slug' => 'the-origin-of-species',
-            'edition' => $edition,
-            '--dir' => $this->tmpDir,
-        ));
+        $tester = $this->publishBook($edition);
         $finish = microtime(true);
 
         $this->assertContains(
@@ -181,46 +164,22 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage ERROR: The directory of the book cannot be found.
+     */
     public function testNonInteractionInvalidBookAndEdition()
     {
-        $command = $this->console->find('publish');
-        $tester = new CommandTester($command);
-
-        try {
-            $tester->execute(array(
-                'command' => $command->getName(),
-                'slug' => uniqid('non_existent_book_'),
-                'edition' => uniqid('non_existent_edition_'),
-                '--dir' => $this->tmpDir,
-                '--no-interaction' => true,
-            ), array(
-                'interactive' => false,
-            ));
-        } catch (\RuntimeException $e) {
-            $this->assertInstanceOf('\RuntimeException', $e);
-            $this->assertContains('The directory of the book cannot be found', $e->getMessage());
-        }
+        $this->publishBook(uniqid('non_existent_edition_'), uniqid('non_existent_book_'));
     }
 
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessageRegExp /ERROR: The '.*' edition isn't defined for\n'The Origin of Species' book./
+     */
     public function testNonInteractionInvalidEdition()
     {
-        $command = $this->console->find('publish');
-        $tester = new CommandTester($command);
-
-        try {
-            $tester->execute(array(
-                'command' => $command->getName(),
-                'slug' => 'the-origin-of-species',
-                'edition' => uniqid('non_existent_edition_'),
-                '--dir' => $this->tmpDir,
-                '--no-interaction' => true,
-            ), array(
-                'interactive' => false,
-            ));
-        } catch (\RuntimeException $e) {
-            $this->assertInstanceOf('\RuntimeException', $e);
-            $this->assertContains('edition isn\'t defined', $e->getMessage());
-        }
+        $this->publishBook(uniqid('non_existent_edition_'));
     }
 
     public function testBeforeAndAfterPublishScripts()
@@ -320,5 +279,25 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
         rewind($stream);
 
         return $stream;
+    }
+
+    /**
+     * @return CommandTester
+     */
+    private function publishBook($edition = 'web', $slug = 'the-origin-of-species')
+    {
+        $command = $this->console->find('publish');
+        $tester = new CommandTester($command);
+
+        $tester->execute(array(
+            'command' => $command->getName(),
+            'slug' => $slug,
+            'edition' => $edition,
+            '--dir' => $this->tmpDir,
+        ), array(
+            'interactive' => false,
+        ));
+
+        return $tester;
     }
 }
