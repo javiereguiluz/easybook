@@ -29,6 +29,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function testListCommand()
     {
+        if ('low' === getenv('deps')) {
+            $this->markTestSkipped('Skip this test because Symfony 2.3 formats command help in a different way.');
+        }
+
         $tester = new ApplicationTester($this->console);
         $tester->run(array('command' => 'list'), array('decorated' => false));
 
