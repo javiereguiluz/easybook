@@ -134,9 +134,7 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
      */
     public function testNonInteractiveCommand($edition, $publishedBookFilePath, $maxTimeElapsed)
     {
-        $start = microtime(true);
         $tester = $this->publishBook($edition);
-        $finish = microtime(true);
 
         $this->assertContains(
             sprintf('Publishing %s edition of The Origin of Species book', $edition),
@@ -148,19 +146,15 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
             sprintf('%s/the-origin-of-species/Output/%s', $this->tmpDir, $publishedBookFilePath),
             sprintf('The book has been published as %s', $publishedBookFilePath)
         );
-
-        $this->assertLessThan($maxTimeElapsed, $finish - $start,
-            sprintf('The publication of "%s" edition took less than %s seconds', $edition, $maxTimeElapsed)
-        );
     }
 
     public function getNonInteractiveCommandData()
     {
         return array(
-            //    edition    $publishedBookFilePath     maxTimeElapsed
-            array('web',     'web/book.html',           5),
-            array('website', 'website/book/index.html', 5),
-            array('ebook',   'ebook/book.epub',         5),
+            //    edition    $publishedBookFilePath
+            array('web',     'web/book.html'),
+            array('website', 'website/book/index.html'),
+            array('ebook',   'ebook/book.epub'),
         );
     }
 
