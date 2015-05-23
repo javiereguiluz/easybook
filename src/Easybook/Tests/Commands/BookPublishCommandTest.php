@@ -122,7 +122,7 @@ class BookPublishCommandTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getNonInteractiveCommandData
      */
-    public function testNonInteractiveCommand($edition, $publishedBookFilePath, $maxTimeElapsed)
+    public function testNonInteractiveCommand($edition, $publishedBookFilePath)
     {
         $tester = $this->publishBook($edition);
 
