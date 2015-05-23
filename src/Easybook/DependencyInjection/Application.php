@@ -235,7 +235,7 @@ class Application extends Container
         $slug = $this['slugger']->slugify($string, $separator);
 
         if (null !== $prefix) {
-            $slug = $prefix.$separator.$slug;
+            $slug = $prefix.$slug;
         }
 
         $this->append('slugger.generated_slugs', $slug);
@@ -263,15 +263,11 @@ class Application extends Container
 
         $slug = $this->slugify($string, $separator, $prefix);
 
-        if (null !== $prefix) {
-            $slug = $prefix.$separator.$slug;
-        }
-
         // ensure the uniqueness of the slug
         $occurrences = array_count_values($this['slugger.generated_slugs']);
         $count = isset($occurrences[$slug]) ? $occurrences[$slug] : 0;
         if ($count > 1) {
-            $slug .= $separator.$count;
+            $slug = $slug.$separator.$count;
         }
 
         return $slug;
