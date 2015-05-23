@@ -1,10 +1,4 @@
-                     |              |
- ,---.,---.,---.,   .|---.,---.,---.|__/
- |---',---|`---.|   ||   ||   ||   ||  \
- `---'`---^`---'`---|`---'`---'`---'`   `
-                `---'
-easybook is the easiest and fastest tool to generate
-technical documentation, books, manuals and websites.
+easybook version 5.0-DEV
 
 Usage:
  command [options] [arguments]

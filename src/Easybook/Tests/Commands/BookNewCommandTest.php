@@ -42,25 +42,7 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        //$this->filesystem->remove($this->tmpDir);
-    }
-
-    public function testCommandDisplaysApplicationSignature()
-    {
-        $command = $this->console->find('new');
-
-        $tester = new CommandTester($command);
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'title' => 'The Origin of Species',
-            '--dir' => $this->tmpDir,
-        ));
-
-        $app = $command->getApp();
-
-        $this->assertContains($app['app.signature'], $command->asText(),
-            'The command text description displays the application signature.'
-        );
+        $this->filesystem->remove($this->tmpDir);
     }
 
     public function testInteractiveCommand()
@@ -123,13 +105,7 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testNonInteractiveCommand()
     {
-        $command = $this->console->find('new');
-        $tester = new CommandTester($command);
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'title' => 'The Origin of Species',
-            '--dir' => $this->tmpDir,
-        ));
+        $tester = $this->createNewBook();
 
         $this->assertRegExp(
             '/.* OK .* You can start writing your book in the following directory/',
@@ -142,7 +118,11 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
             $tester->getDisplay(),
             'The name of the new book directory is correct'
         );
+    }
 
+    public function testBookSkeletonIsProperlyGenerated()
+    {
+        $tester = $this->createNewBook();
         $bookDir = $this->tmpDir.'/the-origin-of-species';
 
         $files = array(
@@ -152,97 +132,45 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
             'Contents/images',
             'Output',
         );
-        foreach ($files as $file) {
-            $this->assertFileExists(
-                $bookDir.'/'.$file,
-                sprintf('%s has been generated', $file)
-            );
-        }
 
+        foreach ($files as $file) {
+            $this->assertFileExists($bookDir.'/'.$file, sprintf('%s has been generated', $file));
+        }
+    }
+
+    public function testBookSkeletonContents()
+    {
+        $tester = $this->createNewBook();
+
+        $bookDir = $this->tmpDir.'/the-origin-of-species';
         $bookConfig = Yaml::parse($bookDir.'/config.yml');
 
-        // --- test basic config ----------------------------------------------
-        $this->assertEquals(
-            $bookConfig['book']['title'],
-            'The Origin of Species',
-            'The title of the new book is "The Origin of Species"'
-        );
+        $this->assertArraySubset(array('book' => array(
+            'title' => 'The Origin of Species',
+            'author' => 'Change this: Author Name',
+            'edition' => 'First edition',
+            'language' => 'en',
+            'publication_date' => null,
+        )), $bookConfig, 'The basic book configuration is properly generated.');
 
-        $this->assertEquals(
-            $bookConfig['book']['author'],
-            'Change this: Author Name',
-            'The author of the new book is unset'
-        );
-
-        $this->assertEquals(
-            $bookConfig['book']['language'],
-            'en',
-            'The language of the new book is English'
-        );
-
-        $this->assertEquals(
-            $bookConfig['book']['publication_date'],
-            null,
-            'The publication date of the new book is unset'
-        );
-
-        // --- test contents config -------------------------------------------
-        $contents = array(
+        $this->assertArraySubset(array('book' => array('contents' => array(
             array('element' => 'cover'),
             array('element' => 'toc'),
             array('element' => 'chapter', 'number' => 1, 'content' => 'chapter1.md'),
             array('element' => 'chapter', 'number' => 2, 'content' => 'chapter2.md'),
-        );
+        ))), $bookConfig, 'The book contents configuration is properly generated.');
+
         $this->assertEquals(
-            $bookConfig['book']['contents'],
-            $contents,
-            'The default contents of the new book are correct'
+            array('ebook', 'kindle', 'print', 'web', 'website'),
+            array_keys($bookConfig['book']['editions']),
+            'The book editions configuration is properly generated.'
         );
+    }
 
-        // --- test editions config -------------------------------------------
-        $this->assertEquals(
-            count($bookConfig['book']['editions']),
-            5,
-            'The new book has 5 editions configured'
-        );
-
-        $this->assertArrayHasKey(
-            'ebook',
-            $bookConfig['book']['editions'],
-            'The new book has an "ebook" (.epub) edition'
-        );
-        $this->assertArrayHasKey(
-            'kindle',
-            $bookConfig['book']['editions'],
-            'The new book has a "kindle" (.mobi) edition'
-        );
-        $this->assertArrayHasKey(
-            'print',
-            $bookConfig['book']['editions'],
-            'The new book has a "print" (.pdf) edition'
-        );
-        $this->assertArrayHasKey(
-            'web',
-            $bookConfig['book']['editions'],
-            'The new book has a "web" (.html) edition'
-        );
-        $this->assertArrayHasKey(
-            'website',
-            $bookConfig['book']['editions'],
-            'The new book has a "website"(.html) edition'
-        );
-
-        // --- test second book generation ------------------------------------
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'title' => 'The Origin of Species',
-            '--dir' => $this->tmpDir,
-        ));
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'title' => 'The Origin of Species',
-            '--dir' => $this->tmpDir,
-        ));
+    public function testGenerateTheSameBookTwoConsecutivetimes()
+    {
+        $tester = $this->createNewBook();
+        $tester = $this->createNewBook();
 
         $this->assertRegExp(
             '/.* OK .* You can start writing your book in the following directory/',
@@ -279,5 +207,22 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         rewind($stream);
 
         return $stream;
+    }
+
+    /**
+     * @return CommandTester
+     */
+    private function createNewBook()
+    {
+        $command = $this->console->find('new');
+        $tester = new CommandTester($command);
+
+        $tester->execute(array(
+            'command' => $command->getName(),
+            'title' => 'The Origin of Species',
+            '--dir' => $this->tmpDir,
+        ));
+
+        return $tester;
     }
 }
