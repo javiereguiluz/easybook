@@ -47,18 +47,10 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testCommandDisplaysApplicationSignature()
     {
-        $command = $this->console->find('new');
+        $tester = $this->createNewBook();
+        $app = $this->console->getApp();
 
-        $tester = new CommandTester($command);
-        $tester->execute(array(
-            'command' => $command->getName(),
-            'title' => 'The Origin of Species',
-            '--dir' => $this->tmpDir,
-        ));
-
-        $app = $command->getApp();
-
-        $this->assertContains($app['app.signature'], $command->asText(),
+        $this->assertContains($app['app.signature'], $tester->getDisplay(),
             'The command text description displays the application signature.'
         );
     }
