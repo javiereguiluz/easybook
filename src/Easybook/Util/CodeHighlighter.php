@@ -11,14 +11,16 @@
 
 namespace Easybook\Util;
 
+use Pimple\Container;
+
 class CodeHighlighter
 {
     private $app;
 
     /**
-     * @param array app The object that represents the whole dependency container
+     * @param Container app The object that represents the whole dependency container
      */
-    public function __construct($app)
+    public function __construct(Container $app)
     {
         $this->app = $app;
     }

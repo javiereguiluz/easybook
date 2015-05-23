@@ -13,6 +13,7 @@ namespace Easybook\DependencyInjection;
 
 use Pimple\Container;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
@@ -29,7 +30,7 @@ use Easybook\Util\Validator;
 
 class Application extends Container
 {
-    const VERSION = '4.9.0';
+    const VERSION = '5.0-DEV';
 
     public function __construct()
     {
@@ -494,7 +495,7 @@ class Application extends Container
      * Shortcut method to dispatch events.
      *
      * @param string $eventName   The name of the dispatched event
-     * @param mixed  $eventObject The object that stores event data
+     * @param Event  $eventObject The object that stores event data
      */
     public function dispatch($eventName, $eventObject = null)
     {
@@ -553,8 +554,8 @@ class Application extends Container
      *   // sets 'New author' as the value of 'author' option
      *   $app->book('author', 'New author');
      *
-     * @param mixed $key      The configuration option key
-     * @param mixed $newValue The new value of the configuration option
+     * @param string $key      The configuration option key
+     * @param mixed  $newValue The new value of the configuration option
      *
      * @return mixed It only returns a value when the second argument is null
      */
@@ -579,8 +580,8 @@ class Application extends Container
      *   // sets 'US-letter' as the value of 'page_size' option
      *   $app->edition('page_size', 'US-Letter');
      *
-     * @param mixed $key      The configuration option key
-     * @param mixed $newValue The new value of the configuration option
+     * @param string $key      The configuration option key
+     * @param mixed  $newValue The new value of the configuration option
      *
      * @return mixed It only returns a value when the second argument is null
      */
