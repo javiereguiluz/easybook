@@ -1,6 +1,6 @@
 {% if item.caption == '*' %}
 <span class="image{{ item.align ? ' '~item.align : '' }}">
-    {{ item.content|replace( {'alt="*"': ''} ) }}    
+    {{ item.content|replace( {'alt="*"': ''} ) }}
 </span>
 {% else %}
 <div class="figure{{ item.align ? ' '~item.align : '' }}" id="{{ item.slug }}">

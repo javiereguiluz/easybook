@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the easybook application.
  *
@@ -17,7 +18,7 @@ use Easybook\Util\Compressor;
 if ('app/Bin/build.php' != $argv[0]) {
     throw new \RuntimeException(sprintf(
         "\n[ERROR] This command can only be executed from the root directory as follows:\n\n%s\n\n",
-        "$ php app/Bin/build.php"
+        '$ php app/Bin/build.php'
     ));
 }
 
@@ -27,7 +28,7 @@ echo "\nBuilding easybook ZIP file\n".str_repeat('=', 80)."\n";
 echo "\n > Updating vendors ('composer update' command)\n";
 $output = array();
 $status = null;
-exec("composer update", $output, $status);
+exec('composer update', $output, $status);
 if (0 !== $status) {
     throw new \RuntimeException(sprintf(
         "\n[ERROR] There was an error updating vendors:\n%s\n\n",
@@ -39,7 +40,7 @@ if (0 !== $status) {
 echo "\n > Executing test suite ('phpunit' command)\n";
 $output = array();
 $status = null;
-exec("phpunit", $output, $status);
+exec('phpunit', $output, $status);
 if (0 !== $status) {
     throw new \RuntimeException(sprintf(
         "\n[ERROR] There was an error executing tests:\n%s\n\n",
