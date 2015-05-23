@@ -160,6 +160,12 @@ class TwigCssExtension extends \Twig_Extension
 
     // -- Internal methods to convert between units ---------------------------
 
+    /**
+     * Transforms the given hexadecimal color string into an RGB array.
+     *
+     * @param  string $hex
+     * @return array
+     */
     private function hex2rgb($hex)
     {
         $hex = str_replace('#', '', $hex);
@@ -184,13 +190,25 @@ class TwigCssExtension extends \Twig_Extension
         );
     }
 
-    private function rgb2hex($rgb)
+    /**
+     * Transforms the given RGB array into an hexadecimal color string.
+     *
+     * @param  array $rgb
+     * @return string
+     */
+    private function rgb2hex(array $rgb)
     {
         return sprintf('#%02s%02s%02s', dechex($rgb[0]), dechex($rgb[1]), dechex($rgb[2]));
     }
 
-    /* code copied from Drupal CMS */
-    private function rgb2hsl($rgb)
+    /**
+     * Transforms the given RGB color array into an HSL color array.
+     * Code copied from Drupal CMS project.
+     *
+     * @param  array $rgb
+     * @return array
+     */
+    private function rgb2hsl(array $rgb)
     {
         list($r, $g, $b) = $rgb;
         $r /= 255;
@@ -226,8 +244,14 @@ class TwigCssExtension extends \Twig_Extension
         return array($h, $s, $l);
     }
 
-    /* code copied from Drupal CMS */
-    private function hsl2rgb($hsl)
+    /**
+     * Transforms the given HSL color array into an RGB color array.
+     * Code copied from Drupal CMS project.
+     *
+     * @param  array $hsl
+     * @return array
+     */
+    private function hsl2rgb(array $hsl)
     {
         list($h, $s, $l) = $hsl;
 
