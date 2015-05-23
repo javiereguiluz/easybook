@@ -1,0 +1,20 @@
+%s
+
+<info>easybook</info> is the <comment>easiest</comment> and <comment>fastest</comment> tool to generate,
+technical documentation, books, manuals and websites.
+
+To create a new book, use the <info>new</info> command:
+
+  <comment>./book new "The Origin of Species"</comment>
+
+To publish a book, use the <info>publish</info> command:
+
+  <comment>./book publish the-origin-of-species print</comment>
+
+To display the installed version, use the <info>version</info> command:
+
+  <comment>./book version</comment>
+
+Checkout the full documentation for each command with the <info>help</info> command:
+
+  <comment>./book help new</comment>

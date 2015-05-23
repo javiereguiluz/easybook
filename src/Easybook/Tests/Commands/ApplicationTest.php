@@ -27,39 +27,39 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->console->setAutoExit(false);
     }
 
-    public function testCommandList()
+    public function testListCommand()
     {
         $tester = new ApplicationTester($this->console);
         $tester->run(array('command' => 'list'), array('decorated' => false));
 
         $this->assertStringEqualsFile(
-            __DIR__.'/fixtures/application_output.txt',
+            __DIR__.'/fixtures/list_command_output.txt',
             $tester->getDisplay(),
-            'Executing the application without arguments shows the commands list'
+            'Test the output of the "list" command.'
         );
     }
 
-    public function testVersion()
+    public function testVersionCommand()
     {
         $tester = new ApplicationTester($this->console);
         $tester->run(array('command' => 'version'));
 
-        $this->assertRegExp(
-            sprintf('/easybook installed version: %s/', preg_quote($this->app->getVersion())),
+        $this->assertContains(
+            sprintf('easybook installed version: %s', $this->app->getVersion()),
             $tester->getDisplay(),
-            'The "version" command shows the version of the application'
+            'The "version" command shows the version of the application.'
         );
     }
 
-    public function testSignature()
+    public function testApplicationSignature()
     {
         $tester = new ApplicationTester($this->console);
-        $tester->run(array('command' => 'list'), array('decorated' => false));
+        $tester->run(array(), array('decorated' => false));
 
         $this->assertContains(
             $this->app['app.signature'],
             $tester->getDisplay(),
-            'The signature of the application is shown'
+            'The default command displays the signature of the application.'
         );
     }
 }
