@@ -21,7 +21,7 @@
         "javiereguiluz/easyslugger" : "~1.0",
         "michelf/php-markdown"      : "1.4",
         "pimple/pimple"             : "~3.0",
-        "symfony/console"           : "2.4.2",
+        "symfony/console"           : "~2.5",
         "symfony/event-dispatcher"  : "2.4.2",
         "symfony/filesystem"        : "2.4.2",
         "symfony/finder"            : "2.4.2",

@@ -12,6 +12,7 @@
 namespace Easybook\Console;
 
 use Symfony\Component\Console\Application as SymfonyConsoleApplication;
+use Easybook\Console\Command\AboutCommand;
 use Easybook\Console\Command\BookNewCommand;
 use Easybook\Console\Command\BookPublishCommand;
 use Easybook\Console\Command\BookCustomizeCommand;
@@ -34,11 +35,14 @@ class ConsoleApplication extends SymfonyConsoleApplication
 
         parent::__construct('easybook', $this->app->getVersion());
 
+        $this->add(new AboutCommand($this->app->getVersion()));
         $this->add(new BookNewCommand());
         $this->add(new BookPublishCommand());
         $this->add(new BookCustomizeCommand());
         $this->add(new EasybookVersionCommand());
         $this->add(new EasybookBenchmarkCommand());
+
+        $this->setDefaultCommand('about');
     }
 
     public function getHelp()

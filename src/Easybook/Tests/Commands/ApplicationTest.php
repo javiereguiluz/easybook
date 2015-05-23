@@ -30,7 +30,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testCommandList()
     {
         $tester = new ApplicationTester($this->console);
-        $tester->run(array(), array('decorated' => false));
+        $tester->run(array('command' => 'list'), array('decorated' => false));
 
         $this->assertStringEqualsFile(
             __DIR__.'/fixtures/application_output.txt',
@@ -54,7 +54,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testSignature()
     {
         $tester = new ApplicationTester($this->console);
-        $tester->run(array(), array('decorated' => false));
+        $tester->run(array('command' => 'list'), array('decorated' => false));
 
         $this->assertContains(
             $this->app['app.signature'],

@@ -42,12 +42,13 @@ class Application extends Container
         $this['app.debug'] = false;
         $this['app.charset'] = 'UTF-8';
         $this['app.name'] = 'easybook';
-        $this['app.signature'] = "\n"
-        ."                     |              |    \n"
-        ." ,---.,---.,---.,   .|---.,---.,---.|__/ \n"
-        ." |---',---|`---.|   ||   ||   ||   ||  \ \n"
-        ." `---'`---^`---'`---|`---'`---'`---'`   `\n"
-        ."                `---'\n";
+        $this['app.signature'] = <<<SIGNATURE
+                     |              |
+ ,---.,---.,---.,   .|---.,---.,---.|__/
+ |---',---|`---.|   ||   ||   ||   ||  \
+ `---'`---^`---'`---|`---'`---'`---'`   `
+                `---'
+SIGNATURE;
 
         // -- global directories location -------------------------------------
         $this['app.dir.base'] = realpath(__DIR__.'/../../../');
