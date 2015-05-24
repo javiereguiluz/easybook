@@ -40,7 +40,7 @@ class PublisherTest extends TestCase
 
     public function tearDown()
     {
-        //$this->filesystem->remove($this->tmpDir);
+        $this->filesystem->remove($this->tmpDir);
 
         parent::tearDown();
     }
