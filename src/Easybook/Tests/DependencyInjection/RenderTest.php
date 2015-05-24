@@ -43,27 +43,25 @@ class RenderTest extends TestCase
 
     public function tearDown()
     {
-        //$this->filesystem->remove($this->templateDir);
+        $this->filesystem->remove($this->templateDir);
     }
 
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage (easybook only supports Twig)
+     */
     public function testNonTwigTemplate()
     {
-        try {
-            $this->app->render('template.tpl');
-        } catch (\RuntimeException $e) {
-            $this->assertInstanceOf('RuntimeException', $e);
-            $this->assertContains('(easybook only supports Twig)', $e->getMessage());
-        }
+        $this->app->render('template.tpl');
     }
 
+    /**
+     * @expectedException Twig_Error_Loader
+     * @expectedExceptionRegExp /Unable to find template (.*)/
+     */
     public function testUndefinedTwigTemplate()
     {
-        try {
-            $this->app->render('template.twig');
-        } catch (\Twig_Error_Loader $e) {
-            $this->assertInstanceOf('Twig_Error_Loader', $e);
-            $this->assertContains('Unable to find template', $e->getMessage());
-        }
+        $this->app->render('template.twig');
     }
 
     public function testSimpleTemplate()
