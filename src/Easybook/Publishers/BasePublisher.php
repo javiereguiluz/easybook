@@ -160,6 +160,15 @@ class BasePublisher implements PublisherInterface
             // get again 'item' object because PRE_PARSE event can modify it
             $item = $this->app['publishing.active_item'];
 
+            // when publishing a book as a website, two pages in different sections
+            // can use the same slugs without resulting in collisions.
+            // TODO: this method should be smarter: if chunk_level = 1, it's safe
+            // to delete all previous slugs, but if chunk_level = 2, we should only
+            // remove the generated slugs for each section
+            if ('html_chunked' === $this->app->edition('format')) {
+                $this->app['slugger.generated_slugs'] = array();
+            }
+
             $item['content'] = $this->app['parser']->transform($item['original']);
             $item['toc'] = $this->app['publishing.active_item.toc'];
 
