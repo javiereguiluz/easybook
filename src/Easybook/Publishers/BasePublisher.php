@@ -16,7 +16,7 @@ use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
 
-class BasePublisher implements PublisherInterface
+abstract class BasePublisher implements PublisherInterface
 {
     protected $app;
 
@@ -41,6 +41,11 @@ class BasePublisher implements PublisherInterface
         $this->decorateContents();
         $this->assembleBook();
     }
+
+    /**
+     * Creates the final book by joining all the rendered parts.
+     */
+    public abstract function assembleBook();
 
     /**
      * It loads the original content of each of the book's items. If the item
