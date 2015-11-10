@@ -11,12 +11,6 @@
 
 namespace Easybook\DependencyInjection;
 
-use Pimple\Container;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
 use Easybook\Configurator\BookConfigurator;
 use Easybook\Providers\CodeHighlighterServiceProvider;
 use Easybook\Providers\KindleGenServiceProvider;
@@ -25,8 +19,15 @@ use Easybook\Providers\PrinceXMLServiceProvider;
 use Easybook\Providers\PublisherServiceProvider;
 use Easybook\Providers\SluggerServiceProvider;
 use Easybook\Providers\TwigServiceProvider;
+use Easybook\Providers\WkhtmltopdfServiceProvider;
 use Easybook\Util\Toolkit;
 use Easybook\Util\Validator;
+use Pimple\Container;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Yaml;
 
 class Application extends Container
 {
@@ -135,6 +136,7 @@ SIGNATURE;
         $this->register(new ParserServiceProvider());
         $this->register(new TwigServiceProvider());
         $this->register(new PrinceXMLServiceProvider());
+        $this->register(new WkhtmltopdfServiceProvider());
         $this->register(new KindleGenServiceProvider());
         $this->register(new SluggerServiceProvider());
         $this->register(new CodeHighlighterServiceProvider());

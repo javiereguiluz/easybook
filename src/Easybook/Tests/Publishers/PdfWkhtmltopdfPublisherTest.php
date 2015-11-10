@@ -11,30 +11,30 @@
 
 namespace Easybook\Tests\Publishers;
 
+use Easybook\Publishers\PdfWkhtmltopdfPublisher;
 use Symfony\Component\Console\Input\ArrayInput;
 use Easybook\DependencyInjection\Application;
-use Easybook\Publishers\PdfPublisher;
 use ZendPdf\PdfDocument;
 use ZendPdf\Font;
 use ZendPdf\Page;
 
-class PdfPublisherTest extends \PHPUnit_Framework_TestCase
+class PdfWkhtmltopdfPublisherTest extends \PHPUnit_Framework_TestCase
 {
     public function testHelpIsDisplayedWhenThisPublisherIsNotSupported()
     {
         $app = new Application();
 
-        $app['prince.path'] = null;
-        $app['prince.default_paths'] = array();
+        $app['wkhtmltopdf.path'] = null;
+        $app['wkhtmltopdf.default_paths'] = array();
         $app['console.input'] = null;
 
         $helpMessage = <<<HELP
   easybook:
       parameters:
-          prince.path: '/path/to/utils/PrinceXML/prince'
+          wkhtmltopdf.path: '/path/to/utils/wkhtmltopdf'
 HELP;
 
-        $publisher = new PdfPublisher($app);
+        $publisher = new PdfWkhtmltopdfPublisher($app);
 
         try {
             $publisher->checkIfThisPublisherIsSupported();
@@ -44,51 +44,51 @@ HELP;
         }
     }
 
-    public function testUserGivesWrongPrinceXmlPath()
+    public function testUserGivesWrongWkhtmltopdfPath()
     {
         $app = new Application();
 
-        $app['prince.path'] = null;
-        $app['prince.default_paths'] = array();
+        $app['wkhtmltopdf.path'] = null;
+        $app['wkhtmltopdf.default_paths'] = array();
         $app['console.input'] = new ArrayInput(array());
 
-        $publisher = $this->getMock('Easybook\Publishers\PdfPublisher',
-            array('askForPrinceXMLPath'),
+        $publisher = $this->getMock('Easybook\Publishers\PdfWkhtmltopdfPublisher',
+            array('askForwkhtmltopdfPath'),
             array($app)
         );
 
         $publisher->expects($this->once())
-            ->method('askForPrinceXMLPath')
+            ->method('askForwkhtmltopdfPath')
             ->will($this->returnValue(uniqid('this_path_does_not_exist_'))
         );
 
         $this->assertFalse(
             $publisher->checkIfThisPublisherIsSupported(),
-            'The given PrinceXML path is wrong, so this publisher is not supported'
+            'The given wkhtmltopdf path is wrong, so this publisher is not supported'
         );
     }
 
-    public function testUserGivesCorrectPrinceXmlPath()
+    public function testUserGivesCorrectwkhtmltopdfPath()
     {
         $app = new Application();
 
-        $app['prince.path'] = null;
-        $app['prince.default_paths'] = array();
+        $app['wkhtmltopdf.path'] = null;
+        $app['wkhtmltopdf.default_paths'] = array();
         $app['console.input'] = new ArrayInput(array());
 
-        $publisher = $this->getMock('Easybook\Publishers\PdfPublisher',
-            array('askForPrinceXMLPath'),
+        $publisher = $this->getMock('Easybook\Publishers\PdfWkhtmltopdfPublisher',
+            array('askForwkhtmltopdfPath'),
             array($app)
         );
 
         $publisher->expects($this->once())
-            ->method('askForPrinceXMLPath')
+            ->method('askForwkhtmltopdfPath')
             ->will($this->returnValue(__FILE__)
         );
 
         $this->assertTrue(
             $publisher->checkIfThisPublisherIsSupported(),
-            'The given PrinceXML path is correct, so this publisher is supported'
+            'The given wkhtmltopdf path is correct, so this publisher is supported'
         );
     }
 
@@ -96,30 +96,30 @@ HELP;
     {
         $app = new Application();
 
-        // for this test, any valid path is enough to simulate PrinceXML
-        $princeXmlPath = __FILE__;
+        // for this test, any valid path is enough to simulate wkhtmltopdf
+        $wkhtmltopdfPath = __FILE__;
 
-        $app['prince.path'] = $princeXmlPath;
-        $publisher = new PdfPublisher($app);
+        $app['wkhtmltopdf.path'] = $wkhtmltopdfPath;
+        $publisher = new PdfWkhtmltopdfPublisher($app);
         $this->assertTrue(
             $publisher->checkIfThisPublisherIsSupported(),
-            'If the PrinceXML path exists, this publisher is supported'
+            'If the wkhtmltopdf path exists, this publisher is supported'
         );
 
-        $app['prince.path'] = null;
-        $app['prince.default_paths'] = array($princeXmlPath);
-        $publisher = new PdfPublisher($app);
+        $app['wkhtmltopdf.path'] = null;
+        $app['wkhtmltopdf.default_paths'] = array($wkhtmltopdfPath);
+        $publisher = new PdfWkhtmltopdfPublisher($app);
         $this->assertTrue(
             $publisher->checkIfThisPublisherIsSupported(),
-            'If the PrinceXML default path exists, this publisher is supported'
+            'If the wkhtmltopdf default path exists, this publisher is supported'
         );
 
-        $app['prince.path'] = null;
-        $app['prince.default_paths'] = array(null, null, $princeXmlPath);
-        $publisher = new PdfPublisher($app);
+        $app['wkhtmltopdf.path'] = null;
+        $app['wkhtmltopdf.default_paths'] = array(null, null, $wkhtmltopdfPath);
+        $publisher = new PdfWkhtmltopdfPublisher($app);
         $this->assertTrue(
             $publisher->checkIfThisPublisherIsSupported(),
-            'If any of the PrinceXML default paths exists, this publisher is supported'
+            'If any of the wkhtmltopdf default paths exists, this publisher is supported'
         );
     }
 
@@ -142,7 +142,7 @@ HELP;
             $app['filesystem']->touch($app['publishing.dir.templates'].'/'.$cover);
         }
 
-        $publisher = new PdfPublisher($app);
+        $publisher = new PdfWkhtmltopdfPublisher($app);
 
         $selectedCoverPath = $publisher->getCustomCover();
         $selectedCover = str_replace($app['publishing.dir.templates'].'/', '', $selectedCoverPath);
@@ -249,7 +249,7 @@ HELP;
         $this->createPdfFile($coverFilePath, 'EASYBOOK COVER');
         $this->createPdfFile($bookFilePath, 'easybook contents');
 
-        $publisher = new PdfPublisher($app);
+        $publisher = new PdfWkhtmltopdfPublisher($app);
         $publisher->addBookCover($bookFilePath, $coverFilePath);
 
         $resultingPdfBook = PdfDocument::load($bookFilePath);
