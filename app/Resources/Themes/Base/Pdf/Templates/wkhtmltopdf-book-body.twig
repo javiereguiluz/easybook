@@ -1,0 +1,11 @@
+<script src="{{ resources_dir }}/Javascript/Hyphenator/Hyphenator.js" type="text/javascript"></script>    
+<script type="text/javascript">
+    Hyphenator.config({
+        donthyphenateclassname: 'code',
+        selectorfunction: function (hyphenateClass) {
+            var el = document.querySelectorAll('p, li');
+            return el;
+        }
+    });
+    Hyphenator.run();
+</script>

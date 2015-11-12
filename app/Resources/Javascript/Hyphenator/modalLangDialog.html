@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Hyphenator.js: select language</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript">
+        'use strict';
+        function getUALang() {
+            var ul = window.navigator.language || window.navigator.userLanguage;
+            ul = ul.substring(0, 2);
+            return ul;
+        }
+
+        function getMsgText(lang) {
+            var text, supportedLangs = window.dialogArguments;
+            if (!!supportedLangs[lang] && supportedLangs[lang].prompt !== '') {
+                text = supportedLangs[lang].prompt;
+            } else {
+                text = supportedLangs.en.prompt;
+            }
+            return text;
+        }
+
+        function populate(el, ul) {
+            var supportedLangs = window.dialogArguments,
+                opEl,
+                lang;
+            for (lang in supportedLangs) {
+                if (supportedLangs.hasOwnProperty(lang)) {
+                    opEl = window.document.createElement('option');
+                    opEl.setAttribute('value', lang);
+                    if (lang === ul) {
+                        opEl.setAttribute('selected', 'selected');
+                    }
+                    opEl.appendChild(window.document.createTextNode(lang));
+                    el.appendChild(opEl);
+                }
+            }
+        }
+
+        window.onload = function () {
+            var msgOut = window.document.getElementById('msg'),
+                lngOut = window.document.getElementById('langsel'),
+                goBtn = window.document.getElementById('go'),
+                ul = getUALang();
+
+            msgOut.appendChild(window.document.createTextNode(getMsgText(ul)));
+            populate(lngOut, ul);
+
+            goBtn.onclick = function () {
+                window.returnValue = lngOut.value;
+                window.close();
+            };
+        };
+    </script>
+</head>
+<body>
+<h1>Hyphenator.js</h1>
+<p id="msg"></p>
+<form action="#">
+<select id="langsel" size="1"></select>
+<input type="submit" id="go" value="&rarr;">
+</form>
+</body>
+</html>
