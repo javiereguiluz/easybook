@@ -11,6 +11,7 @@
 
 namespace Easybook\Providers;
 
+use mikehaertl\wkhtmlto\Pdf;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -34,14 +35,20 @@ class WkhtmltopdfServiceProvider implements ServiceProviderInterface
                 $wkhtmltopdfPath = $app->findWkhtmltopdfExecutable();
 
                 if (!file_exists($wkhtmltopdfPath)) {
-                    throw new \RuntimeException(sprintf(
-                         "We couldn't find the wkhtmltopdf executable in the given directory (%s)", $wkhtmltopdfPath
-                    ));
+                    throw new \RuntimeException(
+                        sprintf(
+                            "We couldn't find the wkhtmltopdf executable in the given directory (%s)",
+                            $wkhtmltopdfPath
+                        )
+                    );
                 }
             }
 
-            $wkhtmltopdf = new Wkhtmltopdf($wkhtmltopdfPath);
-            $wkhtmltopdf->setHtml(true);
+            $wkhtmltopdf = new Pdf(
+                [
+                    'binary' => $wkhtmltopdfPath
+                ]
+            );
 
             return $wkhtmltopdf;
         };

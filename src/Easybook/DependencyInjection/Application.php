@@ -394,7 +394,7 @@ SIGNATURE;
             $this['publishing.dir.templates'].'/'.$this->edition('format'),
             $this['publishing.dir.templates'],
         );
-
+        
         return $this->getFirstExistingFile($templateName, $paths);
     }
 
