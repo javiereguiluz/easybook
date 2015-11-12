@@ -1,0 +1,17 @@
+.item {
+    page-break-before: always;
+}
+
+.header {
+    font-family: sans-serif;
+    font-size: .7em;
+    color: #666;
+    border-bottom: 1px solid #DDD;
+}
+
+.footer {
+    font-family: sans-serif;
+    font-size: .8em;
+    color: #666;
+    border-top: 1px solid #DDD;
+}
