@@ -220,8 +220,11 @@ YAML;
         $marginRight = str_replace(
             'mm',
             '',
-            $this->app->edition('margin')['outer'] ?: $this->app->edition('margin')['outter']
+            isset($this->app->edition('margin')['outer'])
+                ? $this->app->edition('margin')['outer']
+                : $this->app->edition('margin')['outter']
         );
+
         $orientation = $this->app->edition('orientation') ?: 'portrait';
 
         $newOptions = [
@@ -309,9 +312,9 @@ YAML;
 
             // exclude unsupported items
             // - toc: added by wkhtmltopdf
-            // - tof: no way to render with page numbers
+            // - lof: no way to render with page numbers
             // - cover: added after document generation
-            if (!in_array($item['config']['element'], ['toc', 'tof', 'cover'])) {
+            if (!in_array($item['config']['element'], ['toc', 'lof', 'cover'])) {
                 $newItems[] = $item;
             }
         }
