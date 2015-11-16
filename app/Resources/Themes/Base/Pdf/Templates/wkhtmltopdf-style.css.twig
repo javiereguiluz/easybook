@@ -8,6 +8,7 @@
 {% set color_white  = '#F5F5F5' %}
 {% set color_blue   = '#152DC6' %}
 
+
 /* @body
 -------------------------------------------------------------------------- */
 
@@ -21,6 +22,14 @@ code, pre {
     font-family: "Courier New", monospace;
     /* -1pt adjustment */
     font-size: 12pt;
+}
+
+/* @cover
+-------------------------------------------------------------------------- */
+
+.item.cover h1 {
+    /* -2pt adjustment */
+    font-size: 46pt;
 }
 
 /* @highlighting
@@ -54,39 +63,6 @@ b, strong {
 .item.chapter h4 { font-size: 13pt; }
 .item.chapter h5 { font-size: 13pt; }
 .item.chapter h6 { font-size: 13pt; }
-
-{# Headers and footers
-   ========================================================================= #}
-
-.header {
-    border-bottom: 1px solid {{ color_silver }};
-    color: {{ color_gray }};
-    font: 9pt tex-heros, sans-serif;
-    margin-bottom: 12pt;
-    padding-bottom: 3pt;
-    vertical-align: bottom;
-}
-
-.footer {
-    font: bold 12pt tex-heros, sans-serif;
-    padding-top: 11pt;
-    vertical-align: top;
-}
-
-.header .top-right,
-.footer .bottom-right {
-    text-align: right;
-}
-
-.header .top-center,
-.footer .bottom-center {
-    text-align: center;
-}
-
-.header .top-left.
-.footer .bottom-left {
-    text-align: left;
-}
 
 /* @toc
 -------------------------------------------------------------------------- */
