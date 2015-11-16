@@ -45,6 +45,12 @@ book:
             page_size:    royal-octavo
             two_sided:    true
 
+        print-wkhtmltopdf:
+            extends:      common
+            format:       pdf
+            pdf_engine:   wkhtmltopdf
+            page_size:    A4
+            
         web:
             extends:      common
             format:       html
