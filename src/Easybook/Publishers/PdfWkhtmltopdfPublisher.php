@@ -150,13 +150,13 @@ class PdfWkhtmltopdfPublisher extends PdfPublisher
     {
         $this->app['console.output']->write(
             sprintf(
-                " In order to generate PDF files, PrinceXML library must be installed. \n\n"
-                . " We couldn't find PrinceXML executable in any of the following directories: \n"
+                " In order to generate PDF files, wkhtmltopdf library must be installed. \n\n"
+                . " We couldn't find wkhtmltopdf executable in any of the following directories: \n"
                 . "   -> %s \n\n"
                 . " If you haven't installed it yet, you can download a fully-functional demo at: \n"
                 . " %s \n\n"
                 . " If you have installed in a custom directory, please type its full absolute path:\n > ",
-                implode($this->app['prince.default_paths'], "\n   -> "),
+                implode($this->app['wkhtmltopdf.default_paths'], "\n   -> "),
                 'http://wkhtmltopdf.org/downloads.html'
             )
         );
@@ -289,7 +289,7 @@ YAML;
     }
 
     /**
-     * Prepare book items to be rendered, filtering out unuspported types
+     * Prepare book items to be rendered, filtering out unsupported types
      * and extracting certain values.
      *
      * @return array options
@@ -410,7 +410,7 @@ YAML;
     }
 
     /**
-     * Render the TOC html file.
+     * Render the TOC XSLT file.
      *
      * @param $tmpDir
      * @param $tocTitle
