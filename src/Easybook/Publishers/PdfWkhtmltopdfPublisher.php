@@ -64,6 +64,11 @@ class PdfWkhtmltopdfPublisher extends PdfPublisher
         /** @var Pdf $wkhtmltopdf */
         $wkhtmltopdf = $this->app['wkhtmltopdf'];
 
+        // consolidate book images to temp dir
+        $imagesDir = $tmpDir . '/images';
+        $this->app['filesystem']->mkdir($imagesDir);
+        $this->prepareBookImages($imagesDir);
+
         // filter out unusupported content items and extract certain values
         $extractedValues = $this->prepareBookItems();
 
