@@ -129,7 +129,7 @@ $ ./book publish easybook-doc-en print-wkhtmltopdf
 
  In order to generate PDF files, wkhtmltopdf library must be installed.
 
- We couldn't find PrinceXML executable in any of the following directories:
+ We couldn't find wkhtmltopdf executable in any of the following directories:
    -> /usr/local/bin/wkhtmltopdf
    -> /usr/bin/wkhtmltopdf
    -> C:\Program Files\wkhtmltopdf\wkhtmltopdf.exe
