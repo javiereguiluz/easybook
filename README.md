@@ -55,10 +55,15 @@ $ phpunit
 Requirements
 ------------
 
-In order to generate PDF files, PrinceXML library must be installed. 
-If you haven't installed it yet, you can download a fully-functional demo at: 
+In order to generate PDF files, PrinceXML or wkhtmltopdf libraries must be installed. 
+
+- **PrinceXML**: If you haven't installed it yet, you can download a fully-functional demo at: 
 
     http://www.princexml.com/download
+    
+- **wkhtmltopdf**: This open source utility can be downloaded from:
+
+    http://wkhtmltopdf.org/downloads.html
 
 In order to generate MOBI files, KindleGen library must be installed.
 If you haven't installed it yet, you can download it freely at Amazon:
