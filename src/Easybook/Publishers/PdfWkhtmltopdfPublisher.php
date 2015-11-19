@@ -45,7 +45,7 @@ class PdfWkhtmltopdfPublisher extends PdfPublisher
      *
      * - PDF cover is not supported. Only HTML cover is supported.
      *
-     * - Facing odd/even pages are unsupported.
+     * - Two-sided pages are unsupported.
      *
      * - Headers / Footers are set using wkhtmltopdf arguments (very limited).
      *
@@ -53,7 +53,7 @@ class PdfWkhtmltopdfPublisher extends PdfPublisher
      *   document headings.
      *
      * - TOC filtering is (very) limited, performed via XSLT
-     *   transormation.
+     *   tranfsormation.
      *
      */
     public function assembleBook()
@@ -317,9 +317,9 @@ YAML;
 
             // exclude unsupported items
             // - toc: added by wkhtmltopdf
-            // - lof: no way to render with page numbers
+            // - lof and lot: no way to render with page numbers
             // - cover: added after document generation
-            if (!in_array($item['config']['element'], ['toc', 'lof', 'cover'])) {
+            if (!in_array($item['config']['element'], ['toc', 'lof', 'lot', 'cover'])) {
                 $newItems[] = $item;
             }
         }
