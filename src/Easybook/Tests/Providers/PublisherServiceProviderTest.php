@@ -69,16 +69,16 @@ class PublisherServiceProviderTest extends \PHPUnit_Framework_TestCase
 
     private function getBookConfigForPdfFormat($pdfEngine = null)
     {
-        $book = [
-            'book' => [
+        $book = array(
+            'book' => array(
                 'language' => 'en',
-                'editions' => [
-                    'print' => [
+                'editions' => array(
+                    'print' => array(
                         'format'    => 'pdf'
-                    ],
-                ],
-            ],
-        ];
+                    ),
+                ),
+            ),
+        );
         
         if ($pdfEngine) {
             $book['book']['editions']['print']['pdf_engine'] = $pdfEngine;

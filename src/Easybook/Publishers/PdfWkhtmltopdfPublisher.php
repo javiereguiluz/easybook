@@ -97,9 +97,9 @@ class PdfWkhtmltopdfPublisher extends PdfPublisher
         $wkhtmltopdf->addPage($htmlCoverFilePath);
 
         // TOC is always first after cover
-        $tocOptions = [
+        $tocOptions = array(
             'xsl-style-sheet' => $tocFilePath,
-        ];
+        );
         $wkhtmltopdf->addToc($tocOptions);
 
         // rest of the book
@@ -219,20 +219,21 @@ YAML;
     {
         // margins and media size
         // TODO: allow other units (inches, cms)
-        $marginTop = str_replace('mm', '', $this->app->edition('margin')['top']);
-        $marginBottom = str_replace('mm', '', $this->app->edition('margin')['bottom']);
-        $marginLeft = str_replace('mm', '', $this->app->edition('margin')['inner']);
+        $margin = $this->app->edition('margin');
+        $marginTop = str_replace('mm', '', $margin['top']);
+        $marginBottom = str_replace('mm', '', $margin['bottom']);
+        $marginLeft = str_replace('mm', '', $margin['inner']);
         $marginRight = str_replace(
             'mm',
             '',
-            isset($this->app->edition('margin')['outer'])
-                ? $this->app->edition('margin')['outer']
-                : $this->app->edition('margin')['outter']
+            isset($margin['outer'])
+                ? $margin['outer']
+                : $margin['outter']
         );
 
         $orientation = $this->app->edition('orientation') ?: 'portrait';
 
-        $newOptions = [
+        $newOptions = array(
             'page-size'     => $this->app->edition('page_size'),
             'margin-top'    => $marginTop ?: 25,
             'margin-bottom' => $marginBottom ?: 25,
@@ -241,10 +242,11 @@ YAML;
             'orientation'   => $orientation,
             'encoding'      => 'UTF-8',
             'print-media-type',
-        ];
+        );
 
         // misc.
-        $newOptions['outline-depth'] = $this->app->edition('toc')['deep'];
+        $edition = $this->app->edition('toc');
+        $newOptions['outline-depth'] = $edition['deep'];
 
         // dump outline xml for easy outline/toc debugging
         $newOptions['dump-outline'] = $tmpDir . '/outline.xml';
@@ -261,7 +263,7 @@ YAML;
      */
     protected function prepareStyleSheet($tmpDir)
     {
-        $newOptions = [];
+        $newOptions = array();
 
         // copy the general styles if edition wants them included
         if ($this->app->edition('include_styles')) {
@@ -304,9 +306,9 @@ YAML;
      */
     protected function prepareBookItems()
     {
-        $extracted = [];
+        $extracted = array();
 
-        $newItems = [];
+        $newItems = array();
 
         foreach ($this->app['publishing.items'] as $item) {
 
@@ -319,7 +321,7 @@ YAML;
             // - toc: added by wkhtmltopdf
             // - lof and lot: no way to render with page numbers
             // - cover: added after document generation
-            if (!in_array($item['config']['element'], ['toc', 'lof', 'lot', 'cover'])) {
+            if (!in_array($item['config']['element'], array('toc', 'lof', 'lot', 'cover'))) {
                 $newItems[] = $item;
             }
         }
@@ -338,12 +340,12 @@ YAML;
      */
     protected function prepareHeaderAndFooter($tmpDir)
     {
-        $newOptions = [];
+        $newOptions = array();
 
         $headerFooterFile = $tmpDir . '/header-footer.yml';
         $this->app->render(
             '@theme/wkhtmltopdf-header-footer.yml.twig',
-            [],
+            array(),
             $headerFooterFile
         );
 
@@ -388,10 +390,10 @@ YAML;
         $htmlBookFilePath = $tmpDir . '/book.html';
         $this->app->render(
             'book.twig',
-            [
+            array(
                 'items'         => $this->app['publishing.items'],
                 'resources_dir' => $this->app['app.dir.resources'] . '/'
-            ],
+            ),
             $htmlBookFilePath
         );
 
@@ -410,7 +412,7 @@ YAML;
         $htmlCoverFilePath = $tmpDir . '/cover.html';
         $this->app->render(
             'cover.twig',
-            [],
+            array(),
             $htmlCoverFilePath
         );
 
@@ -429,12 +431,13 @@ YAML;
     protected function renderToc($tmpDir, $tocTitle)
     {
         $tocFilePath = $tmpDir . '/toc.xsl';
+        $toc = $this->app->edition('toc');
         $this->app->render(
             'wkhtmltopdf-toc.xsl.twig',
-            [
+            array(
                 'toc_title' => $tocTitle,
-                'toc_deep'  => $this->app->edition('toc')['deep']
-            ],
+                'toc_deep'  => $toc['deep']
+            ),
             $tocFilePath
         );
 

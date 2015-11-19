@@ -45,9 +45,9 @@ class WkhtmltopdfServiceProvider implements ServiceProviderInterface
             }
 
             $wkhtmltopdf = new Pdf(
-                [
+                array(
                     'binary' => $wkhtmltopdfPath
-                ]
+                )
             );
 
             return $wkhtmltopdf;
