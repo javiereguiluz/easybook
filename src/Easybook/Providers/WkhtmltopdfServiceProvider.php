@@ -25,7 +25,7 @@ class WkhtmltopdfServiceProvider implements ServiceProviderInterface
         $app['wkhtmltopdf.default_paths'] = array(
             '/usr/local/bin/wkhtmltopdf',                         # Mac OS X
             '/usr/bin/wkhtmltopdf',                               # Linux
-            'C:\Program Files\wkhtmltopdf.exe',                   # Windows TODO: write the actual path 
+            'C:\Program Files\wkhtmltopdf\wkhtmltopdf.exe',       # Windows TODO: write the actual path 
         );
 
         $app['wkhtmltopdf'] = function () use ($app) {
