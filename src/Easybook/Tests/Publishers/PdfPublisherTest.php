@@ -70,6 +70,13 @@ class PdfPublisherTest extends TestCase
 
     public function testBookPublish()
     {
+        // if running in Travis-CI, PDF book publishing cannot be
+        // tested because external utilities will be unavailable
+        if ('true' === getenv('TRAVIS')) {
+            $this->markTestSkipped("Detected Travis-CI build, skipping test");
+            return;
+        }
+        
         $console = new ConsoleApplication($this->app);
 
         // find the test books
