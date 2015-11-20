@@ -19,6 +19,13 @@ class PublisherServiceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testPdfPublisherWithDefaultEngine()
     {
+        // if running in Travis-CI, external utilities will be unavailable
+        if ('true' === getenv('TRAVIS')) {
+            $this->markTestSkipped("Detected Travis-CI build, skipping test");
+
+            return;
+        }
+
         $app = new Application();
         $app['publishing.book.config'] = $this->getBookConfigForPdfFormat();
         $app['publishing.edition'] = 'print';
@@ -31,6 +38,13 @@ class PublisherServiceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testPdfPublisherWithPrinceXmlEngine()
     {
+        // if running in Travis-CI, external utilities will be unavailable
+        if ('true' === getenv('TRAVIS')) {
+            $this->markTestSkipped("Detected Travis-CI build, skipping test");
+
+            return;
+        }
+
         $app = new Application();
         $app['publishing.book.config'] = $this->getBookConfigForPdfFormat('princexml');
         $app['publishing.edition'] = 'print';
@@ -55,9 +69,16 @@ class PublisherServiceProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Easybook\Publishers\PdfWkhtmltopdfPublisher', $app['publisher']);
     }
-    
+
     public function testPdfPublisherWithWkhtmltopdfEngine()
     {
+        // if running in Travis-CI, external utilities will be unavailable
+        if ('true' === getenv('TRAVIS')) {
+            $this->markTestSkipped("Detected Travis-CI build, skipping test");
+
+            return;
+        }
+
         $app = new Application();
         $app['publishing.book.config'] = $this->getBookConfigForPdfFormat('wkhtmltopdf');
         $app['publishing.edition'] = 'print';
@@ -74,16 +95,16 @@ class PublisherServiceProviderTest extends \PHPUnit_Framework_TestCase
                 'language' => 'en',
                 'editions' => array(
                     'print' => array(
-                        'format'    => 'pdf'
+                        'format' => 'pdf'
                     ),
                 ),
             ),
         );
-        
+
         if ($pdfEngine) {
             $book['book']['editions']['print']['pdf_engine'] = $pdfEngine;
         }
-        
+
         return $book;
     }
 }
