@@ -7,7 +7,7 @@ easybook
 
 **[easybook](http://easybook-project.org)** lets you easily publish books in
 various electronic formats (ePub, MOBI, PDF and HTML). It was originally
-designed to publish programming books, but you can use **easyboook** to
+designed to publish programming books, but you can use **easybook** to
 publish any kind of book, manual or documentation website.
 
 ![easybook worflow diagram](doc/easybook-doc-en/Contents/images/what_is_easybook.png)
