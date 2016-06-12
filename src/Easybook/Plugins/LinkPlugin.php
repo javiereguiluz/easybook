@@ -137,7 +137,13 @@ class LinkPlugin implements EventSubscriberInterface
         $item['content'] = preg_replace_callback(
             '/<a (href="#.*".*)<\/a>/Us',
             function ($matches) {
-                return sprintf('<a class="internal" %s</a>', $matches[1]);
+                // First check if there is an existing class attribute before
+                // adding a new class attribute and breaking the XHTML syntax
+                if (preg_match('/\bclass="(.*)"/Us', $matches[1]) !== false) {
+                    return '<a ' . preg_replace('/\bclass="(.*)"/Us', 'class="internal $1"', $matches[1]);
+                } else {
+                    return sprintf('<a class="internal" %s</a>', $matches[1]);
+                }
             },
             $item['content']
         );

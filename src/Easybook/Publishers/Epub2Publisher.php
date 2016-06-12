@@ -484,7 +484,14 @@ class Epub2Publisher extends HtmlPublisher
                         $newUri = $matches['uri'];
                     }
 
-                    return sprintf('<a class="internal" href="%s"%s</a>', $newUri, $matches[2]);
+                    // First check if there is an existing class attribute before
+                    // adding a new class attribute and breaking the XHTML syntax
+                    if (preg_match('/\bclass="(.*)"/Us', $matches[1]) !== false) {
+                        $matches[2] = preg_replace('/\bclass="(.*)"/Us', 'class="internal $1"', $matches[2]);
+                        return sprintf('<a href="%s"%s</a>', $newUri, $matches[2]);
+                    } else {
+                        return sprintf('<a class="internal" href="%s"%s</a>', $newUri, $matches[2]);
+                    }
                 },
                 $htmlContent
             );
