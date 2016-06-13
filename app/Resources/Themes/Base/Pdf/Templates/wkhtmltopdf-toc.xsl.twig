@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="2.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:outline="http://wkhtmltopdf.org/outline"
+                xmlns="http://www.w3.org/1999/xhtml">
+    <xsl:output doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+                doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+                indent="yes"/>
+    <xsl:template match="outline:outline">
+        <html>
+        <head>
+            <title>Table of Contents</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        </head>
+        <body>
+        <div class="item toc">
+            <h1>{{ toc_title }}</h1>
+            <ul>
+                <!-- ignore HTML cover page and the TOC itself -->
+                <xsl:apply-templates select="outline:item[@title!='' and @title!='Table of Contents']/outline:item"/>
+            </ul>
+        </div>
+        </body>
+        </html>
+    </xsl:template>
+    <xsl:template match="outline:item">
+        <!-- ignore items in the "edition" page-->
+        <xsl:if test="@title!='{{ book.title }}'">
+            <li>
+                <!-- TODO: setting "level-n" does not work for styling (investigate) -->
+                <xsl:attribute name="class">
+                    level-<xsl:value-of select="count(ancestor::outline:item)"/>
+                </xsl:attribute>
+                <xsl:if test="@title!=''">
+                    <xsl:if test="count(ancestor::outline:item) &lt;= {{ toc_deep|default(4) }}">
+                        <div class="dots">
+                            <a>
+                                <xsl:if test="@link">
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="@link"/>
+                                    </xsl:attribute>
+                                </xsl:if>
+                                <xsl:if test="@backLink">
+                                    <xsl:attribute name="name">
+                                        <xsl:value-of select="@backLink"/>
+                                    </xsl:attribute>
+                                </xsl:if>
+                                <xsl:value-of select="@title"/>
+                            </a>
+                            <span><xsl:value-of select="@page"/></span>
+                        </div>
+                    </xsl:if>
+                </xsl:if>
+                <ul>
+                    <xsl:comment>added to prevent self-closing tags in QtXmlPatterns</xsl:comment>
+                    <xsl:apply-templates select="outline:item"/>
+                </ul>
+            </li>
+        </xsl:if>
+    </xsl:template>
+</xsl:stylesheet>

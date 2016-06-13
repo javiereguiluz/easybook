@@ -16,7 +16,7 @@ use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
 
-class BasePublisher implements PublisherInterface
+abstract class BasePublisher implements PublisherInterface
 {
     protected $app;
 
@@ -41,6 +41,11 @@ class BasePublisher implements PublisherInterface
         $this->decorateContents();
         $this->assembleBook();
     }
+
+    /**
+     * Creates the final book by joining all the rendered parts.
+     */
+    public abstract function assembleBook();
 
     /**
      * It loads the original content of each of the book's items. If the item
@@ -272,5 +277,53 @@ class BasePublisher implements PublisherInterface
         }
 
         return $item;
+    }
+
+    /**
+     * It prepares the book images by copying them into the appropriate
+     * temporary directory. It also prepares an array with all the images
+     * data needed later to generate the full ebook contents manifest.
+     *
+     * @param string $targetDir The directory where the images are copied.
+     *
+     * @return array Images data needed to create the book manifest.
+     *
+     * @throws \RuntimeException If the $targetDir doesn't exist.
+     */
+    protected function prepareBookImages($targetDir)
+    {
+        if (!file_exists($targetDir)) {
+            throw new \RuntimeException(
+                sprintf(
+                    " ERROR: Books images couldn't be copied because \n"
+                    . " the given '%s' \n"
+                    . " directory doesn't exist.",
+                    $targetDir
+                )
+            );
+        }
+
+        $imagesDir = $this->app['publishing.dir.contents'] . '/images';
+        $imagesData = array();
+
+        if (file_exists($imagesDir)) {
+            $images = $this->app['finder']->files()->in($imagesDir);
+
+            $i = 1;
+            foreach ($images as $image) {
+                $this->app['filesystem']->copy(
+                    $image->getPathName(),
+                    $targetDir . '/' . $image->getFileName()
+                );
+
+                $imagesData[] = array(
+                    'id'        => 'figure-' . $i++,
+                    'filePath'  => 'images/' . $image->getFileName(),
+                    'mediaType' => 'image/' . pathinfo($image->getFilename(), PATHINFO_EXTENSION),
+                );
+            }
+        }
+
+        return $imagesData;
     }
 }

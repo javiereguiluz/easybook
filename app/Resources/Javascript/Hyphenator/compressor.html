@@ -1,0 +1,412 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <title>Hyphenator.js &ndash; pattern compressor</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <style type="text/css">
+            body {
+                font: 11px/1.8em Verdana;
+                margin-left: 20%;
+                margin-right:20%;
+                background-color:#EEEEEE;
+                width:60em;
+            }
+            fieldset {
+                background-color:#FFFFFF;
+                border:1px solid #AAAAAA;
+                margin:1em 0em;
+                padding: 0em 1em 2em 1em;
+            }
+            h1 {
+                background-color:#FFFFFF;
+                border:1px solid #AAAAAA;
+                margin:1em 0em;
+                color: #404041;
+                text-align:right;
+                
+            }
+            img {
+                vertical-align:middle;
+            }
+            .info_btn {
+                vertical-align:text-bottom;
+                cursor:pointer;
+            }
+            .info_box {
+                display:none;
+                border:1px dashed #AAAAAA;
+                padding:0.2em 1em;
+                font-style:italic;
+            }
+            .multicol {
+                text-align:justify;
+                width: 28em;
+                float:left;
+                margin:0em 1em;
+            }
+            ul.multicol {
+                width:21em;
+                padding:0;
+                margin:0;
+                
+            }
+            li {
+                list-style:none;
+            }
+            form {
+                clear: both;
+                padding-top:2em;
+            }
+            legend {
+                border:1px solid #AAAAAA;
+                background-color:#FFFFFF;
+                padding:0em 1em;
+                font-style: italic;
+                font-weight: 200;
+            }
+            input {
+                margin-right:1em;
+            }
+            textarea {
+                width:100%;
+            }
+            .grayedout {
+                border: 1px solid grey;
+                color: grey;
+            }
+            #fields {
+                float: left;
+                margin-right: 10px;
+            }
+            #desc {
+                font-size: 12px;
+            }
+
+        </style>
+        <script type="text/javascript" src="Hyphenator.js"></script>
+        <script type="text/javascript">
+            var oldpatterns, newpatterns, specialChars;
+            
+            function lengthSort(a, b) {
+                return a.length - b.length;
+            }
+                        
+            function output2String(meta) {
+                var tmp, len;
+                tmp = 'Hyphenator.languages[\'' + document.getElementsByName('language')[0].value + '\'] = {\n';
+                tmp += '\tleftmin : ' + document.getElementsByName('leftmin')[0].value + ',\n';
+                tmp += '\trightmin : ' + document.getElementsByName('rightmin')[0].value + ',\n';
+                tmp += '\tspecialChars : "' + specialChars + '",\n';
+                tmp += '\tpatterns : {\n';
+                for (len in newpatterns) {
+                    if (newpatterns.hasOwnProperty(len)) {
+                        tmp += '\t\t' + len + ' : "' + newpatterns[len] + '",\n';
+                    }
+                }
+                tmp = tmp.slice(0, -2);
+                tmp += '\n\t},\n';
+                tmp += '\tpatternChars : "' + meta.patternChars + '",\n';
+                tmp += '\tpatternArrayLength : ' + meta.patternArrayLength + ',\n';
+                tmp += '\tvalueStoreLength : ' + meta.valueStoreLength + '\n};';
+                document.getElementsByName('newpattern')[0].value = tmp;
+            }
+
+            function createAndMeasure () {
+                var valueStore = (function () {
+                        var ValueStore = function () {
+                            this.keys = [];
+                            this.startIndex = 1;
+                            this.actualIndex = 2;
+                            this.lastValueIndex = 2;
+                            this.add = function (p) {
+                                this.keys[this.actualIndex] = p;
+                                if (p !== 0) {
+                                    this.lastValueIndex = this.actualIndex;
+                                }
+                                this.actualIndex += 1;
+                            };
+                            this.finalize = function () {
+                                var start = this.startIndex;
+                                this.keys[start] = this.lastValueIndex - start;
+                                this.startIndex = this.lastValueIndex + 1;
+                                this.actualIndex = this.startIndex + 1;
+                                return start;
+                            };
+                        };
+                        return new ValueStore();
+                    }()),
+                    indexedTrie = [],
+                    charMap = (function () {
+                        var CharMap = function () {
+                            this.keys = [];
+                            this.values = {};
+                            this.add = function (newValue) {
+                                if (!this.values[newValue]) {
+                                    this.keys.push(newValue);
+                                    this.values[newValue] = this.keys.length - 1;
+                                }
+                            };
+                        };
+                        return new CharMap();
+                    }()),
+                    collected = {},
+                    collectPatternChars = function (patterns) {
+                        var chr = "",
+                            str = "", i;
+                        for (i = 0; i < patterns.length; i += 1) {
+                            chr = patterns.charAt(i);
+                            if (chr === ".") {
+                                chr = "_";
+                            }
+                            if (!chr.match(/\d/) && chr !== " " && !collected.hasOwnProperty(chr)) {
+                                collected[chr] = true;
+                            }
+                        }
+                    },
+                    patternChars,
+                    charMapValues,
+                    steps,
+                    indexedTrieMaxRow,
+                    extract = function (patternSizeInt, patterns) {
+                        var charPos = 0,
+                            charCode = 0,
+                            prevMappedCharCode = 0,
+                            mappedCharCode = 0,
+                            row = 0,
+                            nextRow = 0,
+                            prevWasPosition = false;
+                        for (charPos = 0; charPos < patterns.length; charPos += 1) {
+                            charCode = patterns.charCodeAt(charPos);
+                            if ((charPos + 1) % patternSizeInt !== 0) {
+                                //more to come…
+                                if (charCode >= 49 && charCode <= 57) {
+                                    valueStore.add(charCode - 48);
+                                    prevWasPosition = true;
+                                } else {
+                                    if (!prevWasPosition) {
+                                        valueStore.add(0);
+                                    }
+                                    prevWasPosition = false;
+                                    mappedCharCode = charMapValues[charCode];
+                                    if (nextRow === -1) {
+                                        nextRow = indexedTrieMaxRow + steps;
+                                        indexedTrieMaxRow = nextRow;
+                                        indexedTrie[row + prevMappedCharCode * 2] = nextRow;
+                                    }
+                                    row = nextRow;
+                                    if (indexedTrie[row + mappedCharCode * 2] !== undefined && indexedTrie[row + mappedCharCode * 2] !== 0) {
+                                        nextRow = indexedTrie[row + mappedCharCode * 2];
+                                    } else {
+                                        indexedTrie[row + mappedCharCode * 2] = -1;
+                                        nextRow = -1;
+                                    }
+                                    prevMappedCharCode = mappedCharCode;
+                                }
+                            } else {
+                                //last part of pattern
+                                if (charCode >= 49 && charCode <= 57) {
+                                    valueStore.add(charCode - 48);
+                                    indexedTrie[row + mappedCharCode * 2 + 1] = valueStore.finalize();
+                                } else {
+                                    if (!prevWasPosition) {
+                                        valueStore.add(0);
+                                    }
+                                    valueStore.add(0);
+                                    mappedCharCode = charMapValues[charCode];
+                                    if (nextRow === -1) {
+                                        nextRow = indexedTrieMaxRow + steps;
+                                        indexedTrieMaxRow = nextRow;
+                                        indexedTrie[row + prevMappedCharCode * 2] = nextRow;
+                                    }
+                                    row = nextRow;
+                                    if (indexedTrie[row + mappedCharCode * 2] !== undefined && indexedTrie[row + mappedCharCode * 2] !== 0) {
+                                        indexedTrie[row + mappedCharCode * 2 + 1] = valueStore.finalize();
+                                    } else {
+                                        indexedTrie[row + mappedCharCode * 2] = -1;
+                                        indexedTrie[row + mappedCharCode * 2 + 1] = valueStore.finalize();
+                                    }
+                                }
+                                row = 0;
+                                nextRow = 0;
+                                prevMappedCharCode = 0;
+                                prevWasPosition = false;
+                            }
+                        }
+                    }, i;
+                for (i in newpatterns) {
+                    if (newpatterns.hasOwnProperty(i)) {
+                        collectPatternChars(newpatterns[i]);
+                    }
+                }
+                patternChars = [];
+                for (i in collected) {
+                    if (collected.hasOwnProperty(i)) {
+                        patternChars.push(i);
+                    }
+                }
+                patternChars.sort();
+
+                for (i = 0; i < patternChars.length; i += 1) {
+                    charMap.add(patternChars[i].charCodeAt(0));
+                }
+
+                patternChars = patternChars.join("");
+
+                charMapValues = charMap.values;
+                steps = charMap.keys.length * 2;
+                indexedTrieMaxRow = 0;
+                for (i in newpatterns) {
+                    if (newpatterns.hasOwnProperty(i)) {
+                        extract(parseInt(i, 10), newpatterns[i]);
+                    }
+                }
+                return {
+                    "patternChars": patternChars,
+                    "patternArrayLength": indexedTrie.length / 2,
+                    "valueStoreLength": valueStore.lastValueIndex + 1
+                }
+            }
+
+            function startConversion() {
+                var len, i, curlen, key, special, s;
+                newpatterns = {};
+                special = document.getElementsByName('oldpattern')[0].value.match(/[^a-z0-9\. ]/gi);
+                if (special) {
+                    //Todo: Special vereinfachen...
+                    s = {};
+                    for (i = 0; i < special.length; i++) {
+                        s[special[i]] = true;
+                    }
+                    special = '';
+                    for (i in s) {
+                        if (s.hasOwnProperty(i)) {
+                            special += i;
+                        }
+                    }
+                } else {
+                    special = '';
+                }
+                specialChars = special;
+                oldpatterns = document.getElementsByName('oldpattern')[0].value.replace(/ $/, '').split(' ');
+                oldpatterns.sort(lengthSort);
+                len = oldpatterns.length;
+                for (i = 0; i < len; i++) {
+                    key = oldpatterns[i].replace(/\d/g, '');
+                    curlen = oldpatterns[i].length;
+                    if (curlen in newpatterns) {
+                        newpatterns[curlen] += oldpatterns[i].replace(/\./g, '_');
+                    } else {
+                        newpatterns[curlen] = oldpatterns[i].replace(/\./g, '_');
+                    }
+                }
+                var meta = createAndMeasure();
+                output2String(meta);
+            }
+
+            Hyphenator.run();
+
+            window.onload = function () {
+                var desc = document.getElementById('desc');
+                document.getElementsByName('language')[0].onfocus = function () {
+                    if (this.value === 'language') {
+                        this.value = '';
+                    }
+                    desc.innerHTML = "<em>Define language:</em><br>Use the <a href='http://www.loc.gov/standards/iso639-2/php/code_list.php'>ISO 639-1</a> two-letter language code.<br>(e.g. 'en' for english.)";
+                };
+                document.getElementsByName('language')[0].onblur = function () {
+                    if (this.value === '') {
+                        this.value = 'language';
+                    }
+                    desc.innerHTML = "";
+                };
+            
+                document.getElementsByName('leftmin')[0].onfocus = function () {
+                    if (this.value === 'leftmin') {
+                        this.value = '';
+                    }
+                    desc.innerHTML = "<em>Define leftmin:</em><br>Define how many letters at minimum should stay on the old line upon hyphenation.<br>(e.g.: setting this to 3 would prevent 'Hy-phenation')";
+                };
+                document.getElementsByName('leftmin')[0].onblur = function () {
+                    if (this.value === '') {
+                        this.value = 'leftmin';
+                    }
+                    desc.innerHTML = "";
+                };
+            
+                document.getElementsByName('rightmin')[0].onfocus = function () {
+                    if (this.value === 'rightmin') {
+                        this.value = '';
+                    }
+                    desc.innerHTML = "<em>Define rightmin:</em><br>Define how many letters at minimum should stay on the new line upon hyphenation.<br>(e.g.: setting this to 3 would prevent 'divid-ed')";
+                };
+                document.getElementsByName('rightmin')[0].onblur = function () {
+                    if (this.value === '') {
+                        this.value = 'rightmin';
+                    }
+                    desc.innerHTML = "";
+                };
+            
+                document.getElementsByName('oldpattern')[0].onfocus = function () {
+                    if (this.value === '.a5 .rt4 .d4gt2 asdf2 9kas3') {
+                        this.value = '';
+                    }
+                    desc.innerHTML = "<em>Define oldpattern:</em><br>Paste the patterns you like to convert. They have to be separated by spaces, not newlines! Points (.) will be automatically replaced by underscores (_).<br>(e.g.: .ach4 .ad4der .af1t .al3t .am5at .an5c .ang4 .ani5m .ant4)";
+                };
+                document.getElementsByName('oldpattern')[0].onblur = function () {
+                    if (this.value === '') {
+                        this.value = '.a5 .rt4 .d4gt2 asdf2 9kas3';
+                    }
+                    desc.innerHTML = "";
+                };
+                document.getElementById('myform').onsubmit = function (e) {
+                    if (e && e.preventDefault) {
+                            e.preventDefault();
+                    } else if (window.event) {
+                        window.event.returnValue = false;
+                    }
+                    startConversion();
+                };
+            
+            };
+        </script>
+    </head>
+    <body>
+        <h1>Compressor for
+            <svg  height="60" width="150" version="1.1" style="vertical-align: middle">
+                <g font-family="Consolas" font-weight="bold" font-size="36px" transform="translate(-90,-191)">
+                    <text y="230" x="139" fill="#bbb">&amp;shy;</text>
+                    <text line-height="70%" fill="#444">
+                        <tspan y="218" x="103">Hyphen-</tspan>
+                        <tspan y="243" x="103">ator.js</tspan>
+                    </text>
+                    <text font-weight="normal" line-height="125%" font-size="32px" y="228" x="89" fill="#000">{</text>
+                </g>
+            </svg>
+        </h1>
+        <p class="multicol hyphenate">
+            Compressor converts standard TeX hyphenation patterns to a special format used by hyphenator.js and adds some meta-information automatically. Just fill in the language, leftmin, rightmin and the patterns (overwrite the examples!) and click 'Convert!'.</p>
+        <p class="multicol hyphenate">
+            Copy the output and paste it in the appropriate pattern file ('patterns/lang.js').<br>
+            The script loads the version of Hyphenator.js that resides in the same directory as this page.
+        </p>
+        <form action="#outanchor" method="post" id="myform">
+            <fieldset>
+                <legend>Paste TeX-styled patterns:</legend>
+                    <p id="fields">
+                    <input type="text" name="language" value="language"><br>
+                    <input type="text" name="leftmin" value="leftmin"><br>
+                    <input type="text" name="rightmin" value="rightmin">
+                    </p>
+                    <p id="desc"></p>
+                <textarea name="oldpattern" cols="80" rows="20">hy3ph he2n hena4 hen5at 1na n2at 1tio 2io o2n</textarea>
+                <input type="submit" value="Convert!"><input type="reset" value="Reset">
+            </fieldset>
+            <fieldset>
+                <legend>Copy Hyphenator.js pattern files:</legend>
+                <p>Copy the output and paste it in the appropriate pattern file ('patterns/&lt;lang&gt;.js').</p>
+                <textarea name="newpattern" cols="80" rows="20"></textarea> 
+            </fieldset>
+        </form>
+    </body>
+</html>

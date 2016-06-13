@@ -11,13 +11,14 @@
 
 namespace Easybook\Providers;
 
+use Easybook\Publishers\Epub2Publisher;
+use Easybook\Publishers\HtmlChunkedPublisher;
+use Easybook\Publishers\HtmlPublisher;
+use Easybook\Publishers\MobiPublisher;
+use Easybook\Publishers\PdfPrinceXmlPublisher;
+use Easybook\Publishers\PdfWkhtmltopdfPublisher;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use Easybook\Publishers\Epub2Publisher;
-use Easybook\Publishers\HtmlPublisher;
-use Easybook\Publishers\HtmlChunkedPublisher;
-use Easybook\Publishers\MobiPublisher;
-use Easybook\Publishers\PdfPublisher;
 
 class PublisherServiceProvider implements ServiceProviderInterface
 {
@@ -28,7 +29,30 @@ class PublisherServiceProvider implements ServiceProviderInterface
 
             switch (strtolower($outputFormat)) {
                 case 'pdf':
-                    $publisher = new PdfPublisher($app);
+                    $pdfEngine = $app->edition('pdf_engine');
+
+                    switch (strtolower($pdfEngine)) {
+                        case 'wkhtmltopdf':
+                            $publisher = new PdfWkhtmltopdfPublisher($app);
+                            break;
+
+                        // PrinceXML is the default
+                        case 'princexml':
+                        case '':
+                        case null:
+                            $publisher = new PdfPrinceXmlPublisher($app);
+                            break;
+
+                        default:
+                            throw new \RuntimeException(
+                                sprintf(
+                                    'Unknown "%s" pdf_engine for "%s" edition (allowed: "PrinceXML" (default), "wkhtmltopdf")',
+                                    $pdfEngine,
+                                    $app['publishing.edition']
+                                )
+                            );
+                    }
+
                     break;
 
                 case 'html':
@@ -48,19 +72,23 @@ class PublisherServiceProvider implements ServiceProviderInterface
                     break;
 
                 default:
-                    throw new \RuntimeException(sprintf(
-                        'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "mobi")',
-                        $outputFormat,
-                        $app['publishing.edition']
-                    ));
+                    throw new \RuntimeException(
+                        sprintf(
+                            'Unknown "%s" format for "%s" edition (allowed: "pdf", "html", "html_chunked", "epub", "mobi")',
+                            $outputFormat,
+                            $app['publishing.edition']
+                        )
+                    );
             }
 
             if (true !== $publisher->checkIfThisPublisherIsSupported()) {
-                throw new \RuntimeException(sprintf(
-                    "Your system doesn't support publishing books with the '%s' format\n"
-                    .'Check the easybook documentation to know the dependencies required by this format.',
-                    $outputFormat
-                ));
+                throw new \RuntimeException(
+                    sprintf(
+                        "Your system doesn't support publishing books with the '%s' format\n"
+                        . 'Check the easybook documentation to know the dependencies required by this format.',
+                        $outputFormat
+                    )
+                );
             }
 
             return $publisher;

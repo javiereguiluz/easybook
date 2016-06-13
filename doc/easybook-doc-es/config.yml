@@ -45,6 +45,10 @@ book:
                 deep:        2
                 elements:    ['appendix', 'chapter']
             two_sided:       true
+            
+        print-wkhtmltopdf:
+            extends:        print
+            pdf_engine:     wkhtmltopdf
 
         web:
             format:          html

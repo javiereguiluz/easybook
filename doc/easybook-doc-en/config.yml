@@ -62,6 +62,10 @@ book:
                 elements:    ["appendix", "chapter"]
             two_sided:       true
 
+        print-wkhtmltopdf:
+            extends:        print
+            pdf_engine:     wkhtmltopdf
+            
         web:
             format:          html
             include_styles:  true

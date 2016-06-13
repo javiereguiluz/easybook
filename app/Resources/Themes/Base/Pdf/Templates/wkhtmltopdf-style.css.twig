@@ -1,0 +1,105 @@
+{%  include 'style.css.twig' %}
+
+{# Variables
+   ========================================================================= #}
+{% set color_black  = '#222' %}
+{% set color_gray   = '#777' %}
+{% set color_silver = '#DDD' %}
+{% set color_white  = '#F5F5F5' %}
+{% set color_blue   = '#152DC6' %}
+
+
+/* @body
+-------------------------------------------------------------------------- */
+
+body {
+    /* -1pt adjustment */
+    font-size: 13pt;
+}
+
+code, pre {
+    /* Inconsolata has a rendering issue on wkhtmltopdf, use default font for monospace */
+    font-family: "Courier New", monospace;
+    /* -1pt adjustment */
+    font-size: 12pt;
+}
+
+/* @cover
+-------------------------------------------------------------------------- */
+
+.item.cover h1 {
+    /* -2pt adjustment */
+    font-size: 46pt;
+}
+
+/* @highlighting
+-------------------------------------------------------------------------- */
+
+.code pre {
+    /* -2pt adjustment */
+    font-size: 10pt;
+}
+
+b, strong {
+    font-weight: 700;
+}
+
+/* @common
+-------------------------------------------------------------------------- */
+
+.item {
+    page-break-before: always;
+    /* needed for the inner h1 to actually honor margin-top */
+    padding-top: 1px;
+}
+
+/* @chapter
+-------------------------------------------------------------------------- */
+
+/* -1pt adjustment */
+.item.chapter h1 { font-size: 35pt; }
+.item.chapter h2 { font-size: 17pt; }
+.item.chapter h3 { font-size: 15pt; }
+.item.chapter h4 { font-size: 13pt; }
+.item.chapter h5 { font-size: 13pt; }
+.item.chapter h6 { font-size: 13pt; }
+
+/* @toc
+-------------------------------------------------------------------------- */
+
+.item.toc li a::after {
+    color: inherit;
+    content: "";   
+}
+
+.item.toc ul li,
+.item.toc ul li a {
+    font-size: 15pt;
+    font-weight: bold;
+}
+
+.item.toc ul li li,
+.item.toc ul li li a {
+    font-weight: normal;
+}
+
+.item.toc ul li span {
+    font-weight: normal;
+    padding-right: .2em;
+    float: right;
+}
+
+.item.toc ul li {
+    font-size: 13pt;
+}
+
+.item.toc ul li .dots {
+    border-bottom: 1px dashed rgb(200,200,200);
+}
+
+.item.toc ul ul {
+    margin-left: 1em;
+}
+
+
+
