@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "76e8d18a61269424504a0e41d096373d",
-    "content-hash": "045b3f238bcf9ce484f8d6a3e54945f9",
+    "hash": "875347672c13ee3bc112e9e87cd2d204",
+    "content-hash": "270a02ed96e998ed94b0f6c538408a17",
     "packages": [
         {
             "name": "easybook/geshi",
@@ -618,34 +618,35 @@
         },
         {
             "name": "zendframework/zend-memory",
-            "version": "2.5.2",
+            "version": "2.2.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-memory.git",
-                "reference": "bbf8b9509660b2a97f2d6ccfefabffac3cca6a5c"
+                "reference": "e19c0fe0fa85f8ed00e710d03f77c0246c049444"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-memory/zipball/bbf8b9509660b2a97f2d6ccfefabffac3cca6a5c",
-                "reference": "bbf8b9509660b2a97f2d6ccfefabffac3cca6a5c",
+                "url": "https://api.github.com/repos/zendframework/zend-memory/zipball/e19c0fe0fa85f8ed00e710d03f77c0246c049444",
+                "reference": "e19c0fe0fa85f8ed00e710d03f77c0246c049444",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.5 || ^7.0"
+                "php": ">=5.3.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8",
-                "squizlabs/php_codesniffer": "^2.3.1",
-                "zendframework/zend-cache": "^2.7"
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master",
+                "zendframework/zend-cache": "self.version"
             },
             "suggest": {
-                "zendframework/zend-cache": "To support swapping memory objects into and out of non-memory cache storage"
+                "zendframework/zend-cache": "To support swap the memory objects"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.5-dev",
-                    "dev-develop": "2.6-dev"
+                    "dev-master": "2.2-dev",
+                    "dev-develop": "2.3-dev"
                 }
             },
             "autoload": {
@@ -662,35 +663,45 @@
                 "memory",
                 "zf2"
             ],
-            "time": "2016-05-11 14:49:42"
+            "time": "2014-03-05 17:29:35"
         },
         {
             "name": "zendframework/zend-stdlib",
-            "version": "3.0.1",
+            "version": "2.2.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-stdlib.git",
-                "reference": "8bafa58574204bdff03c275d1d618aaa601588ae"
+                "reference": "b42d784bd142e916058a9d68eeafcc10ff63c12e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/8bafa58574204bdff03c275d1d618aaa601588ae",
-                "reference": "8bafa58574204bdff03c275d1d618aaa601588ae",
+                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/b42d784bd142e916058a9d68eeafcc10ff63c12e",
+                "reference": "b42d784bd142e916058a9d68eeafcc10ff63c12e",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.5 || ^7.0"
+                "php": ">=5.3.3"
             },
             "require-dev": {
-                "athletic/athletic": "~0.1",
                 "fabpot/php-cs-fixer": "1.7.*",
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master",
+                "zendframework/zend-eventmanager": "self.version",
+                "zendframework/zend-filter": "self.version",
+                "zendframework/zend-serializer": "self.version",
+                "zendframework/zend-servicemanager": "self.version"
+            },
+            "suggest": {
+                "zendframework/zend-eventmanager": "To support aggregate hydrator usage",
+                "zendframework/zend-filter": "To support naming strategy hydrator usage",
+                "zendframework/zend-serializer": "Zend\\Serializer component",
+                "zendframework/zend-servicemanager": "To support hydrator plugin manager usage"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev",
-                    "dev-develop": "3.1-dev"
+                    "dev-master": "2.2-dev",
+                    "dev-develop": "2.3-dev"
                 }
             },
             "autoload": {
@@ -707,7 +718,7 @@
                 "stdlib",
                 "zf2"
             ],
-            "time": "2016-04-12 21:19:36"
+            "time": "2014-03-05 17:29:35"
         },
         {
             "name": "zendframework/zendpdf",
@@ -758,6 +769,11 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": []
+    "platform": {
+        "php": ">=5.3.9"
+    },
+    "platform-dev": [],
+    "platform-overrides": {
+        "php": "5.3.9"
+    }
 }
