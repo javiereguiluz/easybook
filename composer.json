@@ -20,7 +20,7 @@
         "platform": {
             "php": "5.3.9"
         }
-    }
+    },
 
     "require": {
         "easybook/geshi"            : "^1.0",
