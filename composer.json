@@ -16,6 +16,12 @@
         }
     ],
 
+    "config": {
+        "platform": {
+            "php": "5.3.9"
+        }
+    }
+
     "require": {
         "easybook/geshi"            : "^1.0",
         "javiereguiluz/easyslugger" : "^1.0",
@@ -28,7 +34,7 @@
         "symfony/process"           : "^2.7",
         "symfony/yaml"              : "^2.7",
         "twig/twig"                 : "^1.15",
-        "zendframework/zendpdf"     : "2.0.2"
+        "zendframework/zendpdf"     : "^2.0"
     },
 
     "autoload": {
