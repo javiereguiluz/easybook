@@ -35,7 +35,8 @@
         "symfony/process"           : "^2.8",
         "symfony/yaml"              : "^2.8",
         "twig/twig"                 : "^1.15",
-        "zendframework/zendpdf"     : "^2.2"
+        "zendframework/zendpdf"     : "^2.2",
+        "zendframework/zend-memory" : "^2.2"
     },
 
     "autoload": {
