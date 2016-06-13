@@ -113,7 +113,6 @@ class Compressor
             ->exclude('Resources')
             ->in(array(
                 $this->rootDir.'/doc/easybook-doc-en',
-                $this->rootDir.'/doc/easybook-doc-es',
             ))
         ;
 

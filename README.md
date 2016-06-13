@@ -55,8 +55,8 @@ $ phpunit
 Requirements
 ------------
 
-In order to generate PDF files, PrinceXML library must be installed. 
-If you haven't installed it yet, you can download a fully-functional demo at: 
+In order to generate PDF files, PrinceXML library must be installed.
+If you haven't installed it yet, you can download a fully-functional demo at:
 
     http://www.princexml.com/download
 
