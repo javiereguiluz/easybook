@@ -5,32 +5,32 @@ sudo: false
 cache:
   directories:
     - $HOME/.composer/cache
+    - $HOME/.app/cache
 
 env:
   global:
-    - deps="no"
+    - CHECK_PHP_SYNTAX="no"
 
 matrix:
   fast_finish: true
   include:
-    - php: 5.3
-    - php: 5.3
-      env: deps="low"
-    - php: 5.4
-    - php: 5.5
+    - php: 7.0
+      env: CHECK_PHP_SYNTAX="yes"
     - php: 5.6
-    - php: hhvm
-    - php: nightly
-  allow_failures:
-    - php: hhvm
-    - php: nightly
+    - php: 5.5
+    - php: 5.4
+    - php: 5.3
+
+before_install:
+    - echo 'memory_limit=-1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+    - phpenv config-rm xdebug.ini
+    - composer selfupdate
 
 install:
-  - if [ "$deps" = "low" ]; then composer update --prefer-lowest; fi
-  - if [ "$deps" != "low" ]; then composer install; fi
-  - composer require --dev satooshi/php-coveralls:~0.6
+    - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then curl http://get.sensiolabs.org/php-cs-fixer.phar -o php-cs-fixer; fi;
+    - composer install
 
-script: phpunit --coverage-text --coverage-clover build/logs/clover.xml
-
-after_success: |
-    if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php vendor/bin/coveralls -v --config .coveralls.yml; fi;
+script:
+    - phpunit
+    - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then php php-cs-fixer --no-interaction --dry-run --diff -v fix; fi;
+    - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then mv ./.php_cs.cache $HOME/.app/cache/.php_cs.cache; fi;
