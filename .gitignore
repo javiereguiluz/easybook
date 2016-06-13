@@ -4,9 +4,6 @@ app/Logs
 doc
 !doc/easybook-doc-en/*
 doc/easybook-doc-en/Output/*
-!doc/easybook-doc-es/*
-doc/easybook-doc-es/Output/*
-doc/easybook-doc-es/Resources
 
 easybook.zip
 
