@@ -23,6 +23,7 @@
     },
 
     "require": {
+        "php"                       : ">=5.3.9",
         "easybook/geshi"            : "^1.0",
         "javiereguiluz/easyslugger" : "^1.0",
         "michelf/php-markdown"      : "^1.4",
@@ -34,7 +35,7 @@
         "symfony/process"           : "^2.8",
         "symfony/yaml"              : "^2.8",
         "twig/twig"                 : "^1.15",
-        "zendframework/zendpdf"     : "^2.0"
+        "zendframework/zendpdf"     : "^2.2"
     },
 
     "autoload": {
