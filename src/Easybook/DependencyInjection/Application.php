@@ -102,10 +102,11 @@ SIGNATURE;
             return array('scheme' => 'URN', 'value' => Toolkit::uuid());
         };
         // maintained for backwards compatibility
-        $this['publishing.id'] = function () {
+        $that = $this;
+        $this['publishing.id'] = function () use ($that) {
             trigger_error('The "publishing.id" option is deprecated since version 5.0 and will be removed in the future. Use "publishing.edition.id" instead.', E_USER_DEPRECATED);
 
-            return $this['publishing.edition.id'];
+            return $that['publishing.edition.id'];
         };
 
         // -- event dispatcher ------------------------------------------------
