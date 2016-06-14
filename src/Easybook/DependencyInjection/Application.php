@@ -104,6 +104,8 @@ SIGNATURE;
         // maintained for backwards compatibility
         $this['publishing.id'] = function () {
             trigger_error('The "publishing.id" option is deprecated since version 5.0 and will be removed in the future. Use "publishing.edition.id" instead.', E_USER_DEPRECATED);
+
+            return $this['publishing.edition.id'];
         };
 
         // -- event dispatcher ------------------------------------------------
