@@ -141,13 +141,13 @@ SIGNATURE;
 
         // -- labels ---------------------------------------------------------
         $this['labels'] = function () use ($app) {
-            $labels = Yaml::parse(
+            $labels = Yaml::parse(file_get_contents(
                 $app['app.dir.translations'].'/labels.'.$app->book('language').'.yml'
-            );
+            ));
 
             // books can define their own labels files
             if (null !== $customLabelsFile = $app->getCustomLabelsFile()) {
-                $customLabels = Yaml::parse($customLabelsFile);
+                $customLabels = Yaml::parse(file_get_contents($customLabelsFile));
 
                 return Toolkit::array_deep_merge_and_replace($labels, $customLabels);
             }
@@ -157,13 +157,13 @@ SIGNATURE;
 
         // -- titles ----------------------------------------------------------
         $this['titles'] = function () use ($app) {
-            $titles = Yaml::parse(
+            $titles = Yaml::parse(file_get_contents(
                 $app['app.dir.translations'].'/titles.'.$app->book('language').'.yml'
-            );
+            ));
 
             // books can define their own titles files
             if (null !== $customTitlesFile = $app->getCustomTitlesFile()) {
-                $customTitles = Yaml::parse($customTitlesFile);
+                $customTitles = Yaml::parse(file_get_contents($customTitlesFile));
 
                 return Toolkit::array_deep_merge_and_replace($titles, $customTitles);
             }

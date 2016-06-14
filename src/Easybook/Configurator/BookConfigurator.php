@@ -93,7 +93,7 @@ class BookConfigurator
             ));
         }
 
-        $config = Yaml::parse($bookConfigFile);
+        $config = Yaml::parse(file_get_contents($bookConfigFile));
 
         return empty($config) ? array() : $config;
     }
@@ -106,7 +106,7 @@ class BookConfigurator
      */
     public function loadDefaultBookConfiguration()
     {
-        $config = Yaml::parse(__DIR__.'/DefaultConfigurations/book.yml');
+        $config = Yaml::parse(file_get_contents(__DIR__.'/DefaultConfigurations/book.yml'));
 
         return empty($config) ? array() : $config;
     }
@@ -184,7 +184,7 @@ class BookConfigurator
      */
     public function loadDefaultEditionConfiguration()
     {
-        $config = Yaml::parse(__DIR__.'/DefaultConfigurations/edition.yml');
+        $config = Yaml::parse(file_get_contents(__DIR__.'/DefaultConfigurations/edition.yml'));
 
         return $config['edition'] ?: array();
     }

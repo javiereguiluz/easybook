@@ -143,7 +143,7 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
         $tester = $this->createNewBook();
 
         $bookDir = $this->tmpDir.'/the-origin-of-species';
-        $bookConfig = Yaml::parse($bookDir.'/config.yml');
+        $bookConfig = Yaml::parse(file_get_contents($bookDir.'/config.yml'));
 
         $this->assertArraySubset(array('book' => array(
             'title' => 'The Origin of Species',
