@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Easybook\Util\Validator;
+use Symfony\Component\Console\Question\Question;
 
 class BookCustomizeCommand extends BaseCommand
 {
@@ -44,11 +45,11 @@ class BookCustomizeCommand extends BaseCommand
         $edition = $input->getArgument('edition');
         $dir = $input->getOption('dir') ?: $this->app['app.dir.doc'];
 
-        $dialog = $this->getHelperSet()->get('dialog');
+        $helper = $this->getHelperSet()->get('question');
 
         $this->app['console.input'] = $input;
         $this->app['console.output'] = $output;
-        $this->app['console.dialog'] = $dialog;
+        $this->app['console.dialog'] = $helper;
 
         // validate book dir and add some useful values to the app configuration
         $bookDir = $this->app['validator']->validateBookDir($slug, $dir);
@@ -127,30 +128,30 @@ class BookCustomizeCommand extends BaseCommand
             '',
         ));
 
-        $dialog = $this->getHelperSet()->get('dialog');
+        $helper = $this->getHelperSet()->get('question');
 
         // check 'slug' argument
-        $slug = $input->getArgument('slug') ?: $dialog->askAndValidate($output,
-            array(
-                " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n",
-                ' > ',
-            ),
-            function ($slug) {
-                return Validator::validateBookSlug($slug);
-            }
+        $question = new Question(
+            " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n"
+            .' > '
         );
+        $question->setValidator(function ($answer) {
+            return Validator::validateBookSlug($answer);
+        });
+
+        $slug = $input->getArgument('slug') ?: $helper->ask($input, $output, $question);
         $input->setArgument('slug', $slug);
 
         // check 'edition' argument
-        $edition = $input->getArgument('edition') ?: $dialog->askAndValidate($output,
-            array(
-                " Please, type the name of the <info>edition</info> to be customized (e.g. <comment>web</comment>)\n",
-                ' > ',
-            ),
-            function ($edition) {
-                return Validator::validateEditionSlug($edition);
-            }
+        $question = new Question(
+                " Please, type the name of the <info>edition</info> to be customized (e.g. <comment>web</comment>)\n"
+            .' > '
         );
+        $question->setValidator(function ($answer) {
+            return Validator::validateEditionSlug($answer);
+        });
+
+        $edition = $input->getArgument('edition') ?: $helper->ask($input, $output, $question);
         $input->setArgument('edition', $edition);
     }
 }

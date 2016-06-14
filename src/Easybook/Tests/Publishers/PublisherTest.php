@@ -77,7 +77,7 @@ class PublisherTest extends TestCase
             );
 
             // look for and publish all the book editions
-            $bookConfig = Yaml::parse($this->tmpDir.'/'.$slug.'/config.yml');
+            $bookConfig = Yaml::parse(file_get_contents($this->tmpDir.'/'.$slug.'/config.yml'));
             $editionNames = array_keys($bookConfig['book']['editions']);
 
             foreach ($editionNames as $editionName) {

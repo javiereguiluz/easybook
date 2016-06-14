@@ -139,15 +139,31 @@ class ApplicationTest extends TestCase
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Deprecated
-     * @expectedExceptionMessage The "publishing.id" option is deprecated
+     * The code to catch deprecation is copied from
+     * Symfony\Component\Yaml\Tests\ParserTest::testColonInMappingValueException
      */
     public function testDeprecatedPublishingIdProperty()
     {
+        $deprecations = array();
+        set_error_handler(function ($type, $msg) use (&$deprecations) {
+            if (E_USER_DEPRECATED !== $type) {
+                restore_error_handler();
+
+                return call_user_func_array('PHPUnit_Util_ErrorHandler::handleError', func_get_args());
+            }
+
+            $deprecations[] = $msg;
+        });
+
         $app = new Application();
         $app['publishing.edition.id'] = 'custom_edition_id';
-
         $id = $app['publishing.id'];
+        $this->assertSame('custom_edition_id', $id);
+
+        restore_error_handler();
+
+        $this->assertCount(1, $deprecations);
+        $this->assertContains('The "publishing.id" option is deprecated since version 5.0 and will be removed in the future. Use "publishing.edition.id" instead.', $deprecations[0]);
     }
 
     /**
@@ -247,7 +263,7 @@ class ApplicationTest extends TestCase
                 ),
             ));
 
-            $titles = Yaml::parse($file->getPathname());
+            $titles = Yaml::parse(file_get_contents($file->getPathname()));
             foreach ($titles['title'] as $key => $expectedValue) {
                 $this->assertEquals($expectedValue, $app->getTitle($key));
             }
@@ -285,7 +301,7 @@ class ApplicationTest extends TestCase
                 ),
             ));
 
-            $labels = Yaml::parse($file->getPathname());
+            $labels = Yaml::parse(file_get_contents($file->getPathname()));
             foreach ($labels['label'] as $key => $value) {
                 // some labels (chapter and appendix) are arrays instead of strings
                 if (is_array($value)) {

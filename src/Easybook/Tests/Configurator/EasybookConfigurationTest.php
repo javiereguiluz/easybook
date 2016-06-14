@@ -68,7 +68,7 @@ class EasybookConfigurationTest extends TestCase
         $configurator = $this->getMock('Easybook\Configurator\BookConfigurator', array('loadBookFileConfiguration'), array($app));
         $configurator->expects($this->any())
             ->method('loadBookFileConfiguration')
-            ->will($this->returnValue(Yaml::parse($this->fixturesDir.'/'.$configFileName) ?: array()))
+            ->will($this->returnValue(Yaml::parse(file_get_contents($this->fixturesDir.'/'.$configFileName)) ?: array()))
         ;
 
         $app['configurator'] = $configurator;

@@ -102,8 +102,11 @@ SIGNATURE;
             return array('scheme' => 'URN', 'value' => Toolkit::uuid());
         };
         // maintained for backwards compatibility
-        $this['publishing.id'] = function () {
+        $that = $this;
+        $this['publishing.id'] = function () use ($that) {
             trigger_error('The "publishing.id" option is deprecated since version 5.0 and will be removed in the future. Use "publishing.edition.id" instead.', E_USER_DEPRECATED);
+
+            return $that['publishing.edition.id'];
         };
 
         // -- event dispatcher ------------------------------------------------
@@ -141,13 +144,13 @@ SIGNATURE;
 
         // -- labels ---------------------------------------------------------
         $this['labels'] = function () use ($app) {
-            $labels = Yaml::parse(
+            $labels = Yaml::parse(file_get_contents(
                 $app['app.dir.translations'].'/labels.'.$app->book('language').'.yml'
-            );
+            ));
 
             // books can define their own labels files
             if (null !== $customLabelsFile = $app->getCustomLabelsFile()) {
-                $customLabels = Yaml::parse($customLabelsFile);
+                $customLabels = Yaml::parse(file_get_contents($customLabelsFile));
 
                 return Toolkit::array_deep_merge_and_replace($labels, $customLabels);
             }
@@ -157,13 +160,13 @@ SIGNATURE;
 
         // -- titles ----------------------------------------------------------
         $this['titles'] = function () use ($app) {
-            $titles = Yaml::parse(
+            $titles = Yaml::parse(file_get_contents(
                 $app['app.dir.translations'].'/titles.'.$app->book('language').'.yml'
-            );
+            ));
 
             // books can define their own titles files
             if (null !== $customTitlesFile = $app->getCustomTitlesFile()) {
-                $customTitles = Yaml::parse($customTitlesFile);
+                $customTitles = Yaml::parse(file_get_contents($customTitlesFile));
 
                 return Toolkit::array_deep_merge_and_replace($titles, $customTitles);
             }
@@ -324,8 +327,10 @@ SIGNATURE;
      */
     public function renderString($string, $variables = array())
     {
-        $twig = new \Twig_Environment(new \Twig_Loader_String(), $this['twig.options']);
+        $loader = new \Twig_Loader_Array(array('string_template' => $string));
+        $twig = new \Twig_Environment($loader, $this['twig.options']);
 
+        $twig->setCache(false);
         $twig->addGlobal('app', $this);
 
         if (null !== $bookConfig = $this['publishing.book.config']) {
@@ -336,7 +341,7 @@ SIGNATURE;
             $twig->addGlobal('edition', $editions[$publishingEdition]);
         }
 
-        return $twig->render($string, $variables);
+        return $twig->render('string_template', $variables);
     }
 
     /**

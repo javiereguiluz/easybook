@@ -16,14 +16,14 @@ class TwigCssExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'lighten' => new \Twig_Function_Method($this, 'lighten'),
-            'darken' => new \Twig_Function_Method($this, 'darken'),
-            'fade' => new \Twig_Function_Method($this, 'fade'),
-            'css_add' => new \Twig_Function_Method($this, 'cssAdd'),
-            'css_substract' => new \Twig_Function_Method($this, 'cssSubstract'),
-            'css_multiply' => new \Twig_Function_Method($this, 'cssMultiply'),
-            'css_divide' => new \Twig_Function_Method($this, 'cssDivide'),
-
+            new \Twig_SimpleFunction('lighten', array($this, 'lighten')),
+            new \Twig_SimpleFunction('darken', array($this, 'darken')),
+            new \Twig_SimpleFunction('fade', array($this, 'fade')),
+            new \Twig_SimpleFunction('cssAdd', array($this, 'cssAdd')),
+            new \Twig_SimpleFunction('cssSubstract', array($this, 'cssSubstract')),
+            new \Twig_SimpleFunction('cssMultiply', array($this, 'cssMultiply')),
+            new \Twig_SimpleFunction('cssDivide', array($this, 'cssDivide')),
+            new \Twig_SimpleFunction('lighten', array($this, 'lighten')),
         );
     }
 
