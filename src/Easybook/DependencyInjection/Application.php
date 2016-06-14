@@ -324,8 +324,10 @@ SIGNATURE;
      */
     public function renderString($string, $variables = array())
     {
-        $twig = new \Twig_Environment(new \Twig_Loader_String(), $this['twig.options']);
+        $loader = new \Twig_Loader_Array(array('string_template' => $string));
+        $twig = new \Twig_Environment($loader, $this['twig.options']);
 
+        $twig->setCache(false);
         $twig->addGlobal('app', $this);
 
         if (null !== $bookConfig = $this['publishing.book.config']) {
@@ -336,7 +338,7 @@ SIGNATURE;
             $twig->addGlobal('edition', $editions[$publishingEdition]);
         }
 
-        return $twig->render($string, $variables);
+        return $twig->render('string_template', $variables);
     }
 
     /**
