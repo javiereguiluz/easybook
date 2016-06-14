@@ -14,8 +14,8 @@ namespace Easybook\Tests\Commands;
 use Easybook\DependencyInjection\Application;
 use Easybook\Console\ConsoleApplication;
 use Easybook\Console\Command\BookNewCommand;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Filesystem\Filesystem;
@@ -51,10 +51,10 @@ class BookNewCommandTest extends \PHPUnit_Framework_TestCase
 
         // prepare the data that will be input interactively
         // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
-        $dialog = new DialogHelper();
-        $dialog->setInputStream($this->getInputStream("\n\nThe Origin of Species\n"));
-        $helper = new HelperSet(array(new FormatterHelper(), $dialog));
-        $command->setHelperSet($helper);
+        $questionHelper = new QuestionHelper();
+        $questionHelper->setInputStream($this->getInputStream("\n\nThe Origin of Species\n"));
+        $helperSet = new HelperSet(array(new FormatterHelper(), $questionHelper));
+        $command->setHelperSet($helperSet);
 
         $tester = new CommandTester($command);
         $tester->execute(array(
