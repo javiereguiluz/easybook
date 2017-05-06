@@ -26,6 +26,7 @@ class PrinceXMLServiceProvider implements ServiceProviderInterface
             '/usr/local/bin/prince',                         # Mac OS X
             '/usr/bin/prince',                               # Linux
             'C:\Program Files\Prince\engine\bin\prince.exe',  # Windows
+            'C:\Program Files (x86)\Prince\engine\bin\prince.exe', # Windows
         );
 
         $app['prince'] = function () use ($app) {
