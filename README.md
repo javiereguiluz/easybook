@@ -25,12 +25,9 @@ $ composer create-project easybook/easybook easybook
 Once installed, use **easybook** with the `book` command:
 
 ```
-$ cd <easybook-installation-dir>
-$ ./book
+cd <easybook-installation-dir>
+bin/book
 ```
-
-If the last command doesn't work, try `php book` or check `book` script
-permissions.
 
 Documentation
 -------------
