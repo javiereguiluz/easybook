@@ -5,6 +5,8 @@ doc
 !doc/easybook-doc-en/*
 doc/easybook-doc-en/Output/*
 
+composer.lock
+
 easybook.zip
 
 vendor
