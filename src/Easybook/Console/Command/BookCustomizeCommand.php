@@ -26,13 +26,20 @@ class BookCustomizeCommand extends BaseCommand
             ->setDescription('Eases the customization of the book design')
             ->setDefinition(array(
                 new InputArgument(
-                    'slug', InputArgument::REQUIRED, 'Book slug (no spaces allowed)'
+                    'slug',
+                    InputArgument::REQUIRED,
+                    'Book slug (no spaces allowed)'
                 ),
                 new InputArgument(
-                    'edition', InputArgument::REQUIRED, 'The name of the edition to be customized'
+                    'edition',
+                    InputArgument::REQUIRED,
+                    'The name of the edition to be customized'
                 ),
                 new InputOption(
-                    'dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory'
+                    'dir',
+                    '',
+                    InputOption::VALUE_OPTIONAL,
+                    'Path of the documentation directory'
                 ),
             ))
             ->setHelp(file_get_contents(__DIR__.'/Resources/BookCustomizeCommandHelp.txt'));
@@ -79,8 +86,10 @@ class BookCustomizeCommand extends BaseCommand
                 ." rename:\n     %s/<info>%s</info>\n"
                 ." to:\n    %s/<info>%s</info>\n",
                 $this->app->edition('format'),
-                $this->app['publishing.dir.templates'], $edition,
-                $this->app['publishing.dir.templates'], $this->app->edition('format')
+                $this->app['publishing.dir.templates'],
+                $edition,
+                $this->app['publishing.dir.templates'],
+                $this->app->edition('format')
             ),
         ));
     }
@@ -94,8 +103,10 @@ class BookCustomizeCommand extends BaseCommand
 
     private function prepareCustomizationCssFile($file)
     {
-        $customizationSkeleton = sprintf('%s/Customization/%s/style.css',
-            $this->app['app.dir.skeletons'], $this->app->edition('format')
+        $customizationSkeleton = sprintf(
+            '%s/Customization/%s/style.css',
+            $this->app['app.dir.skeletons'],
+            $this->app->edition('format')
         );
 
         if (!file_exists($file)) {
@@ -105,7 +116,8 @@ class BookCustomizeCommand extends BaseCommand
                 "ERROR: The '%s' edition already contains a custom CSS stylesheet.\n"
                     ." You can find it at the following file:\n\n"
                     .' %s',
-                $this->app['publishing.edition'], $file
+                $this->app['publishing.edition'],
+                $file
             ));
         }
     }
@@ -130,7 +142,8 @@ class BookCustomizeCommand extends BaseCommand
         $dialog = $this->getHelperSet()->get('dialog');
 
         // check 'slug' argument
-        $slug = $input->getArgument('slug') ?: $dialog->askAndValidate($output,
+        $slug = $input->getArgument('slug') ?: $dialog->askAndValidate(
+            $output,
             array(
                 " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n",
                 ' > ',
@@ -142,7 +155,8 @@ class BookCustomizeCommand extends BaseCommand
         $input->setArgument('slug', $slug);
 
         // check 'edition' argument
-        $edition = $input->getArgument('edition') ?: $dialog->askAndValidate($output,
+        $edition = $input->getArgument('edition') ?: $dialog->askAndValidate(
+            $output,
             array(
                 " Please, type the name of the <info>edition</info> to be customized (e.g. <comment>web</comment>)\n",
                 ' > ',

@@ -71,7 +71,9 @@ class LinkPlugin implements EventSubscriberInterface
             $matches = array();
             $foundHeadings = preg_match_all(
                 '/<h[1-6].*id="(?<id>.*)".*<\/h[1-6]>/U',
-                $htmlContent, $matches, PREG_SET_ORDER
+                $htmlContent,
+                $matches,
+                PREG_SET_ORDER
             );
 
             if ($foundHeadings > 0) {
@@ -109,7 +111,9 @@ class LinkPlugin implements EventSubscriberInterface
 
                     return sprintf(
                         '<a class="internal" href="%s%s"%s</a>',
-                        $urlBasePath, $newUri, $matches[2]
+                        $urlBasePath,
+                        $newUri,
+                        $matches[2]
                     );
                 },
                 $htmlContent

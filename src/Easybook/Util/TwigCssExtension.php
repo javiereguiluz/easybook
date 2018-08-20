@@ -77,8 +77,12 @@ class TwigCssExtension extends \Twig_Extension
     {
         $rgb = $this->hex2rgb($hex);
 
-        return sprintf('rgba(%d, %d, %d, %.2f)',
-            $rgb[0], $rgb[1], $rgb[2], max(0, min(1, $opacity))
+        return sprintf(
+            'rgba(%d, %d, %d, %.2f)',
+            $rgb[0],
+            $rgb[1],
+            $rgb[2],
+            max(0, min(1, $opacity))
         );
     }
 

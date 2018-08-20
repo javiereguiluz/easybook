@@ -42,7 +42,8 @@ class MobiPublisher extends Epub2Publisher
 
         $epubFilePath = $this->app['publishing.dir.output'].'/book.epub';
 
-        $command = sprintf('%s %s -o book.mobi %s',
+        $command = sprintf(
+            '%s %s -o book.mobi %s',
             $this->app['kindlegen.path'],
             $this->app['kindlegen.command_options'],
             $epubFilePath

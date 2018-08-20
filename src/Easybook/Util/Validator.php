@@ -87,7 +87,8 @@ class Validator
                 "ERROR: The directory of the book cannot be found.\n"
                 ." Check that '%s' directory \n"
                 ." has a folder named as the book slug ('%s')",
-                $baseDir, $slug
+                $baseDir,
+                $slug
             ));
         }
 
@@ -98,7 +99,8 @@ class Validator
                     "ERROR: Too many failed attempts of getting the book directory.\n"
                     ." Check that '%s' directory \n"
                     ." has a folder named as the book slug ('%s')",
-                    $baseDir, $slug
+                    $baseDir,
+                    $slug
                 ));
             }
 
@@ -163,7 +165,8 @@ class Validator
                 throw new \RuntimeException(sprintf(
                     "ERROR: The '%s' edition isn't defined for\n"
                         ."'%s' book.",
-                    $edition, $this->app->book('title')
+                    $edition,
+                    $this->app->book('title')
                 ));
             }
         }
@@ -193,7 +196,8 @@ class Validator
                     " ERROR: Too many failed attempts. Check that your book has a\n"
                     ." '%s' edition defined in the following configuration file:\n"
                     ." '%s'",
-                    $edition, realpath($bookDir.'/config.yml')
+                    $edition,
+                    realpath($bookDir.'/config.yml')
                 ));
             }
 

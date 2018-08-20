@@ -47,7 +47,9 @@ class BookConfigurator
         $configurationViaDefaults = $this->loadDefaultBookConfiguration();
 
         $bookConfiguration = array_replace_recursive(
-            $configurationViaDefaults, $configurationViaFile, $configurationViaCommand
+            $configurationViaDefaults,
+            $configurationViaFile,
+            $configurationViaCommand
         );
 
         return $bookConfiguration;
@@ -126,7 +128,8 @@ class BookConfigurator
             throw new \RuntimeException(sprintf(
                 "ERROR: The '%s' edition isn't defined for\n"
                     ."'%s' book.",
-                $edition, $this->app->book('title')
+                $edition,
+                $this->app->book('title')
             ));
         }
 
@@ -135,7 +138,9 @@ class BookConfigurator
         $defaultConfig = $this->loadDefaultEditionConfiguration();
 
         $configuration = array_replace_recursive(
-            $defaultConfig, $parentEditionConfig, $editionConfig
+            $defaultConfig,
+            $parentEditionConfig,
+            $editionConfig
         );
 
         $bookConfiguration['book']['editions'][$edition] = $configuration;
@@ -167,7 +172,10 @@ class BookConfigurator
                         ."Check in '%s' file \n"
                         ."that the value of 'extends' option in '%s' edition is a valid \n"
                         .'edition of the book',
-                    $edition, $parentEdition, realpath($this->app['publishing.dir.book'].'/config.yml'), $edition
+                    $edition,
+                    $parentEdition,
+                    realpath($this->app['publishing.dir.book'].'/config.yml'),
+                    $edition
                 ));
             }
 

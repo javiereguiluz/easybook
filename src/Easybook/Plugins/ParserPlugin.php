@@ -172,7 +172,8 @@ class ParserPlugin implements EventSubscriberInterface
             // doesn't include the title text
             $fuzzyTitle = '/<h'.$entry['level'].' id="'.$entry['slug']."\">.*<\/h".$entry['level'].">\n\n/";
 
-            $labeledTitle = sprintf("<h%s id=\"%s\">%s%s</h%s>\n\n",
+            $labeledTitle = sprintf(
+                "<h%s id=\"%s\">%s%s</h%s>\n\n",
                 $entry['level'],
                 $entry['slug'],
                 $entry['label'],

@@ -42,7 +42,8 @@ class MarkdownParser implements ParserInterface
         $supportedFormats = array('epub', 'epub2', 'epub3', 'html', 'html_chunked', 'pdf');
 
         if (!in_array($outputFormat, $supportedFormats)) {
-            throw new \Exception(sprintf('No markdown parser available for "%s" format',
+            throw new \Exception(sprintf(
+                'No markdown parser available for "%s" format',
                 $outputFormat
             ));
         }
@@ -67,8 +68,10 @@ class MarkdownParser implements ParserInterface
         $supportedSyntaxes = array('original', 'php-markdown-extra', 'easybook');
 
         if (!in_array($syntax, $supportedSyntaxes)) {
-            throw new \Exception(sprintf('Unknown "%s" Markdown syntax (options available: %s)',
-                $syntax, implode(', ', $supportedSyntaxes)
+            throw new \Exception(sprintf(
+                'Unknown "%s" Markdown syntax (options available: %s)',
+                $syntax,
+                implode(', ', $supportedSyntaxes)
             ));
         }
 

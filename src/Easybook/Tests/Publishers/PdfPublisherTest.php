@@ -52,14 +52,16 @@ HELP;
         $app['prince.default_paths'] = array();
         $app['console.input'] = new ArrayInput(array());
 
-        $publisher = $this->getMock('Easybook\Publishers\PdfPublisher',
+        $publisher = $this->getMock(
+            'Easybook\Publishers\PdfPublisher',
             array('askForPrinceXMLPath'),
             array($app)
         );
 
         $publisher->expects($this->once())
             ->method('askForPrinceXMLPath')
-            ->will($this->returnValue(uniqid('this_path_does_not_exist_'))
+            ->will(
+                $this->returnValue(uniqid('this_path_does_not_exist_'))
         );
 
         $this->assertFalse(
@@ -76,14 +78,16 @@ HELP;
         $app['prince.default_paths'] = array();
         $app['console.input'] = new ArrayInput(array());
 
-        $publisher = $this->getMock('Easybook\Publishers\PdfPublisher',
+        $publisher = $this->getMock(
+            'Easybook\Publishers\PdfPublisher',
             array('askForPrinceXMLPath'),
             array($app)
         );
 
         $publisher->expects($this->once())
             ->method('askForPrinceXMLPath')
-            ->will($this->returnValue(__FILE__)
+            ->will(
+                $this->returnValue(__FILE__)
         );
 
         $this->assertTrue(
@@ -254,11 +258,16 @@ HELP;
 
         $resultingPdfBook = PdfDocument::load($bookFilePath);
 
-        $this->assertCount(2, $resultingPdfBook->pages,
-            'The cover page has been added to the book.');
+        $this->assertCount(
+            2,
+            $resultingPdfBook->pages,
+            'The cover page has been added to the book.'
+        );
 
-        $this->assertFileExists($coverFilePath,
-            'The cover PDF file is NOT deleted after adding it to the book.');
+        $this->assertFileExists(
+            $coverFilePath,
+            'The cover PDF file is NOT deleted after adding it to the book.'
+        );
 
         $this->assertContains(
             'EASYBOOK COVER',

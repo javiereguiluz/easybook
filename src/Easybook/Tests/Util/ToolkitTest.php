@@ -42,7 +42,8 @@ class ToolkitTest extends TestCase
     {
         $this->assertEquals(
             $expectedArray,
-            call_user_func_array('Easybook\Util\Toolkit::array_deep_merge_and_replace', $arguments));
+            call_user_func_array('Easybook\Util\Toolkit::array_deep_merge_and_replace', $arguments)
+        );
     }
 
     public function getArrayDeepMergeAndReplaceData()

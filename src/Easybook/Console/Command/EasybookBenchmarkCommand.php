@@ -34,10 +34,18 @@ class EasybookBenchmarkCommand extends BaseCommand
             ->setDescription('Benchmarks the performance of book publishing')
             ->setDefinition(array(
                 new InputOption(
-                    'full-benchmark', '', InputOption::VALUE_OPTIONAL, 'If true, PDF and MOBI editions are also benchmarked (they require external libraries)', false
+                    'full-benchmark',
+                    '',
+                    InputOption::VALUE_OPTIONAL,
+                    'If true, PDF and MOBI editions are also benchmarked (they require external libraries)',
+                    false
                 ),
                 new InputOption(
-                    'iterations', '', InputOption::VALUE_OPTIONAL, 'The number of times that each book edition is published (if this number is low, the benchmark results aren\'t reliable enough)', '5'
+                    'iterations',
+                    '',
+                    InputOption::VALUE_OPTIONAL,
+                    'The number of times that each book edition is published (if this number is low, the benchmark results aren\'t reliable enough)',
+                    '5'
                 ),
             ))
             ->setHelp('The <info>benchmark</info> command performs a full book publishing benchmark');

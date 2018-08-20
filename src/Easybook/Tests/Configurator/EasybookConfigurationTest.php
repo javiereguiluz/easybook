@@ -55,7 +55,9 @@ class EasybookConfigurationTest extends TestCase
     private function assertEasybookConfiguration($expectedConfiguration)
     {
         foreach ($expectedConfiguration as $option => $expectedValue) {
-            $this->assertEquals($expectedValue, $this->app[$option],
+            $this->assertEquals(
+                $expectedValue,
+                $this->app[$option],
                 "\$app['$option'] = ".(is_array($expectedValue) ? '<Array>' : $expectedValue)
             );
         }

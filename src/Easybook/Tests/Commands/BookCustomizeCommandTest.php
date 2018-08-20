@@ -122,15 +122,20 @@ class BookCustomizeCommandTest extends \PHPUnit_Framework_TestCase
 
         $app = $this->console->getApp();
 
-        $skeletonCss = sprintf('%s/Customization/%s/style.css',
+        $skeletonCss = sprintf(
+            '%s/Customization/%s/style.css',
             $app['app.dir.skeletons'],
             $app->edition('format')
         );
-        $generatedCss = sprintf('%s/%s/style.css',
-            $app['publishing.dir.templates'], $edition
+        $generatedCss = sprintf(
+            '%s/%s/style.css',
+            $app['publishing.dir.templates'],
+            $edition
         );
 
-        $this->assertFileEquals($skeletonCss, $generatedCss,
+        $this->assertFileEquals(
+            $skeletonCss,
+            $generatedCss,
             sprintf('The generated CSS stylesheet for %s edition is correct', $edition)
         );
     }

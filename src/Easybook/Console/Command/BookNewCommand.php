@@ -29,10 +29,15 @@ class BookNewCommand extends BaseCommand
             ->setDescription('Creates a new empty book')
             ->setDefinition(array(
                 new InputArgument(
-                    'title', InputArgument::REQUIRED, 'Book title'
+                    'title',
+                    InputArgument::REQUIRED,
+                    'Book title'
                 ),
                 new InputOption(
-                    'dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory'
+                    'dir',
+                    '',
+                    InputOption::VALUE_OPTIONAL,
+                    'Path of the documentation directory'
                 ),
             ))
             ->setHelp(file_get_contents(__DIR__.'/Resources/BookNewCommandHelp.txt'));
@@ -41,7 +46,8 @@ class BookNewCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $title = Validator::validateNonEmptyString(
-            'title', $input->getArgument('title')
+            'title',
+            $input->getArgument('title')
         );
 
         $dir = Validator::validateDirExistsAndWritable(

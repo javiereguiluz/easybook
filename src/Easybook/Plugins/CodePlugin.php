@@ -103,7 +103,8 @@ class CodePlugin implements EventSubscriberInterface
 
         $item = $event->getItem();
         // regexp copied from PHP-Markdown
-        $item['original'] = preg_replace_callback('{
+        $item['original'] = preg_replace_callback(
+            '{
                 (?:\n(?<indent>(?:[ ]{4})*)\n|\A\n?)
                 (?<code>                    # $1 = the code block -- one or more lines, starting with a space/tab
                     (?:(?>
@@ -125,7 +126,8 @@ class CodePlugin implements EventSubscriberInterface
 
                 // if present, strip code language declaration ([php], [js], ...)
                 $language = 'code';
-                $code = preg_replace_callback('{
+                $code = preg_replace_callback(
+                    '{
                         ^\[(?<lang>.*)\]\n(?<code>.*)
                     }x',
                     function ($matches) use (&$language) {
@@ -180,7 +182,8 @@ class CodePlugin implements EventSubscriberInterface
 
         $item = $event->getItem();
         // regexp adapted from PHP-Markdown
-        $item['original'] = preg_replace_callback('{
+        $item['original'] = preg_replace_callback(
+            '{
                 (?:\n|\A)
                 # 1: Opening marker
                 (
@@ -259,7 +262,8 @@ class CodePlugin implements EventSubscriberInterface
 
         $item = $event->getItem();
         // regexp adapted from PHP-Markdown
-        $item['original'] = preg_replace_callback('{
+        $item['original'] = preg_replace_callback(
+            '{
                 (?:\n|\A)
                 # 1: Opening marker
                 (

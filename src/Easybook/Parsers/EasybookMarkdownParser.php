@@ -95,8 +95,8 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
     public function doHeaders($text)
     {
         #
-    # Redefined to add id attribute support.
-    #
+        # Redefined to add id attribute support.
+        #
         # Setext-style headers:
         #     Header 1  {#header1}
         #     ========
@@ -110,7 +110,9 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
                 (?:[ ]+\{\#([-_:a-zA-Z0-9]+)\})?    # $2: Id attribute
                 [ ]*\n(=+|-+)[ ]*\n+                # $3: Header footer
             }mx',
-            array(&$this, '_doHeaders_callback_setext'), $text);
+            array(&$this, '_doHeaders_callback_setext'),
+            $text
+        );
 
         # atx-style headers:
         #   # Header 1        {#header1}
@@ -119,7 +121,8 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
         #   ...
         #   ###### Header 6   {#header2}
         #
-        $text = preg_replace_callback('{
+        $text = preg_replace_callback(
+            '{
                 ^(\#{1,6})  # $1 = string of #\'s
                 [ ]*
                 (.+?)       # $2 = Header text
@@ -129,7 +132,9 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
                 [ ]*
                 \n+
             }xm',
-            array(&$this, '_doHeaders_callback_atx'), $text);
+            array(&$this, '_doHeaders_callback_atx'),
+            $text
+        );
 
         return $text;
     }
@@ -344,7 +349,8 @@ class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterf
      */
     public function doAdmonitions($text)
     {
-        $text = preg_replace_callback('/
+        $text = preg_replace_callback(
+            '/
             (
                 (?>^[ ]*(['.implode('', array_keys($this->admonitionTypes)).'])>[ ]?.+\n)+
             )

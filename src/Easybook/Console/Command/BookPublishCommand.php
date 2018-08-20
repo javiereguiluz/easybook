@@ -29,16 +29,27 @@ class BookPublishCommand extends BaseCommand
             ->setDescription('Publishes an edition of a book')
             ->setDefinition(array(
                 new InputArgument(
-                    'slug', InputArgument::REQUIRED, 'Book slug (no spaces allowed, use dashes instead)'
+                    'slug',
+                    InputArgument::REQUIRED,
+                    'Book slug (no spaces allowed, use dashes instead)'
                 ),
                 new InputArgument(
-                    'edition', InputArgument::REQUIRED, 'Edition to be published'
+                    'edition',
+                    InputArgument::REQUIRED,
+                    'Edition to be published'
                 ),
                 new InputOption(
-                    'dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory'
+                    'dir',
+                    '',
+                    InputOption::VALUE_OPTIONAL,
+                    'Path of the documentation directory'
                 ),
                 new InputOption(
-                    'configuration', '', InputOption::VALUE_OPTIONAL, 'Additional book configuration options', ''
+                    'configuration',
+                    '',
+                    InputOption::VALUE_OPTIONAL,
+                    'Additional book configuration options',
+                    ''
                 ),
             ))
             ->setHelp(file_get_contents(__DIR__.'/Resources/BookPublishCommandHelp.txt'));
@@ -81,7 +92,8 @@ class BookPublishCommand extends BaseCommand
         $this->app->dispatch(Events::PRE_PUBLISH, new BaseEvent($this->app));
         $output->writeln(sprintf(
             "\n Publishing <comment>%s</comment> edition of <info>%s</info> book...\n",
-            $edition, $this->app->book('title')
+            $edition,
+            $this->app->book('title')
         ));
 
         // 1-line magic publication!
@@ -137,7 +149,8 @@ class BookPublishCommand extends BaseCommand
                 "There was an error executing the following script: \n"
                 ."  %s\n\n"
                 ."  %s\n",
-                $scripts, $process->getErrorOutput()
+                $scripts,
+                $process->getErrorOutput()
             ));
         }
     }
@@ -162,7 +175,8 @@ class BookPublishCommand extends BaseCommand
         $dialog = $this->getHelperSet()->get('dialog');
 
         // check 'slug' argument
-        $slug = $input->getArgument('slug') ?: $dialog->askAndValidate($output,
+        $slug = $input->getArgument('slug') ?: $dialog->askAndValidate(
+            $output,
             array(
                 " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n",
                 ' > ',
@@ -174,7 +188,8 @@ class BookPublishCommand extends BaseCommand
         $input->setArgument('slug', $slug);
 
         // check 'edition' argument
-        $edition = $input->getArgument('edition') ?: $dialog->askAndValidate($output,
+        $edition = $input->getArgument('edition') ?: $dialog->askAndValidate(
+            $output,
             array(
                 " Please, type the name of the <info>edition</info> to be published (e.g. <comment>web</comment>)\n",
                 ' > ',

@@ -119,8 +119,11 @@ class PublisherTest extends TestCase
                             $this->assertFileEquals(
                                 $expected.'/'.$genFile->getRelativePathname(),
                                 $genFile->getPathname(),
-                                sprintf("ERROR on $book:\n '%s' file (into ZIP file '%s') not properly generated",
-                                         $genFile->getRelativePathname(), $file->getPathName())
+                                sprintf(
+                                    "ERROR on $book:\n '%s' file (into ZIP file '%s') not properly generated",
+                                         $genFile->getRelativePathname(),
+                                    $file->getPathName()
+                                )
                             );
                         }
 
@@ -138,7 +141,8 @@ class PublisherTest extends TestCase
                 // assert that all required files are generated
                 $this->checkForMissingFiles(
                         __DIR__.'/fixtures/'.$slug.'/expected/'.$editionName,
-                        $this->tmpDir.'/'.$slug.'/Output/'.$editionName);
+                        $this->tmpDir.'/'.$slug.'/Output/'.$editionName
+                );
 
                 // assert than book publication took less than 5 seconds
                 $this->assertLessThan(

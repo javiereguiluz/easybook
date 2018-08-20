@@ -36,7 +36,8 @@ class PrinceXMLServiceProvider implements ServiceProviderInterface
 
                 if (!file_exists($princePath)) {
                     throw new \RuntimeException(sprintf(
-                         "We couldn't find the PrinceXML executable in the given directory (%s)", $princePath
+                         "We couldn't find the PrinceXML executable in the given directory (%s)",
+                        $princePath
                     ));
                 }
             }

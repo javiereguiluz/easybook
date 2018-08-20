@@ -63,7 +63,8 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
-            $this->app->render('@theme/style.css.twig',
+            $this->app->render(
+                '@theme/style.css.twig',
                 array('resources_dir' => $this->app['app.dir.resources'].'/'),
                 $this->app['publishing.dir.output'].'/css/easybook.css'
             );
@@ -94,7 +95,8 @@ class HtmlChunkedPublisher extends HtmlPublisher
         }
 
         // generate index page
-        $this->app->render('index.twig',
+        $this->app->render(
+            'index.twig',
             array('items' => $this->app['publishing.items'], 'toc' => $toc, 'has_custom_css' => $hasCustomCss),
             $this->app['publishing.dir.output'].'/index.html'
         );
@@ -381,8 +383,12 @@ class HtmlChunkedPublisher extends HtmlPublisher
     private function prepareItemChunks($item)
     {
         // divide the item content using '<h1>' and '<h2>' HTML sections
-        $originalItemChunks = preg_split('/(<h[1-2].*<\/h[1-2]>)/', $item['content'],
-            null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $originalItemChunks = preg_split(
+            '/(<h[1-2].*<\/h[1-2]>)/',
+            $item['content'],
+            null,
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
+        );
 
         // prepare each chunk information combining the item['toc'] information
         // with the contents extracted in the $originalItemChunks variable

@@ -71,8 +71,11 @@ class Compressor
         // delete temp directory
         $this->filesystem->remove($this->packageDir);
 
-        echo sprintf("\n %d files added\n\n %s (%.2f MB) package built successfully\n\n",
-            $this->fileCount, $this->zipFile, filesize($this->zipFile) / (1024 * 1024)
+        echo sprintf(
+            "\n %d files added\n\n %s (%.2f MB) package built successfully\n\n",
+            $this->fileCount,
+            $this->zipFile,
+            filesize($this->zipFile) / (1024 * 1024)
         );
     }
 

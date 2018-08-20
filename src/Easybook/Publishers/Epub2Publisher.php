@@ -120,12 +120,16 @@ class Epub2Publisher extends HtmlPublisher
         $bookFonts = $this->prepareBookFonts($bookTmpDir.'/book/OEBPS/fonts');
 
         // generate the book cover page
-        $this->app->render('cover.twig', array('customCoverImage' => $bookCover),
+        $this->app->render(
+            'cover.twig',
+            array('customCoverImage' => $bookCover),
             $bookTmpDir.'/book/OEBPS/titlepage.html'
         );
 
         // generate the OPF file (the ebook manifest)
-        $this->app->render('content.opf.twig', array(
+        $this->app->render(
+            'content.opf.twig',
+            array(
                 'cover' => $bookCover,
                 'has_custom_css' => $hasCustomCss,
                 'fonts' => $bookFonts,
@@ -136,15 +140,21 @@ class Epub2Publisher extends HtmlPublisher
         );
 
         // generate the NCX file (the table of contents)
-        $this->app->render('toc.ncx.twig', array('items' => $bookItems),
+        $this->app->render(
+            'toc.ncx.twig',
+            array('items' => $bookItems),
             $bookTmpDir.'/book/OEBPS/toc.ncx'
         );
 
         // generate container.xml and mimetype files
-        $this->app->render('container.xml.twig', array(),
+        $this->app->render(
+            'container.xml.twig',
+            array(),
             $bookTmpDir.'/book/META-INF/container.xml'
         );
-        $this->app->render('mimetype.twig', array(),
+        $this->app->render(
+            'mimetype.twig',
+            array(),
             $bookTmpDir.'/book/mimetype'
         );
 
@@ -395,7 +405,9 @@ class Epub2Publisher extends HtmlPublisher
     {
         $command = sprintf(
             'cd %s && zip -X0 %s mimetype && zip -rX9 %s * -x mimetype',
-            $directory, $zip_file, $zip_file
+            $directory,
+            $zip_file,
+            $zip_file
         );
 
         $process = new Process($command);
@@ -458,7 +470,9 @@ class Epub2Publisher extends HtmlPublisher
             $matches = array();
             $numHeadings = preg_match_all(
                 '/<h[1-6].*id="(?<id>.*)".*<\/h[1-6]>/U',
-                $htmlContent, $matches, PREG_SET_ORDER
+                $htmlContent,
+                $matches,
+                PREG_SET_ORDER
             );
 
             if ($numHeadings > 0) {

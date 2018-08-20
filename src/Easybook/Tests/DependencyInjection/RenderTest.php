@@ -68,7 +68,8 @@ class RenderTest extends TestCase
     {
         $templateFileName = 'template.twig';
 
-        file_put_contents($this->templateDir.'/'.$templateFileName,
+        file_put_contents(
+            $this->templateDir.'/'.$templateFileName,
             'Template for "{{ book.title }}"'
         );
 
@@ -82,7 +83,8 @@ class RenderTest extends TestCase
     {
         $templateFileName = 'template.twig';
 
-        file_put_contents($this->templateDir.'/'.$templateFileName,
+        file_put_contents(
+            $this->templateDir.'/'.$templateFileName,
             'Template for "{{ book.title }}" (by {{ author }})'
         );
 
@@ -98,15 +100,19 @@ class RenderTest extends TestCase
         $targetFileName = 'rendered.txt';
         $expectedFileName = 'expected.txt';
 
-        file_put_contents($this->templateDir.'/'.$templateFileName,
+        file_put_contents(
+            $this->templateDir.'/'.$templateFileName,
             'Template for "{{ book.title }}" (by {{ author }})'
         );
 
-        file_put_contents($this->templateDir.'/'.$expectedFileName,
+        file_put_contents(
+            $this->templateDir.'/'.$expectedFileName,
             'Template for "Custom Test Book Title" (by easybook tests)'
         );
 
-        $this->app->render($templateFileName, array('author' => 'easybook tests'),
+        $this->app->render(
+            $templateFileName,
+            array('author' => 'easybook tests'),
             $this->templateDir.'/'.$targetFileName
         );
 
