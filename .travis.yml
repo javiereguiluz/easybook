@@ -2,37 +2,20 @@ language: php
 
 sudo: false
 
-cache:
-  directories:
-    - $HOME/.composer/cache
-    - $HOME/.app/cache
-
-env:
-  global:
-    - CHECK_PHP_SYNTAX="no"
-
 matrix:
   fast_finish: true
   include:
-    - php: 7.0
+    - php: 7.1
       env: CHECK_PHP_SYNTAX="yes"
-    - php: 5.6
-    - php: 5.5
-    - php: 5.4
-    - php: 5.3
-  allow_failures:
-    - php: 7.0
+    - php: 7.2
 
 before_install:
-    - echo 'memory_limit=-1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-    - phpenv config-rm xdebug.ini
-    - composer selfupdate
+  # remove xdebug to speed up everything
+  - phpenv config-rm xdebug.ini
 
 install:
-    - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then curl http://get.sensiolabs.org/php-cs-fixer.phar -o php-cs-fixer; fi;
-    - composer install
+  - composer install
 
 script:
-    - phpunit
-    - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then php php-cs-fixer --no-interaction --dry-run --diff -v fix; fi;
-    - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then mv ./.php_cs.cache $HOME/.app/cache/.php_cs.cache; fi;
+  - vendor/bin/phpunit
+  - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then vendor/bin/php-cs-fixer --no-interaction --dry-run --diff -v fix; fi;
