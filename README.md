@@ -1,5 +1,4 @@
-easybook
-========
+# easybook
 
 *«book publishing as easy as it should be»*
 
@@ -12,45 +11,30 @@ publish any kind of book, manual or documentation website.
 
 ![easybook worflow diagram](doc/easybook-doc-en/Contents/images/what_is_easybook.png)
 
-Installation
-------------
-
-Make sure to have installed [Composer](https://getcomposer.org/) globally in
-your system and execute the following command:
+## Installation
 
 ```bash
-$ composer create-project easybook/easybook easybook
+composer create-project easybook/easybook easybook
+cd easybook 
 ```
 
-Once installed, use **easybook** with the `book` command:
+Once installed, use **easybook** with the bin:
 
 ```
-cd <easybook-installation-dir>
 bin/book
 ```
 
-Documentation
--------------
+## Documentation
 
-**easybook** is fully documented at http://easybook-project.org/documentation
+**easybook** is fully documented at [`/doc/easybook-doc-en`](/doc/easybook-doc-en)
 
-License
--------
-
-**easybook** is licensed under the [MIT license](LICENSE.md).
-
-Tests
------
-
-Execute the following command to test **easybook** (it requires PHPUnit):
+## Tests
 
 ```
-$ cd <easybook-installation-dir>
-$ phpunit
+vendor/bin/phpunit
 ```
 
-Requirements
-------------
+## Requirements
 
 In order to generate PDF files, PrinceXML library must be installed.
 If you haven't installed it yet, you can download a fully-functional demo at:
