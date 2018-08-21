@@ -14,3 +14,13 @@ services:
 
     Easybook\:
         resource: '../src/Easybook'
+
+    # from providers
+    GeSHi:
+        class: 'GeSHi'
+        calls:
+            - ['enable_classes'] # this must be the first method (see Geshi doc)
+            - ['enable_classes', ['%app.charset%']]
+            - ['enable_line_numbers', [!const GESHI_NO_LINE_NUMBERS]]
+            - ['enable_keyword_links', [false]]
+

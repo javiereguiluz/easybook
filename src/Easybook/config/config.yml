@@ -24,9 +24,9 @@ parameters:
     app.dir.themes: '%kernel.project_dir%/app/Resources/Themes'
 
     # console
-    console.input: null
-    console.output: null
-    console.dialog: null
+    console.input: ~
+    console.output: ~
+    console.dialog: ~
 
     # timer
     app.timer.start: 0.0
@@ -59,3 +59,29 @@ parameters:
     publishing.links: []
     publishing.list.images: []
     publishing.list.tables: []
+
+    # kindle gen
+    kindlegen.path: ~
+
+    # the common installation dirs for KindleGen in several OS
+    kindlegen.default_paths:
+        # Mac OS X & Linux
+        - '/usr/local/bin/kindlegen'
+        - '/usr/bin/kindlegen'
+        # Windows
+        - 'c:\KindleGen\kindlegen'
+
+        # -c0: no compression
+        # -c1: standard DOC compression
+        # -c2: Kindle huffdic compression
+        # -verbose: (even more) verbose output
+        # -western: force Windows-1252 charset
+        # -gif: transform book images to GIF
+        kindlegen.command_options: '-c1'
+
+    # parse
+    parser.options:
+        # available syntaxes: 'original', 'php-markdown-extra', 'easybook'
+        markdown_syntax: 'easybook'
+        # available types: 'markdown', 'fenced', 'github'
+        code_block_type: 'markdown'

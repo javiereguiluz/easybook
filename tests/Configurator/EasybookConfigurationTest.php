@@ -13,8 +13,6 @@ namespace Easybook\Tests\Configurator;
 
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symfony\Component\Yaml\Yaml;
-use Easybook\DependencyInjection\Application;
-use Easybook\Tests\TestCase;
 use Easybook\Util\Toolkit;
 
 final class EasybookConfigurationTest extends AbstractContainerAwareTestCase
@@ -66,8 +64,6 @@ final class EasybookConfigurationTest extends AbstractContainerAwareTestCase
 
     private function getApplication($configFileName)
     {
-        $app = new Application();
-
         $configurator = $this->getMock('Easybook\Configurator\BookConfigurator', array('loadBookFileConfiguration'), array($app));
         $configurator->expects($this->any())
             ->method('loadBookFileConfiguration')

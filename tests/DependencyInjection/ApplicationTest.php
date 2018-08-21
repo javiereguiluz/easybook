@@ -112,9 +112,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
     {
         $app = new Application();
 
-        // needed to simulate the third-party library required to publish PDF books
-        $app['prince.path'] = __FILE__;
-
         $app['publishing.edition'] = 'my_edition';
 
         $app['publishing.book.config'] = array(
@@ -139,7 +136,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
      */
     public function testDeprecatedPublishingIdProperty()
     {
-        $app = new Application();
         $app['publishing.edition.id'] = 'custom_edition_id';
 
         $id = $app['publishing.id'];
@@ -150,13 +146,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
      */
     public function testPublisherTypes($outputformat, $publisherClassName)
     {
-        $app = new Application();
-
-        // needed to simulate the third-party libraries required
-        // to publish PDF and MOBI books
-        $app['kindlegen.path'] = __FILE__;
-        $app['prince.path'] = __FILE__;
-
         $app['publishing.edition'] = 'my_edition';
 
         $app['publishing.book.config'] = array(
@@ -176,7 +165,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
     {
         return array(
             array('epub',         'Easybook\Publishers\Epub2Publisher'),
-            array('mobi',         'Easybook\Publishers\MobiPublisher'),
             array('pdf',          'Easybook\Publishers\PdfPublisher'),
             array('html',         'Easybook\Publishers\HtmlPublisher'),
             array('html_chunked', 'Easybook\Publishers\HtmlChunkedPublisher'),

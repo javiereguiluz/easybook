@@ -11,13 +11,25 @@
 
 namespace Easybook\Tests\Plugins;
 
-use Easybook\DependencyInjection\Application;
 use Easybook\Events\ParseEvent;
 use Easybook\Plugins\CodePlugin;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use Twig\Parser;
 
 final class CodePluginTest extends AbstractContainerAwareTestCase
 {
+    /**
+     * @var Parser
+     */
+    private $parser;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->parser = $this->container->get(Parser::class);
+    }
+
+
     /**
      * @dataProvider  getCodeBlockConfiguration
      *

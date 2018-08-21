@@ -21,17 +21,9 @@ use ZendPdf\PdfDocument;
  */
 class PdfPublisher extends BasePublisher
 {
-    public function checkIfThisPublisherIsSupported()
+    public function __construct()
     {
-        if (null !== $this->app['prince.path'] && file_exists($this->app['prince.path'])) {
-            $princeXMLPath = $this->app['prince.path'];
-        } else {
-            $princeXMLPath = $this->findPrinceXMLPath();
-        }
-
-        $this->app['prince.path'] = $princeXMLPath;
-
-        return null !== $princeXMLPath && file_exists($princeXMLPath);
+        // @todo use open-sourced wkhtmlpdf
     }
 
     public function loadContents()

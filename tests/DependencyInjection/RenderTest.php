@@ -13,12 +13,9 @@ namespace Easybook\Tests\DependencyInjection;
 
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Easybook\Tests\TestCase;
-use Easybook\DependencyInjection\Application;
 
 /**
- * Tests related to the render() method of the
- * Easybook\DependencyInjection\Application class.
+ * Tests related to the render() method
  */
 final class RenderTest extends AbstractContainerAwareTestCase
 {

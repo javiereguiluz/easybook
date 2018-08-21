@@ -11,25 +11,12 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\DependencyInjection\Application;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
 
-class BasePublisher implements PublisherInterface
+final class BasePublisher implements PublisherInterface
 {
-    protected $app;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
-    public function checkIfThisPublisherIsSupported()
-    {
-        return true;
-    }
-
     /**
      * It controls the book publishing workflow for this particular publisher.
      */
