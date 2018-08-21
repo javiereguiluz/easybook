@@ -2,7 +2,7 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\Events\BaseEvent;
+use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
 use RuntimeException;
@@ -78,7 +78,7 @@ abstract class AbstractPublisher implements PublisherInterface
             $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before decorating it
-            $event = new BaseEvent($this->app);
+            $event = new AbstractEvent($this->app);
             $this->app->dispatch(Events::PRE_DECORATE, $event);
 
             // get again 'item' object because PRE_DECORATE event can modify it
@@ -88,7 +88,7 @@ abstract class AbstractPublisher implements PublisherInterface
 
             $this->app['publishing.active_item'] = $item;
 
-            $event = new BaseEvent($this->app);
+            $event = new AbstractEvent($this->app);
             $this->app->dispatch(Events::POST_DECORATE, $event);
 
             // get again 'item' object because POST_DECORATE event can modify it

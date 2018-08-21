@@ -60,45 +60,15 @@ final class TablePluginTest extends AbstractContainerAwareTestCase
     public function getTestTablePluginData()
     {
         return [
-            [
-                'input_1.html',
-                'expected_1_1.html',
-                1,
-                true,
-                ['Table 1.1', 'Table 1.2'],
-            ],
+            ['input_1.html', 'expected_1_1.html', 1, true, ['Table 1.1', 'Table 1.2']],
 
-            [
-                'input_1.html',
-                'expected_1_2.html',
-                2,
-                true,
-                ['Table 2.1', 'Table 2.2'],
-            ],
+            ['input_1.html', 'expected_1_2.html', 2, true, ['Table 2.1', 'Table 2.2']],
 
-            [
-                'input_1.html',
-                'expected_1_1.html',
-                1,
-                false,
-                [],
-            ],
+            ['input_1.html', 'expected_1_1.html', 1, false, []],
 
-            [
-                'input_2.html',
-                'expected_2.html',
-                1,
-                false,
-                [],
-            ],
+            ['input_2.html', 'expected_2.html', 1, false, []],
 
-            [
-                'input_3.html',
-                'expected_3.html',
-                'A',
-                true,
-                ['Table A.1'],
-            ],
+            ['input_3.html', 'expected_3.html', 'A', true, ['Table A.1']],
         ];
     }
 }

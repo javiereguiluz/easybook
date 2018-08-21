@@ -7,38 +7,53 @@ use Easybook\Util\Toolkit;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 
 final class PublisherTest extends AbstractContainerAwareTestCase
 {
     private $app;
 
+    /**
+     * @var Filesystem
+     */
     private $filesystem;
 
     private $tmpDir;
 
-    protected function setUp(): void
+    /**
+     * @var Finder
+     */
+    private $finder;
+
+    protected function setUp()
     {
+        $this->finder = $this->container->get(Finder::class);
+    }
+
+
+
+//    protected function setUp(): void
+//    {
         // setup temp dir for generated files
-        $this->tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('phpunit_', true);
-        $this->filesystem = new Filesystem();
-        $this->filesystem->mkdir($this->tmpDir);
+//        $this->tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('phpunit_', true);
+//        $this->filesystem = new Filesystem();
+//        $this->filesystem->mkdir($this->tmpDir);
 
-        parent::setUp();
-    }
+//        parent::setUp();
+//    }
 
-    protected function tearDown(): void
-    {
-        $this->filesystem->remove($this->tmpDir);
-
-        parent::tearDown();
-    }
+//    protected function tearDown(): void
+//    {
+//        $this->filesystem->remove($this->tmpDir);
+//
+//        parent::tearDown();
+//    }
 
     public function testBookPublish(): void
     {
         // find the test books
-        $books = $this->app['finder']
-            ->directories()
+        $books = $this->finder->directories()
             ->name('book*')
             ->depth(0)
             ->in(__DIR__ . '/fixtures');
@@ -74,8 +89,7 @@ final class PublisherTest extends AbstractContainerAwareTestCase
                 $console->find('publish')->run($input, new NullOutput());
 
                 // assert that generated files are exactly the same as expected
-                $generatedFiles = $this->app['finder']
-                    ->files()
+                $generatedFiles = $this->finder->files()
                     ->notName('.gitignore')
                     ->in($this->tmpDir . '/' . $slug . '/Output/' . $editionName);
 
@@ -91,8 +105,7 @@ final class PublisherTest extends AbstractContainerAwareTestCase
                                     $editionName . '/' . $file->getRelativePathname(), $expected);
 
                         // assert that generated files are exactly the same as expected
-                        $genFiles = $this->app['finder']
-                            ->files()
+                        $genFiles = $this->finder->files()
                             ->notName('.gitignore')
                             ->in($generated);
 
@@ -137,8 +150,7 @@ final class PublisherTest extends AbstractContainerAwareTestCase
      */
     protected function checkForMissingFiles($dirExpected, $dirGenerated): void
     {
-        $expectedFiles = $this->app['finder']
-            ->files()
+        $expectedFiles = $this->finder->files()
             ->notName('.gitignore')
             ->in($dirExpected);
 

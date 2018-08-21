@@ -7,30 +7,8 @@ namespace Easybook\Events;
  * It provides access for the application object, the specific item
  * being published and to any of the item's properties.
  */
-final class ParseEvent extends BaseEvent
+final class ParseEvent extends AbstractEvent
 {
-    /**
-     * Getter for the specific item that is being published at
-     * the moment (e.g. a book chapter).
-     *
-     * @return array The item data
-     */
-    public function getItem(): array
-    {
-        return $this->app['publishing.active_item'];
-    }
-
-    /**
-     * Setter to modify the item that is being published at
-     * the moment (e.g. a book chapter).
-     *
-     * @param array $item The item that replaces the old item data
-     */
-    public function setItem(array $item): void
-    {
-        $this->app['publishing.active_item'] = $item;
-    }
-
     /**
      * Getter for any of the properties of the item being published.
      *

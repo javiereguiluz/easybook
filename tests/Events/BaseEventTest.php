@@ -2,7 +2,7 @@
 
 namespace Easybook\Tests\Publishers;
 
-use Easybook\Events\BaseEvent;
+use Easybook\Events\AbstractEvent;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 
 final class BaseEventTest extends AbstractContainerAwareTestCase
@@ -24,7 +24,7 @@ final class BaseEventTest extends AbstractContainerAwareTestCase
 
         $this->app['publishing.active_item'] = $item;
 
-        $this->event = new BaseEvent($this->app);
+        $this->event = new AbstractEvent($this->app);
     }
 
     public function testGetItem(): void

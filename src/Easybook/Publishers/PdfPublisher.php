@@ -2,7 +2,6 @@
 
 namespace Easybook\Publishers;
 
-use RuntimeException;
 use ZendPdf\PdfDocument;
 
 /**
@@ -50,9 +49,6 @@ final class PdfPublisher extends AbstractPublisher
         $this->app->render('book.twig', ['items' => $this->app['publishing.items']], $htmlBookFilePath);
 
         // use PrinceXML to transform the HTML book into a PDF book
-        $prince = $this->app['prince'];
-        $prince->setBaseURL($this->app['publishing.dir.contents'] . '/images');
-
         // Prepare and add stylesheets before PDF conversion
         if ($this->app->edition('include_styles')) {
             $defaultStyles = $tmpDir . '/default_styles.css';
@@ -62,72 +58,20 @@ final class PdfPublisher extends AbstractPublisher
                 $defaultStyles
             );
 
-            $prince->addStyleSheet($defaultStyles);
+//            $prince->addStyleSheet($defaultStyles);
         }
 
         $customCss = $this->app->getCustomTemplate('style.css');
-        if (file_exists($customCss)) {
-            $prince->addStyleSheet($customCss);
-        }
+//        if (file_exists($customCss)) {
+//            $prince->addStyleSheet($customCss);
+//        }
 
         $errorMessages = [];
         $pdfBookFilePath = $this->app['publishing.dir.output'] . '/book.pdf';
-        $prince->convert_file_to_file($htmlBookFilePath, $pdfBookFilePath, $errorMessages);
+//        $prince->convert_file_to_file($htmlBookFilePath, $pdfBookFilePath, $errorMessages);
         $this->displayPdfConversionErrors($errorMessages);
 
         $this->addBookCover($pdfBookFilePath, $this->getCustomCover());
-    }
-
-    /**
-     * Looks for the executable of the PrinceXML library.
-     *
-     * @return string The absolute path of the executable
-     *
-     * @throws \RuntimeException If the PrinceXML executable is not found
-     */
-    public function findPrinceXMLPath(): string
-    {
-        foreach ($this->app['prince.default_paths'] as $path) {
-            if (file_exists($path)) {
-                return $path;
-            }
-        }
-
-        // the executable couldn't be found in the common
-        // installation directories. Ask the user for the path
-        $isInteractive = $this->app['console.input'] !== null && $this->app['console.input']->isInteractive();
-        if ($isInteractive) {
-            return $this->askForPrinceXMLPath();
-        }
-
-        throw new RuntimeException(sprintf(
-            "ERROR: The PrinceXML library needed to generate PDF books cannot be found.\n"
-                . " Check that you have installed PrinceXML in a common directory \n"
-                . " or set your custom PrinceXML path in the book's config.yml file:\n\n"
-                . '%s',
-            $this->getSampleYamlConfiguration()
-        ));
-    }
-
-    public function askForPrinceXMLPath()
-    {
-        $this->app['console.output']->write(sprintf(
-            " In order to generate PDF files, PrinceXML library must be installed. \n\n"
-                . " We couldn't find PrinceXML executable in any of the following directories: \n"
-                . "   -> %s \n\n"
-                . " If you haven't installed it yet, you can download a fully-functional demo at: \n"
-                . " %s \n\n"
-                . " If you have installed in a custom directory, please type its full absolute path:\n > ",
-            implode($this->app['prince.default_paths'], "\n   -> "),
-            'http://www.princexml.com/download'
-        ));
-
-        $userGivenPath = trim(fgets(STDIN));
-
-        // output a newline for aesthetic reasons
-        $this->app['console.output']->write("\n");
-
-        return $userGivenPath;
     }
 
     /**

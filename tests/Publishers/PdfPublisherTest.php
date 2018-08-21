@@ -51,38 +51,14 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
     public function provideCoverSampleData()
     {
         return [
-            [
-                ['print/cover.pdf', 'pdf/cover.pdf', 'cover.pdf'],
-                'print/cover.pdf',
-            ],
-            [
-                ['print/cover.jpg', 'pdf/cover.pdf', 'cover.pdf'],
-                'pdf/cover.pdf',
-            ],
-            [
-                ['print/cover.jpg', 'pdf/cover.png', 'cover.pdf'],
-                'cover.pdf',
-            ],
-            [
-                ['pdf/cover.pdf', 'cover.pdf'],
-                'pdf/cover.pdf',
-            ],
-            [
-                ['print/cover.pdf'],
-                'print/cover.pdf',
-            ],
-            [
-                ['pdf/cover.pdf'],
-                'pdf/cover.pdf',
-            ],
-            [
-                ['cover.pdf'],
-                'cover.pdf',
-            ],
-            [
-                ['print/cover.png'],
-                '',
-            ],
+            [['print/cover.pdf', 'pdf/cover.pdf', 'cover.pdf'], 'print/cover.pdf'],
+            [['print/cover.jpg', 'pdf/cover.pdf', 'cover.pdf'], 'pdf/cover.pdf'],
+            [['print/cover.jpg', 'pdf/cover.png', 'cover.pdf'], 'cover.pdf'],
+            [['pdf/cover.pdf', 'cover.pdf'], 'pdf/cover.pdf'],
+            [['print/cover.pdf'], 'print/cover.pdf'],
+            [['pdf/cover.pdf'], 'pdf/cover.pdf'],
+            [['cover.pdf'], 'cover.pdf'],
+            [['print/cover.png'], ''],
         ];
     }
 

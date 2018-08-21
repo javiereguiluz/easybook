@@ -21,6 +21,7 @@
     "require": {
         "php": "^7.1",
         "ext-json": "*",
+        "ext-zip": "*",
         "easybook/geshi": "^1.0",
         "javiereguiluz/easyslugger": "^1.0",
         "michelf/php-markdown": "^1.4",
@@ -58,6 +59,6 @@
     "scripts": {
         "check-cs": "vendor/bin/ecs check src tests",
         "fix-cs": "vendor/bin/ecs check src tests --fix",
-        "phpstan": "vendor/bin/phpstan analyse packages --level max"
+        "phpstan": "vendor/bin/phpstan analyse src tests --level max"
     }
 }

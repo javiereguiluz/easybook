@@ -70,23 +70,23 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
         $originalBookToc = [
             [
                 'slug' => 'item1',
-                'level' => 1
+                'level' => 1,
             ],
             [
                 'slug' => 'item2',
-                'level' => 2
+                'level' => 2,
             ],
             [
                 'slug' => 'item3',
-                'level' => 3
+                'level' => 3,
             ],
             [
                 'slug' => 'item4',
-                'level' => 2
+                'level' => 2,
             ],
             [
                 'slug' => 'item5',
-                'level' => 1
+                'level' => 1,
             ],
         ];
 
@@ -100,21 +100,18 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
     public function getFilterBookTocData()
     {
         return [
-            [
-                0,
-                [],
-            ],
+            [0, []],
 
             [
                 1,
                 [
                     [
                         'slug' => 'item1',
-                        'level' => 1
+                        'level' => 1,
                     ],
                     [
                         'slug' => 'item5',
-                        'level' => 1
+                        'level' => 1,
                     ],
                 ],
             ],
@@ -124,19 +121,19 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
                 [
                     [
                         'slug' => 'item1',
-                        'level' => 1
+                        'level' => 1,
                     ],
                     [
                         'slug' => 'item2',
-                        'level' => 2
+                        'level' => 2,
                     ],
                     [
                         'slug' => 'item4',
-                        'level' => 2
+                        'level' => 2,
                     ],
                     [
                         'slug' => 'item5',
-                        'level' => 1
+                        'level' => 1,
                     ],
                 ],
             ],
@@ -146,23 +143,23 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
                 [
                     [
                         'slug' => 'item1',
-                        'level' => 1
+                        'level' => 1,
                     ],
                     [
                         'slug' => 'item2',
-                        'level' => 2
+                        'level' => 2,
                     ],
                     [
                         'slug' => 'item3',
-                        'level' => 3
+                        'level' => 3,
                     ],
                     [
                         'slug' => 'item4',
-                        'level' => 2
+                        'level' => 2,
                     ],
                     [
                         'slug' => 'item5',
-                        'level' => 1
+                        'level' => 1,
                     ],
                 ],
             ],
@@ -172,23 +169,23 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
                 [
                     [
                         'slug' => 'item1',
-                        'level' => 1
+                        'level' => 1,
                     ],
                     [
                         'slug' => 'item2',
-                        'level' => 2
+                        'level' => 2,
                     ],
                     [
                         'slug' => 'item3',
-                        'level' => 3
+                        'level' => 3,
                     ],
                     [
                         'slug' => 'item4',
-                        'level' => 2
+                        'level' => 2,
                     ],
                     [
                         'slug' => 'item5',
-                        'level' => 1
+                        'level' => 1,
                     ],
                 ],
             ],
@@ -203,23 +200,23 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
         $bookToc = [
             [
                 'slug' => 'item1',
-                'url' => 'chapter-1/item-1.html'
+                'url' => 'chapter-1/item-1.html',
             ],
             [
                 'slug' => 'item2',
-                'url' => 'item-2.html'
+                'url' => 'item-2.html',
             ],
             [
                 'slug' => 'item3',
-                'url' => 'chapter-2/item-3.html'
+                'url' => 'chapter-2/item-3.html',
             ],
             [
                 'slug' => 'item1',
-                'url' => 'other-chapter-1.html'
+                'url' => 'other-chapter-1.html',
             ],
             [
                 'slug' => 'item1',
-                'url' => 'another-chapter-1.html'
+                'url' => 'another-chapter-1.html',
             ],
         ];
 
@@ -266,10 +263,7 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
         $method = new ReflectionMethod(HtmlChunkedPublisher::class, 'getPreviousChunk');
         $method->setAccessible(true);
 
-        $this->assertSame(
-            $expectedItem,
-            $method->invoke($this->htmlChunkedPublisher, $currentPosition, $bookToc)
-        );
+        $this->assertSame($expectedItem, $method->invoke($this->htmlChunkedPublisher, $currentPosition, $bookToc));
     }
 
     public function getGetPreviousChunkData()
@@ -278,7 +272,7 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
             [0, [
                 'level' => 1,
                 'slug' => 'index',
-                'url' => 'index.html'
+                'url' => 'index.html',
             ]],
             [1, ['slug' => 'item1']],
             [2, ['slug' => 'item2']],
@@ -288,7 +282,7 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
             [6, [
                 'level' => 1,
                 'slug' => 'index',
-                'url' => 'index.html'
+                'url' => 'index.html',
             ]],
         ];
     }
@@ -309,10 +303,7 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
         $method = new ReflectionMethod(HtmlChunkedPublisher::class, 'getNextChunk');
         $method->setAccessible(true);
 
-        $this->assertSame(
-            $expectedItem,
-            $method->invoke($this->htmlChunkedPublisher, $currentPosition, $bookToc)
-        );
+        $this->assertSame($expectedItem, $method->invoke($this->htmlChunkedPublisher, $currentPosition, $bookToc));
     }
 
     public function getGetNextChunkData()

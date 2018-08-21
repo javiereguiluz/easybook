@@ -5,7 +5,6 @@ namespace Easybook\Util;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ZipArchive;
-use ZIPARCHIVE;
 
 final class Toolkit
 {
@@ -19,30 +18,15 @@ final class Toolkit
      *
      * code inspired by:
      * http://www.php.net/manual/en/function.array-merge-recursive.php#104145
+     *
+     * @return mixed[]
      */
-    public static function array_deep_merge_and_replace(): void
+    public static function array_deep_merge_and_replace(...$arrays): array
     {
-        if (func_num_args() < 2) {
-            trigger_error(__FUNCTION__ . ' needs two or more array arguments', E_USER_WARNING);
-
-            return;
-        }
-
-        $arrays = func_get_args();
         $merged = [];
 
         while (! empty($arrays)) {
             $array = array_shift($arrays);
-
-            if (! is_array($array)) {
-                trigger_error(__FUNCTION__ . ' encountered a non array argument', E_USER_WARNING);
-
-                return;
-            }
-
-            if (empty($array)) {
-                continue;
-            }
 
             foreach ($array as $key => $value) {
                 if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {

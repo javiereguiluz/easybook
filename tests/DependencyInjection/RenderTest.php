@@ -103,6 +103,9 @@ final class RenderTest extends AbstractContainerAwareTestCase
             $this->templateDir . '/' . $targetFileName
         );
 
-        $this->assertFileEquals($this->templateDir . '/' . $expectedFileName, $this->templateDir . '/' . $targetFileName);
+        $this->assertFileEquals(
+            $this->templateDir . '/' . $expectedFileName,
+            $this->templateDir . '/' . $targetFileName
+        );
     }
 }

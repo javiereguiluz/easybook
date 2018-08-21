@@ -2,20 +2,37 @@
 
 namespace Easybook\Util;
 
-use Easybook\DependencyInjection\Application;
 use InvalidArgumentException;
 use RuntimeException;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Groups several validators used across the application.
  */
 final class Validator
 {
-    private $app;
+    /**
+     * @var InputInterface
+     */
+    private $input;
 
-    public function __construct(Application $application)
+    /**
+     * @var OutputInterface
+     */
+    private $output;
+
+    /**
+     * @var SymfonyStyle
+     */
+    private $symfonyStyle;
+
+    public function __construct(InputInterface $input, OutputInterface $output, SymfonyStyle $symfonyStyle)
     {
-        $this->app = $application;
+        $this->input = $input;
+        $this->output = $output;
+        $this->symfonyStyle = $symfonyStyle;
     }
 
     /**
@@ -74,8 +91,7 @@ final class Validator
         $attempts = 6;
         $bookDir = $baseDir . '/' . $slug;
 
-        $isInteractive = $this->app['console.input']->isInteractive();
-        if (! $isInteractive && ! file_exists($bookDir)) {
+        if (! $this->input->isInteractive() && ! file_exists($bookDir)) {
             throw new RuntimeException(sprintf(
                 "ERROR: The directory of the book cannot be found.\n"
                 . " Check that '%s' directory \n"
@@ -97,14 +113,14 @@ final class Validator
                 ));
             }
 
-            $this->app['console.output']->writeln([
+            $this->output->writeln([
                 '',
                 " <bg=red;fg=white> ERROR </> The given <info>${slug}</info> slug doesn't match any book in",
                 ' <comment>' . realpath($baseDir) . '/</comment> directory',
             ]);
 
             $slug = $this->app['console.dialog']->ask(
-                $this->app['console.output'],
+                $this->output,
                 [
                     "\n Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n"
                     . ' > ',
@@ -149,10 +165,8 @@ final class Validator
             ));
         }
 
-        $isInteractive = $this->app['console.input']->isInteractive();
-
         if (! array_key_exists($edition, $this->app->book('editions'))) {
-            if ($isInteractive) {
+            if ($this->input->isInteractive()) {
                 $edition = $this->askForPublishingEdition();
             } else {
                 throw new RuntimeException(sprintf(
@@ -180,7 +194,7 @@ final class Validator
     {
         $attempts = 6;
         $bookDir = $this->app['publishing.dir.book'];
-        $edition = null;
+        $edition = '';
 
         // check that the book has defined the given edition or ask for another edition
         while (! array_key_exists($edition, $this->app->book('editions')) && $attempts--) {
@@ -194,9 +208,9 @@ final class Validator
                 ));
             }
 
-            $this->app['console.output']->writeln([
+            $this->symfonyStyle->error([
                 '',
-                " <bg=red;fg=white> ERROR </> The <info>${edition}</info> edition isn't defined for "
+                " ERROR </> The <info>${edition}</info> edition isn't defined for "
                 . '<comment>' . $this->app->book('title') . '</comment> book',
                 '',
                 ' Check that <comment>' . realpath($bookDir . '/config.yml') . '</comment> file',
@@ -204,7 +218,7 @@ final class Validator
             ]);
 
             $edition = $this->app['console.dialog']->ask(
-                $this->app['console.output'],
+                $this->output,
                 ["\n Please, type the name of the <info>edition</info> to be published:\n" . ' > ']
             );
         }

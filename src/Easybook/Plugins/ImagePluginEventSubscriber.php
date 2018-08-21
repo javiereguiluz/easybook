@@ -4,19 +4,18 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * It performs some operations on the book images, such as
  * fixing their URLs and adding labels to them.
  */
-final class ImagePlugin implements EventSubscriberInterface
+final class ImagePluginEventSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): Iterator
     {
-        return [
-            EasybookEvents::POST_PARSE => [['fixImageUris', -500], ['decorateAndLabelImages', -500]],
-        ];
+        yield EasybookEvents::POST_PARSE => [['fixImageUris', -500], ['decorateAndLabelImages', -500]];
     }
 
     /**

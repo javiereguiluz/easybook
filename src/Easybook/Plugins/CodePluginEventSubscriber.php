@@ -4,19 +4,18 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * It parses and (optionally) highlights the syntax of the code listings.
  */
-final class CodePlugin implements EventSubscriberInterface
+final class CodePluginEventSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): Iterator
     {
-        return [
-            EasybookEvents::PRE_PARSE => ['parseCodeBlocks', -500],
-            EasybookEvents::POST_PARSE => ['fixParsedCodeBlocks', -500],
-        ];
+        yield EasybookEvents::PRE_PARSE => ['parseCodeBlocks', -500];
+        yield EasybookEvents::POST_PARSE => ['fixParsedCodeBlocks', -500];
     }
 
     /**

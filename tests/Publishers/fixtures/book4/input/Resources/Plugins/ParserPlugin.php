@@ -1,17 +1,15 @@
 <?php declare(strict_types=1);
 
-use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class ParserPlugin implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): Iterator
     {
-        return [
-            Events::PRE_PARSE => 'onItemPreParse',
-            Events::POST_PARSE => 'onItemPostParse',
-        ];
+        yield EasybookEvents::PRE_PARSE => 'onItemPreParse';
+        yield EasybookEvents::POST_PARSE => 'onItemPostParse';
     }
 
     public function onItemPreParse(ParseEvent $parseEvent): void

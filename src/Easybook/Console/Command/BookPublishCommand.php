@@ -2,7 +2,7 @@
 
 namespace Easybook\Console\Command;
 
-use Easybook\Events\BaseEvent;
+use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Util\Validator;
 use RuntimeException;
@@ -60,7 +60,7 @@ final class BookPublishCommand extends Command
         $this->runScripts($this->app->edition('before_publish'));
 
         // book publishing starts
-        $this->app->dispatch(Events::PRE_PUBLISH, new BaseEvent($this->app));
+        $this->app->dispatch(Events::PRE_PUBLISH, new AbstractEvent($this->app));
         $output->writeln(sprintf(
             "\n Publishing <comment>%s</comment> edition of <info>%s</info> book...\n",
             $edition,
@@ -71,14 +71,14 @@ final class BookPublishCommand extends Command
         $this->app['publisher']->publishBook();
 
         // book publishing finishes
-        $this->app->dispatch(Events::POST_PUBLISH, new BaseEvent($this->app));
+        $this->app->dispatch(Events::POST_PUBLISH, new AbstractEvent($this->app));
 
         // execute the 'after_publish' scripts
         $this->runScripts($this->app->edition('after_publish'));
 
         $output->writeln([
             ' <bg=green;fg=black> OK </> You can access the book in the following directory:',
-            ' <comment>' . realpath($this->app['publishing.dir.output']) . '</comment>'
+            ' <comment>' . realpath($this->app['publishing.dir.output']) . '</comment>',
         ]);
     }
 

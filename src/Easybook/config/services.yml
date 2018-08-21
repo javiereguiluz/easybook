@@ -13,7 +13,7 @@ services:
             $version: '%version%'
 
     Easybook\:
-        resource: '../../../src/Easybook'
+        resource: '..'
 
     # from providers
     GeSHi:
@@ -29,15 +29,16 @@ services:
             - '%slugger_separator%'
 
 
-    Twig_Environment:
-        class: 'Twig_Environment'
+    Twig\Environment:
         arguments:
             $options: '%twig.options%'
-
         calls:
             # @todo use collector
              - ['addExtension', ['@Easybook\Util\TwigCssExtension']]
 
+    Twig_LoaderInterface:
+        class: 'Twig_Loader_Filesystem'
+        factory: ['@Easybook\Twig\TwigLoaderFactory', 'create']
 #        if (null !== $bookConfig = $app['publishing.book.config']) {
 #        $twig->addGlobal('book', $bookConfig['book']);
 #        $publishingEdition = $app['publishing.edition'];
@@ -45,3 +46,14 @@ services:
 #        $twig->addGlobal('edition', $editions[$publishingEdition]);
 
     Michelf\MarkdownExtra: ~
+
+    # Console
+    Symfony\Component\Console\Style\SymfonyStyle:
+    Symfony\Component\Console\Input\ArgvInput: ~
+    Symfony\Component\Console\Input\InputInterface:
+        alias: Symfony\Component\Console\Input\ArgvInput
+    Symfony\Component\Console\Output\ConsoleOutput: ~
+    Symfony\Component\Console\Output\OutputInterface:
+        alias: Symfony\Component\Console\Output\ConsoleOutput
+
+    Symplify\PackageBuilder\Parameter\ParameterProvider: ~

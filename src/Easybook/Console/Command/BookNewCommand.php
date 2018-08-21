@@ -2,7 +2,7 @@
 
 namespace Easybook\Console\Command;
 
-use Easybook\Events\BaseEvent;
+use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Generator\BookGenerator;
 use Easybook\Util\Validator;
@@ -31,7 +31,7 @@ final class BookNewCommand extends Command
 
         $slug = $this->app->slugify($title);
 
-        $this->app->dispatch(Events::PRE_NEW, new BaseEvent($this->app));
+        $this->app->dispatch(Events::PRE_NEW, new AbstractEvent($this->app));
 
         $generator = new BookGenerator();
         $generator->setFilesystem($this->app['filesystem']);
@@ -46,7 +46,7 @@ final class BookNewCommand extends Command
         ]);
         $generator->generate();
 
-        $this->app->dispatch(Events::POST_NEW, new BaseEvent($this->app));
+        $this->app->dispatch(Events::POST_NEW, new AbstractEvent($this->app));
 
         $output->writeln([
             '',

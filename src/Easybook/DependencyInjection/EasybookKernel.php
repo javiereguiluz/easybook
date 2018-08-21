@@ -80,6 +80,16 @@ final class EasybookKernel extends Kernel
         return $array;
     }
 
+    public function getCacheDir(): string
+    {
+        return sys_get_temp_dir() . '/_easybook';
+    }
+
+    public function getLogDir(): string
+    {
+        return sys_get_temp_dir() . '/_easybook_log';
+    }
+
 //    /**
 //     * Transforms the string into a web-safe slug.
 //     *

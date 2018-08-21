@@ -55,9 +55,9 @@ final class ParseEventTest extends TestCase
     public function getTestGetMethodData()
     {
         return [
-            ['key1',           'value1'],
-            ['key2',           'value2'],
-            ['key3',           'value3'],
+            ['key1', 'value1'],
+            ['key2', 'value2'],
+            ['key3', 'value3'],
             ['compound_key_1', 'value1'],
             ['compound_key_2', 'value2'],
             ['compound_key_3', 'value3'],
@@ -77,9 +77,9 @@ final class ParseEventTest extends TestCase
     public function getTestSetMethodData()
     {
         return [
-            ['key1',           'new_value1'],
-            ['key2',           'new_value2'],
-            ['key3',           'new_value3'],
+            ['key1', 'new_value1'],
+            ['key2', 'new_value2'],
+            ['key3', 'new_value3'],
             ['compound_key_1', 'new_value1'],
             ['compound_key_2', 'new_value2'],
             ['compound_key_3', 'new_value3'],

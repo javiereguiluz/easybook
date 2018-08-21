@@ -2,22 +2,22 @@
 
 namespace Easybook\Util;
 
+use Iterator;
 use Twig_Extension;
 use Twig_Function_Method;
+use Twig_SimpleFunction;
 
 final class TwigCssExtension extends Twig_Extension
 {
-    public function getFunctions()
+    public function getFunctions(): Iterator
     {
-        return [
-            'lighten' => new Twig_Function_Method($this, 'lighten'),
-            'darken' => new Twig_Function_Method($this, 'darken'),
-            'fade' => new Twig_Function_Method($this, 'fade'),
-            'css_add' => new Twig_Function_Method($this, 'cssAdd'),
-            'css_substract' => new Twig_Function_Method($this, 'cssSubstract'),
-            'css_multiply' => new Twig_Function_Method($this, 'cssMultiply'),
-            'css_divide' => new Twig_Function_Method($this, 'cssDivide'),
-        ];
+        yield new Twig_SimpleFunction('ligten', [$this, 'lighten']);
+        yield new Twig_SimpleFunction('darken', [$this, 'darken']);
+        yield new Twig_SimpleFunction('fade', [$this, 'fade']);
+        yield new Twig_SimpleFunction('css_add', [$this, 'cssAdd']);
+        yield new Twig_SimpleFunction('css_substract', [$this, 'cssSubstract']);
+        yield new Twig_SimpleFunction('css_multiply', [$this, 'cssMultiply']);
+        yield new Twig_SimpleFunction('css_divide', [$this, 'cssDivide']);
     }
 
     /*
@@ -141,6 +141,10 @@ final class TwigCssExtension extends Twig_Extension
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function ($matches) use ($factor) {
                 $unit = $matches['unit'] ?? 'px';
+
+                if ((int) $factor ===  0) {
+                    return 0;
+                }
 
                 return ($matches['value'] / $factor) . $unit;
             },

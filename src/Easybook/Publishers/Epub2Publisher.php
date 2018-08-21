@@ -2,7 +2,7 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\Events\BaseEvent;
+use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Util\Toolkit;
 use RuntimeException;
@@ -46,12 +46,12 @@ final class Epub2Publisher extends AbstractPublisher
             $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before decorating it
-            $event = new BaseEvent($this->app);
+            $event = new AbstractEvent($this->app);
             $this->app->dispatch(Events::PRE_DECORATE, $event);
 
             // Do nothing to decorate the item
 
-            $event = new BaseEvent($this->app);
+            $event = new AbstractEvent($this->app);
             $this->app->dispatch(Events::POST_DECORATE, $event);
 
             // get again 'item' object because POST_DECORATE event can modify it

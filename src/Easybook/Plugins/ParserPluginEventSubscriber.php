@@ -4,18 +4,22 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * It performs some operations on the book items after they have been parsed.
  */
-final class ParserPlugin implements EventSubscriberInterface
+final class ParserPluginEventSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): Iterator
     {
-        return [
-            EasybookEvents::PRE_PARSE => [['normalizeMarkdownHeaders', -1000]],
-            EasybookEvents::POST_PARSE => [['fixHtmlCode', -1000], ['setItemTitle', -1000], ['addSectionLabels', -1000]],
+        yield EasybookEvents::PRE_PARSE => [['normalizeMarkdownHeaders', -1000]];
+
+        yield EasybookEvents::POST_PARSE => [
+            ['fixHtmlCode', -1000],
+            ['setItemTitle', -1000],
+            ['addSectionLabels', -1000],
         ];
     }
 

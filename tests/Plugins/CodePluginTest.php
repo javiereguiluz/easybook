@@ -3,7 +3,7 @@
 namespace Easybook\Tests\Plugins;
 
 use Easybook\Events\ParseEvent;
-use Easybook\Plugins\CodePlugin;
+use Easybook\Plugins\CodePluginEventSubscriber;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Twig\Parser;
 
@@ -37,7 +37,7 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
         $fixturesDir = __DIR__ . '/fixtures/code/';
 
         $app = $this->getApp($codeBlockType, $enableCodeHightlight);
-        $plugin = new CodePlugin();
+        $plugin = new CodePluginEventSubscriber();
         $event = new ParseEvent($app);
 
         $event->setItem([
@@ -65,13 +65,13 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
     {
         return [
             ['input_1.md', 'expected_easybook_type_disabled_highlight.html', 'easybook', false],
-            ['input_1.md', 'expected_easybook_type_enabled_highlight.html',  'easybook', true],
+            ['input_1.md', 'expected_easybook_type_enabled_highlight.html', 'easybook', true],
 
-            ['input_2.md', 'expected_fenced_type_disabled_highlight.html',   'fenced',   false],
-            ['input_2.md', 'expected_fenced_type_enabled_highlight.html',    'fenced',   true],
+            ['input_2.md', 'expected_fenced_type_disabled_highlight.html', 'fenced', false],
+            ['input_2.md', 'expected_fenced_type_enabled_highlight.html', 'fenced', true],
 
-            ['input_3.md', 'expected_github_type_disabled_highlight.html',   'github',   false],
-            ['input_3.md', 'expected_github_type_enabled_highlight.html',    'github',   true],
+            ['input_3.md', 'expected_github_type_disabled_highlight.html', 'github', false],
+            ['input_3.md', 'expected_github_type_enabled_highlight.html', 'github', true],
         ];
     }
 

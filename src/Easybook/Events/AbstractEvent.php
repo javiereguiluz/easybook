@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\Event;
  * The object passed to most of the events. It provides access for
  * both the application object and the specific item being published.
  */
-final class BaseEvent extends Event
+abstract class AbstractEvent extends Event
 {
     /**
      * Getter for the specific item that is being published at

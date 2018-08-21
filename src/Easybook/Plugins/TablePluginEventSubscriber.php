@@ -4,19 +4,17 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * It performs some operations on the book tables, such as
- * decorating their contents and adding labels to them.
+ * It performs some operations on the book tables, such as decorating their contents and adding labels to them.
  */
-final class TablePlugin implements EventSubscriberInterface
+final class TablePluginEventSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): Iterator
     {
-        return [
-            EasybookEvents::POST_PARSE => ['decorateAndLabelTables', -500],
-        ];
+        yield EasybookEvents::POST_PARSE => ['decorateAndLabelTables', -500];
     }
 
     /**

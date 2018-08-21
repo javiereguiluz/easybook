@@ -3,12 +3,11 @@
 namespace Easybook\Twig;
 
 use Easybook\Util\Toolkit;
-use Twig\Loader\LoaderInterface;
 use Twig_Loader_Filesystem;
 
 final class TwigLoaderFactory
 {
-    public function create(): LoaderInterface
+    public function create(): Twig_Loader_Filesystem
     {
         $theme = ucfirst($app->edition('theme'));
         $format = Toolkit::camelize($app->edition('format'), true);

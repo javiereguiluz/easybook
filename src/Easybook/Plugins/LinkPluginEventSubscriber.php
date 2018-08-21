@@ -2,23 +2,22 @@
 
 namespace Easybook\Plugins;
 
-use Easybook\Events\BaseEvent;
+use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * It performs some operations on the book links, such as fixing the URLs of
  * the links pointing to internal chapters and sections.
  */
-final class LinkPlugin implements EventSubscriberInterface
+final class LinkPluginEventSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): Iterator
     {
-        return [
-            EasybookEvents::POST_PARSE => ['markInternalLinks'],
-            EasybookEvents::POST_PUBLISH => ['fixInternalLinks', -10],
-        ];
+        yield EasybookEvents::POST_PARSE => ['markInternalLinks'];
+        yield EasybookEvents::POST_PUBLISH => ['fixInternalLinks', -10];
     }
 
     /**
@@ -35,7 +34,7 @@ final class LinkPlugin implements EventSubscriberInterface
      * books published as websites merge empty sections and the absolute URI
      * cannot be determined until the book has been completely generated.
      */
-    public function fixInternalLinks(BaseEvent $baseEvent): void
+    public function fixInternalLinks(AbstractEvent $baseEvent): void
     {
         // Link fixing is only needed for 'html_chunked' editions
         if ($baseEvent->app->edition('format') !== 'html_chunked') {
