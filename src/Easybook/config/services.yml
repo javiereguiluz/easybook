@@ -21,15 +21,16 @@ services:
         calls:
             - ['enable_classes'] # this must be the first method (see Geshi doc)
             - ['enable_classes', ['%app.charset%']]
-            - ['enable_line_numbers', [!const GESHI_NO_LINE_NUMBERS]]
+            - ['enable_line_numbers', ['!php/const GESHI_NO_LINE_NUMBERS']]
             - ['enable_keyword_links', [false]]
 
     EasySlugger\Utf8Slugger:
         arguments:
-            - '%slugger.options%:%separator%'
+            - '%slugger_separator%'
 
 
     Twig_Environment:
+        class: 'Twig_Environment'
         arguments:
             $options: '%twig.options%'
 

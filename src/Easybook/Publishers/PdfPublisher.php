@@ -19,7 +19,7 @@ use ZendPdf\PdfDocument;
  * the page number where they point into, so no information is lost when printing
  * the book.
  */
-class PdfPublisher extends BasePublisher
+final class PdfPublisher extends AbstractPublisher
 {
     public function __construct()
     {

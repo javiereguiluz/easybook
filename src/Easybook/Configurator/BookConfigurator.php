@@ -12,7 +12,6 @@
 namespace Easybook\Configurator;
 
 use Symfony\Component\Yaml\Yaml;
-use Easybook\DependencyInjection\Application;
 
 /**
  * Handles book and edition configurations.
@@ -21,15 +20,8 @@ use Easybook\DependencyInjection\Application;
  * configuration isn't strict (each book can define an unlimited number
  * of configuration options and each option can store any value).
  */
-class BookConfigurator
+final class BookConfigurator
 {
-    private $app;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * It loads book configuration by merging all the different configuration
      * sources (CLI command options, YAML configuration file and default configuration).

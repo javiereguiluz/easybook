@@ -11,7 +11,6 @@
 
 namespace Easybook\Plugins;
 
-use Easybook\DependencyInjection\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
@@ -19,7 +18,7 @@ use Easybook\Events\ParseEvent;
 /**
  * It parses and (optionally) highlights the syntax of the code listings.
  */
-class CodePlugin implements EventSubscriberInterface
+final class CodePlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {

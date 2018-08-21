@@ -83,8 +83,8 @@ parameters:
         # available types: 'markdown', 'fenced', 'github'
         code_block_type: 'markdown'
 
+    slugger_separator: '-' # used between words and instead of illegal characters
     slugger.options:
-         separator: '-' # used between words and instead of illegal characters
          prefix: '' # prefix to be appended at the beginning of the slug
 
     # stores all the generated slugs to ensure slug uniqueness

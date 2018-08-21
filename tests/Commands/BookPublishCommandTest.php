@@ -13,35 +13,27 @@ namespace Easybook\Tests\Commands;
 
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Filesystem\Filesystem;
-use Easybook\DependencyInjection\Application;
-use Easybook\Console\ConsoleApplication;
 use Easybook\Console\Command\BookNewCommand;
 use Easybook\Console\Command\BookPublishCommand;
 
 final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 {
-    private $console;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var string
-     */
-    private $tmpDir;
+//
+//
+//    /**
+//     * @var string
+//     */
+//    private $tmpDir;
 
     public function setUp(): void
     {
         // setup temp dir for generated files
-        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
-        $this->filesystem = new Filesystem();
-        $this->filesystem->mkdir($this->tmpDir);
+//        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
+//        $this->filesystem = new Filesystem();
+//        $this->filesystem->mkdir($this->tmpDir);
 
         // generate a sample book before testing its publication
         $command = $this->container->get(BookNewCommand::class);
@@ -49,14 +41,14 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
         $tester->execute([
             'command' => $command->getName(),
             'title' => 'The Origin of Species',
-            '--dir' => $this->tmpDir,
+//            '--dir' => $this->tmpDir,
         ]);
     }
 
-    public function tearDown()
-    {
-        $this->filesystem->remove($this->tmpDir);
-    }
+//    public function tearDown()
+//    {
+//        $this->filesystem->remove($this->tmpDir);
+//    }
 
     public function testInteractiveCommand()
     {

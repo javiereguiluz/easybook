@@ -11,12 +11,8 @@
 
 namespace Easybook\Tests\Commands;
 
-use Easybook\DependencyInjection\Application;
-use Easybook\Console\ConsoleApplication;
-use Easybook\Console\Command\BookNewCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Filesystem\Filesystem;
@@ -28,18 +24,18 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
     protected $tmpDir;
     protected $console;
 
-    public function setUp()
-    {
+//    public function setUp()
+//    {
         // setup temp dir for generated files
-        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
-        $this->filesystem = new Filesystem();
-        $this->filesystem->mkdir($this->tmpDir);
-    }
+//        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
+//        $this->filesystem = new Filesystem();
+//        $this->filesystem->mkdir($this->tmpDir);
+//    }
 
-    public function tearDown()
-    {
-        $this->filesystem->remove($this->tmpDir);
-    }
+//    public function tearDown()
+//    {
+//        $this->filesystem->remove($this->tmpDir);
+//    }
 
     public function testInteractiveCommand()
     {

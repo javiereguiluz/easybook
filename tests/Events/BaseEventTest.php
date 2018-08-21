@@ -11,13 +11,11 @@
 
 namespace Easybook\Tests\Publishers;
 
-use Easybook\DependencyInjection\Application;
 use Easybook\Events\BaseEvent;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 
 final class BaseEventTest extends AbstractContainerAwareTestCase
 {
-    public $app;
     public $event;
     public $item;
 

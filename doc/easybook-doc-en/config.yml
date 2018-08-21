@@ -1,7 +1,6 @@
-easybook:
-    parameters:
-        parser.options:
-            code_block_type: fenced
+parameters:
+    parser.options:
+        code_block_type: fenced
 
 book:
     title:            easybook documentation

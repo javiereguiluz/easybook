@@ -20,7 +20,7 @@ use Easybook\Util\Toolkit;
  * It publishes the book as an EPUB file. All the internal links are transformed
  * into clickable cross-section book links.
  */
-class Epub2Publisher extends HtmlPublisher
+final class Epub2Publisher extends HtmlPublisher
 {
     // 'toc' content type usually makes no sense in epub books (see below)
     // 'cover' is a very special content for epub books
@@ -514,7 +514,7 @@ class Epub2Publisher extends HtmlPublisher
         }
     }
 
-    public function getFormat(): bool
+    public function getFormat(): string
     {
         return 'epub';
     }

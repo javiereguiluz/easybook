@@ -12,7 +12,6 @@
 namespace Easybook\Events;
 
 use Symfony\Component\EventDispatcher\Event;
-use Easybook\DependencyInjection\Application;
 
 /**
  * The object passed to most of the events. It provides access for
@@ -20,13 +19,6 @@ use Easybook\DependencyInjection\Application;
  */
 class BaseEvent extends Event
 {
-    public $app;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * Getter for the specific item that is being published at
      * the moment (e.g. a book chapter).

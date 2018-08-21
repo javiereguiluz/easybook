@@ -13,8 +13,6 @@ namespace Easybook\Tests\Configurator;
 
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symfony\Component\Yaml\Yaml;
-use Easybook\DependencyInjection\Application;
-use Easybook\Tests\TestCase;
 
 final class BookConfigurationTest extends AbstractContainerAwareTestCase
 {
