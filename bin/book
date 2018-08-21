@@ -10,6 +10,9 @@
  * file that was distributed with this source code.
  */
 
+use Easybook\DependencyInjection\ContainerFactory;
+use Symfony\Component\Console\Application;
+
 if (!file_exists(__DIR__.'/../vendor/autoload.php')) {
     throw new \RuntimeException(
         "\n"
@@ -26,9 +29,8 @@ if (!file_exists(__DIR__.'/../vendor/autoload.php')) {
 
 require __DIR__.'/../vendor/autoload.php';
 
-use Easybook\DependencyInjection\Application;
-use Easybook\Console\ConsoleApplication;
+$container = (new ContainerFactory())->create();
 
-$app = new Application();
-$console = new ConsoleApplication($app);
-$console->run();
+/** @var Application $application */
+$application = $container->get(Application::class);
+$application->run();

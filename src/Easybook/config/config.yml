@@ -1,7 +1,9 @@
 imports:
-      - { resource: 'services.yml' }
+    - { resource: 'services.yml' }
 
 parameters:
+    version: '5.0-DEV'
+
     app.debug: false
     app.charset: 'UTF-8'
     app.name: 'easybook'

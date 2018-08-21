@@ -7,5 +7,10 @@ services:
     Symfony\Component\Finder\Finder: ~
     Symfony\Component\Filesystem\Filesystem: ~
 
+    Symfony\Component\Console\Application:
+        arguments:
+            $name: 'easybook'
+            $version: '%version%'
+
     Easybook\:
         resource: '../src/Easybook'

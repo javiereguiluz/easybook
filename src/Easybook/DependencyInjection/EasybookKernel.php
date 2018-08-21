@@ -11,7 +11,9 @@
 
 namespace Easybook\DependencyInjection;
 
+use Easybook\DependencyInjection\CompilerPass\CollectorCompilerPass;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -20,60 +22,60 @@ use Easybook\Util\Toolkit;
 
 final class EasybookKernel extends Kernel
 {
-    const VERSION = '5.0-DEV';
+    public function __construct()
+    {
+//        dynamic parameters
+//        $this['publishing.edition.id'] = function ($app) {
+//            if (null !== $isbn = $app->edition('isbn')) {
+//                return ['scheme' => 'isbn', 'value' => $isbn];
+//            }
+//
+//            // for ISBN-less books, generate a unique RFC 4211 UUID v4 ID
+//            return ['scheme' => 'URN', 'value' => Toolkit::uuid()];
+//        };
+//
+//        // -- labels ---------------------------------------------------------
+//        $this['labels'] = function () use ($app) {
+//            $labels = Yaml::parse(
+//                $app['app.dir.translations'].'/labels.'.$app->book('language').'.yml'
+//            );
+//
+//            // books can define their own labels files
+//            if (null !== $customLabelsFile = $app->getCustomLabelsFile()) {
+//                $customLabels = Yaml::parse($customLabelsFile);
+//
+//                return Toolkit::array_deep_merge_and_replace($labels, $customLabels);
+//            }
+//
+//            return $labels;
+//        };
+//
+//        // -- titles ----------------------------------------------------------
+//        $this['titles'] = function () use ($app) {
+//            $titles = Yaml::parse(
+//                $app['app.dir.translations'].'/titles.'.$app->book('language').'.yml'
+//            );
+//
+//            // books can define their own titles files
+//            if (null !== $customTitlesFile = $app->getCustomTitlesFile()) {
+//                $customTitles = Yaml::parse($customTitlesFile);
+//
+//                return Toolkit::array_deep_merge_and_replace($titles, $customTitles);
+//            }
+//
+//            return $titles;
+//        };
+    }
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load(__DIR__ . '/../config/config.yml');
     }
 
-    public function __construct()
+
+    protected function prepareContainer(ContainerBuilder $containerBuilder): void
     {
-        $this['publishing.edition.id'] = function ($app) {
-            if (null !== $isbn = $app->edition('isbn')) {
-                return ['scheme' => 'isbn', 'value' => $isbn];
-            }
-
-            // for ISBN-less books, generate a unique RFC 4211 UUID v4 ID
-            return ['scheme' => 'URN', 'value' => Toolkit::uuid()];
-        };
-
-        // -- labels ---------------------------------------------------------
-        $this['labels'] = function () use ($app) {
-            $labels = Yaml::parse(
-                $app['app.dir.translations'].'/labels.'.$app->book('language').'.yml'
-            );
-
-            // books can define their own labels files
-            if (null !== $customLabelsFile = $app->getCustomLabelsFile()) {
-                $customLabels = Yaml::parse($customLabelsFile);
-
-                return Toolkit::array_deep_merge_and_replace($labels, $customLabels);
-            }
-
-            return $labels;
-        };
-
-        // -- titles ----------------------------------------------------------
-        $this['titles'] = function () use ($app) {
-            $titles = Yaml::parse(
-                $app['app.dir.translations'].'/titles.'.$app->book('language').'.yml'
-            );
-
-            // books can define their own titles files
-            if (null !== $customTitlesFile = $app->getCustomTitlesFile()) {
-                $customTitles = Yaml::parse($customTitlesFile);
-
-                return Toolkit::array_deep_merge_and_replace($titles, $customTitles);
-            }
-
-            return $titles;
-        };
-    }
-
-    final public function getVersion()
-    {
-        return static::VERSION;
+        $containerBuilder->addCompilerPass(new CollectorCompilerPass());
     }
 
     /**

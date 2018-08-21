@@ -44,5 +44,10 @@
         "psr-4": {
             "Easybook\\": "src/Easybook"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Easybook\\Tests\\": "tests"
+        }
     }
 }
