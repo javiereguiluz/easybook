@@ -11,22 +11,11 @@
 
 namespace Easybook\Parsers;
 
-use Easybook\DependencyInjection\Application;
-
 /**
  * Interface implemented by content parser classes.
  */
 interface ParserInterface
 {
-    /**
-     * Class constructor. It receives an Application instance to get access
-     * to important elements such as the slugger and the characteristics of
-     * the book being parsed.
-     *
-     * @param Application $app The easybook application being executed
-     */
-    public function __construct(Application $app);
-
     /**
      * Converts the original content (e.g. Markdown) into the appropriate
      * content for publishing (e.g. HTML).

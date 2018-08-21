@@ -23,11 +23,11 @@ final class PublisherProvider
     /**
      * @var string
      */
-    private $publisherEdition;
+    private $publishingEdition;
 
-    public function __construct(string $publisherEdition)
+    public function __construct(string $publishingEdition)
     {
-        $this->publisherEdition = $publisherEdition;
+        $this->publishingEdition = $publishingEdition;
     }
 
     public function addPublisher(PublisherInterface $publisher): void
@@ -50,7 +50,7 @@ final class PublisherProvider
         throw new FormatPublisherNotSupportedException(sprintf(
             'Unknown "%s" format for "%s" edition. Try one of "%s".',
             implode('", "', $supportedFormats),
-            $this->publisherEdition
+            $this->publishingEdition
         ));
     }
 }

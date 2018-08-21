@@ -11,22 +11,14 @@
 
 namespace Easybook\Parsers;
 
-use Easybook\DependencyInjection\Application;
 use Michelf\Markdown as OriginalMarkdownParser;
 use Michelf\MarkdownExtra as ExtraMarkdownParser;
 
 /**
  * This class implements a full-featured Markdown parser.
  */
-class MarkdownParser implements ParserInterface
+final class MarkdownParser implements ParserInterface
 {
-    private $app;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * Transforms the original Markdown content into the desired output format.
      *

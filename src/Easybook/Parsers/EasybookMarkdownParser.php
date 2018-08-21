@@ -11,7 +11,6 @@
 
 namespace Easybook\Parsers;
 
-use Easybook\DependencyInjection\Application;
 use Michelf\MarkdownExtra as ExtraMarkdownParser;
 
 /**
@@ -21,14 +20,15 @@ use Michelf\MarkdownExtra as ExtraMarkdownParser;
  * In addition, it overrides some PHP Markdown Extra methods to improve
  * performance.
  */
-class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterface
+final class EasybookMarkdownParser extends ExtraMarkdownParser implements ParserInterface
 {
     private $app;
     private $admonitionTypes;
 
-    public function __construct(Application $app)
+    public function __construct()
     {
-        $this->app = $app;
+        parent::__construct();
+
         $this->app['publishing.active_item.toc'] = array();
 
         $this->admonitionTypes = array(

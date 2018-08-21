@@ -34,7 +34,6 @@ book:
         ebook:
             format:          epub
             include_styles:  true
-            highlight_cache: true
             highlight_code:  false
             labels:          ['appendix', 'chapter', 'figure']
             theme:           clean
@@ -44,7 +43,6 @@ book:
 
         print:
             format:          pdf
-            highlight_cache: true
             highlight_code:  true
             isbn:            ~
             include_styles:  true
@@ -64,7 +62,6 @@ book:
         web:
             format:          html
             include_styles:  true
-            highlight_cache: true
             highlight_code:  true
             labels:          ['appendix', 'chapter', 'figure']
             theme:           clean
@@ -83,7 +80,6 @@ book:
             chunk_level:     2
             images_base_dir: /images/doc-en/
             include_styles:  false
-            highlight_cache: false
             highlight_code:  true
             labels:          ['appendix', 'chapter', 'figure']
             theme:           clean
