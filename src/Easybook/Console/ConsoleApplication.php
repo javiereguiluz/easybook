@@ -20,27 +20,15 @@ use Easybook\Console\Command\EasybookVersionCommand;
 use Easybook\Console\Command\EasybookBenchmarkCommand;
 use Easybook\DependencyInjection\Application;
 
-class ConsoleApplication extends SymfonyConsoleApplication
+final class ConsoleApplication extends SymfonyConsoleApplication
 {
-    private $app;
-
-    public function getApp()
+    public function __construct()
     {
-        return $this->app;
-    }
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
 
         parent::__construct('easybook', $this->app->getVersion());
 
         $this->add(new AboutCommand($this->app['app.signature']));
-        $this->add(new BookNewCommand());
-        $this->add(new BookPublishCommand());
-        $this->add(new BookCustomizeCommand());
-        $this->add(new EasybookVersionCommand());
-        $this->add(new EasybookBenchmarkCommand());
+//
 
         $this->setDefaultCommand('about');
     }

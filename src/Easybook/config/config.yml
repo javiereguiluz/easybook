@@ -1,0 +1,59 @@
+imports:
+      - { resource: 'services.yml' }
+
+parameters:
+    app.debug: false
+    app.charset: 'UTF-8'
+    app.name: 'easybook'
+    app.signature: |
+                            |              |   /
+        ,---.,---.,---.,   .|---.,---.,---.|__/
+        |---',---|`---.|   ||   ||   ||   ||  \
+        `---'`---^`---'`---|`---'`---'`---'`   `
+                       `---'
+
+    # global directories location
+    app.dir.cache: '%kernel.project_dir%/cache'
+    app.dir.doc: '%kernel.project_dir%/doc'
+    app.dir.resources: '%kernel.project_dir%/app/Resources'
+    app.dir.plugins: '%kernel.project_dir%/src/Easybook/Plugins'
+    app.dir.translations: '%kernel.project_dir%/app/Resources/Translations'
+    app.dir.skeletons: '%kernel.project_dir%/app/Resources/Skeletons'
+    app.dir.themes: '%kernel.project_dir%/app/Resources/Themes'
+
+    # console
+    console.input: null
+    console.output: null
+    console.dialog: null
+
+    # timer
+    app.timer.start: 0.0
+    app.timer.finish: 0.0
+
+    # publishing process variables
+    # holds the app theme dir for the current edition
+    publishing.dir.app_theme: ''
+    publishing.dir.book: ''
+    publishing.dir.contents: ''
+    publishing.dir.resources: ''
+    publishing.dir.plugins: ''
+    publishing.dir.templates: ''
+    publishing.dir.output: ''
+    publishing.edition: ''
+    publishing.items: []
+
+    # the specific item currently being parsed/modified/decorated/...
+    publishing.active_item: []
+    publishing.active_item.toc: []
+    publishing.book.config:
+        book: []
+    publishing.book.slug: ''
+    publishing.book.items: []
+
+    # the real TOC used to generate the book (needed for html_chunked editions)
+    publishing.book.toc: []
+
+    # holds all the internal links (used in html_chunked and epub editions)
+    publishing.links: []
+    publishing.list.images: []
+    publishing.list.tables: []

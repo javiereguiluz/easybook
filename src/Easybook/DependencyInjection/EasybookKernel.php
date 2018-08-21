@@ -11,133 +11,32 @@
 
 namespace Easybook\DependencyInjection;
 
-use Pimple\Container;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Yaml\Yaml;
-use Easybook\Configurator\BookConfigurator;
-use Easybook\Providers\CodeHighlighterServiceProvider;
-use Easybook\Providers\KindleGenServiceProvider;
-use Easybook\Providers\ParserServiceProvider;
-use Easybook\Providers\PrinceXMLServiceProvider;
-use Easybook\Providers\PublisherServiceProvider;
-use Easybook\Providers\SluggerServiceProvider;
-use Easybook\Providers\TwigServiceProvider;
 use Easybook\Util\Toolkit;
-use Easybook\Util\Validator;
 
-class Application extends Container
+final class EasybookKernel extends Kernel
 {
     const VERSION = '5.0-DEV';
 
+    public function registerContainerConfiguration(LoaderInterface $loader): void
+    {
+        $loader->load(__DIR__ . '/../config/config.yml');
+    }
+
     public function __construct()
     {
-        parent::__construct();
-
-        $app = $this;
-
-        // -- global generic parameters ---------------------------------------
-        $this['app.debug'] = false;
-        $this['app.charset'] = 'UTF-8';
-        $this['app.name'] = 'easybook';
-        $this['app.signature'] = <<<SIGNATURE
-                     |              |
- ,---.,---.,---.,   .|---.,---.,---.|__/
- |---',---|`---.|   ||   ||   ||   ||  \
- `---'`---^`---'`---|`---'`---'`---'`   `
-                `---'
-SIGNATURE;
-
-        // -- global directories location -------------------------------------
-        $this['app.dir.base'] = realpath(__DIR__.'/../../../');
-        $this['app.dir.cache'] = $this['app.dir.base'].'/app/Cache';
-        $this['app.dir.doc'] = $this['app.dir.base'].'/doc';
-        $this['app.dir.resources'] = $this['app.dir.base'].'/app/Resources';
-        $this['app.dir.plugins'] = $this['app.dir.base'].'/src/Easybook/Plugins';
-        $this['app.dir.translations'] = $this['app.dir.resources'].'/Translations';
-        $this['app.dir.skeletons'] = $this['app.dir.resources'].'/Skeletons';
-        $this['app.dir.themes'] = $this['app.dir.resources'].'/Themes';
-
-        // -- console ---------------------------------------------------------
-        $this['console.input'] = null;
-        $this['console.output'] = null;
-        $this['console.dialog'] = null;
-
-        // -- timer -----------------------------------------------------------
-        $this['app.timer.start'] = 0.0;
-        $this['app.timer.finish'] = 0.0;
-
-        // -- publishing process variables ------------------------------------
-        // holds the app theme dir for the current edition
-        $this['publishing.dir.app_theme'] = '';
-        $this['publishing.dir.book'] = '';
-        $this['publishing.dir.contents'] = '';
-        $this['publishing.dir.resources'] = '';
-        $this['publishing.dir.plugins'] = '';
-        $this['publishing.dir.templates'] = '';
-        $this['publishing.dir.output'] = '';
-        $this['publishing.edition'] = '';
-        $this['publishing.items'] = array();
-        // the specific item currently being parsed/modified/decorated/...
-        $this['publishing.active_item'] = array();
-        $this['publishing.active_item.toc'] = array();
-        $this['publishing.book.config'] = array('book' => array());
-        $this['publishing.book.slug'] = '';
-        $this['publishing.book.items'] = array();
-        // the real TOC used to generate the book (needed for html_chunked editions)
-        $this['publishing.book.toc'] = array();
-        // holds all the internal links (used in html_chunked and epub editions)
-        $this['publishing.links'] = array();
-        $this['publishing.list.images'] = array();
-        $this['publishing.list.tables'] = array();
-
         $this['publishing.edition.id'] = function ($app) {
             if (null !== $isbn = $app->edition('isbn')) {
-                return array('scheme' => 'isbn', 'value' => $isbn);
+                return ['scheme' => 'isbn', 'value' => $isbn];
             }
 
             // for ISBN-less books, generate a unique RFC 4211 UUID v4 ID
-            return array('scheme' => 'URN', 'value' => Toolkit::uuid());
+            return ['scheme' => 'URN', 'value' => Toolkit::uuid()];
         };
-        // maintained for backwards compatibility
-        $this['publishing.id'] = function () {
-            trigger_error('The "publishing.id" option is deprecated since version 5.0 and will be removed in the future. Use "publishing.edition.id" instead.', E_USER_DEPRECATED);
-        };
-
-        // -- event dispatcher ------------------------------------------------
-        $this['dispatcher'] = function () {
-            return new EventDispatcher();
-        };
-
-        // -- finder ----------------------------------------------------------
-        $this['finder'] = $this->factory(function () {
-            return new Finder();
-        });
-
-        // -- filesystem ------------------------------------------------------
-        $this['filesystem'] = $this->factory(function () {
-            return new Filesystem();
-        });
-
-        // -- configurator ----------------------------------------------------
-        $this['configurator'] = function ($app) {
-            return new BookConfigurator($app);
-        };
-
-        // -- validator -------------------------------------------------------
-        $this['validator'] = function ($app) {
-            return new Validator($app);
-        };
-
-        $this->register(new PublisherServiceProvider());
-        $this->register(new ParserServiceProvider());
-        $this->register(new TwigServiceProvider());
-        $this->register(new PrinceXMLServiceProvider());
-        $this->register(new KindleGenServiceProvider());
-        $this->register(new SluggerServiceProvider());
-        $this->register(new CodeHighlighterServiceProvider());
 
         // -- labels ---------------------------------------------------------
         $this['labels'] = function () use ($app) {
@@ -175,34 +74,6 @@ SIGNATURE;
     final public function getVersion()
     {
         return static::VERSION;
-    }
-
-    /**
-     * @deprecated Deprecated since version 5.0.
-     *
-     * Instead of:
-     *   $value = $app->get('key');
-     *
-     * Use:
-     *   $value = $app['key'];
-     */
-    public function get($id)
-    {
-        return $this->offsetGet($id);
-    }
-
-    /**
-     * @deprecated Deprecated since version 5.0.
-     *
-     * Instead of:
-     *   $app->set('key', $value);
-     *
-     * Use:
-     *   $app['key'] = $value;
-     */
-    public function set($id, $value)
-    {
-        $this->offsetSet($id, $value);
     }
 
     /**
@@ -599,5 +470,13 @@ SIGNATURE;
             $bookConfig['book']['editions'][$publishingEdition][$key] = $newValue;
             $this['publishing.book.config'] = $bookConfig;
         }
+    }
+
+    /**
+     * @return BundleInterface[]
+     */
+    public function registerBundles(): array
+    {
+        return [];
     }
 }

@@ -23,25 +23,25 @@ use Easybook\DependencyInjection\Application;
  */
 class BaseCommand extends Command
 {
-    /**
-     * @var Application
-     */
-    protected $app;
+//    /**
+//     * @var Application
+//     */
+//    protected $app;
 
-    /**
-     * It provides direct access to the whole easybook dependency injection container.
-     *
-     * @return Application The object that represents the dependency injection container
-     */
-    public function getApp()
-    {
-        return $this->app;
-    }
-
-    protected function initialize(InputInterface $input = null, OutputInterface $output = null)
-    {
-        $this->app = $this->getApplication()->getApp();
-    }
+//    /**
+//     * It provides direct access to the whole easybook dependency injection container.
+//     *
+//     * @return Application The object that represents the dependency injection container
+//     */
+//    public function getApp()
+//    {
+//        return $this->app;
+//    }
+////
+//    protected function initialize(InputInterface $input = null, OutputInterface $output = null)
+//    {
+//        $this->app = $this->getApplication()->getApp();
+//    }
 
     /**
      * Returns the text representation of the command.
