@@ -2,6 +2,8 @@
 
 namespace Easybook\DependencyInjection\CompilerPass;
 
+use Easybook\Publishers\PublisherInterface;
+use Easybook\Publishers\PublisherProvider;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -37,6 +39,13 @@ final class CollectorCompilerPass implements CompilerPassInterface
             EventDispatcherInterface::class,
             EventSubscriberInterface::class,
             'addSubscriber'
+        );
+
+        $this->definitionCollector->loadCollectorWithType(
+            $containerBuilder,
+            PublisherProvider::class,
+            PublisherInterface::class,
+            'addPublisher'
         );
     }
 }

@@ -11,7 +11,9 @@
 
 namespace Easybook\Util;
 
-class TwigCssExtension extends \Twig_Extension
+use Twig_Extension;
+
+final class TwigCssExtension extends Twig_Extension
 {
     public function getFunctions()
     {
@@ -284,8 +286,8 @@ class TwigCssExtension extends \Twig_Extension
         );
     }
 
-    public function getName()
+    public function getName(): string
     {
-        return 'twig_css_extension';
+        return self::class;
     }
 }

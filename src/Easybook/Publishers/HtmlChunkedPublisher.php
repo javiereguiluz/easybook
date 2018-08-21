@@ -539,4 +539,9 @@ class HtmlChunkedPublisher extends HtmlPublisher
 
         return $nextChunk;
     }
+
+    public function getFormat(): string
+    {
+        return 'html_chunked';
+    }
 }

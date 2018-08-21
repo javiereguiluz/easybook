@@ -16,7 +16,7 @@ namespace Easybook\Publishers;
  * are transformed into anchors. This means that the generated book can be
  * browsed offline or copied under any web server directory.
  */
-class HtmlPublisher extends BasePublisher
+class HtmlPublisher extends AbstractPublisher
 {
     public function assembleBook()
     {
@@ -57,5 +57,10 @@ class HtmlPublisher extends BasePublisher
                 $this->app['publishing.dir.output'].'/images'
             );
         }
+    }
+
+    public function getFormat(): string
+    {
+        return 'html';
     }
 }

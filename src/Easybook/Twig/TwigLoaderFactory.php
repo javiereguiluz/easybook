@@ -1,34 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
-*/
+namespace Easybook\Twig;
 
-namespace Easybook\Providers;
-
-use Pimple\Container;
-use Pimple\ServiceProviderInterface;
 use Easybook\Util\Toolkit;
-use Easybook\Util\TwigCssExtension;
+use Twig\Loader\LoaderInterface;
 
-class TwigServiceProvider implements ServiceProviderInterface
+final class TwigLoaderFactory
 {
-    public function register(Container $app)
+    public function create(): LoaderInterface
     {
-        $app['twig.options'] = array(
-            'autoescape' => false,
-            // 'cache'         => $app['app.dir.cache'].'/Twig',
-            'charset' => $app['app.charset'],
-            'debug' => $app['app.debug'],
-            'strict_variables' => $app['app.debug'],
-        );
-
-        $app['twig.loader'] = function () use ($app) {
             $theme = ucfirst($app->edition('theme'));
             $format = Toolkit::camelize($app->edition('format'), true);
 
@@ -76,23 +56,5 @@ class TwigServiceProvider implements ServiceProviderInterface
             }
 
             return $loader;
-        };
-
-        $app['twig'] = function () use ($app) {
-            $twig = new \Twig_Environment($app['twig.loader'], $app['twig.options']);
-            $twig->addExtension(new TwigCssExtension());
-
-            $twig->addGlobal('app', $app);
-
-            if (null !== $bookConfig = $app['publishing.book.config']) {
-                $twig->addGlobal('book', $bookConfig['book']);
-
-                $publishingEdition = $app['publishing.edition'];
-                $editions = $app->book('editions');
-                $twig->addGlobal('edition', $editions[$publishingEdition]);
-            }
-
-            return $twig;
-        };
     }
 }

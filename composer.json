@@ -49,5 +49,8 @@
         "psr-4": {
             "Easybook\\Tests\\": "tests"
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }

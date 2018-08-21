@@ -224,4 +224,9 @@ class PdfPublisher extends BasePublisher
       # ...
 YAML;
     }
+
+    public function getFormat(): string
+    {
+        return 'pdf';
+    }
 }

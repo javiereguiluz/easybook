@@ -15,7 +15,7 @@ use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Events\ParseEvent;
 
-final class BasePublisher implements PublisherInterface
+abstract class AbstractPublisher implements PublisherInterface
 {
     /**
      * It controls the book publishing workflow for this particular publisher.

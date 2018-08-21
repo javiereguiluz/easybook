@@ -513,4 +513,9 @@ class Epub2Publisher extends HtmlPublisher
             file_put_contents($chunk->getPathname(), $htmlContent);
         }
     }
+
+    public function getFormat(): bool
+    {
+        return 'epub';
+    }
 }

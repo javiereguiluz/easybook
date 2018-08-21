@@ -24,3 +24,21 @@ services:
             - ['enable_line_numbers', [!const GESHI_NO_LINE_NUMBERS]]
             - ['enable_keyword_links', [false]]
 
+    EasySlugger\Utf8Slugger:
+        arguments:
+            - '%slugger.options%:%separator%'
+
+
+    Twig_Environment:
+        arguments:
+            $options: '%twig.options%'
+
+        calls:
+            # @todo use collector
+             - ['addExtension', ['@Easybook\Util\TwigCssExtension']]
+
+#        if (null !== $bookConfig = $app['publishing.book.config']) {
+#        $twig->addGlobal('book', $bookConfig['book']);
+#        $publishingEdition = $app['publishing.edition'];
+#        $editions = $app->book('editions');
+#        $twig->addGlobal('edition', $editions[$publishingEdition]);
