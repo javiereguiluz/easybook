@@ -2,7 +2,7 @@
 
 namespace Easybook\Plugins;
 
-use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -15,7 +15,7 @@ final class ImagePlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::POST_PARSE => [['fixImageUris', -500], ['decorateAndLabelImages', -500]],
+            EasybookEvents::POST_PARSE => [['fixImageUris', -500], ['decorateAndLabelImages', -500]],
         ];
     }
 

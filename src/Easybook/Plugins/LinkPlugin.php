@@ -3,7 +3,7 @@
 namespace Easybook\Plugins;
 
 use Easybook\Events\BaseEvent;
-use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -16,8 +16,8 @@ final class LinkPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::POST_PARSE => ['markInternalLinks'],
-            Events::POST_PUBLISH => ['fixInternalLinks', -10],
+            EasybookEvents::POST_PARSE => ['markInternalLinks'],
+            EasybookEvents::POST_PUBLISH => ['fixInternalLinks', -10],
         ];
     }
 

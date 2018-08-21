@@ -78,12 +78,7 @@ final class BookPublishCommand extends Command
 
         $output->writeln([
             ' <bg=green;fg=black> OK </> You can access the book in the following directory:',
-            ' <comment>' . realpath($this->app['publishing.dir.output']) . '</comment>',
-            '',
-            sprintf(
-                " The publishing process took <info>%s seconds</info>\n",
-                number_format($this->app['app.timer.finish'] - $this->app['app.timer.start'], 1)
-            ),
+            ' <comment>' . realpath($this->app['publishing.dir.output']) . '</comment>'
         ]);
     }
 

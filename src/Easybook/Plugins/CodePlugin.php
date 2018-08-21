@@ -2,7 +2,7 @@
 
 namespace Easybook\Plugins;
 
-use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -14,8 +14,8 @@ final class CodePlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::PRE_PARSE => ['parseCodeBlocks', -500],
-            Events::POST_PARSE => ['fixParsedCodeBlocks', -500],
+            EasybookEvents::PRE_PARSE => ['parseCodeBlocks', -500],
+            EasybookEvents::POST_PARSE => ['fixParsedCodeBlocks', -500],
         ];
     }
 
