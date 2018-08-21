@@ -185,9 +185,7 @@ tablets, iPhone phones, most Android tablets and phones and every e-book
 reader except Amazon Kindle) and start reading the **easybook** documentation 
 as an e-book.
 
-Similarly, you can publish your book as `MOBI` (the format for Kindle-
-compatible e-books) and `PDF` files. However, these formats require the 
-installation of two libraries and they will be explained in the next chapters:
+Similarly, you can publish your book as `PDF` files.
 
 ~~~ .cli
 // publishes the book as a PDF file
@@ -196,13 +194,6 @@ $ ./book publish easybook-doc-en print
 // publishes the book as a Kindle-compatible MOBI e-book
 $ ./book publish easybook-doc-en kindle
 ~~~
-
-N> For those impatient readers that cannot wait to try the `MOBI` and `PDF`
-N> publication, these are the third-party libraries needed to generate those
-N> formats:
-N> 
-N>   * For `MOBI` books: [KindleGen](http://amzn.to/kindlegen)
-N>   * For `PDF` books: [PrinceXML](http://www.princexml.com/)
 
 ## Creating a new book ## {#creating-a-new-book}
 
