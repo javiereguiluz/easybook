@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -24,5 +24,5 @@ interface ParserInterface
      *
      * @return string The parsed content
      */
-    public function transform($content);
+    public function transform(string $content): string;
 }

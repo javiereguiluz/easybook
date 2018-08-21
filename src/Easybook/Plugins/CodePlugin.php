@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,9 +11,9 @@
 
 namespace Easybook\Plugins;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * It parses and (optionally) highlights the syntax of the code listings.
@@ -22,10 +22,10 @@ final class CodePlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        return array(
-            Events::PRE_PARSE => array('parseCodeBlocks', -500),
-            Events::POST_PARSE => array('fixParsedCodeBlocks', -500),
-        );
+        return [
+            Events::PRE_PARSE => ['parseCodeBlocks', -500],
+            Events::POST_PARSE => ['fixParsedCodeBlocks', -500],
+        ];
     }
 
     /**
@@ -33,25 +33,23 @@ final class CodePlugin implements EventSubscriberInterface
      * and GitHub).
      *
      * @see 'Code block types' section in easybook-doc-en/05-publishing-html-books.md
-     *
-     * @param ParseEvent $event
      */
-    public function parseCodeBlocks(ParseEvent $event)
+    public function parseCodeBlocks(ParseEvent $parseEvent): void
     {
-        $codeBlockType = $event->app['parser.options']['code_block_type'];
+        $codeBlockType = $parseEvent->app['parser.options']['code_block_type'];
 
         switch ($codeBlockType) {
             case 'fenced':
-                $this->parseFencedTypeCodeBlocks($event);
+                $this->parseFencedTypeCodeBlocks($parseEvent);
                 break;
 
             case 'github':
-                $this->parseGithubTypeCodeBlocks($event);
+                $this->parseGithubTypeCodeBlocks($parseEvent);
                 break;
 
             case 'markdown':
             default:
-                $this->parseMarkdownTypeCodeBlocks($event);
+                $this->parseMarkdownTypeCodeBlocks($parseEvent);
                 break;
         }
     }
@@ -61,15 +59,51 @@ final class CodePlugin implements EventSubscriberInterface
      *
      * @param ParseEvent $event The object that contains the item being processed
      */
-    public function fixParsedCodeBlocks(ParseEvent $event)
+    public function fixParsedCodeBlocks(ParseEvent $parseEvent): void
     {
-        $item = $event->getItem();
+        $item = $parseEvent->getItem();
 
         // unescape yaml-style comments that before parsing could
         // be interpreted as Markdown first-level headings
         $item['content'] = str_replace('&#35;', '#', $item['content']);
 
-        $event->setItem($item);
+        $parseEvent->setItem($item);
+    }
+
+    /**
+     * It highlights the given code using the given programming language syntax
+     * and decorates the result with the Twig template associated with the
+     * code fragments.
+     *
+     * @param string      $code     The source code to highlight and decorate
+     * @param string      $language The programming language associated with the code
+     * @param Application $app      The application object needed to highlight and decorate
+     *
+     * @return string The resulting code after the highlight and rendering process
+     */
+    public function highlightAndDecorateCode(string $code, string $language, Application $application): string
+    {
+        if ($application->edition('highlight_code')) {
+            // highlight code if the edition wants to
+            $code = $application->highlight($code, $language);
+        } else {
+            // escape code to show it instead of interpreting it
+
+            // yaml-style comments could be interpreted as Markdown headings
+            // replace any starting # character by its HTML entity (&#35;)
+            $code = '<pre>'
+                . preg_replace('/^# (.*)/', '&#35; $1', htmlspecialchars($code))
+                . '</pre>';
+        }
+
+        return $application->render('code.twig', [
+            'item' => [
+                'content' => $code,
+                'language' => $language,
+                'number' => '',
+                'slug' => '',
+            ],
+        ]);
     }
 
     /**
@@ -95,12 +129,12 @@ final class CodePlugin implements EventSubscriberInterface
      * @param ParseEvent $event The event object that provides access to the $app and
      *                          the $item being parsed
      */
-    private function parseMarkdownTypeCodeBlocks(ParseEvent $event)
+    private function parseMarkdownTypeCodeBlocks(ParseEvent $parseEvent): void
     {
         // variable needed for PHP 5.3
         $self = $this;
 
-        $item = $event->getItem();
+        $item = $parseEvent->getItem();
         // regexp copied from PHP-Markdown
         $item['original'] = preg_replace_callback(
             '{
@@ -116,12 +150,12 @@ final class CodePlugin implements EventSubscriberInterface
                     ))
                 )
             }xm',
-            function ($matches) use ($self, $event) {
+            function ($matches) use ($self, $parseEvent) {
                 $code = $matches['code'];
                 $indent = $matches['indent'];
 
                 // outdent codeblock
-                $code = preg_replace('/^('.$indent.'[ ]{4})/m', '', $code);
+                $code = preg_replace('/^(' . $indent . '[ ]{4})/m', '', $code);
 
                 // if present, strip code language declaration ([php], [js], ...)
                 $language = 'code';
@@ -137,14 +171,14 @@ final class CodePlugin implements EventSubscriberInterface
                     $code
                 );
 
-                $code = $self->highlightAndDecorateCode($code, $language, $event->app);
+                $code = $self->highlightAndDecorateCode($code, $language, $parseEvent->app);
 
                 // indent code block
-                return "\n$indent\n$indent".str_replace("\n", "\n".$indent, $code);
+                return "\n${indent}\n${indent}" . str_replace("\n", "\n" . $indent, $code);
             },
             $item['original']
         );
-        $event->setItem($item);
+        $parseEvent->setItem($item);
     }
 
     /**
@@ -174,12 +208,12 @@ final class CodePlugin implements EventSubscriberInterface
      * @param ParseEvent $event The event object that provides access to the $app and
      *                          the $item being parsed
      */
-    private function parseGithubTypeCodeBlocks(ParseEvent $event)
+    private function parseGithubTypeCodeBlocks(ParseEvent $parseEvent): void
     {
         // variable needed for PHP 5.3
         $self = $this;
 
-        $item = $event->getItem();
+        $item = $parseEvent->getItem();
         // regexp adapted from PHP-Markdown
         $item['original'] = preg_replace_callback(
             '{
@@ -205,7 +239,7 @@ final class CodePlugin implements EventSubscriberInterface
                 # Closing marker.
                 \1 [ ]* \n
             }Uxm',
-            function ($matches) use ($self, $event) {
+            function ($matches) use ($self, $parseEvent) {
                 $language = $matches[2];
 
                 // codeblocks always end with an empty new line (due to the regexp used)
@@ -214,17 +248,17 @@ final class CodePlugin implements EventSubscriberInterface
                 // whitespaces, tabs or new lines
                 $code = rtrim($matches[3]);
 
-                if ('' == $language) {
+                if ($language === '') {
                     $language = 'code';
                 }
 
-                $code = $self->highlightAndDecorateCode($code, $language, $event->app);
+                $code = $self->highlightAndDecorateCode($code, $language, $parseEvent->app);
 
-                return "\n\n".$code;
+                return "\n\n" . $code;
             },
             $item['original']
         );
-        $event->setItem($item);
+        $parseEvent->setItem($item);
     }
 
     /**
@@ -254,12 +288,12 @@ final class CodePlugin implements EventSubscriberInterface
      * @param ParseEvent $event The event object that provides access to the $app and
      *                          the $item being parsed
      */
-    private function parseFencedTypeCodeBlocks(ParseEvent $event)
+    private function parseFencedTypeCodeBlocks(ParseEvent $parseEvent): void
     {
         // variable needed for PHP 5.3
         $self = $this;
 
-        $item = $event->getItem();
+        $item = $parseEvent->getItem();
         // regexp adapted from PHP-Markdown
         $item['original'] = preg_replace_callback(
             '{
@@ -285,7 +319,7 @@ final class CodePlugin implements EventSubscriberInterface
                 # Closing marker.
                 \1 [ ]* \n
             }Uxm',
-            function ($matches) use ($self, $event) {
+            function ($matches) use ($self, $parseEvent) {
                 $language = $matches[2];
 
                 // codeblocks always end with an empty new line (due to the regexp used)
@@ -294,54 +328,16 @@ final class CodePlugin implements EventSubscriberInterface
                 // whitespaces, tabs or new lines
                 $code = rtrim($matches[3]);
 
-                if ('' == $language) {
+                if ($language === '') {
                     $language = 'code';
                 }
 
-                $code = $self->highlightAndDecorateCode($code, $language, $event->app);
+                $code = $self->highlightAndDecorateCode($code, $language, $parseEvent->app);
 
-                return "\n\n".$code;
+                return "\n\n" . $code;
             },
             $item['original']
         );
-        $event->setItem($item);
-    }
-
-    /**
-     * It highlights the given code using the given programming language syntax
-     * and decorates the result with the Twig template associated with the
-     * code fragments.
-     *
-     * @param string      $code     The source code to highlight and decorate
-     * @param string      $language The programming language associated with the code
-     * @param Application $app      The application object needed to highlight and decorate
-     *
-     * @return string The resulting code after the highlight and rendering process
-     */
-    public function highlightAndDecorateCode($code, $language, Application $app)
-    {
-        if ($app->edition('highlight_code')) {
-            // highlight code if the edition wants to
-            $code = $app->highlight($code, $language);
-        } else {
-            // escape code to show it instead of interpreting it
-
-            // yaml-style comments could be interpreted as Markdown headings
-            // replace any starting # character by its HTML entity (&#35;)
-            $code = '<pre>'
-                .preg_replace('/^# (.*)/', '&#35; $1', htmlspecialchars($code))
-                .'</pre>';
-        }
-
-        $code = $app->render('code.twig', array(
-            'item' => array(
-                'content' => $code,
-                'language' => $language,
-                'number' => '',
-                'slug' => '',
-            ),
-        ));
-
-        return $code;
+        $parseEvent->setItem($item);
     }
 }

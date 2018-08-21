@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,10 +11,12 @@
 
 namespace Easybook\Publishers;
 
-use Symfony\Component\Process\Process;
-use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
+use Easybook\Events\EasybookEvents as Events;
 use Easybook\Util\Toolkit;
+use RuntimeException;
+use Symfony\Component\Process\Process;
+use Twig_Error_Loader;
 
 /**
  * It publishes the book as an EPUB file. All the internal links are transformed
@@ -24,14 +26,14 @@ final class Epub2Publisher extends HtmlPublisher
 {
     // 'toc' content type usually makes no sense in epub books (see below)
     // 'cover' is a very special content for epub books
-    protected $excludedElements = array('cover', 'lot', 'lof', 'toc');
+    protected $excludedElements = ['cover', 'lot', 'lof', 'toc'];
 
-    public function loadContents()
+    public function loadContents(): void
     {
         // strip excluded elements before loading book contents
-        $contents = array();
+        $contents = [];
         foreach ($this->app->book('contents') as $content) {
-            if (!in_array($content['element'], $this->excludedElements)) {
+            if (! in_array($content['element'], $this->excludedElements, true)) {
                 $contents[] = $content;
             }
         }
@@ -45,9 +47,9 @@ final class Epub2Publisher extends HtmlPublisher
      * Instead of using the regular Twig templates based on the item type (e.g. chapter),
      * ePub books items are decorated afterwards with some special Twig templates.
      */
-    public function decorateContents()
+    public function decorateContents(): void
     {
-        $decoratedItems = array();
+        $decoratedItems = [];
 
         foreach ($this->app['publishing.items'] as $item) {
             $this->app['publishing.active_item'] = $item;
@@ -68,7 +70,7 @@ final class Epub2Publisher extends HtmlPublisher
         $this->app['publishing.items'] = $decoratedItems;
     }
 
-    public function assembleBook()
+    public function assembleBook(): void
     {
         $bookTmpDir = $this->prepareBookTemporaryDirectory();
 
@@ -76,8 +78,8 @@ final class Epub2Publisher extends HtmlPublisher
         if ($this->app->edition('include_styles')) {
             $this->app->render(
                 '@theme/style.css.twig',
-                array('resources_dir' => '..'),
-                $bookTmpDir.'/book/OEBPS/css/easybook.css'
+                ['resources_dir' => '..'],
+                $bookTmpDir . '/book/OEBPS/css/easybook.css'
             );
         }
 
@@ -85,11 +87,7 @@ final class Epub2Publisher extends HtmlPublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app['filesystem']->copy(
-                $customCss,
-                $bookTmpDir.'/book/OEBPS/css/styles.css',
-                true
-            );
+            $this->app['filesystem']->copy($customCss, $bookTmpDir . '/book/OEBPS/css/styles.css', true);
         }
 
         $bookItems = $this->normalizePageNames($this->app['publishing.items']);
@@ -97,79 +95,72 @@ final class Epub2Publisher extends HtmlPublisher
 
         // generate one HTML page for every book item
         foreach ($bookItems as $item) {
-            $renderedTemplatePath = $bookTmpDir.'/book/OEBPS/'.$item['page_name'].'.html';
-            $templateVariables = array(
+            $renderedTemplatePath = $bookTmpDir . '/book/OEBPS/' . $item['page_name'] . '.html';
+            $templateVariables = [
                 'item' => $item,
                 'has_custom_css' => $hasCustomCss,
-            );
+            ];
 
             // try first to render the specific template for each content
             // type, if it exists (e.g. toc.twig, chapter.twig, etc.) and
             // use chunk.twig as the fallback template
             try {
-                $templateName = $item['config']['element'].'.twig';
+                $templateName = $item['config']['element'] . '.twig';
 
                 $this->app->render($templateName, $templateVariables, $renderedTemplatePath);
-            } catch (\Twig_Error_Loader $e) {
+            } catch (Twig_Error_Loader $e) {
                 $this->app->render('chunk.twig', $templateVariables, $renderedTemplatePath);
             }
         }
 
-        $bookImages = $this->prepareBookImages($bookTmpDir.'/book/OEBPS/images');
-        $bookCover = $this->prepareBookCoverImage($bookTmpDir.'/book/OEBPS/images');
-        $bookFonts = $this->prepareBookFonts($bookTmpDir.'/book/OEBPS/fonts');
+        $bookImages = $this->prepareBookImages($bookTmpDir . '/book/OEBPS/images');
+        $bookCover = $this->prepareBookCoverImage($bookTmpDir . '/book/OEBPS/images');
+        $bookFonts = $this->prepareBookFonts($bookTmpDir . '/book/OEBPS/fonts');
 
         // generate the book cover page
         $this->app->render(
             'cover.twig',
-            array('customCoverImage' => $bookCover),
-            $bookTmpDir.'/book/OEBPS/titlepage.html'
+            ['customCoverImage' => $bookCover],
+            $bookTmpDir . '/book/OEBPS/titlepage.html'
         );
 
         // generate the OPF file (the ebook manifest)
         $this->app->render(
             'content.opf.twig',
-            array(
+            [
                 'cover' => $bookCover,
                 'has_custom_css' => $hasCustomCss,
                 'fonts' => $bookFonts,
                 'images' => $bookImages,
                 'items' => $bookItems,
-            ),
-            $bookTmpDir.'/book/OEBPS/content.opf'
+            ],
+            $bookTmpDir . '/book/OEBPS/content.opf'
         );
 
         // generate the NCX file (the table of contents)
-        $this->app->render(
-            'toc.ncx.twig',
-            array('items' => $bookItems),
-            $bookTmpDir.'/book/OEBPS/toc.ncx'
-        );
+        $this->app->render('toc.ncx.twig', ['items' => $bookItems], $bookTmpDir . '/book/OEBPS/toc.ncx');
 
         // generate container.xml and mimetype files
-        $this->app->render(
-            'container.xml.twig',
-            array(),
-            $bookTmpDir.'/book/META-INF/container.xml'
-        );
-        $this->app->render(
-            'mimetype.twig',
-            array(),
-            $bookTmpDir.'/book/mimetype'
-        );
+        $this->app->render('container.xml.twig', [], $bookTmpDir . '/book/META-INF/container.xml');
+        $this->app->render('mimetype.twig', [], $bookTmpDir . '/book/mimetype');
 
-        $this->fixInternalLinks($bookTmpDir.'/book/OEBPS');
+        $this->fixInternalLinks($bookTmpDir . '/book/OEBPS');
 
         // compress book contents as ZIP file and rename to .epub
-        $this->zipBookContents($bookTmpDir.'/book', $bookTmpDir.'/book.zip');
+        $this->zipBookContents($bookTmpDir . '/book', $bookTmpDir . '/book.zip');
         $this->app['filesystem']->copy(
-            $bookTmpDir.'/book.zip',
-            $this->app['publishing.dir.output'].'/book.epub',
+            $bookTmpDir . '/book.zip',
+            $this->app['publishing.dir.output'] . '/book.epub',
             true
         );
 
         // remove temp directory used to build the book
         $this->app['filesystem']->remove($bookTmpDir);
+    }
+
+    public function getFormat(): string
+    {
+        return 'epub';
     }
 
     /**
@@ -179,20 +170,20 @@ final class Epub2Publisher extends HtmlPublisher
      *
      * @return string The absolute path of the directory created.
      */
-    private function prepareBookTemporaryDirectory()
+    private function prepareBookTemporaryDirectory(): string
     {
-        $bookDir = $this->app['app.dir.cache'].'/'
-                   .uniqid($this->app['publishing.book.slug']);
+        $bookDir = $this->app['app.dir.cache'] . '/'
+                   . uniqid($this->app['publishing.book.slug']);
 
-        $this->app['filesystem']->mkdir(array(
+        $this->app['filesystem']->mkdir([
             $bookDir,
-            $bookDir.'/book',
-            $bookDir.'/book/META-INF',
-            $bookDir.'/book/OEBPS',
-            $bookDir.'/book/OEBPS/css',
-            $bookDir.'/book/OEBPS/images',
-            $bookDir.'/book/OEBPS/fonts',
-        ));
+            $bookDir . '/book',
+            $bookDir . '/book/META-INF',
+            $bookDir . '/book/OEBPS',
+            $bookDir . '/book/OEBPS/css',
+            $bookDir . '/book/OEBPS/images',
+            $bookDir . '/book/OEBPS/fonts',
+        ]);
 
         return $bookDir;
     }
@@ -208,35 +199,32 @@ final class Epub2Publisher extends HtmlPublisher
      *
      * @throws \RuntimeException If the $targetDir doesn't exist.
      */
-    private function prepareBookImages($targetDir)
+    private function prepareBookImages(string $targetDir): array
     {
-        if (!file_exists($targetDir)) {
-            throw new \RuntimeException(sprintf(
+        if (! file_exists($targetDir)) {
+            throw new RuntimeException(sprintf(
                 " ERROR: Books images couldn't be copied because \n"
-                ." the given '%s' \n"
-                ." directory doesn't exist.",
+                . " the given '%s' \n"
+                . " directory doesn't exist.",
                 $targetDir
             ));
         }
 
-        $imagesDir = $this->app['publishing.dir.contents'].'/images';
-        $imagesData = array();
+        $imagesDir = $this->app['publishing.dir.contents'] . '/images';
+        $imagesData = [];
 
         if (file_exists($imagesDir)) {
             $images = $this->app['finder']->files()->in($imagesDir);
 
             $i = 1;
             foreach ($images as $image) {
-                $this->app['filesystem']->copy(
-                    $image->getPathName(),
-                    $targetDir.'/'.$image->getFileName()
-                );
+                $this->app['filesystem']->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
 
-                $imagesData[] = array(
-                    'id' => 'figure-'.$i++,
-                    'filePath' => 'images/'.$image->getFileName(),
-                    'mediaType' => 'image/'.pathinfo($image->getFilename(), PATHINFO_EXTENSION),
-                );
+                $imagesData[] = [
+                    'id' => 'figure-' . $i++,
+                    'filePath' => 'images/' . $image->getFileName(),
+                    'mediaType' => 'image/' . pathinfo($image->getFilename(), PATHINFO_EXTENSION),
+                ];
             }
         }
 
@@ -251,21 +239,21 @@ final class Epub2Publisher extends HtmlPublisher
      * @return array|null Book cover image data or null if the book doesn't
      *                    include a cover image.
      */
-    private function prepareBookCoverImage($targetDir)
+    private function prepareBookCoverImage(string $targetDir): ?array
     {
         $cover = null;
 
         if (null !== $image = $this->app->getCustomCoverImage()) {
-            list($width, $height, $type) = getimagesize($image);
+            [$width, $height, $type] = getimagesize($image);
 
-            $cover = array(
+            $cover = [
                 'height' => $height,
                 'width' => $width,
-                'filePath' => 'images/'.basename($image),
+                'filePath' => 'images/' . basename($image),
                 'mediaType' => image_type_to_mime_type($type),
-            );
+            ];
 
-            $this->app['filesystem']->copy($image, $targetDir.'/'.basename($image));
+            $this->app['filesystem']->copy($image, $targetDir . '/' . basename($image));
         }
 
         return $cover;
@@ -283,35 +271,32 @@ final class Epub2Publisher extends HtmlPublisher
      *
      * @return array Font data needed to create the book manifest.
      */
-    private function prepareBookFonts($targetDir)
+    private function prepareBookFonts(string $targetDir): array
     {
-        if (!file_exists($targetDir)) {
-            throw new \RuntimeException(sprintf(
+        if (! file_exists($targetDir)) {
+            throw new RuntimeException(sprintf(
                 " ERROR: Books fonts couldn't be copied because \n"
-                    ." the given '%s' \n"
-                    ." directory doesn't exist.",
+                    . " the given '%s' \n"
+                    . " directory doesn't exist.",
                 $targetDir
             ));
         }
 
-        $fontsDir = $this->app['app.dir.resources'].'/Fonts/Inconsolata';
-        $fontsData = array();
+        $fontsDir = $this->app['app.dir.resources'] . '/Fonts/Inconsolata';
+        $fontsData = [];
 
         if (file_exists($fontsDir)) {
             $fonts = $this->app['finder']->files()->name('*.ttf')->in($fontsDir);
 
             $i = 1;
             foreach ($fonts as $font) {
-                $this->app['filesystem']->copy(
-                    $font->getPathName(),
-                    $targetDir.'/'.$font->getFileName()
-                );
+                $this->app['filesystem']->copy($font->getPathName(), $targetDir . '/' . $font->getFileName());
 
-                $fontsData[] = array(
-                    'id' => 'font-'.$i++,
-                    'filePath' => 'fonts/'.$font->getFileName(),
+                $fontsData[] = [
+                    'id' => 'font-' . $i++,
+                    'filePath' => 'fonts/' . $font->getFileName(),
                     'mediaType' => finfo_file(finfo_open(FILEINFO_MIME_TYPE), $font->getPathName()),
-                );
+                ];
             }
         }
 
@@ -330,13 +315,13 @@ final class Epub2Publisher extends HtmlPublisher
      *
      * @return array The book items with their new 'page_name' property.
      */
-    private function normalizePageNames($items)
+    private function normalizePageNames(array $items): array
     {
-        $itemsWithNormalizedPageNames = array();
+        $itemsWithNormalizedPageNames = [];
 
         foreach ($items as $item) {
             $itemPageName = isset($item['config']['number'])
-                ? $item['config']['element'].' '.$item['config']['number']
+                ? $item['config']['element'] . ' ' . $item['config']['number']
                 : $item['config']['element'];
 
             $item['page_name'] = $this->app->slugifyUniquely($itemPageName);
@@ -381,11 +366,11 @@ final class Epub2Publisher extends HtmlPublisher
             return $this->zipBookContentsWithPhpExtension($directory, $zip_file);
         }
 
-        throw new \RuntimeException(
+        throw new RuntimeException(
             "[ERROR] The ePub file couldn't be published because your \n"
-            ." Operating System doesn't support the 'zip' command and your \n"
-            ." PHP installation hasn't enabled the 'Zip' extension. \n\n"
-            ." Please, enable the 'zip' extension and publish the book again."
+            . " Operating System doesn't support the 'zip' command and your \n"
+            . " PHP installation hasn't enabled the 'Zip' extension. \n\n"
+            . " Please, enable the 'zip' extension and publish the book again."
         );
     }
 
@@ -401,7 +386,7 @@ final class Epub2Publisher extends HtmlPublisher
      * @param string $directory Book contents directory
      * @param string $zip_file  The path of the generated ZIP file
      */
-    private function zipBookContentsNatively($directory, $zip_file)
+    private function zipBookContentsNatively(string $directory, string $zip_file): void
     {
         $command = sprintf(
             'cd %s && zip -X0 %s mimetype && zip -rX9 %s * -x mimetype',
@@ -413,13 +398,13 @@ final class Epub2Publisher extends HtmlPublisher
         $process = new Process($command);
         $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw new \RuntimeException(
+        if (! $process->isSuccessful()) {
+            throw new RuntimeException(
                 "[ERROR] 'zip' command execution wasn't successful.\n\n"
-                ."Executed command:\n"
-                ." $command\n\n"
-                ."Result:\n"
-                .$process->getErrorOutput()
+                . "Executed command:\n"
+                . " ${command}\n\n"
+                . "Result:\n"
+                . $process->getErrorOutput()
             );
         }
     }
@@ -431,7 +416,7 @@ final class Epub2Publisher extends HtmlPublisher
      * @param string $directory Book contents directory
      * @param string $zip_file  The path of the generated ZIP file
      */
-    private function zipBookContentsWithPhpExtension($directory, $zip_file)
+    private function zipBookContentsWithPhpExtension(string $directory, string $zip_file): void
     {
         Toolkit::zip($directory, $zip_file);
     }
@@ -454,20 +439,20 @@ final class Epub2Publisher extends HtmlPublisher
      * @param string $chunksDir The directory where the book's HTML page/chunks
      *                          are stored
      */
-    private function fixInternalLinks($chunksDir)
+    private function fixInternalLinks(string $chunksDir): void
     {
         $generatedChunks = $this->app['finder']->files()->name('*.html')->in($chunksDir);
 
         // maps the original internal links (e.g. #new-content-types)
         // with the correct absolute URL needed for a website
         // (e.g. chapter-3/advanced-features.html#new-content-types
-        $internalLinkMapper = array();
+        $internalLinkMapper = [];
 
         //look for the ID of every book section
         foreach ($generatedChunks as $chunk) {
             $htmlContent = file_get_contents($chunk->getPathname());
 
-            $matches = array();
+            $matches = [];
             $numHeadings = preg_match_all(
                 '/<h[1-6].*id="(?<id>.*)".*<\/h[1-6]>/U',
                 $htmlContent,
@@ -477,8 +462,8 @@ final class Epub2Publisher extends HtmlPublisher
 
             if ($numHeadings > 0) {
                 foreach ($matches as $match) {
-                    $relativeUri = '#'.$match['id'];
-                    $absoluteUri = $chunk->getRelativePathname().$relativeUri;
+                    $relativeUri = '#' . $match['id'];
+                    $absoluteUri = $chunk->getRelativePathname() . $relativeUri;
 
                     $internalLinkMapper[$relativeUri] = $absoluteUri;
                 }
@@ -503,19 +488,13 @@ final class Epub2Publisher extends HtmlPublisher
                     if (preg_match('/\bclass="(.*)"/Us', $matches[1]) !== false) {
                         $matches[2] = preg_replace('/\bclass="(.*)"/Us', 'class="internal $1"', $matches[2]);
                         return sprintf('<a href="%s"%s</a>', $newUri, $matches[2]);
-                    } else {
-                        return sprintf('<a class="internal" href="%s"%s</a>', $newUri, $matches[2]);
                     }
+                    return sprintf('<a class="internal" href="%s"%s</a>', $newUri, $matches[2]);
                 },
                 $htmlContent
             );
 
             file_put_contents($chunk->getPathname(), $htmlContent);
         }
-    }
-
-    public function getFormat(): string
-    {
-        return 'epub';
     }
 }

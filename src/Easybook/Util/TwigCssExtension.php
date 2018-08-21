@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -12,21 +12,21 @@
 namespace Easybook\Util;
 
 use Twig_Extension;
+use Twig_Function_Method;
 
 final class TwigCssExtension extends Twig_Extension
 {
     public function getFunctions()
     {
-        return array(
-            'lighten' => new \Twig_Function_Method($this, 'lighten'),
-            'darken' => new \Twig_Function_Method($this, 'darken'),
-            'fade' => new \Twig_Function_Method($this, 'fade'),
-            'css_add' => new \Twig_Function_Method($this, 'cssAdd'),
-            'css_substract' => new \Twig_Function_Method($this, 'cssSubstract'),
-            'css_multiply' => new \Twig_Function_Method($this, 'cssMultiply'),
-            'css_divide' => new \Twig_Function_Method($this, 'cssDivide'),
-
-        );
+        return [
+            'lighten' => new Twig_Function_Method($this, 'lighten'),
+            'darken' => new Twig_Function_Method($this, 'darken'),
+            'fade' => new Twig_Function_Method($this, 'fade'),
+            'css_add' => new Twig_Function_Method($this, 'cssAdd'),
+            'css_substract' => new Twig_Function_Method($this, 'cssSubstract'),
+            'css_multiply' => new Twig_Function_Method($this, 'cssMultiply'),
+            'css_divide' => new Twig_Function_Method($this, 'cssDivide'),
+        ];
     }
 
     /*
@@ -44,11 +44,11 @@ final class TwigCssExtension extends Twig_Extension
 
         $rgb = $this->hex2rgb($color);
         $hsl = $this->rgb2hsl($rgb);
-        list($h, $s, $l) = $hsl;
+        [$h, $s, $l] = $hsl;
 
         $l = min(1, max(0, $l + $percent));
 
-        $rgb = $this->hsl2rgb(array($h, $s, $l));
+        $rgb = $this->hsl2rgb([$h, $s, $l]);
         $color = $this->rgb2hex($rgb);
 
         return strtoupper($color);
@@ -73,19 +73,12 @@ final class TwigCssExtension extends Twig_Extension
      *
      * @param string $hex     The original color in hexadecimal format (eg. '#FFF', '#CC0000')
      * @param string $opacity The opacity of the result color (value ranges from 0.0 to 1.0)
-     *
      */
     public function fade($hex, $opacity)
     {
         $rgb = $this->hex2rgb($hex);
 
-        return sprintf(
-            'rgba(%d, %d, %d, %.2f)',
-            $rgb[0],
-            $rgb[1],
-            $rgb[2],
-            max(0, min(1, $opacity))
-        );
+        return sprintf('rgba(%d, %d, %d, %.2f)', $rgb[0], $rgb[1], $rgb[2], max(0, min(1, $opacity)));
     }
 
     /*
@@ -98,9 +91,9 @@ final class TwigCssExtension extends Twig_Extension
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function ($matches) use ($factor) {
-                $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
+                $unit = $matches['unit'] ?? 'px';
 
-                return ($matches['value'] + $factor).$unit;
+                return ($matches['value'] + $factor) . $unit;
             },
             $length
         );
@@ -116,9 +109,9 @@ final class TwigCssExtension extends Twig_Extension
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function ($matches) use ($factor) {
-                $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
+                $unit = $matches['unit'] ?? 'px';
 
-                return ($matches['value'] - $factor).$unit;
+                return ($matches['value'] - $factor) . $unit;
             },
             $length
         );
@@ -134,9 +127,9 @@ final class TwigCssExtension extends Twig_Extension
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function ($matches) use ($factor) {
-                $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
+                $unit = $matches['unit'] ?? 'px';
 
-                return ($matches['value'] * $factor).$unit;
+                return ($matches['value'] * $factor) . $unit;
             },
             $length
         );
@@ -149,60 +142,59 @@ final class TwigCssExtension extends Twig_Extension
      */
     public function cssDivide($length, $factor)
     {
-        if (0 == $factor) {
+        if ($factor === 0) {
             return 0;
         }
 
         return preg_replace_callback(
             '/(?<value>[\d\.]*)(?<unit>[a-z]{2})/i',
             function ($matches) use ($factor) {
-                $unit = isset($matches['unit']) ? $matches['unit'] : 'px';
+                $unit = $matches['unit'] ?? 'px';
 
-                return ($matches['value'] / $factor).$unit;
+                return ($matches['value'] / $factor) . $unit;
             },
             $length
         );
+    }
+
+    public function getName(): string
+    {
+        return self::class;
     }
 
     // -- Internal methods to convert between units ---------------------------
 
     /**
      * Transforms the given hexadecimal color string into an RGB array.
-     *
-     * @param  string $hex
-     * @return array
      */
-    private function hex2rgb($hex)
+    private function hex2rgb(string $hex): array
     {
         $hex = str_replace('#', '', $hex);
 
         // expand shorthand notation #36A -> #3366AA
-        if (3 == strlen($hex)) {
+        if (strlen($hex) === 3) {
             $hex = $hex{0}
-            .$hex{0}
-            .$hex{1}
-            .$hex{1}
-            .$hex{2}
-            .$hex{2};
+            . $hex{0}
+            . $hex{1}
+            . $hex{1}
+            . $hex{2}
+            . $hex{2};
         }
 
         // expanded hex colors can only have 6 characters
         $hex = substr($hex, 0, 6);
 
-        return array(
+        return [
             hexdec(substr($hex, 0, 2)),
             hexdec(substr($hex, 2, 2)),
             hexdec(substr($hex, 4, 2)),
-        );
+        ];
     }
 
     /**
      * Transforms the given RGB array into an hexadecimal color string.
-     *
-     * @param  array $rgb
-     * @return string
      */
-    private function rgb2hex(array $rgb)
+    private function rgb2hex(array $rgb): string
     {
         return sprintf('#%02s%02s%02s', dechex($rgb[0]), dechex($rgb[1]), dechex($rgb[2]));
     }
@@ -210,13 +202,10 @@ final class TwigCssExtension extends Twig_Extension
     /**
      * Transforms the given RGB color array into an HSL color array.
      * Code copied from Drupal CMS project.
-     *
-     * @param  array $rgb
-     * @return array
      */
-    private function rgb2hsl(array $rgb)
+    private function rgb2hsl(array $rgb): array
     {
-        list($r, $g, $b) = $rgb;
+        [$r, $g, $b] = $rgb;
         $r /= 255;
         $g /= 255;
         $b /= 255;
@@ -235,31 +224,28 @@ final class TwigCssExtension extends Twig_Extension
         $h = 0;
 
         if ($delta > 0) {
-            if ($max == $r && $max != $g) {
+            if ($max === $r && $max !== $g) {
                 $h += ($g - $b) / $delta;
             }
-            if ($max == $g && $max != $b) {
+            if ($max === $g && $max !== $b) {
                 $h += (2 + ($b - $r) / $delta);
             }
-            if ($max == $b && $max != $r) {
+            if ($max === $b && $max !== $r) {
                 $h += (4 + ($r - $g) / $delta);
             }
             $h /= 6;
         }
 
-        return array($h, $s, $l);
+        return [$h, $s, $l];
     }
 
     /**
      * Transforms the given HSL color array into an RGB color array.
      * Code copied from Drupal CMS project.
-     *
-     * @param  array $hsl
-     * @return array
      */
-    private function hsl2rgb(array $hsl)
+    private function hsl2rgb(array $hsl): array
     {
-        list($h, $s, $l) = $hsl;
+        [$h, $s, $l] = $hsl;
 
         $m2 = ($l <= 0.5) ? $l * ($s + 1) : $l + $s - $l * $s;
         $m1 = $l * 2 - $m2;
@@ -279,15 +265,10 @@ final class TwigCssExtension extends Twig_Extension
             return $m1;
         };
 
-        return array(
+        return [
             $hue($h + 0.33333) * 255,
             $hue($h) * 255,
             $hue($h - 0.33333) * 255,
-        );
-    }
-
-    public function getName(): string
-    {
-        return self::class;
+        ];
     }
 }

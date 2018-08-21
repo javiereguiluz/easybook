@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,20 +11,25 @@
 
 namespace Easybook\Tests\Configurator;
 
+use Easybook\Configurator\BookConfigurator;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use InvalidArgumentException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 
 final class BookConfigurationTest extends AbstractContainerAwareTestCase
 {
-    public function testBookWithNoConfigFile()
+    public function testBookWithNoConfigFile(): void
     {
         $app['publishing.dir.book'] = uniqid('this-path-does-not-exist');
         $app['publishing.book.slug'] = 'book_with_no_config_file';
 
         try {
             $app->loadBookConfiguration();
-        } catch (\RuntimeException $e) {
-            $this->assertInstanceOf('\RuntimeException', $e);
+        } catch (RuntimeException $e) {
+            $this->assertInstanceOf(RuntimeException::class, $e);
             $this->assertContains("There is no 'config.yml' configuration file", $e->getMessage());
         }
     }
@@ -32,30 +37,36 @@ final class BookConfigurationTest extends AbstractContainerAwareTestCase
     /**
      * @dataProvider getStaticTests()
      */
-    public function testStaticBookConfiguration($testMessage, $commandConfiguration, $bookConfiguration, $expectedConfiguration)
-    {
-        $configurator = $this->getMock('Easybook\Configurator\BookConfigurator', array('loadBookFileConfiguration'), array($app));
+    public function testStaticBookConfiguration(
+        $testMessage,
+        $commandConfiguration,
+        $bookConfiguration,
+        $expectedConfiguration
+    ): void {
+        $configurator = $this->getMock(BookConfigurator::class, ['loadBookFileConfiguration'], [$app]);
         $configurator->expects($this->once())
             ->method('loadBookFileConfiguration')
-            ->will($this->returnValue(Yaml::parse($bookConfiguration) ?: array()))
-        ;
+            ->will($this->returnValue(Yaml::parse($bookConfiguration) ?: []));
 
         $configuration = $configurator->loadBookConfiguration(null, $commandConfiguration);
         $expectedConfiguration = Yaml::parse($expectedConfiguration);
 
-        $this->assertEquals($expectedConfiguration, $configuration, $testMessage);
+        $this->assertSame($expectedConfiguration, $configuration, $testMessage);
     }
 
     /**
      * @dataProvider getDynamicTests()
      */
-    public function testDynamicBookConfiguration($testMessage, $commandConfiguration, $bookConfiguration, $expectedConfiguration)
-    {
-        $configurator = $this->getMock('Easybook\Configurator\BookConfigurator', array('loadBookFileConfiguration'), array($app));
+    public function testDynamicBookConfiguration(
+        $testMessage,
+        $commandConfiguration,
+        $bookConfiguration,
+        $expectedConfiguration
+    ): void {
+        $configurator = $this->getMock(BookConfigurator::class, ['loadBookFileConfiguration'], [$app]);
         $configurator->expects($this->once())
             ->method('loadBookFileConfiguration')
-            ->will($this->returnValue(Yaml::parse($bookConfiguration) ?: array()))
-        ;
+            ->will($this->returnValue(Yaml::parse($bookConfiguration) ?: []));
 
         $configuration = $configurator->loadBookConfiguration(null, $commandConfiguration);
 
@@ -63,17 +74,17 @@ final class BookConfigurationTest extends AbstractContainerAwareTestCase
         $configuration = $configurator->processConfigurationValues();
 
         $expectedConfiguration = Yaml::parse($expectedConfiguration);
-        $this->assertEquals($expectedConfiguration, $configuration, $testMessage);
+        $this->assertSame($expectedConfiguration, $configuration, $testMessage);
     }
 
     public function getStaticTests(): array
     {
-        return $this->getTests(__DIR__.'/fixtures/static');
+        return $this->getTests(__DIR__ . '/fixtures/static');
     }
 
     public function getDynamicTests()
     {
-        return $this->getTests(__DIR__.'/fixtures/dynamic');
+        return $this->getTests(__DIR__ . '/fixtures/dynamic');
     }
 
     /**
@@ -84,25 +95,34 @@ final class BookConfigurationTest extends AbstractContainerAwareTestCase
     public function getTests($dir)
     {
         $fixturesDir = realpath($dir);
-        $tests = array();
+        $tests = [];
 
-        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($fixturesDir), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-            if (!preg_match('/\.test$/', $file)) {
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
+            $fixturesDir
+        ), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
+            if (! preg_match('/\.test$/', $file)) {
                 continue;
             }
 
             $test = file_get_contents($file->getRealpath());
 
-            if (preg_match('/--TEST--(.*)--COMMAND_CONFIG--(.*)--BOOK_CONFIG--(.*)--EXPECT--(.*)/sx', $test, $matches)) {
+            if (preg_match(
+                '/--TEST--(.*)--COMMAND_CONFIG--(.*)--BOOK_CONFIG--(.*)--EXPECT--(.*)/sx',
+                $test,
+                $matches
+            )) {
                 $testMessage = trim($matches[1]);
                 $commandConfiguration = trim($matches[2]);
                 $bookConfiguration = trim($matches[3]);
                 $expectedConfiguration = trim($matches[4]);
             } else {
-                throw new \InvalidArgumentException(sprintf('Test "%s" is not valid.', str_replace($fixturesDir.'/', '', $file)));
+                throw new InvalidArgumentException(sprintf(
+                    'Test "%s" is not valid.',
+                    str_replace($fixturesDir . '/', '', $file)
+                ));
             }
 
-            $tests[] = array($testMessage, $commandConfiguration, $bookConfiguration, $expectedConfiguration);
+            $tests[] = [$testMessage, $commandConfiguration, $bookConfiguration, $expectedConfiguration];
         }
 
         return $tests;

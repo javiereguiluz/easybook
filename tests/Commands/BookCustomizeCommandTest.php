@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,15 +11,16 @@
 
 namespace Easybook\Tests\Commands;
 
+use Easybook\Console\Command\BookCustomizeCommand;
+use Easybook\Console\Command\BookNewCommand;
 use Easybook\Console\Command\BookPublishCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
-use Symfony\Component\Console\Tester\CommandTester;
+use RuntimeException;
 use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
-use Easybook\Console\Command\BookNewCommand;
-use Easybook\Console\Command\BookCustomizeCommand;
 
 final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
 {
@@ -29,35 +30,36 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
      * @var Filesystem
      */
     private $filesystem;
+
     private $tmpDir;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->container = $this->container->get(BookNewCommand::class);
 
         // setup temp dir for generated files
-        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
+        $this->tmpDir = $app['app.dir.cache'] . '/' . uniqid('phpunit_', true);
         $this->filesystem = new Filesystem();
         $this->filesystem->mkdir($this->tmpDir);
 
         // generate a sample book before testing its customization
         $command = $this->container->get(BookNewCommand::class);
         $tester = new CommandTester($command);
-        $tester->execute(array(
+        $tester->execute([
             'command' => $command->getName(),
             'title' => 'The Origin of Species',
             '--dir' => $this->tmpDir,
-        ));
+        ]);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->filesystem->remove($this->tmpDir);
     }
 
-    public function testInteractiveCommand()
+    public function testInteractiveCommand(): void
     {
         $command = $this->container->get(BookCustomizeCommand::class);
 
@@ -65,16 +67,16 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
         // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
         $dialog = new DialogHelper();
         $dialog->setInputStream($this->getInputStream("\n\nthe-origin-of-species\n\n\nweb\n"));
-        $helper = new HelperSet(array(new FormatterHelper(), $dialog));
+        $helper = new HelperSet([new FormatterHelper(), $dialog]);
         $command->setHelperSet($helper);
 
         $tester = new CommandTester($command);
-        $tester->execute(array(
+        $tester->execute([
             'command' => $command->getName(),
             '--dir' => $this->tmpDir,
-        ), array(
+        ], [
             'interactive' => true,
-        ));
+        ]);
 
         $app = $command->getApp();
 
@@ -112,7 +114,7 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
     /**
      * @dataProvider getNonInteractiveCommandData
      */
-    public function testNonInteractiveCommand($edition)
+    public function testNonInteractiveCommand($edition): void
     {
         $tester = $this->customizeBook($edition);
 
@@ -127,11 +129,7 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
             $app['app.dir.skeletons'],
             $app->edition('format')
         );
-        $generatedCss = sprintf(
-            '%s/%s/style.css',
-            $app['publishing.dir.templates'],
-            $edition
-        );
+        $generatedCss = sprintf('%s/%s/style.css', $app['publishing.dir.templates'], $edition);
 
         $this->assertFileEquals(
             $skeletonCss,
@@ -142,19 +140,19 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
 
     public function getNonInteractiveCommandData()
     {
-        return array(
-            array('web'),
-            array('website'),
-            array('print'),
-            array('ebook'),
-        );
+        return [
+            ['web'],
+            ['website'],
+            ['print'],
+            ['ebook'],
+        ];
     }
 
     /**
      * @expectedException RuntimeException
      * @expectedExceptionMessage ERROR: The directory of the book cannot be found.
      */
-    public function testNonInteractionInvalidBookAndEdition()
+    public function testNonInteractionInvalidBookAndEdition(): void
     {
         $this->customizeBook(uniqid('non_existent_edition_'), uniqid('non_existent_book_'));
     }
@@ -163,12 +161,12 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
      * @expectedException RuntimeException
      * @expectedExceptionMessageRegExp /ERROR: The '.*' edition isn't defined for\n'The Origin of Species' book./
      */
-    public function testNonInteractionInvalidEdition()
+    public function testNonInteractionInvalidEdition(): void
     {
         $this->customizeBook(uniqid('non_existent_edition_'));
     }
 
-    public function testFailingCustomizationforABookThatAlreadyContainsCustomStyles()
+    public function testFailingCustomizationforABookThatAlreadyContainsCustomStyles(): void
     {
         if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
             $this->markTestSkipped('This test executes commands not available for Windows systems.');
@@ -176,44 +174,44 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
 
         // this configuration creates a 'style.css' file to simulate that the
         // customization CSS file has already been defined
-        $bookConfigurationViaCommand = array(
-            'book' => array(
-                'editions' => array(
-                    'web' => array(
-                        'before_publish' => array(
+        $bookConfigurationViaCommand = [
+            'book' => [
+                'editions' => [
+                    'web' => [
+                        'before_publish' => [
                             'mkdir -p Resources/Templates/web/',
                             'touch Resources/Templates/web/style.css',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         // publish the sample book before testing its customization
         $command = $this->container->get(BookPublishCommand::class);
         $tester = new CommandTester($command);
-        $tester->execute(array(
+        $tester->execute([
             'command' => $command->getName(),
             'slug' => 'the-origin-of-species',
             'edition' => 'web',
             '--dir' => $this->tmpDir,
             '--configuration' => json_encode($bookConfigurationViaCommand),
-        ));
+        ]);
 
         $command = $this->container->get(BookCustomizeCommand::class);
         $tester = new CommandTester($command);
 
         try {
-            $tester->execute(array(
+            $tester->execute([
                 'command' => $command->getName(),
                 'slug' => 'the-origin-of-species',
                 'edition' => 'web',
                 '--dir' => $this->tmpDir,
-            ), array(
+            ], [
                 'interactive' => false,
-            ));
-        } catch (\RuntimeException $e) {
-            $this->assertInstanceOf('RuntimeException', $e);
+            ]);
+        } catch (RuntimeException $e) {
+            $this->assertInstanceOf(RuntimeException::class, $e);
             $this->assertContains('edition already contains a custom CSS stylesheet', $e->getMessage());
         }
     }
@@ -222,16 +220,13 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
     protected function getInputStream($input)
     {
         $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, $input.str_repeat("\n", 10));
+        fputs($stream, $input . str_repeat("\n", 10));
         rewind($stream);
 
         return $stream;
     }
-
-    /**
-     * @return CommandTester
-     */
-    private function customizeBook($edition = 'web', $slug = 'the-origin-of-species')
+    
+    private function customizeBook($edition = 'web', $slug = 'the-origin-of-species'): CommandTester
     {
         $command = $this->container->get(BookCustomizeCommand::class);
         $tester = new CommandTester($command);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -71,13 +71,6 @@ final class EasybookKernel extends Kernel
         $loader->load(__DIR__ . '/../config/config.yml');
     }
 
-
-    protected function prepareContainer(ContainerBuilder $containerBuilder): void
-    {
-        $containerBuilder->addCompilerPass(new CollectorCompilerPass());
-        $containerBuilder->addCompilerPass(new AutoBindParametersCompilerPass());
-    }
-
     /**
      * Appends the given value to the content of the container element identified
      * by the 'id' parameter. It only works for container elements that store arrays.
@@ -87,7 +80,7 @@ final class EasybookKernel extends Kernel
      *
      * @return array The resulting array element (with the new value appended)
      */
-    public function append($id, $value)
+    public function append(string $id, $value): array
     {
         $array = $this[$id];
         $array[] = $value;
@@ -183,7 +176,7 @@ final class EasybookKernel extends Kernel
 //        return isset($this['titles']['title'][$element])
 //            ? $this['titles']['title'][$element]
 //            : '';
-////    }
+    ////    }
 //
 //    /**
 //     * Renders any string as a Twig template. It automatically injects two global
@@ -386,7 +379,7 @@ final class EasybookKernel extends Kernel
 //        $this['publishing.book.config'] = $config;
 //    }
 //
-////    /**
+    ////    /**
 //     * It loads the (optional) easybook configuration parameters defined by the book.
 //     */
 //    public function loadEasybookConfiguration()
@@ -469,5 +462,11 @@ final class EasybookKernel extends Kernel
     public function registerBundles(): array
     {
         return [];
+    }
+
+    protected function prepareContainer(ContainerBuilder $containerBuilder): void
+    {
+        $containerBuilder->addCompilerPass(new CollectorCompilerPass());
+        $containerBuilder->addCompilerPass(new AutoBindParametersCompilerPass());
     }
 }

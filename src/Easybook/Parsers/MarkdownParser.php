@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,6 +11,7 @@
 
 namespace Easybook\Parsers;
 
+use Exception;
 use Michelf\Markdown as OriginalMarkdownParser;
 use Michelf\MarkdownExtra as ExtraMarkdownParser;
 
@@ -29,15 +30,12 @@ final class MarkdownParser implements ParserInterface
      *
      * @return string The parsed content
      */
-    public function transform($content, $outputFormat = 'html')
+    public function transform(string $content, string $outputFormat = 'html'): string
     {
-        $supportedFormats = array('epub', 'epub2', 'epub3', 'html', 'html_chunked', 'pdf');
+        $supportedFormats = ['epub', 'epub2', 'epub3', 'html', 'html_chunked', 'pdf'];
 
-        if (!in_array($outputFormat, $supportedFormats)) {
-            throw new \Exception(sprintf(
-                'No markdown parser available for "%s" format',
-                $outputFormat
-            ));
+        if (! in_array($outputFormat, $supportedFormats, true)) {
+            throw new Exception(sprintf('No markdown parser available for "%s" format', $outputFormat));
         }
 
         $syntax = $this->app['parser.options']['markdown_syntax'];
@@ -55,12 +53,12 @@ final class MarkdownParser implements ParserInterface
      *
      * @throws \Exception If the given $syntax is not supported
      */
-    private function transformToHtml($content, $syntax)
+    private function transformToHtml(string $content, string $syntax): string
     {
-        $supportedSyntaxes = array('original', 'php-markdown-extra', 'easybook');
+        $supportedSyntaxes = ['original', 'php-markdown-extra', 'easybook'];
 
-        if (!in_array($syntax, $supportedSyntaxes)) {
-            throw new \Exception(sprintf(
+        if (! in_array($syntax, $supportedSyntaxes, true)) {
+            throw new Exception(sprintf(
                 'Unknown "%s" Markdown syntax (options available: %s)',
                 $syntax,
                 implode(', ', $supportedSyntaxes)
@@ -77,7 +75,7 @@ final class MarkdownParser implements ParserInterface
                 break;
 
             case 'easybook':
-                $parser = new EasybookMarkdownParser($this->app);
+                $parser = new EasybookMarkdownParser;
 
                 // replace <!--BREAK--> with {pagebreak} to prevent Markdown
                 // parser from considering <!--BREAK--> as a regular HTML comment

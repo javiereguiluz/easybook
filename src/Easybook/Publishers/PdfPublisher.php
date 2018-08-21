@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,6 +11,7 @@
 
 namespace Easybook\Publishers;
 
+use RuntimeException;
 use ZendPdf\PdfDocument;
 
 /**
@@ -26,20 +27,20 @@ final class PdfPublisher extends AbstractPublisher
         // @todo use open-sourced wkhtmlpdf
     }
 
-    public function loadContents()
+    public function loadContents(): void
     {
         parent::loadContents();
 
         // if the book includes its own cover as a PDF file,
         // remove the default 'cover' element to prevent
         // publishing a book with two covers
-        if (null !== $this->getCustomCover()) {
-            $bookItems = array();
+        if ($this->getCustomCover() !== null) {
+            $bookItems = [];
 
             // remove any element of type 'cover' from the
             // publishing items
             foreach ($this->app['publishing.items'] as $item) {
-                if ('cover' != $item['config']['element']) {
+                if ($item['config']['element'] !== 'cover') {
                     $bookItems[] = $item;
                 }
             }
@@ -48,29 +49,25 @@ final class PdfPublisher extends AbstractPublisher
         }
     }
 
-    public function assembleBook()
+    public function assembleBook(): void
     {
-        $tmpDir = $this->app['app.dir.cache'].'/'.uniqid('easybook_pdf_');
+        $tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('easybook_pdf_');
         $this->app['filesystem']->mkdir($tmpDir);
 
         // implode all the contents to create the whole book
-        $htmlBookFilePath = $tmpDir.'/book.html';
-        $this->app->render(
-            'book.twig',
-            array('items' => $this->app['publishing.items']),
-            $htmlBookFilePath
-        );
+        $htmlBookFilePath = $tmpDir . '/book.html';
+        $this->app->render('book.twig', ['items' => $this->app['publishing.items']], $htmlBookFilePath);
 
         // use PrinceXML to transform the HTML book into a PDF book
         $prince = $this->app['prince'];
-        $prince->setBaseURL($this->app['publishing.dir.contents'].'/images');
+        $prince->setBaseURL($this->app['publishing.dir.contents'] . '/images');
 
         // Prepare and add stylesheets before PDF conversion
         if ($this->app->edition('include_styles')) {
-            $defaultStyles = $tmpDir.'/default_styles.css';
+            $defaultStyles = $tmpDir . '/default_styles.css';
             $this->app->render(
                 '@theme/style.css.twig',
-                array('resources_dir' => $this->app['app.dir.resources'].'/'),
+                ['resources_dir' => $this->app['app.dir.resources'] . '/'],
                 $defaultStyles
             );
 
@@ -82,8 +79,8 @@ final class PdfPublisher extends AbstractPublisher
             $prince->addStyleSheet($customCss);
         }
 
-        $errorMessages = array();
-        $pdfBookFilePath = $this->app['publishing.dir.output'].'/book.pdf';
+        $errorMessages = [];
+        $pdfBookFilePath = $this->app['publishing.dir.output'] . '/book.pdf';
         $prince->convert_file_to_file($htmlBookFilePath, $pdfBookFilePath, $errorMessages);
         $this->displayPdfConversionErrors($errorMessages);
 
@@ -97,7 +94,7 @@ final class PdfPublisher extends AbstractPublisher
      *
      * @throws \RuntimeException If the PrinceXML executable is not found
      */
-    public function findPrinceXMLPath()
+    public function findPrinceXMLPath(): string
     {
         foreach ($this->app['prince.default_paths'] as $path) {
             if (file_exists($path)) {
@@ -107,16 +104,16 @@ final class PdfPublisher extends AbstractPublisher
 
         // the executable couldn't be found in the common
         // installation directories. Ask the user for the path
-        $isInteractive = null !== $this->app['console.input'] && $this->app['console.input']->isInteractive();
+        $isInteractive = $this->app['console.input'] !== null && $this->app['console.input']->isInteractive();
         if ($isInteractive) {
             return $this->askForPrinceXMLPath();
         }
 
-        throw new \RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             "ERROR: The PrinceXML library needed to generate PDF books cannot be found.\n"
-                ." Check that you have installed PrinceXML in a common directory \n"
-                ." or set your custom PrinceXML path in the book's config.yml file:\n\n"
-                .'%s',
+                . " Check that you have installed PrinceXML in a common directory \n"
+                . " or set your custom PrinceXML path in the book's config.yml file:\n\n"
+                . '%s',
             $this->getSampleYamlConfiguration()
         ));
     }
@@ -125,11 +122,11 @@ final class PdfPublisher extends AbstractPublisher
     {
         $this->app['console.output']->write(sprintf(
             " In order to generate PDF files, PrinceXML library must be installed. \n\n"
-                ." We couldn't find PrinceXML executable in any of the following directories: \n"
-                ."   -> %s \n\n"
-                ." If you haven't installed it yet, you can download a fully-functional demo at: \n"
-                ." %s \n\n"
-                ." If you have installed in a custom directory, please type its full absolute path:\n > ",
+                . " We couldn't find PrinceXML executable in any of the following directories: \n"
+                . "   -> %s \n\n"
+                . " If you haven't installed it yet, you can download a fully-functional demo at: \n"
+                . " %s \n\n"
+                . " If you have installed in a custom directory, please type its full absolute path:\n > ",
             implode($this->app['prince.default_paths'], "\n   -> "),
             'http://www.princexml.com/download'
         ));
@@ -148,7 +145,7 @@ final class PdfPublisher extends AbstractPublisher
      *
      * @param array $errorMessages The array of messages generated by PrinceXML
      */
-    public function displayPdfConversionErrors($errorMessages)
+    public function displayPdfConversionErrors(array $errorMessages): void
     {
         if (count($errorMessages) > 0) {
             $this->app['console.output']->writeln("\n PrinceXML errors and warnings");
@@ -156,7 +153,7 @@ final class PdfPublisher extends AbstractPublisher
 
             foreach ($errorMessages as $message) {
                 $this->app['console.output']->writeln(
-                    '   ['.strtoupper($message[0]).'] '.ucfirst($message[2]).' ('.$message[1].')'
+                    '   [' . strtoupper($message[0]) . '] ' . ucfirst($message[2]) . ' (' . $message[1] . ')'
                 );
             }
 
@@ -171,9 +168,9 @@ final class PdfPublisher extends AbstractPublisher
      * @param string $bookFilePath  The path of the original PDF book without the cover
      * @param string $coverFilePath The path of the PDF file which will be displayed as the cover of the book
      */
-    public function addBookCover($bookFilePath, $coverFilePath)
+    public function addBookCover(string $bookFilePath, string $coverFilePath): void
     {
-        if (!empty($coverFilePath)) {
+        if (! empty($coverFilePath)) {
             $pdfBook = PdfDocument::load($bookFilePath);
             $pdfCover = PdfDocument::load($coverFilePath);
 
@@ -196,13 +193,18 @@ final class PdfPublisher extends AbstractPublisher
      */
     public function getCustomCover($coverFileName = 'cover.pdf')
     {
-        $paths = array(
-            $this->app['publishing.dir.templates'].'/'.$this->app['publishing.edition'],
-            $this->app['publishing.dir.templates'].'/pdf',
+        $paths = [
+            $this->app['publishing.dir.templates'] . '/' . $this->app['publishing.edition'],
+            $this->app['publishing.dir.templates'] . '/pdf',
             $this->app['publishing.dir.templates'],
-        );
+        ];
 
         return $this->app->getFirstExistingFile($coverFileName, $paths);
+    }
+
+    public function getFormat(): string
+    {
+        return 'pdf';
     }
 
     /**
@@ -211,7 +213,7 @@ final class PdfPublisher extends AbstractPublisher
      *
      * @return string The sample YAML configuration
      */
-    private function getSampleYamlConfiguration()
+    private function getSampleYamlConfiguration(): string
     {
         return <<<YAML
   easybook:
@@ -223,10 +225,5 @@ final class PdfPublisher extends AbstractPublisher
       author: ...
       # ...
 YAML;
-    }
-
-    public function getFormat(): string
-    {
-        return 'pdf';
     }
 }

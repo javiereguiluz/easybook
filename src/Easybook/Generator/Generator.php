@@ -1,6 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Easybook\Generator;
+
+use Twig_Environment;
+use Twig_Loader_Filesystem;
 
 /**
  * Generic generator class to render Twig templates and save them as files.
@@ -17,7 +20,7 @@ abstract class Generator
     /**
      * Generates all the needed resources (usually, files and directories).
      */
-    abstract public function generate();
+    abstract public function generate(): void;
 
     /**
      * Renders a Twig template with the given parameters.
@@ -28,15 +31,15 @@ abstract class Generator
      *
      * @return string The contents of the rendered template
      */
-    protected function render($skeletonDir, $template, $parameters)
+    protected function render($skeletonDir, string $template, array $parameters): string
     {
-        $loader = new \Twig_Loader_Filesystem($skeletonDir);
-        $twig = new \Twig_Environment($loader, array(
+        $loader = new Twig_Loader_Filesystem($skeletonDir);
+        $twig = new Twig_Environment($loader, [
             'debug' => true,
             'cache' => false,
             'strict_variables' => true,
             'autoescape' => false,
-        ));
+        ]);
 
         return $twig->render($template, $parameters);
     }
@@ -53,9 +56,9 @@ abstract class Generator
      *
      * @return int The number of bytes that were written to the file, or false on failure.
      */
-    protected function renderFile($skeletonDir, $template, $target, $parameters)
+    protected function renderFile($skeletonDir, string $template, string $target, array $parameters): int
     {
-        if (!is_dir(dirname($target))) {
+        if (! is_dir(dirname($target))) {
             mkdir(dirname($target), 0777, true);
         }
 

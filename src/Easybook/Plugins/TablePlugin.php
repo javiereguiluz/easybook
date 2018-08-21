@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,21 +11,21 @@
 
 namespace Easybook\Plugins;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * It performs some operations on the book tables, such as
  * decorating their contents and adding labels to them.
  */
-class TablePlugin implements EventSubscriberInterface
+final class TablePlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        return array(
-            Events::POST_PARSE => array('decorateAndLabelTables', -500),
-        );
+        return [
+            Events::POST_PARSE => ['decorateAndLabelTables', -500],
+        ];
     }
 
     /**
@@ -34,51 +34,51 @@ class TablePlugin implements EventSubscriberInterface
      *
      * @param ParseEvent $event The object that contains the item being processed
      */
-    public function decorateAndLabelTables(ParseEvent $event)
+    public function decorateAndLabelTables(ParseEvent $parseEvent): void
     {
-        $item = $event->getItem();
+        $item = $parseEvent->getItem();
 
-        $addTableLabels = in_array('table', $event->app->edition('labels') ?: array());
+        $addTableLabels = in_array('table', $parseEvent->app->edition('labels') ?: [], true);
         $parentItemNumber = $item['config']['number'];
-        $listOfTables = array();
+        $listOfTables = [];
         $counter = 0;
 
         $item['content'] = preg_replace_callback(
             "/(?<content><table.*\n<\/table>)/Ums",
-            function ($matches) use ($event, $addTableLabels, $parentItemNumber, &$listOfTables, &$counter) {
+            function ($matches) use ($parseEvent, $addTableLabels, $parentItemNumber, &$listOfTables, &$counter) {
                 // prepare table parameters for template and label
                 $counter++;
-                $parameters = array(
-                    'item' => array(
+                $parameters = [
+                    'item' => [
                         'caption' => '',
                         'content' => $matches['content'],
                         'label' => '',
                         'number' => $counter,
-                        'slug' => $event->app->slugify('Table '.$parentItemNumber.'-'.$counter),
-                    ),
-                    'element' => array(
+                        'slug' => $parseEvent->app->slugify('Table ' . $parentItemNumber . '-' . $counter),
+                    ],
+                    'element' => [
                         'number' => $parentItemNumber,
-                    ),
-                );
+                    ],
+                ];
 
                 // the publishing edition wants to label tables
                 if ($addTableLabels) {
-                    $label = $event->app->getLabel('table', $parameters);
+                    $label = $parseEvent->app->getLabel('table', $parameters);
                     $parameters['item']['label'] = $label;
                 }
 
                 // add table details to the list-of-tables
                 $listOfTables[] = $parameters;
 
-                return $event->app->render('table.twig', $parameters);
+                return $parseEvent->app->render('table.twig', $parameters);
             },
             $item['content']
         );
 
         if (count($listOfTables) > 0) {
-            $event->app->append('publishing.list.tables', $listOfTables);
+            $parseEvent->app->append('publishing.list.tables', $listOfTables);
         }
 
-        $event->setItem($item);
+        $parseEvent->setItem($item);
     }
 }

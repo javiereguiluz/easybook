@@ -43,3 +43,5 @@ services:
 #        $publishingEdition = $app['publishing.edition'];
 #        $editions = $app->book('editions');
 #        $twig->addGlobal('edition', $editions[$publishingEdition]);
+
+    Michelf\MarkdownExtra: ~

@@ -16,7 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 
 final class ApplicationTest extends AbstractContainerAwareTestCase
 {
-    public function testSlugify()
+    public function testSlugify(): void
     {
         // don't use a dataProvider because it interferes with the slug generation
         $slugs = array(
@@ -40,7 +40,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         }
     }
 
-    public function testSlugifyUniquely()
+    public function testSlugifyUniquely(): void
     {
         // don't use a dataProvider because it interferes with the slug generation
         $uniqueSlugs = array(
@@ -67,7 +67,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
     /**
      * @dataProvider provideHighlightFixtures
      */
-    public function testHighlight($originalFilePath, $highlightedFilePath)
+    public function testHighlight($originalFilePath, $highlightedFilePath): void
     {
         // mock the $app object to disable the highlight cache
         $app = $this->getMock('Easybook\DependencyInjection\Application', array('edition'));
@@ -91,7 +91,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         return array_map(null, glob($fixturesDir.'/input/*.txt'), glob($fixturesDir.'/output/*.txt'));
     }
 
-    public function testBookMethodShortcut()
+    public function testBookMethodShortcut(): void
     {
         $app = new Application();
         $app['publishing.book.config'] = array(
@@ -108,7 +108,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         $this->assertEquals($newBookTitle, $app->book('title'));
     }
 
-    public function testEditionMethodShortcut()
+    public function testEditionMethodShortcut(): void
     {
         $app = new Application();
 
@@ -134,7 +134,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
      * @expectedException PHPUnit_Framework_Error_Deprecated
      * @expectedExceptionMessage The "publishing.id" option is deprecated
      */
-    public function testDeprecatedPublishingIdProperty()
+    public function testDeprecatedPublishingIdProperty(): void
     {
         $app['publishing.edition.id'] = 'custom_edition_id';
 
@@ -144,7 +144,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
     /**
      * @dataProvider getPublishers
      */
-    public function testPublisherTypes($outputformat, $publisherClassName)
+    public function testPublisherTypes($outputformat, $publisherClassName): void
     {
         $app['publishing.edition'] = 'my_edition';
 
@@ -175,7 +175,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
      * @expectedException RuntimeException
      * @expectedExceptionMessage Unknown "this_format_does_not_exist" format
      */
-    public function testUnsupportedPublisher()
+    public function testUnsupportedPublisher(): void
     {
         $app = new Application();
         $app['publishing.edition'] = 'my_edition';
@@ -197,7 +197,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
      * @expectedException RuntimeException
      * @expectedExceptionMessage (easybook only supports Markdown)
      */
-    public function testUnsupportedContentFormat()
+    public function testUnsupportedContentFormat(): void
     {
         $app = new Application();
         $app['publishing.active_item'] = array(
@@ -210,7 +210,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         $parser = $app['parser'];
     }
 
-    public function testGetTitleMethodForDefaultTitles()
+    public function testGetTitleMethodForDefaultTitles(): void
     {
         $app = new Application();
 
@@ -237,7 +237,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         }
     }
 
-    public function testGetLabelMethodForDefaultLabels()
+    public function testGetLabelMethodForDefaultLabels(): void
     {
         $app = new Application();
 
@@ -287,7 +287,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         }
     }
 
-    public function testGetPublishingEditionId()
+    public function testGetPublishingEditionId(): void
     {
         // get the ID of a ISBN-less book
         $app = new Application();
@@ -320,7 +320,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
     /**
      * @dataProvider getValuesForGetAndSetMethods
      */
-    public function testGetMethod($key, $expectedValue)
+    public function testGetMethod($key, $expectedValue): void
     {
         $app[$key] = $expectedValue;
 
@@ -330,7 +330,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
     /**
      * @dataProvider getValuesForGetAndSetMethods
      */
-    public function testSetMethod($key, $expectedValue)
+    public function testSetMethod($key, $expectedValue): void
     {
         $app = new Application();
 

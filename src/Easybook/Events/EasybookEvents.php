@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -16,12 +16,19 @@ namespace Easybook\Events;
  */
 final class EasybookEvents
 {
-    const PRE_NEW = 'book.new.start';
-    const POST_NEW = 'book.new.finish';
-    const PRE_PUBLISH = 'book.publish.start';
-    const POST_PUBLISH = 'book.publish.finish';
-    const PRE_PARSE = 'item.parse.start';
-    const POST_PARSE = 'item.parse.finish';
-    const PRE_DECORATE = 'item.decorate.start';
-    const POST_DECORATE = 'item.decorate.finish';
+    public const PRE_NEW = 'book.new.start';
+
+    public const POST_NEW = 'book.new.finish';
+
+    public const PRE_PUBLISH = 'book.publish.start';
+
+    public const POST_PUBLISH = 'book.publish.finish';
+
+    public const PRE_PARSE = 'item.parse.start';
+
+    public const POST_PARSE = 'item.parse.finish';
+
+    public const PRE_DECORATE = 'item.decorate.start';
+
+    public const POST_DECORATE = 'item.decorate.finish';
 }

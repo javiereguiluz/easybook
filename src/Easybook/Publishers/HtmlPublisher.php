@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -18,14 +18,14 @@ namespace Easybook\Publishers;
  */
 class HtmlPublisher extends AbstractPublisher
 {
-    public function assembleBook()
+    public function assembleBook(): void
     {
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
             $this->app->render(
                 '@theme/style.css.twig',
-                array('resources_dir' => $this->app['app.dir.resources'].'/'),
-                $this->app['publishing.dir.output'].'/css/easybook.css'
+                ['resources_dir' => $this->app['app.dir.resources'] . '/'],
+                $this->app['publishing.dir.output'] . '/css/easybook.css'
             );
         }
 
@@ -33,29 +33,22 @@ class HtmlPublisher extends AbstractPublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app['filesystem']->copy(
-                $customCss,
-                $this->app['publishing.dir.output'].'/css/styles.css',
-                true
-            );
+            $this->app['filesystem']->copy($customCss, $this->app['publishing.dir.output'] . '/css/styles.css', true);
         }
 
         // implode all the contents to create the whole book
         $this->app->render(
             'book.twig',
-            array(
+            [
                 'items' => $this->app['publishing.items'],
                 'has_custom_css' => $hasCustomCss,
-            ),
-            $this->app['publishing.dir.output'].'/book.html'
+            ],
+            $this->app['publishing.dir.output'] . '/book.html'
         );
 
         // copy book images
-        if (file_exists($imagesDir = $this->app['publishing.dir.contents'].'/images')) {
-            $this->app['filesystem']->mirror(
-                $imagesDir,
-                $this->app['publishing.dir.output'].'/images'
-            );
+        if (file_exists($imagesDir = $this->app['publishing.dir.contents'] . '/images')) {
+            $this->app['filesystem']->mirror($imagesDir, $this->app['publishing.dir.output'] . '/images');
         }
     }
 

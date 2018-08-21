@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -12,17 +12,19 @@
 namespace Easybook\Util;
 
 use Easybook\DependencyInjection\Application;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Groups several validators used across the application.
  */
-class Validator
+final class Validator
 {
     private $app;
 
-    public function __construct(Application $app)
+    public function __construct(Application $application)
     {
-        $this->app = $app;
+        $this->app = $application;
     }
 
     /**
@@ -30,9 +32,9 @@ class Validator
      */
     public static function validateNonEmptyString($name, $value)
     {
-        if (null === $value || '' === trim($value)) {
+        if ($value === null || trim($value) === '') {
             // it throws an exception for invalid values because it's used in console commands
-            throw new \InvalidArgumentException("ERROR: The $name cannot be empty.");
+            throw new InvalidArgumentException("ERROR: The ${name} cannot be empty.");
         }
 
         return $value;
@@ -40,19 +42,19 @@ class Validator
 
     public static function validateDirExistsAndWritable($dir)
     {
-        if (null === $dir || '' === trim($dir)) {
+        if ($dir === null || trim($dir) === '') {
             // it throws an exception for invalid values because it's used in console commands
-            throw new \InvalidArgumentException('ERROR: The directory cannot be empty.');
+            throw new InvalidArgumentException('ERROR: The directory cannot be empty.');
         }
 
-        if (!is_dir($dir)) {
+        if (! is_dir($dir)) {
             // it throws an exception for invalid values because it's used in console commands
-            throw new \InvalidArgumentException("ERROR: '$dir' directory doesn't exist.");
+            throw new InvalidArgumentException("ERROR: '${dir}' directory doesn't exist.");
         }
 
-        if (!is_writable($dir)) {
+        if (! is_writable($dir)) {
             // it throws an exception for invalid values because it's used in console commands
-            throw new \InvalidArgumentException("ERROR: '$dir' directory is not writable.");
+            throw new InvalidArgumentException("ERROR: '${dir}' directory is not writable.");
         }
 
         return $dir;
@@ -63,9 +65,9 @@ class Validator
      */
     public static function validateBookSlug($slug)
     {
-        if (!preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
+        if (! preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
             // it throws an exception for invalid values because it's used in console commands
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'ERROR: The slug can only contain letters, numbers and dashes (no spaces)'
             );
         }
@@ -79,46 +81,46 @@ class Validator
     public function validateBookDir($slug, $baseDir)
     {
         $attempts = 6;
-        $bookDir = $baseDir.'/'.$slug;
+        $bookDir = $baseDir . '/' . $slug;
 
         $isInteractive = $this->app['console.input']->isInteractive();
-        if (!$isInteractive && !file_exists($bookDir)) {
-            throw new \RuntimeException(sprintf(
+        if (! $isInteractive && ! file_exists($bookDir)) {
+            throw new RuntimeException(sprintf(
                 "ERROR: The directory of the book cannot be found.\n"
-                ." Check that '%s' directory \n"
-                ." has a folder named as the book slug ('%s')",
+                . " Check that '%s' directory \n"
+                . " has a folder named as the book slug ('%s')",
                 $baseDir,
                 $slug
             ));
         }
 
         // check that the given book already exists or ask for another slug
-        while (!file_exists($bookDir) && $attempts--) {
-            if (!$attempts) {
-                throw new \InvalidArgumentException(sprintf(
+        while (! file_exists($bookDir) && $attempts--) {
+            if (! $attempts) {
+                throw new InvalidArgumentException(sprintf(
                     "ERROR: Too many failed attempts of getting the book directory.\n"
-                    ." Check that '%s' directory \n"
-                    ." has a folder named as the book slug ('%s')",
+                    . " Check that '%s' directory \n"
+                    . " has a folder named as the book slug ('%s')",
                     $baseDir,
                     $slug
                 ));
             }
 
-            $this->app['console.output']->writeln(array(
+            $this->app['console.output']->writeln([
                 '',
-                " <bg=red;fg=white> ERROR </> The given <info>$slug</info> slug doesn't match any book in",
-                ' <comment>'.realpath($baseDir).'/</comment> directory',
-            ));
+                " <bg=red;fg=white> ERROR </> The given <info>${slug}</info> slug doesn't match any book in",
+                ' <comment>' . realpath($baseDir) . '/</comment> directory',
+            ]);
 
             $slug = $this->app['console.dialog']->ask(
                 $this->app['console.output'],
-                array(
+                [
                     "\n Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n"
-                    .' > ',
-                )
+                    . ' > ',
+                ]
             );
 
-            $bookDir = $baseDir.'/'.$slug;
+            $bookDir = $baseDir . '/' . $slug;
         }
 
         return $bookDir;
@@ -129,8 +131,8 @@ class Validator
      */
     public static function validateEditionSlug($slug)
     {
-        if (!preg_match('/^[a-zA-Z0-9\-\_]+$/', $slug)) {
-            throw new \InvalidArgumentException(
+        if (! preg_match('/^[a-zA-Z0-9\-\_]+$/', $slug)) {
+            throw new InvalidArgumentException(
                 'ERROR: The edition name can only contain letters, numbers and dashes (no spaces)'
             );
         }
@@ -144,27 +146,27 @@ class Validator
     public function validatePublishingEdition($edition)
     {
         // if the book defines no edition, raise an exception
-        if (count($this->app->book('editions') ?: array()) == 0) {
-            throw new \RuntimeException(sprintf(
+        if (count($this->app->book('editions') ?: []) === 0) {
+            throw new RuntimeException(sprintf(
                 " ERROR: Book hasn't defined any edition.\n"
-                ."\n"
-                ." Check that your book has at least one edition defined under\n"
-                ." 'editions' option in the following configuration file:\n"
-                ."\n"
-                ." '%s'",
-                realpath($this->app['publishing.dir.book'].'/config.yml')
+                . "\n"
+                . " Check that your book has at least one edition defined under\n"
+                . " 'editions' option in the following configuration file:\n"
+                . "\n"
+                . " '%s'",
+                realpath($this->app['publishing.dir.book'] . '/config.yml')
             ));
         }
 
         $isInteractive = $this->app['console.input']->isInteractive();
 
-        if (!array_key_exists($edition, $this->app->book('editions'))) {
+        if (! array_key_exists($edition, $this->app->book('editions'))) {
             if ($isInteractive) {
                 $edition = $this->askForPublishingEdition();
             } else {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     "ERROR: The '%s' edition isn't defined for\n"
-                        ."'%s' book.",
+                        . "'%s' book.",
                     $edition,
                     $this->app->book('title')
                 ));
@@ -183,39 +185,39 @@ class Validator
      *
      * @throws \RuntimeException If there are too many failed attempts
      */
-    private function askForPublishingEdition()
+    private function askForPublishingEdition(): string
     {
         $attempts = 6;
         $bookDir = $this->app['publishing.dir.book'];
         $edition = null;
 
         // check that the book has defined the given edition or ask for another edition
-        while (!array_key_exists($edition, $this->app->book('editions')) && $attempts--) {
-            if (!$attempts) {
-                throw new \RuntimeException(sprintf(
+        while (! array_key_exists($edition, $this->app->book('editions')) && $attempts--) {
+            if (! $attempts) {
+                throw new RuntimeException(sprintf(
                     " ERROR: Too many failed attempts. Check that your book has a\n"
-                    ." '%s' edition defined in the following configuration file:\n"
-                    ." '%s'",
+                    . " '%s' edition defined in the following configuration file:\n"
+                    . " '%s'",
                     $edition,
-                    realpath($bookDir.'/config.yml')
+                    realpath($bookDir . '/config.yml')
                 ));
             }
 
-            $this->app['console.output']->writeln(array(
+            $this->app['console.output']->writeln([
                 '',
-                " <bg=red;fg=white> ERROR </> The <info>$edition</info> edition isn't defined for "
-                .'<comment>'.$this->app->book('title').'</comment> book',
+                " <bg=red;fg=white> ERROR </> The <info>${edition}</info> edition isn't defined for "
+                . '<comment>' . $this->app->book('title') . '</comment> book',
                 '',
-                ' Check that <comment>'.realpath($bookDir.'/config.yml').'</comment> file',
-                " defines a <info>$edition</info> edition under the <info>editions</info> option.",
-            ));
+                ' Check that <comment>' . realpath($bookDir . '/config.yml') . '</comment> file',
+                " defines a <info>${edition}</info> edition under the <info>editions</info> option.",
+            ]);
 
             $edition = $this->app['console.dialog']->ask(
                 $this->app['console.output'],
-                array(
+                [
                     "\n Please, type the name of the <info>edition</info> to be published:\n"
-                    .' > ',
-                )
+                    . ' > ',
+                ]
             );
         }
 

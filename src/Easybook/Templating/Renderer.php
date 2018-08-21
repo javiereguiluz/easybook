@@ -2,6 +2,8 @@
 
 namespace Easybook\Templating;
 
+use RuntimeException;
+
 final class Renderer
 {
     public function __construct()
@@ -20,17 +22,17 @@ final class Renderer
      *
      *  @throws \RuntimeException  If the given template is not a Twig template
      */
-    public function render($template, $variables = array(), $targetFile = null)
+    public function render(string $template, array $variables = [], string $targetFile = null): string
     {
-        if ('.twig' != substr($template, -5)) {
-            throw new \RuntimeException(sprintf(
+        if (substr($template, -5) !== '.twig') {
+            throw new RuntimeException(sprintf(
                 'Unsupported format for "%s" template (easybook only supports Twig)',
                 $template
             ));
         }
         $rendered = $this['twig']->render($template, $variables);
-        if (null !== $targetFile) {
-            if (!is_dir($dir = dirname($targetFile))) {
+        if ($targetFile !== null) {
+            if (! is_dir($dir = dirname($targetFile))) {
                 $this['filesystem']->mkdir($dir);
             }
             file_put_contents($targetFile, $rendered);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,64 +11,68 @@
 
 namespace Easybook\Tests\Configurator;
 
+use Easybook\Configurator\BookConfigurator;
 use Easybook\Tests\AbstractContainerAwareTestCase;
-use Symfony\Component\Yaml\Yaml;
 use Easybook\Util\Toolkit;
+use Symfony\Component\Yaml\Yaml;
 
 final class EasybookConfigurationTest extends AbstractContainerAwareTestCase
 {
     private $fixturesDir;
+
     private $app;
 
-    public function setup()
+    protected function setup(): void
     {
-        $this->fixturesDir = __DIR__.'/fixtures/easybook_configuration';
+        $this->fixturesDir = __DIR__ . '/fixtures/easybook_configuration';
     }
 
     /**
      * @dataProvider getConfigFileName
      */
-    public function testEasybookConfiguration($configFileName)
+    public function testEasybookConfiguration($configFileName): void
     {
         $this->app = $this->getApplication($configFileName);
 
         $config = $this->app['configurator']->loadBookFileConfiguration(null);
         $easybookConfig = isset($config['easybook'])
             ? $config['easybook']['parameters']
-            : array();
+            : [];
 
-        $expectedConfiguration = Toolkit::array_deep_merge_and_replace($this->getEasybookDefaultParameters(), $easybookConfig);
+        $expectedConfiguration = Toolkit::array_deep_merge_and_replace(
+            $this->getEasybookDefaultParameters(),
+            $easybookConfig
+        );
         $this->assertEasybookConfiguration($expectedConfiguration);
     }
 
     public function getConfigFileName()
     {
-        return array(
-            array('no_configuration.yml'),
-            array('custom_configuration.yml'),
-            array('override_configuration.yml'),
-            array('custom_and_override_configuration.yml'),
-        );
+        return [
+            ['no_configuration.yml'],
+            ['custom_configuration.yml'],
+            ['override_configuration.yml'],
+            ['custom_and_override_configuration.yml'],
+        ];
     }
 
-    private function assertEasybookConfiguration($expectedConfiguration)
+    private function assertEasybookConfiguration($expectedConfiguration): void
     {
         foreach ($expectedConfiguration as $option => $expectedValue) {
-            $this->assertEquals(
+            $this->assertSame(
                 $expectedValue,
                 $this->app[$option],
-                "\$app['$option'] = ".(is_array($expectedValue) ? '<Array>' : $expectedValue)
+                "\$app['${option}'] = " . (is_array($expectedValue) ? '<Array>' : $expectedValue)
             );
         }
     }
 
     private function getApplication($configFileName)
     {
-        $configurator = $this->getMock('Easybook\Configurator\BookConfigurator', array('loadBookFileConfiguration'), array($app));
+        $configurator = $this->getMock(BookConfigurator::class, ['loadBookFileConfiguration'], [$app]);
         $configurator->expects($this->any())
             ->method('loadBookFileConfiguration')
-            ->will($this->returnValue(Yaml::parse($this->fixturesDir.'/'.$configFileName) ?: array()))
-        ;
+            ->will($this->returnValue(Yaml::parse($this->fixturesDir . '/' . $configFileName) ?: []));
 
         $app['configurator'] = $configurator;
 

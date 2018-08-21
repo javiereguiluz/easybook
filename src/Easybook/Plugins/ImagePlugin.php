@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,24 +11,24 @@
 
 namespace Easybook\Plugins;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * It performs some operations on the book images, such as
  * fixing their URLs and adding labels to them.
  */
-class ImagePlugin implements EventSubscriberInterface
+final class ImagePlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        return array(
-            Events::POST_PARSE => array(
-                array('fixImageUris', -500),
-                array('decorateAndLabelImages', -500),
-            ),
-        );
+        return [
+            Events::POST_PARSE => [
+                ['fixImageUris', -500],
+                ['decorateAndLabelImages', -500],
+            ],
+        ];
     }
 
     /**
@@ -40,23 +40,23 @@ class ImagePlugin implements EventSubscriberInterface
      *
      * @param ParseEvent $event The object that contains the item being processed
      */
-    public function fixImageUris(ParseEvent $event)
+    public function fixImageUris(ParseEvent $parseEvent): void
     {
-        $item = $event->getItem();
-        $baseDir = $event->app->edition('images_base_dir');
+        $item = $parseEvent->getItem();
+        $baseDir = $parseEvent->app->edition('images_base_dir');
 
         $item['content'] = preg_replace_callback(
             '/<img src="(.*)"(.*) \/>/U',
             function ($matches) use ($baseDir) {
                 $uri = $matches[1];
-                $uri = $baseDir.$uri;
+                $uri = $baseDir . $uri;
 
                 return sprintf('<img src="%s"%s />', $uri, $matches[2]);
             },
             $item['content']
         );
 
-        $event->setItem($item);
+        $parseEvent->setItem($item);
     }
 
     /**
@@ -65,13 +65,13 @@ class ImagePlugin implements EventSubscriberInterface
      *
      * @param ParseEvent $event The object that contains the item being processed
      */
-    public function decorateAndLabelImages(ParseEvent $event)
+    public function decorateAndLabelImages(ParseEvent $parseEvent): void
     {
-        $item = $event->getItem();
+        $item = $parseEvent->getItem();
 
-        $addImageLabels = in_array('figure', $event->app->edition('labels') ?: array());
+        $addImageLabels = in_array('figure', $parseEvent->app->edition('labels') ?: [], true);
         $parentItemNumber = $item['config']['number'];
-        $listOfImages = array();
+        $listOfImages = [];
         $counter = 0;
 
         $item['content'] = preg_replace_callback(
@@ -82,32 +82,32 @@ class ImagePlugin implements EventSubscriberInterface
             //        <img (...optional...) alt="..." (...optional...) />
             //      </div>
             '/(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>[^"]*)".*\/>)(<\/div>)?(<\/p>)?/',
-            function ($matches) use ($event, $addImageLabels, $parentItemNumber, &$listOfImages, &$counter) {
+            function ($matches) use ($parseEvent, $addImageLabels, $parentItemNumber, &$listOfImages, &$counter) {
                 // prepare figure parameters for the template and the label
-                $parameters = array(
-                    'item' => array(
+                $parameters = [
+                    'item' => [
                         'align' => $matches['align'],
                         'caption' => $matches['title'],
                         'content' => $matches['content'],
                         'label' => '',
                         'number' => null,
                         'slug' => '',
-                    ),
-                    'element' => array(
+                    ],
+                    'element' => [
                         'number' => $parentItemNumber,
-                    ),
-                );
+                    ],
+                ];
 
                 // '*' in title means this is a decorative image instead of
                 // a book figure or illustration
-                if ('*' != $matches['title']) {
+                if ($matches['title'] !== '*') {
                     $counter++;
                     $parameters['item']['number'] = $counter;
-                    $parameters['item']['slug'] = $event->app->slugify('Figure '.$parentItemNumber.'-'.$counter);
+                    $parameters['item']['slug'] = $parseEvent->app->slugify('Figure ' . $parentItemNumber . '-' . $counter);
 
                     // the publishing edition wants to label figures/images
                     if ($addImageLabels) {
-                        $label = $event->app->getLabel('figure', $parameters);
+                        $label = $parseEvent->app->getLabel('figure', $parameters);
                         $parameters['item']['label'] = $label;
                     }
 
@@ -115,15 +115,15 @@ class ImagePlugin implements EventSubscriberInterface
                     $listOfImages[] = $parameters;
                 }
 
-                return $event->app->render('figure.twig', $parameters);
+                return $parseEvent->app->render('figure.twig', $parameters);
             },
             $item['content']
         );
 
         if (count($listOfImages) > 0) {
-            $event->app->append('publishing.list.images', $listOfImages);
+            $parseEvent->app->append('publishing.list.images', $listOfImages);
         }
 
-        $event->setItem($item);
+        $parseEvent->setItem($item);
     }
 }

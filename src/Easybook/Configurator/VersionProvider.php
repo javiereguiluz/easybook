@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
 * This file is part of the easybook application.
@@ -11,9 +11,6 @@
 
 namespace Easybook\Configurator;
 
-use Symfony\Component\Yaml\Yaml;
-use Easybook\DependencyInjection\Application;
-
-class VersionProvider
+final class VersionProvider
 {
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -19,5 +19,5 @@ interface PublisherInterface
      * It defines the complete workflow followed to publish a book (load its
      * contents, transform them into HTML files, etc.).
      */
-    public function publishBook();
+    public function publishBook(): void;
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,30 +11,31 @@
 
 namespace Easybook\Console\Command;
 
+use Easybook\Events\BaseEvent;
+use Easybook\Events\EasybookEvents as Events;
+use Easybook\Util\Validator;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
-use Easybook\Events\EasybookEvents as Events;
-use Easybook\Events\BaseEvent;
-use Easybook\Util\Validator;
 
 final class BookPublishCommand extends Command
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('publish');
         $this->setDescription('Publishes an edition of a book');
-        $this->addArgument('slug', InputArgument::REQUIRED, 'Book slug (no spaces allowed, use dashes instead)' );
-        $this->addArgument('edition', InputArgument::REQUIRED, 'Edition to be published' );
+        $this->addArgument('slug', InputArgument::REQUIRED, 'Book slug (no spaces allowed, use dashes instead)');
+        $this->addArgument('edition', InputArgument::REQUIRED, 'Edition to be published');
         $this->addOption('dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
         $this->addOption('configuration', '', InputOption::VALUE_OPTIONAL, 'Additional book configuration options');
-        $this->setHelp(file_get_contents(__DIR__.'/Resources/BookPublishCommandHelp.txt'));
+        $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookPublishCommandHelp.txt'));
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $slug = $input->getArgument('slug');
         $edition = $input->getArgument('edition');
@@ -48,10 +49,10 @@ final class BookPublishCommand extends Command
         $bookDir = $this->app['validator']->validateBookDir($slug, $dir);
 
         $this->app['publishing.dir.book'] = $bookDir;
-        $this->app['publishing.dir.contents'] = $bookDir.'/Contents';
-        $this->app['publishing.dir.resources'] = $bookDir.'/Resources';
-        $this->app['publishing.dir.plugins'] = $bookDir.'/Resources/Plugins';
-        $this->app['publishing.dir.templates'] = $bookDir.'/Resources/Templates';
+        $this->app['publishing.dir.contents'] = $bookDir . '/Contents';
+        $this->app['publishing.dir.resources'] = $bookDir . '/Resources';
+        $this->app['publishing.dir.plugins'] = $bookDir . '/Resources/Plugins';
+        $this->app['publishing.dir.templates'] = $bookDir . '/Resources/Templates';
         $this->app['publishing.book.slug'] = $slug;
         $this->app['publishing.edition'] = $edition;
 
@@ -84,15 +85,61 @@ final class BookPublishCommand extends Command
         // execute the 'after_publish' scripts
         $this->runScripts($this->app->edition('after_publish'));
 
-        $output->writeln(array(
+        $output->writeln([
             ' <bg=green;fg=black> OK </> You can access the book in the following directory:',
-            ' <comment>'.realpath($this->app['publishing.dir.output']).'</comment>',
+            ' <comment>' . realpath($this->app['publishing.dir.output']) . '</comment>',
             '',
             sprintf(
                 " The publishing process took <info>%s seconds</info>\n",
                 number_format($this->app['app.timer.finish'] - $this->app['app.timer.start'], 1)
             ),
-        ));
+        ]);
+    }
+
+    protected function interact(InputInterface $input, OutputInterface $output): void
+    {
+        $output->writeln($this->app['app.signature']);
+
+        $slug = $input->getArgument('slug');
+        $edition = $input->getArgument('edition');
+
+        if (! empty($slug) && ! empty($edition)) {
+            return;
+        }
+
+        $output->writeln([
+            '',
+            ' Welcome to the <comment>easybook</comment> interactive book publisher',
+            '',
+        ]);
+
+        $dialog = $this->getHelperSet()->get('dialog');
+
+        // check 'slug' argument
+        $slug = $input->getArgument('slug') ?: $dialog->askAndValidate(
+            $output,
+            [
+                " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n",
+                ' > ',
+            ],
+            function ($slug) {
+                return Validator::validateBookSlug($slug);
+            }
+        );
+        $input->setArgument('slug', $slug);
+
+        // check 'edition' argument
+        $edition = $input->getArgument('edition') ?: $dialog->askAndValidate(
+            $output,
+            [
+                " Please, type the name of the <info>edition</info> to be published (e.g. <comment>web</comment>)\n",
+                ' > ',
+            ],
+            function ($edition) {
+                return Validator::validateEditionSlug($edition);
+            }
+        );
+        $input->setArgument('edition', $edition);
     }
 
     /**
@@ -102,9 +149,9 @@ final class BookPublishCommand extends Command
      *
      * @throws \RuntimeException if any script execution produces an error.
      */
-    private function runScripts($scripts)
+    private function runScripts($scripts): void
     {
-        if (null === $scripts) {
+        if ($scripts === null) {
             return;
         }
 
@@ -115,68 +162,19 @@ final class BookPublishCommand extends Command
 
             return;
         }
-        $process = new Process(
-            $this->app->renderString($scripts),
-            $this->app['publishing.dir.book']
-        );
+        $process = new Process($this->app->renderString($scripts), $this->app['publishing.dir.book']);
         $process->run();
 
         if ($process->isSuccessful()) {
             echo $process->getOutput();
         } else {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 "There was an error executing the following script: \n"
-                ."  %s\n\n"
-                ."  %s\n",
+                . "  %s\n\n"
+                . "  %s\n",
                 $scripts,
                 $process->getErrorOutput()
             ));
         }
-    }
-
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
-        $output->writeln($this->app['app.signature']);
-
-        $slug = $input->getArgument('slug');
-        $edition = $input->getArgument('edition');
-
-        if (!empty($slug) && !empty($edition)) {
-            return;
-        }
-
-        $output->writeln(array(
-            '',
-            ' Welcome to the <comment>easybook</comment> interactive book publisher',
-            '',
-        ));
-
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        // check 'slug' argument
-        $slug = $input->getArgument('slug') ?: $dialog->askAndValidate(
-            $output,
-            array(
-                " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n",
-                ' > ',
-            ),
-            function ($slug) {
-                return Validator::validateBookSlug($slug);
-            }
-        );
-        $input->setArgument('slug', $slug);
-
-        // check 'edition' argument
-        $edition = $input->getArgument('edition') ?: $dialog->askAndValidate(
-            $output,
-            array(
-                " Please, type the name of the <info>edition</info> to be published (e.g. <comment>web</comment>)\n",
-                ' > ',
-            ),
-            function ($edition) {
-                return Validator::validateEditionSlug($edition);
-            }
-        );
-        $input->setArgument('edition', $edition);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
 * This file is part of the easybook application.
@@ -11,7 +11,9 @@
 
 namespace Easybook\Configurator;
 
+use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
+use UnexpectedValueException;
 
 /**
  * Handles book and edition configurations.
@@ -32,19 +34,17 @@ final class BookConfigurator
      * @return array The complete book configuration resulted from merging
      *               all the different configuration sources
      */
-    public function loadBookConfiguration($bookDir = null, $configurationViaCommand = '')
+    public function loadBookConfiguration(string $bookDir = null, string $configurationViaCommand = ''): array
     {
         $configurationViaCommand = $this->loadCommandConfiguration($configurationViaCommand);
         $configurationViaFile = $this->loadBookFileConfiguration($bookDir);
         $configurationViaDefaults = $this->loadDefaultBookConfiguration();
 
-        $bookConfiguration = array_replace_recursive(
+        return array_replace_recursive(
             $configurationViaDefaults,
             $configurationViaFile,
             $configurationViaCommand
         );
-
-        return $bookConfiguration;
     }
 
     /**
@@ -57,11 +57,11 @@ final class BookConfigurator
      *
      * @return array The loaded configuration (or an empty array if no configuration is set)
      */
-    public function loadCommandConfiguration($configurationJsonString)
+    public function loadCommandConfiguration(string $configurationJsonString): array
     {
         $config = json_decode($configurationJsonString, true);
 
-        return empty($config) ? array() : $config;
+        return empty($config) ? [] : $config;
     }
 
     /**
@@ -73,23 +73,23 @@ final class BookConfigurator
      *
      * @throws \RuntimeException If no config.yml is present.
      */
-    public function loadBookFileConfiguration($bookDir)
+    public function loadBookFileConfiguration(string $bookDir): array
     {
-        $bookConfigFile = $bookDir.'/config.yml';
+        $bookConfigFile = $bookDir . '/config.yml';
 
-        if (!file_exists($bookConfigFile)) {
-            throw new \RuntimeException(sprintf(
+        if (! file_exists($bookConfigFile)) {
+            throw new RuntimeException(sprintf(
                 "There is no 'config.yml' configuration file for '%s' book \n\n"
-                ."Try to create the book again with the 'new' command or create \n"
-                ."'%s' file by hand",
+                . "Try to create the book again with the 'new' command or create \n"
+                . "'%s' file by hand",
                 $this->app['publishing.book.slug'],
-                realpath($bookDir).'/config.yml'
+                realpath($bookDir) . '/config.yml'
             ));
         }
 
         $config = Yaml::parse($bookConfigFile);
 
-        return empty($config) ? array() : $config;
+        return empty($config) ? [] : $config;
     }
 
     /**
@@ -98,11 +98,11 @@ final class BookConfigurator
      *
      * @return array The loaded configuration.
      */
-    public function loadDefaultBookConfiguration()
+    public function loadDefaultBookConfiguration(): array
     {
-        $config = Yaml::parse(__DIR__.'/DefaultConfigurations/book.yml');
+        $config = Yaml::parse(__DIR__ . '/DefaultConfigurations/book.yml');
 
-        return empty($config) ? array() : $config;
+        return empty($config) ? [] : $config;
     }
 
     /**
@@ -111,29 +111,25 @@ final class BookConfigurator
      *
      * @return array The complete book configuration (this method only fills-in the edition configuration)
      */
-    public function loadEditionConfiguration()
+    public function loadEditionConfiguration(): array
     {
         $bookConfiguration = $this->app['publishing.book.config'];
         $edition = $this->app['publishing.edition'];
 
-        if (!isset($bookConfiguration['book']['editions'][$edition])) {
-            throw new \RuntimeException(sprintf(
+        if (! isset($bookConfiguration['book']['editions'][$edition])) {
+            throw new RuntimeException(sprintf(
                 "ERROR: The '%s' edition isn't defined for\n"
-                    ."'%s' book.",
+                    . "'%s' book.",
                 $edition,
                 $this->app->book('title')
             ));
         }
 
-        $editionConfig = $bookConfiguration['book']['editions'][$edition] ?: array();
+        $editionConfig = $bookConfiguration['book']['editions'][$edition] ?: [];
         $parentEditionConfig = $this->loadParentEditionConfiguration();
         $defaultConfig = $this->loadDefaultEditionConfiguration();
 
-        $configuration = array_replace_recursive(
-            $defaultConfig,
-            $parentEditionConfig,
-            $editionConfig
-        );
+        $configuration = array_replace_recursive($defaultConfig, $parentEditionConfig, $editionConfig);
 
         $bookConfiguration['book']['editions'][$edition] = $configuration;
 
@@ -148,30 +144,30 @@ final class BookConfigurator
      *
      * @throws \UnexpectedValueException If the edition extends an undefined edition.
      */
-    public function loadParentEditionConfiguration()
+    public function loadParentEditionConfiguration(): array
     {
         $bookEditions = $this->app->book('editions');
         $edition = $this->app['publishing.edition'];
 
         $parentEdition = $this->app->edition('extends');
-        $parentEditionConfig = array();
+        $parentEditionConfig = [];
 
-        if (null !== $parentEdition) {
-            if (!isset($bookEditions[$parentEdition])) {
-                throw new \UnexpectedValueException(sprintf(
+        if ($parentEdition !== null) {
+            if (! isset($bookEditions[$parentEdition])) {
+                throw new UnexpectedValueException(sprintf(
                     " ERROR: '%s' edition extends nonexistent '%s' edition"
-                        ."\n\n"
-                        ."Check in '%s' file \n"
-                        ."that the value of 'extends' option in '%s' edition is a valid \n"
-                        .'edition of the book',
+                        . "\n\n"
+                        . "Check in '%s' file \n"
+                        . "that the value of 'extends' option in '%s' edition is a valid \n"
+                        . 'edition of the book',
                     $edition,
                     $parentEdition,
-                    realpath($this->app['publishing.dir.book'].'/config.yml'),
+                    realpath($this->app['publishing.dir.book'] . '/config.yml'),
                     $edition
                 ));
             }
 
-            $parentEditionConfig = $bookEditions[$parentEdition] ?: array();
+            $parentEditionConfig = $bookEditions[$parentEdition] ?: [];
         }
 
         return $parentEditionConfig;
@@ -182,11 +178,11 @@ final class BookConfigurator
      *
      * @return array The loaded configuration.
      */
-    public function loadDefaultEditionConfiguration()
+    public function loadDefaultEditionConfiguration(): array
     {
-        $config = Yaml::parse(__DIR__.'/DefaultConfigurations/edition.yml');
+        $config = Yaml::parse(__DIR__ . '/DefaultConfigurations/edition.yml');
 
-        return $config['edition'] ?: array();
+        return $config['edition'] ?: [];
     }
 
     /**
@@ -197,21 +193,24 @@ final class BookConfigurator
      *
      * @return array The complete book configuration with all its dynamic/variable values resolved
      */
-    public function processConfigurationValues()
+    public function processConfigurationValues(): array
     {
         $bookConfig = $this->app['publishing.book.config'];
         $editionConfig = $bookConfig['book']['editions'][$this->app['publishing.edition']];
 
         // prepare options needed to parse option values as Twig expressions
         $app = clone $this->app;
-        $twig_variables = array('book' => $bookConfig['book'], 'edition' => $editionConfig);
+        $twig_variables = [
+            'book' => $bookConfig['book'],
+            'edition' => $editionConfig
+        ];
 
         foreach ($bookConfig['book'] as $key => $value) {
-            if (true !== $value && false !== $value && null !== $value && !is_array($value)) {
+            if ($value !== true && $value !== false && $value !== null && ! is_array($value)) {
                 $bookConfig['book'][$key] = $app->renderString($value, $twig_variables);
             } elseif (is_array($value)) {
                 foreach ($value as $subkey => $subvalue) {
-                    if (true !== $subvalue && false !== $subvalue && null !== $subvalue && !is_array($subvalue)) {
+                    if ($subvalue !== true && $subvalue !== false && $subvalue !== null && ! is_array($subvalue)) {
                         $bookConfig['book'][$key][$subkey] = $app->renderString($subvalue, $twig_variables);
                     }
                 }

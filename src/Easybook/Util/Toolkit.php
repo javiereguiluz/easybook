@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,7 +11,12 @@
 
 namespace Easybook\Util;
 
-class Toolkit
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ZipArchive;
+use ZIPARCHIVE;
+
+final class Toolkit
 {
     /*
      * Merges any number of arrays. The values of the right arrays
@@ -24,22 +29,22 @@ class Toolkit
      * code inspired by:
      * http://www.php.net/manual/en/function.array-merge-recursive.php#104145
      */
-    public static function array_deep_merge_and_replace()
+    public static function array_deep_merge_and_replace(): void
     {
         if (func_num_args() < 2) {
-            trigger_error(__FUNCTION__.' needs two or more array arguments', E_USER_WARNING);
+            trigger_error(__FUNCTION__ . ' needs two or more array arguments', E_USER_WARNING);
 
             return;
         }
 
         $arrays = func_get_args();
-        $merged = array();
+        $merged = [];
 
-        while (!empty($arrays)) {
+        while (! empty($arrays)) {
             $array = array_shift($arrays);
 
-            if (!is_array($array)) {
-                trigger_error(__FUNCTION__.' encountered a non array argument', E_USER_WARNING);
+            if (! is_array($array)) {
+                trigger_error(__FUNCTION__ . ' encountered a non array argument', E_USER_WARNING);
 
                 return;
             }
@@ -50,11 +55,7 @@ class Toolkit
 
             foreach ($array as $key => $value) {
                 if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                    $merged[$key] = call_user_func(
-                        __CLASS__.'::'.__FUNCTION__,
-                        $merged[$key],
-                        $value
-                    );
+                    $merged[$key] = call_user_func(__CLASS__ . '::' . __FUNCTION__, $merged[$key], $value);
                 } else {
                     $merged[$key] = $value;
                 }
@@ -82,12 +83,12 @@ class Toolkit
      */
     public static function zip($source, $destination)
     {
-        if (!extension_loaded('zip') || !file_exists($source)) {
+        if (! extension_loaded('zip') || ! file_exists($source)) {
             return false;
         }
 
-        $zip = new \ZipArchive();
-        if (!$zip->open($destination, \ZIPARCHIVE::CREATE)) {
+        $zip = new ZipArchive();
+        if (! $zip->open($destination, ZIPARCHIVE::CREATE)) {
             return false;
         }
 
@@ -95,20 +96,20 @@ class Toolkit
         $parent = pathinfo($source, PATHINFO_DIRNAME);
 
         if (is_dir($source)) {
-            $files = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($source),
-                \RecursiveIteratorIterator::SELF_FIRST
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($source),
+                RecursiveIteratorIterator::SELF_FIRST
             );
 
             foreach ($files as $file) {
                 $file = str_replace('\\', '/', realpath($file));
 
                 if (is_dir($file)) {
-                    if ($file != $parent) {
-                        $zip->addEmptyDir(str_replace($source.'/', '', $file.'/'));
+                    if ($file !== $parent) {
+                        $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
                     }
                 } elseif (is_file($file)) {
-                    $zip->addFromString(str_replace($source.'/', '', $file), file_get_contents($file));
+                    $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
                 }
             }
         } elseif (is_file($source)) {
@@ -127,15 +128,15 @@ class Toolkit
      */
     public static function unzip($file, $destination)
     {
-        $zip = new \ZipArchive();
+        $zip = new ZipArchive();
 
         $file = str_replace('\\', '/', realpath($file));
 
-        if (!$zip->open($file)) {
+        if (! $zip->open($file)) {
             return false;
         }
 
-        if (!$zip->extractTo($destination)) {
+        if (! $zip->extractTo($destination)) {
             return false;
         }
 
@@ -151,14 +152,14 @@ class Toolkit
     {
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff)
+            random_int(0, 0xffff),
+            random_int(0, 0xffff),
+            random_int(0, 0xffff),
+            random_int(0, 0x0fff) | 0x4000,
+            random_int(0, 0x3fff) | 0x8000,
+            random_int(0, 0xffff),
+            random_int(0, 0xffff),
+            random_int(0, 0xffff)
         );
     }
 
@@ -173,10 +174,10 @@ class Toolkit
      *
      * code adapted from Symfony\Component\DependencyInjection\Container.php
      */
-    public static function camelize($string, $upperFirst = false)
+    public static function camelize(string $string, bool $upperFirst = false): string
     {
         return preg_replace_callback('/(^|_|\.)+(.)/', function ($match) use ($upperFirst) {
-            $camelized = ('.' === $match[1] ? '_' : '').strtoupper($match[2]);
+            $camelized = ($match[1] === '.' ? '_' : '') . strtoupper($match[2]);
 
             return $upperFirst ? ucfirst($camelized) : $camelized;
         }, $string);

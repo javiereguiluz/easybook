@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,24 +11,23 @@
 
 namespace Easybook\Tests\Commands;
 
-use Easybook\Tests\AbstractContainerAwareTestCase;
-use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Console\Helper\FormatterHelper;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Filesystem\Filesystem;
 use Easybook\Console\Command\BookNewCommand;
 use Easybook\Console\Command\BookPublishCommand;
+use Easybook\Tests\AbstractContainerAwareTestCase;
+use RuntimeException;
+use Symfony\Component\Console\Helper\FormatterHelper;
+use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 {
-//
-//
 //    /**
 //     * @var string
 //     */
-//    private $tmpDir;
+    //    private $tmpDir;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         // setup temp dir for generated files
 //        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
@@ -41,16 +40,16 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
         $tester->execute([
             'command' => $command->getName(),
             'title' => 'The Origin of Species',
-//            '--dir' => $this->tmpDir,
+            //            '--dir' => $this->tmpDir,
         ]);
     }
 
 //    public function tearDown()
 //    {
 //        $this->filesystem->remove($this->tmpDir);
-//    }
+    //    }
 
-    public function testInteractiveCommand()
+    public function testInteractiveCommand(): void
     {
         $command = $this->container->get(BookPublishCommand::class);
 
@@ -58,16 +57,16 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
         // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
         $dialog = new DialogHelper();
         $dialog->setInputStream($this->getInputStream("\n\nthe-origin-of-species\n\n\nweb\n"));
-        $helper = new HelperSet(array(new FormatterHelper(), $dialog));
+        $helper = new HelperSet([new FormatterHelper(), $dialog]);
         $command->setHelperSet($helper);
 
         $tester = new CommandTester($command);
-        $tester->execute(array(
+        $tester->execute([
             'command' => $command->getName(),
             '--dir' => $this->tmpDir,
-        ), array(
+        ], [
             'interactive' => true,
-        ));
+        ]);
 
         $app = $command->getApp();
 
@@ -117,7 +116,7 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
     /**
      * @dataProvider getNonInteractiveCommandData
      */
-    public function testNonInteractiveCommand($edition, $publishedBookFilePath)
+    public function testNonInteractiveCommand($edition, $publishedBookFilePath): void
     {
         $tester = $this->publishBook($edition);
 
@@ -135,19 +134,19 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 
     public function getNonInteractiveCommandData()
     {
-        return array(
+        return [
             //    edition    $publishedBookFilePath
-            array('web',     'web/book.html'),
-            array('website', 'website/book/index.html'),
-            array('ebook',   'ebook/book.epub'),
-        );
+            ['web',     'web/book.html'],
+            ['website', 'website/book/index.html'],
+            ['ebook',   'ebook/book.epub'],
+        ];
     }
 
     /**
      * @expectedException RuntimeException
      * @expectedExceptionMessage ERROR: The directory of the book cannot be found.
      */
-    public function testNonInteractionInvalidBookAndEdition()
+    public function testNonInteractionInvalidBookAndEdition(): void
     {
         $this->publishBook(uniqid('non_existent_edition_'), uniqid('non_existent_book_'));
     }
@@ -156,96 +155,96 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
      * @expectedException RuntimeException
      * @expectedExceptionMessageRegExp /ERROR: The '.*' edition isn't defined for\n'The Origin of Species' book./
      */
-    public function testNonInteractionInvalidEdition()
+    public function testNonInteractionInvalidEdition(): void
     {
         $this->publishBook(uniqid('non_existent_edition_'));
     }
 
-    public function testBeforeAndAfterPublishScripts()
+    public function testBeforeAndAfterPublishScripts(): void
     {
         if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
             $this->markTestSkipped('This test executes commands not available for Windows systems.');
         }
 
-        $bookConfigurationViaCommand = array(
-            'book' => array(
+        $bookConfigurationViaCommand = [
+            'book' => [
                 'title' => 'My Custom Title',
-                'editions' => array(
-                    'web' => array(
-                        'before_publish' => array(
+                'editions' => [
+                    'web' => [
+                        'before_publish' => [
                             'touch before_publish_script.txt',
                             "echo '123' > before_publish_script.txt",
                             "touch {{ 'other' ~ '_before_publish_script' ~ '.txt' }}",
                             "echo '{{ book.title|upper }}' > other_before_publish_script.txt",
-                        ),
-                        'after_publish' => array(
+                        ],
+                        'after_publish' => [
                             'touch after_publish_script.txt',
                             "echo '456' > after_publish_script.txt",
                             "touch {{ 'other' ~ '_after_publish_script' ~ '.txt' }}",
                             "echo '{{ book.title[0:9]|upper }}' > other_after_publish_script.txt",
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         $command = $this->container->get(BookPublishCommand::class);
         $tester = new CommandTester($command);
 
-        $tester->execute(array(
+        $tester->execute([
             'command' => $command->getName(),
             'slug' => 'the-origin-of-species',
             'edition' => 'web',
             '--dir' => $this->tmpDir,
             '--no-interaction' => true,
             '--configuration' => json_encode($bookConfigurationViaCommand),
-        ), array(
+        ], [
             'interactive' => false,
-        ));
+        ]);
 
-        $bookDir = $this->tmpDir.'/the-origin-of-species';
+        $bookDir = $this->tmpDir . '/the-origin-of-species';
 
-        $this->assertFileExists($bookDir.'/before_publish_script.txt');
-        $this->assertEquals("123\n", file_get_contents($bookDir.'/before_publish_script.txt'));
-        $this->assertFileExists($bookDir.'/other_before_publish_script.txt');
-        $this->assertEquals("MY CUSTOM TITLE\n", file_get_contents($bookDir.'/other_before_publish_script.txt'));
+        $this->assertFileExists($bookDir . '/before_publish_script.txt');
+        $this->assertSame("123\n", file_get_contents($bookDir . '/before_publish_script.txt'));
+        $this->assertFileExists($bookDir . '/other_before_publish_script.txt');
+        $this->assertSame("MY CUSTOM TITLE\n", file_get_contents($bookDir . '/other_before_publish_script.txt'));
 
-        $this->assertFileExists($bookDir.'/after_publish_script.txt');
-        $this->assertEquals("456\n", file_get_contents($bookDir.'/after_publish_script.txt'));
-        $this->assertFileExists($bookDir.'/other_after_publish_script.txt');
-        $this->assertEquals("MY CUSTOM\n", file_get_contents($bookDir.'/other_after_publish_script.txt'));
+        $this->assertFileExists($bookDir . '/after_publish_script.txt');
+        $this->assertSame("456\n", file_get_contents($bookDir . '/after_publish_script.txt'));
+        $this->assertFileExists($bookDir . '/other_after_publish_script.txt');
+        $this->assertSame("MY CUSTOM\n", file_get_contents($bookDir . '/other_after_publish_script.txt'));
     }
 
-    public function testFailingBeforePublishScript()
+    public function testFailingBeforePublishScript(): void
     {
-        $bookConfigurationViaCommand = array(
-            'book' => array(
-                'editions' => array(
-                    'web' => array(
-                        'before_publish' => array(
+        $bookConfigurationViaCommand = [
+            'book' => [
+                'editions' => [
+                    'web' => [
+                        'before_publish' => [
                             uniqid('this_command_does_not_exist_'),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         $command = $this->container->get(BookPublishCommand::class);
         $tester = new CommandTester($command);
 
         try {
-            $tester->execute(array(
+            $tester->execute([
                 'command' => $command->getName(),
                 'slug' => 'the-origin-of-species',
                 'edition' => 'web',
                 '--dir' => $this->tmpDir,
                 '--no-interaction' => true,
                 '--configuration' => json_encode($bookConfigurationViaCommand),
-            ), array(
+            ], [
                 'interactive' => false,
-            ));
-        } catch (\RuntimeException $e) {
-            $this->assertInstanceOf('\RuntimeException', $e);
+            ]);
+        } catch (RuntimeException $e) {
+            $this->assertInstanceOf(RuntimeException::class, $e);
             $this->assertContains('There was an error executing the following script', $e->getMessage());
         }
     }
@@ -254,16 +253,13 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
     protected function getInputStream($input)
     {
         $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, $input.str_repeat("\n", 10));
+        fputs($stream, $input . str_repeat("\n", 10));
         rewind($stream);
 
         return $stream;
     }
-
-    /**
-     * @return CommandTester
-     */
-    private function publishBook($edition = 'web', $slug = 'the-origin-of-species')
+    
+    private function publishBook($edition = 'web', $slug = 'the-origin-of-species'): CommandTester
     {
         $command = $this->container->get(BookPublishCommand::class);
         $tester = new CommandTester($command);
@@ -273,9 +269,9 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
             'slug' => $slug,
             'edition' => $edition,
             '--dir' => $this->tmpDir,
-        ], array(
+        ], [
             'interactive' => false,
-        ));
+        ]);
 
         return $tester;
     }

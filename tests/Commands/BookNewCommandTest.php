@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -12,21 +12,23 @@
 namespace Easybook\Tests\Commands;
 
 use Easybook\Tests\AbstractContainerAwareTestCase;
-use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 final class BookNewCommandTest extends AbstractContainerAwareTestCase
 {
     protected $filesystem;
+
     protected $tmpDir;
+
     protected $console;
 
 //    public function setUp()
 //    {
-        // setup temp dir for generated files
+    // setup temp dir for generated files
 //        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
 //        $this->filesystem = new Filesystem();
 //        $this->filesystem->mkdir($this->tmpDir);
@@ -35,9 +37,9 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
 //    public function tearDown()
 //    {
 //        $this->filesystem->remove($this->tmpDir);
-//    }
+    //    }
 
-    public function testInteractiveCommand()
+    public function testInteractiveCommand(): void
     {
         $command = $this->console->find('new');
 
@@ -45,16 +47,16 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
         // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
         $dialog = new DialogHelper();
         $dialog->setInputStream($this->getInputStream("\n\nThe Origin of Species\n"));
-        $helper = new HelperSet(array(new FormatterHelper(), $dialog));
+        $helper = new HelperSet([new FormatterHelper(), $dialog]);
         $command->setHelperSet($helper);
 
         $tester = new CommandTester($command);
-        $tester->execute(array(
+        $tester->execute([
             'command' => $command->getName(),
             '--dir' => $this->tmpDir,
-        ), array(
+        ], [
             'interactive' => true,
-        ));
+        ]);
 
         $app = $command->getApp();
 
@@ -95,7 +97,7 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
         );
     }
 
-    public function testNonInteractiveCommand()
+    public function testNonInteractiveCommand(): void
     {
         $tester = $this->createNewBook();
 
@@ -112,54 +114,62 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
         );
     }
 
-    public function testBookSkeletonIsProperlyGenerated()
+    public function testBookSkeletonIsProperlyGenerated(): void
     {
         $tester = $this->createNewBook();
-        $bookDir = $this->tmpDir.'/the-origin-of-species';
+        $bookDir = $this->tmpDir . '/the-origin-of-species';
 
-        $files = array(
+        $files = [
             'config.yml',
             'Contents/chapter1.md',
             'Contents/chapter2.md',
             'Contents/images',
             'Output',
-        );
+        ];
 
         foreach ($files as $file) {
-            $this->assertFileExists($bookDir.'/'.$file, sprintf('%s has been generated', $file));
+            $this->assertFileExists($bookDir . '/' . $file, sprintf('%s has been generated', $file));
         }
     }
 
-    public function testBookSkeletonContents()
+    public function testBookSkeletonContents(): void
     {
         $tester = $this->createNewBook();
 
-        $bookDir = $this->tmpDir.'/the-origin-of-species';
-        $bookConfig = Yaml::parse($bookDir.'/config.yml');
+        $bookDir = $this->tmpDir . '/the-origin-of-species';
+        $bookConfig = Yaml::parse($bookDir . '/config.yml');
 
-        $this->assertArraySubset(array('book' => array(
+        $this->assertArraySubset(['book' => [
             'title' => 'The Origin of Species',
             'author' => 'Change this: Author Name',
             'edition' => 'First edition',
             'language' => 'en',
             'publication_date' => null,
-        )), $bookConfig, 'The basic book configuration is properly generated.');
+        ]], $bookConfig, 'The basic book configuration is properly generated.');
 
-        $this->assertArraySubset(array('book' => array('contents' => array(
-            array('element' => 'cover'),
-            array('element' => 'toc'),
-            array('element' => 'chapter', 'number' => 1, 'content' => 'chapter1.md'),
-            array('element' => 'chapter', 'number' => 2, 'content' => 'chapter2.md'),
-        ))), $bookConfig, 'The book contents configuration is properly generated.');
+        $this->assertArraySubset(['book' => ['contents' => [
+            ['element' => 'cover'],
+            ['element' => 'toc'],
+            [
+                'element' => 'chapter',
+                'number' => 1,
+                'content' => 'chapter1.md'
+            ],
+            [
+                'element' => 'chapter',
+                'number' => 2,
+                'content' => 'chapter2.md'
+            ],
+        ]]], $bookConfig, 'The book contents configuration is properly generated.');
 
-        $this->assertEquals(
-            array('ebook', 'kindle', 'print', 'web', 'website'),
+        $this->assertSame(
+            ['ebook', 'kindle', 'print', 'web', 'website'],
             array_keys($bookConfig['book']['editions']),
             'The book editions configuration is properly generated.'
         );
     }
 
-    public function testGenerateTheSameBookTwoConsecutivetimes()
+    public function testGenerateTheSameBookTwoConsecutivetimes(): void
     {
         $tester = $this->createNewBook();
         $tester = $this->createNewBook();
@@ -180,40 +190,37 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testNonexistentDir()
+    public function testNonexistentDir(): void
     {
         $command = $this->console->find('new');
         $tester = new CommandTester($command);
-        $tester->execute(array(
+        $tester->execute([
             'command' => $command->getName(),
             'title' => 'The Origin of Species',
-            '--dir' => './'.uniqid('non_existent_dir'),
-        ));
+            '--dir' => './' . uniqid('non_existent_dir'),
+        ]);
     }
 
     // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
     protected function getInputStream($input)
     {
         $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, $input.str_repeat("\n", 10));
+        fputs($stream, $input . str_repeat("\n", 10));
         rewind($stream);
 
         return $stream;
     }
-
-    /**
-     * @return CommandTester
-     */
-    private function createNewBook()
+    
+    private function createNewBook(): CommandTester
     {
         $command = $this->console->find('new');
         $tester = new CommandTester($command);
 
-        $tester->execute(array(
+        $tester->execute([
             'command' => $command->getName(),
             'title' => 'The Origin of Species',
             '--dir' => $this->tmpDir,
-        ));
+        ]);
 
         return $tester;
     }

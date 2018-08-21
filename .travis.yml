@@ -18,4 +18,4 @@ install:
 
 script:
   - vendor/bin/phpunit
-  - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then vendor/bin/php-cs-fixer fix src --dry-run --diff; fi;
+  - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then composer check-cs; fi;

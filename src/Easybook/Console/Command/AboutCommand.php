@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -29,13 +29,13 @@ final class AboutCommand extends Command
         $this->signature = $signature;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('about');
         $this->setDescription('Displays the easybook usage help');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $output->writeln(sprintf(file_get_contents(__DIR__ . '/Resources/AboutCommandHelp.txt'), $this->signature));
     }

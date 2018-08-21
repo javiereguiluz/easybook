@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -18,6 +18,7 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 final class ApplicationTest extends AbstractContainerAwareTestCase
 {
     private $app;
+
     private $console;
 
     /**
@@ -25,7 +26,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
      */
     private $application;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -33,19 +34,19 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         $this->application->setAutoExit(false);
     }
 
-    public function testListCommand()
+    public function testListCommand(): void
     {
         $tester = new ApplicationTester($this->console);
         $tester->run(['command' => 'list'], ['decorated' => false]);
 
         $this->assertStringEqualsFile(
-            __DIR__.'/fixtures/list_command_output.txt',
+            __DIR__ . '/fixtures/list_command_output.txt',
             $tester->getDisplay(),
             'Test the output of the "list" command.'
         );
     }
 
-    public function testVersionCommand()
+    public function testVersionCommand(): void
     {
         $tester = new ApplicationTester($this->console);
         $tester->run(['command' => 'version']);
@@ -57,7 +58,7 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         );
     }
 
-    public function testApplicationSignature()
+    public function testApplicationSignature(): void
     {
         $tester = new ApplicationTester($this->console);
         $tester->run([], ['decorated' => false]);

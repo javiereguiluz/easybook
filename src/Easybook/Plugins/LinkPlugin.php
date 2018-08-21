@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,23 +11,23 @@
 
 namespace Easybook\Plugins;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
+use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * It performs some operations on the book links, such as fixing the URLs of
  * the links pointing to internal chapters and sections.
  */
-class LinkPlugin implements EventSubscriberInterface
+final class LinkPlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        return array(
-            Events::POST_PARSE => array('markInternalLinks'),
-            Events::POST_PUBLISH => array('fixInternalLinks', -10),
-        );
+        return [
+            Events::POST_PARSE => ['markInternalLinks'],
+            Events::POST_PUBLISH => ['fixInternalLinks', -10],
+        ];
     }
 
     /**
@@ -46,29 +46,28 @@ class LinkPlugin implements EventSubscriberInterface
      *
      * @param BaseEvent $event The event object that provides access to the application
      */
-    public function fixInternalLinks(BaseEvent $event)
+    public function fixInternalLinks(BaseEvent $baseEvent): void
     {
         // Link fixing is only needed for 'html_chunked' editions
-        if ('html_chunked' != $event->app->edition('format')) {
+        if ($baseEvent->app->edition('format') !== 'html_chunked') {
             return;
         }
 
-        $bookPages = $event->app['finder']
+        $bookPages = $baseEvent->app['finder']
             ->files()
             ->name('*.html')
-            ->in($event->app['publishing.dir.output'])
-        ;
+            ->in($baseEvent->app['publishing.dir.output']);
 
         // maps the original internal links (e.g. #new-content-types)
         // with the correct relative URL needed for the website
         // (e.g. chapter-3/advanced-features.html#new-content-types
-        $linkMapper = array();
+        $linkMapper = [];
 
         // look for the ID of every book section
         foreach ($bookPages as $bookPage) {
             $htmlContent = file_get_contents($bookPage->getPathname());
 
-            $matches = array();
+            $matches = [];
             $foundHeadings = preg_match_all(
                 '/<h[1-6].*id="(?<id>.*)".*<\/h[1-6]>/U',
                 $htmlContent,
@@ -78,8 +77,8 @@ class LinkPlugin implements EventSubscriberInterface
 
             if ($foundHeadings > 0) {
                 foreach ($matches as $match) {
-                    $relativeUri = '#'.$match['id'];
-                    $absoluteUri = $bookPage->getRelativePathname().$relativeUri;
+                    $relativeUri = '#' . $match['id'];
+                    $absoluteUri = $bookPage->getRelativePathname() . $relativeUri;
 
                     $linkMapper[$relativeUri] = $absoluteUri;
                 }
@@ -92,7 +91,7 @@ class LinkPlugin implements EventSubscriberInterface
 
             // hackish method the detect if this is a first level book page
             // or a page inside a directory
-            if (false === strpos($bookPage->getRelativePathname(), '/')) {
+            if (strpos($bookPage->getRelativePathname(), '/') === false) {
                 $chunkLevel = 1;
             } else {
                 $chunkLevel = 2;
@@ -103,18 +102,13 @@ class LinkPlugin implements EventSubscriberInterface
                 function ($matches) use ($chunkLevel, $linkMapper) {
                     if (isset($linkMapper[$matches['uri']])) {
                         $newUri = $linkMapper[$matches['uri']];
-                        $urlBasePath = (2 == $chunkLevel) ? '../' : './';
+                        $urlBasePath = ($chunkLevel === 2) ? '../' : './';
                     } else {
                         $newUri = $matches['uri'];
                         $urlBasePath = '';
                     }
 
-                    return sprintf(
-                        '<a class="internal" href="%s%s"%s</a>',
-                        $urlBasePath,
-                        $newUri,
-                        $matches[2]
-                    );
+                    return sprintf('<a class="internal" href="%s%s"%s</a>', $urlBasePath, $newUri, $matches[2]);
                 },
                 $htmlContent
             );
@@ -129,14 +123,14 @@ class LinkPlugin implements EventSubscriberInterface
      *
      * @param ParseEvent $event The object that contains the item being processed
      */
-    public function markInternalLinks(ParseEvent $event)
+    public function markInternalLinks(ParseEvent $parseEvent): void
     {
         // Internal links are only marked for the PDF editions
-        if ('pdf' != $event->app->edition('format')) {
+        if ($parseEvent->app->edition('format') !== 'pdf') {
             return;
         }
 
-        $item = $event->getItem();
+        $item = $parseEvent->getItem();
 
         $item['content'] = preg_replace_callback(
             '/<a (href="#.*".*)<\/a>/Us',
@@ -145,13 +139,12 @@ class LinkPlugin implements EventSubscriberInterface
                 // adding a new class attribute and breaking the XHTML syntax
                 if (preg_match('/\bclass="(.*)"/Us', $matches[1]) !== false) {
                     return '<a ' . preg_replace('/\bclass="(.*)"/Us', 'class="internal $1"', $matches[1]);
-                } else {
-                    return sprintf('<a class="internal" %s</a>', $matches[1]);
                 }
+                return sprintf('<a class="internal" %s</a>', $matches[1]);
             },
             $item['content']
         );
 
-        $event->setItem($item);
+        $parseEvent->setItem($item);
     }
 }

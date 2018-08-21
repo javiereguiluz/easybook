@@ -5,7 +5,6 @@ doc
 !doc/easybook-doc-en/*
 doc/easybook-doc-en/Output/*
 
-.php_cs.cache
 composer.lock
 
 easybook.zip

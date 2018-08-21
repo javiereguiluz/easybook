@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -11,22 +11,22 @@
 
 namespace Easybook\Plugins;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
+use Easybook\Events\EasybookEvents as Events;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * It registers the start and the end of the book publication
  * to measure the elapsed time.
  */
-class TimerPlugin implements EventSubscriberInterface
+final class TimerPlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             Events::PRE_PUBLISH => 'registerPublicationStart',
             Events::POST_PUBLISH => 'registerPublicationEnd',
-        );
+        ];
     }
 
     /**
@@ -34,9 +34,9 @@ class TimerPlugin implements EventSubscriberInterface
      *
      * @param BaseEvent $event The event object that provides access to the application
      */
-    public function registerPublicationStart(BaseEvent $event)
+    public function registerPublicationStart(BaseEvent $baseEvent): void
     {
-        $event->app['app.timer.start'] = microtime(true);
+        $baseEvent->app['app.timer.start'] = microtime(true);
     }
 
     /**
@@ -44,8 +44,8 @@ class TimerPlugin implements EventSubscriberInterface
      *
      * @param BaseEvent $event The event object that provides access to the application
      */
-    public function registerPublicationEnd(BaseEvent $event)
+    public function registerPublicationEnd(BaseEvent $baseEvent): void
     {
-        $event->app['app.timer.finish'] = microtime(true);
+        $baseEvent->app['app.timer.finish'] = microtime(true);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -16,7 +16,7 @@ namespace Easybook\Events;
  * It provides access for the application object, the specific item
  * being published and to any of the item's properties.
  */
-class ParseEvent extends BaseEvent
+final class ParseEvent extends BaseEvent
 {
     /**
      * Getter for the specific item that is being published at
@@ -24,7 +24,7 @@ class ParseEvent extends BaseEvent
      *
      * @return array The item data
      */
-    public function getItem()
+    public function getItem(): array
     {
         return $this->app['publishing.active_item'];
     }
@@ -35,7 +35,7 @@ class ParseEvent extends BaseEvent
      *
      * @param array $item The item that replaces the old item data
      */
-    public function setItem($item)
+    public function setItem(array $item): void
     {
         $this->app['publishing.active_item'] = $item;
     }
@@ -47,7 +47,7 @@ class ParseEvent extends BaseEvent
      *
      * @return mixed The value of the requested property
      */
-    public function getItemProperty($key)
+    public function getItemProperty(string $key)
     {
         return $this->app['publishing.active_item'][$key];
     }
@@ -58,7 +58,7 @@ class ParseEvent extends BaseEvent
      * @param string $key   The name of the property to modify
      * @param mixed  $value The new value of the property
      */
-    public function setItemProperty($key, $value)
+    public function setItemProperty(string $key, $value): void
     {
         $item = $this->app['publishing.active_item'];
         $item[$key] = $value;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the easybook application.
@@ -44,7 +44,7 @@ final class PublisherProvider
         }
 
         $supportedFormats = array_map(function (PublisherInterface $publisher) {
-           return $publisher->getFormat();
+            return $publisher->getFormat();
         }, $this->publishers);
 
         throw new FormatPublisherNotSupportedException(sprintf(
