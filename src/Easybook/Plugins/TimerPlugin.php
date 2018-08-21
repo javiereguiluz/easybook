@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Plugins;
 
 use Easybook\Events\BaseEvent;
@@ -31,8 +22,6 @@ final class TimerPlugin implements EventSubscriberInterface
 
     /**
      * It registers the timestamp of the book publication start.
-     *
-     * @param BaseEvent $event The event object that provides access to the application
      */
     public function registerPublicationStart(BaseEvent $baseEvent): void
     {
@@ -41,8 +30,6 @@ final class TimerPlugin implements EventSubscriberInterface
 
     /**
      * It registers the timestamp of the book publication end.
-     *
-     * @param BaseEvent $event The event object that provides access to the application
      */
     public function registerPublicationEnd(BaseEvent $baseEvent): void
     {

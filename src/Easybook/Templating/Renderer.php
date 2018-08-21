@@ -22,7 +22,7 @@ final class Renderer
      *
      *  @throws \RuntimeException  If the given template is not a Twig template
      */
-    public function render(string $template, array $variables = [], string $targetFile = null): string
+    public function render(string $template, array $variables = [], ?string $targetFile = null): string
     {
         if (substr($template, -5) !== '.twig') {
             throw new RuntimeException(sprintf(

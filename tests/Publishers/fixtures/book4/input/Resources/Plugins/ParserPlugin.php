@@ -1,38 +1,34 @@
-<?php
+<?php declare(strict_types=1);
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ParserPlugin implements EventSubscriberInterface
+final class ParserPlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             Events::PRE_PARSE => 'onItemPreParse',
             Events::POST_PARSE => 'onItemPostParse',
-        );
+        ];
     }
 
-    public function onItemPreParse(ParseEvent $event)
+    public function onItemPreParse(ParseEvent $parseEvent): void
     {
-        $txt = str_replace(
-            '**easybook**',
-            '*eAsYbOoK*',
-            $event->getItemProperty('original')
-        );
+        $txt = str_replace('**easybook**', '*eAsYbOoK*', $parseEvent->getItemProperty('original'));
 
-        $event->setItemProperty('original', $txt);
+        $parseEvent->setItemProperty('original', $txt);
     }
 
-    public function onItemPostParse(ParseEvent $event)
+    public function onItemPostParse(ParseEvent $parseEvent): void
     {
         $html = str_replace(
             '<em>eAsYbOoK</em>',
             '<strong class="branding">easybook</strong>',
-            $event->getItemProperty('content')
+            $parseEvent->getItemProperty('content')
         );
 
-        $event->setItemProperty('content', $html);
+        $parseEvent->setItemProperty('content', $html);
     }
 }

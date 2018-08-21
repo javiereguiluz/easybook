@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents as Events;
@@ -24,10 +15,7 @@ final class ImagePlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::POST_PARSE => [
-                ['fixImageUris', -500],
-                ['decorateAndLabelImages', -500],
-            ],
+            Events::POST_PARSE => [['fixImageUris', -500], ['decorateAndLabelImages', -500]],
         ];
     }
 
@@ -37,8 +25,6 @@ final class ImagePlugin implements EventSubscriberInterface
      * the book is published as a website.
      *
      * @see 'images_base_dir' option in easybook-doc-en/05-publishing-html-books.md
-     *
-     * @param ParseEvent $event The object that contains the item being processed
      */
     public function fixImageUris(ParseEvent $parseEvent): void
     {
@@ -62,8 +48,6 @@ final class ImagePlugin implements EventSubscriberInterface
     /**
      * It decorates each image with a template and, if the edition configures it,
      * with the appropriate auto-numbered label.
-     *
-     * @param ParseEvent $event The object that contains the item being processed
      */
     public function decorateAndLabelImages(ParseEvent $parseEvent): void
     {
@@ -103,7 +87,9 @@ final class ImagePlugin implements EventSubscriberInterface
                 if ($matches['title'] !== '*') {
                     $counter++;
                     $parameters['item']['number'] = $counter;
-                    $parameters['item']['slug'] = $parseEvent->app->slugify('Figure ' . $parentItemNumber . '-' . $counter);
+                    $parameters['item']['slug'] = $parseEvent->app->slugify(
+                        'Figure ' . $parentItemNumber . '-' . $counter
+                    );
 
                     // the publishing edition wants to label figures/images
                     if ($addImageLabels) {

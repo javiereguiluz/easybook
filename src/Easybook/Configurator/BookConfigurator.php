@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
-* This file is part of the easybook application.
-*
-* (c) Javier Eguiluz <javier.eguiluz@gmail.com>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
-
 namespace Easybook\Configurator;
 
 use RuntimeException;
@@ -34,17 +25,13 @@ final class BookConfigurator
      * @return array The complete book configuration resulted from merging
      *               all the different configuration sources
      */
-    public function loadBookConfiguration(string $bookDir = null, string $configurationViaCommand = ''): array
+    public function loadBookConfiguration(?string $bookDir = null, string $configurationViaCommand = ''): array
     {
         $configurationViaCommand = $this->loadCommandConfiguration($configurationViaCommand);
         $configurationViaFile = $this->loadBookFileConfiguration($bookDir);
         $configurationViaDefaults = $this->loadDefaultBookConfiguration();
 
-        return array_replace_recursive(
-            $configurationViaDefaults,
-            $configurationViaFile,
-            $configurationViaCommand
-        );
+        return array_replace_recursive($configurationViaDefaults, $configurationViaFile, $configurationViaCommand);
     }
 
     /**
@@ -202,7 +189,7 @@ final class BookConfigurator
         $app = clone $this->app;
         $twig_variables = [
             'book' => $bookConfig['book'],
-            'edition' => $editionConfig
+            'edition' => $editionConfig,
         ];
 
         foreach ($bookConfig['book'] as $key => $value) {

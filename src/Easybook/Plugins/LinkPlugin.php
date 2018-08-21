@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Plugins;
 
 use Easybook\Events\BaseEvent;
@@ -43,8 +34,6 @@ final class LinkPlugin implements EventSubscriberInterface
      * This replacement cannot be done earlier in the book processing, because
      * books published as websites merge empty sections and the absolute URI
      * cannot be determined until the book has been completely generated.
-     *
-     * @param BaseEvent $event The event object that provides access to the application
      */
     public function fixInternalLinks(BaseEvent $baseEvent): void
     {
@@ -120,8 +109,6 @@ final class LinkPlugin implements EventSubscriberInterface
     /**
      * It marks the internal links of the book used for cross-references. This
      * allows to display the internal links differently than the regular links.
-     *
-     * @param ParseEvent $event The object that contains the item being processed
      */
     public function markInternalLinks(ParseEvent $parseEvent): void
     {

@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Console\Command;
 
 use RuntimeException;
@@ -261,23 +252,23 @@ final class EasybookBenchmarkCommand extends Command
             //   msec.              bytes
             'ebook' => [
                 'time' => 3000,
-                'memory' => 3 * 1024 * 1024
+                'memory' => 3 * 1024 * 1024,
             ],
             'kindle' => [
                 'time' => 6000,
-                'memory' => 6 * 1024 * 1024
+                'memory' => 6 * 1024 * 1024,
             ],
             'print' => [
                 'time' => 20000,
-                'memory' => 9 * 1024 * 1024
+                'memory' => 9 * 1024 * 1024,
             ],
             'web' => [
                 'time' => 3000,
-                'memory' => 3 * 1024 * 1024
+                'memory' => 3 * 1024 * 1024,
             ],
             'website' => [
                 'time' => 3000,
-                'memory' => 3 * 1024 * 1024
+                'memory' => 3 * 1024 * 1024,
             ],
         ];
 

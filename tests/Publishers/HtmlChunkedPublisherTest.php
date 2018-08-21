@@ -1,19 +1,10 @@
-<?php
-
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+<?php declare(strict_types=1);
 
 namespace Easybook\Tests\Publishers;
 
-use Easybook\DependencyInjection\Application;
 use Easybook\Publishers\HtmlChunkedPublisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use ReflectionMethod;
 
 final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
 {
@@ -22,142 +13,220 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
      */
     private $htmlChunkedPublisher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->htmlChunkedPublisher = $this->container->get(HtmlChunkedPublisher::class);
     }
 
-    public function testNormalizePageNames()
+    public function testNormalizePageNames(): void
     {
-        $originalItems = array(
-            array(
+        $originalItems = [
+            [
                 'slug' => 'Lorem ipsum dolor sit amet',
                 'label' => 'Chapter 1',
-            ),
-            array(
+            ],
+            [
                 'slug' => 'Another lorem ipsum dolor sit amet',
                 'label' => 'Appendix A',
-            ),
-            array(
+            ],
+            [
                 'slug' => 'Yet another lorem ipsum dolor sit amet',
                 'label' => null,
-            ),
-        );
+            ],
+        ];
 
-        $expectedItems = array(
-            array(
+        $expectedItems = [
+            [
                 'slug' => 'Lorem ipsum dolor sit amet',
                 'label' => 'Chapter 1',
                 'page_name' => 'chapter-1',
-            ),
-            array(
+            ],
+            [
                 'slug' => 'Another lorem ipsum dolor sit amet',
                 'label' => 'Appendix A',
                 'page_name' => 'appendix-a',
-            ),
-            array(
+            ],
+            [
                 'slug' => 'Yet another lorem ipsum dolor sit amet',
                 'label' => null,
                 'page_name' => 'yet-another-lorem-ipsum-dolor-sit-amet',
-            ),
-        );
+            ],
+        ];
 
-        $method = new \ReflectionMethod('Easybook\Publishers\HtmlChunkedPublisher', 'normalizePageNames');
+        $method = new ReflectionMethod(HtmlChunkedPublisher::class, 'normalizePageNames');
         $method->setAccessible(true);
 
         $itemsWithNormalizedPageNames = $method->invoke($this->htmlChunkedPublisher, $originalItems);
-        $this->assertEquals($expectedItems, $itemsWithNormalizedPageNames);
+        $this->assertSame($expectedItems, $itemsWithNormalizedPageNames);
     }
 
     /**
      * @dataProvider getFilterBookTocData
      */
-    public function testFilterBookToc($maxLevel, $expectedBookToc)
+    public function testFilterBookToc($maxLevel, $expectedBookToc): void
     {
-        $originalBookToc = array(
-            array('slug' => 'item1', 'level' => 1),
-            array('slug' => 'item2', 'level' => 2),
-            array('slug' => 'item3', 'level' => 3),
-            array('slug' => 'item4', 'level' => 2),
-            array('slug' => 'item5', 'level' => 1),
-        );
+        $originalBookToc = [
+            [
+                'slug' => 'item1',
+                'level' => 1
+            ],
+            [
+                'slug' => 'item2',
+                'level' => 2
+            ],
+            [
+                'slug' => 'item3',
+                'level' => 3
+            ],
+            [
+                'slug' => 'item4',
+                'level' => 2
+            ],
+            [
+                'slug' => 'item5',
+                'level' => 1
+            ],
+        ];
 
-        $method = new \ReflectionMethod('Easybook\Publishers\HtmlChunkedPublisher', 'filterBookToc');
+        $method = new ReflectionMethod(HtmlChunkedPublisher::class, 'filterBookToc');
         $method->setAccessible(true);
 
         $filteredBookToc = $method->invoke($this->htmlChunkedPublisher, $originalBookToc, $maxLevel);
-        $this->assertEquals($expectedBookToc, $filteredBookToc);
+        $this->assertSame($expectedBookToc, $filteredBookToc);
     }
 
     public function getFilterBookTocData()
     {
-        return array(
-            array(
+        return [
+            [
                 0,
-                array(),
-            ),
+                [],
+            ],
 
-            array(
+            [
                 1,
-                array(
-                    array('slug' => 'item1', 'level' => 1),
-                    array('slug' => 'item5', 'level' => 1),
-                ),
-            ),
+                [
+                    [
+                        'slug' => 'item1',
+                        'level' => 1
+                    ],
+                    [
+                        'slug' => 'item5',
+                        'level' => 1
+                    ],
+                ],
+            ],
 
-            array(
+            [
                 2,
-                array(
-                    array('slug' => 'item1', 'level' => 1),
-                    array('slug' => 'item2', 'level' => 2),
-                    array('slug' => 'item4', 'level' => 2),
-                    array('slug' => 'item5', 'level' => 1),
-                ),
-            ),
+                [
+                    [
+                        'slug' => 'item1',
+                        'level' => 1
+                    ],
+                    [
+                        'slug' => 'item2',
+                        'level' => 2
+                    ],
+                    [
+                        'slug' => 'item4',
+                        'level' => 2
+                    ],
+                    [
+                        'slug' => 'item5',
+                        'level' => 1
+                    ],
+                ],
+            ],
 
-            array(
+            [
                 3,
-                array(
-                    array('slug' => 'item1', 'level' => 1),
-                    array('slug' => 'item2', 'level' => 2),
-                    array('slug' => 'item3', 'level' => 3),
-                    array('slug' => 'item4', 'level' => 2),
-                    array('slug' => 'item5', 'level' => 1),
-                ),
-            ),
+                [
+                    [
+                        'slug' => 'item1',
+                        'level' => 1
+                    ],
+                    [
+                        'slug' => 'item2',
+                        'level' => 2
+                    ],
+                    [
+                        'slug' => 'item3',
+                        'level' => 3
+                    ],
+                    [
+                        'slug' => 'item4',
+                        'level' => 2
+                    ],
+                    [
+                        'slug' => 'item5',
+                        'level' => 1
+                    ],
+                ],
+            ],
 
-            array(
+            [
                 4,
-                array(
-                    array('slug' => 'item1', 'level' => 1),
-                    array('slug' => 'item2', 'level' => 2),
-                    array('slug' => 'item3', 'level' => 3),
-                    array('slug' => 'item4', 'level' => 2),
-                    array('slug' => 'item5', 'level' => 1),
-                ),
-            ),
-        );
+                [
+                    [
+                        'slug' => 'item1',
+                        'level' => 1
+                    ],
+                    [
+                        'slug' => 'item2',
+                        'level' => 2
+                    ],
+                    [
+                        'slug' => 'item3',
+                        'level' => 3
+                    ],
+                    [
+                        'slug' => 'item4',
+                        'level' => 2
+                    ],
+                    [
+                        'slug' => 'item5',
+                        'level' => 1
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
      * @dataProvider getFindItemPositionData
      */
-    public function testFindItemPosition($expectedPosition, $itemToFind, $criteria)
+    public function testFindItemPosition($expectedPosition, $itemToFind, $criteria): void
     {
-        $bookToc = array(
-            array('slug' => 'item1', 'url' => 'chapter-1/item-1.html'),
-            array('slug' => 'item2', 'url' => 'item-2.html'),
-            array('slug' => 'item3', 'url' => 'chapter-2/item-3.html'),
-            array('slug' => 'item1', 'url' => 'other-chapter-1.html'),
-            array('slug' => 'item1', 'url' => 'another-chapter-1.html'),
-        );
+        $bookToc = [
+            [
+                'slug' => 'item1',
+                'url' => 'chapter-1/item-1.html'
+            ],
+            [
+                'slug' => 'item2',
+                'url' => 'item-2.html'
+            ],
+            [
+                'slug' => 'item3',
+                'url' => 'chapter-2/item-3.html'
+            ],
+            [
+                'slug' => 'item1',
+                'url' => 'other-chapter-1.html'
+            ],
+            [
+                'slug' => 'item1',
+                'url' => 'another-chapter-1.html'
+            ],
+        ];
 
-        $method = new \ReflectionMethod('Easybook\Publishers\HtmlChunkedPublisher', 'findItemPosition');
+        $method = new ReflectionMethod(HtmlChunkedPublisher::class, 'findItemPosition');
         $method->setAccessible(true);
 
-        $this->assertEquals(
+        $this->assertSame(
             $expectedPosition,
             $method->invoke($this->htmlChunkedPublisher, $itemToFind, $bookToc, $criteria)
         );
@@ -165,39 +234,39 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
 
     public function getFindItemPositionData()
     {
-        return array(
-            array(0, array('slug' => 'item1'), 'slug'),
-            array(1, array('slug' => 'item2'), 'slug'),
-            array(2, array('slug' => 'item3'), 'slug'),
-            array(-1, array('slug' => 'item4'), 'slug'),
-            array(0, array('slug' => 'item1'), 'slug'),
-            array(-1, array('slug' => 'item1'), 'url'),
-            array(-1, array('slug' => 'item1'), 'this_criteria_does_not_exist'),
-            array(0, array('url' => 'chapter-1/item-1.html'), 'url'),
-            array(1, array('url' => 'item-2.html'), 'url'),
-            array(2, array('url' => 'chapter-2/item-3.html'), 'url'),
-            array(3, array('url' => 'other-chapter-1.html'), 'url'),
-            array(4, array('url' => 'another-chapter-1.html'), 'url'),
-        );
+        return [
+            [0, ['slug' => 'item1'], 'slug'],
+            [1, ['slug' => 'item2'], 'slug'],
+            [2, ['slug' => 'item3'], 'slug'],
+            [-1, ['slug' => 'item4'], 'slug'],
+            [0, ['slug' => 'item1'], 'slug'],
+            [-1, ['slug' => 'item1'], 'url'],
+            [-1, ['slug' => 'item1'], 'this_criteria_does_not_exist'],
+            [0, ['url' => 'chapter-1/item-1.html'], 'url'],
+            [1, ['url' => 'item-2.html'], 'url'],
+            [2, ['url' => 'chapter-2/item-3.html'], 'url'],
+            [3, ['url' => 'other-chapter-1.html'], 'url'],
+            [4, ['url' => 'another-chapter-1.html'], 'url'],
+        ];
     }
 
     /**
      * @dataProvider getGetPreviousChunkData
      */
-    public function testGetPreviousChunk($currentPosition, $expectedItem)
+    public function testGetPreviousChunk($currentPosition, $expectedItem): void
     {
-        $bookToc = array(
-            array('slug' => 'item1'),
-            array('slug' => 'item2'),
-            array('slug' => 'item3'),
-            array('slug' => 'item4'),
-            array('slug' => 'item5'),
-        );
+        $bookToc = [
+            ['slug' => 'item1'],
+            ['slug' => 'item2'],
+            ['slug' => 'item3'],
+            ['slug' => 'item4'],
+            ['slug' => 'item5'],
+        ];
 
-        $method = new \ReflectionMethod('Easybook\Publishers\HtmlChunkedPublisher', 'getPreviousChunk');
+        $method = new ReflectionMethod(HtmlChunkedPublisher::class, 'getPreviousChunk');
         $method->setAccessible(true);
 
-        $this->assertEquals(
+        $this->assertSame(
             $expectedItem,
             $method->invoke($this->htmlChunkedPublisher, $currentPosition, $bookToc)
         );
@@ -205,34 +274,42 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
 
     public function getGetPreviousChunkData()
     {
-        return array(
-            array(0, array('level' => 1, 'slug' => 'index', 'url' => 'index.html')),
-            array(1, array('slug' => 'item1')),
-            array(2, array('slug' => 'item2')),
-            array(3, array('slug' => 'item3')),
-            array(4, array('slug' => 'item4')),
-            array(5, array('slug' => 'item5')),
-            array(6, array('level' => 1, 'slug' => 'index', 'url' => 'index.html')),
-        );
+        return [
+            [0, [
+                'level' => 1,
+                'slug' => 'index',
+                'url' => 'index.html'
+            ]],
+            [1, ['slug' => 'item1']],
+            [2, ['slug' => 'item2']],
+            [3, ['slug' => 'item3']],
+            [4, ['slug' => 'item4']],
+            [5, ['slug' => 'item5']],
+            [6, [
+                'level' => 1,
+                'slug' => 'index',
+                'url' => 'index.html'
+            ]],
+        ];
     }
 
     /**
      * @dataProvider getGetNextChunkData
      */
-    public function testGetNextChunk($currentPosition, $expectedItem)
+    public function testGetNextChunk($currentPosition, $expectedItem): void
     {
-        $bookToc = array(
-            array('slug' => 'item1'),
-            array('slug' => 'item2'),
-            array('slug' => 'item3'),
-            array('slug' => 'item4'),
-            array('slug' => 'item5'),
-        );
+        $bookToc = [
+            ['slug' => 'item1'],
+            ['slug' => 'item2'],
+            ['slug' => 'item3'],
+            ['slug' => 'item4'],
+            ['slug' => 'item5'],
+        ];
 
-        $method = new \ReflectionMethod('Easybook\Publishers\HtmlChunkedPublisher', 'getNextChunk');
+        $method = new ReflectionMethod(HtmlChunkedPublisher::class, 'getNextChunk');
         $method->setAccessible(true);
 
-        $this->assertEquals(
+        $this->assertSame(
             $expectedItem,
             $method->invoke($this->htmlChunkedPublisher, $currentPosition, $bookToc)
         );
@@ -240,13 +317,13 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
 
     public function getGetNextChunkData()
     {
-        return array(
-            array(-1, array('slug' => 'item1')),
-            array(0, array('slug' => 'item2')),
-            array(1, array('slug' => 'item3')),
-            array(2, array('slug' => 'item4')),
-            array(3, array('slug' => 'item5')),
-            array(4, null),
-        );
+        return [
+            [-1, ['slug' => 'item1']],
+            [0, ['slug' => 'item2']],
+            [1, ['slug' => 'item3']],
+            [2, ['slug' => 'item4']],
+            [3, ['slug' => 'item5']],
+            [4, null],
+        ];
     }
 }

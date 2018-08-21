@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Tests\Commands;
 
 use Easybook\Tests\AbstractContainerAwareTestCase;
@@ -119,13 +110,7 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
         $tester = $this->createNewBook();
         $bookDir = $this->tmpDir . '/the-origin-of-species';
 
-        $files = [
-            'config.yml',
-            'Contents/chapter1.md',
-            'Contents/chapter2.md',
-            'Contents/images',
-            'Output',
-        ];
+        $files = ['config.yml', 'Contents/chapter1.md', 'Contents/chapter2.md', 'Contents/images', 'Output'];
 
         foreach ($files as $file) {
             $this->assertFileExists($bookDir . '/' . $file, sprintf('%s has been generated', $file));
@@ -153,12 +138,12 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
             [
                 'element' => 'chapter',
                 'number' => 1,
-                'content' => 'chapter1.md'
+                'content' => 'chapter1.md',
             ],
             [
                 'element' => 'chapter',
                 'number' => 2,
-                'content' => 'chapter2.md'
+                'content' => 'chapter2.md',
             ],
         ]]], $bookConfig, 'The book contents configuration is properly generated.');
 
@@ -210,7 +195,7 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
 
         return $stream;
     }
-    
+
     private function createNewBook(): CommandTester
     {
         $command = $this->console->find('new');

@@ -1,13 +1,4 @@
-<?php
-
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+<?php declare(strict_types=1);
 
 namespace Easybook\Tests\Util;
 
@@ -22,7 +13,7 @@ final class TwigCssExtensionTest extends AbstractContainerAwareTestCase
      */
     private $twigCssExtension;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->twigCssExtension = $this->container->get(TwigCssExtension::class);
     }
@@ -32,10 +23,7 @@ final class TwigCssExtensionTest extends AbstractContainerAwareTestCase
      */
     public function testLighten(string $originalColor, string $percent, string $expectedColor): void
     {
-        $this->assertEquals(
-            $expectedColor,
-            $this->twigCssExtension->lighten($originalColor, $percent)
-        );
+        $this->assertSame($expectedColor, $this->twigCssExtension->lighten($originalColor, $percent));
     }
 
     public function getLightenColors(): Iterator
@@ -69,10 +57,7 @@ final class TwigCssExtensionTest extends AbstractContainerAwareTestCase
      */
     public function testDarken(string $originalColor, string $percent, string $expectedColor): void
     {
-        $this->assertEquals(
-            $expectedColor,
-            $this->twigCssExtension->darken($originalColor, $percent)
-        );
+        $this->assertSame($expectedColor, $this->twigCssExtension->darken($originalColor, $percent));
     }
 
     public function getDarkenColors(): Iterator
@@ -94,7 +79,7 @@ final class TwigCssExtensionTest extends AbstractContainerAwareTestCase
         yield ['#C71585', '50%', '#000000'];
         yield ['#C71585', '66%', '#000000'];
         yield ['#C71585', '100%', '#000000'];
-            // errors
+        // errors
         yield ['#FFF', '-100%', '#FFFFFF'];
         yield ['#FFF', '10000%', '#000000'];
         yield ['#', '100%', '#000000'];
@@ -106,13 +91,10 @@ final class TwigCssExtensionTest extends AbstractContainerAwareTestCase
      */
     public function testFade(string $originalColor, string $opacity, string $expectedColor): void
     {
-        $this->assertEquals(
-            $expectedColor,
-            $this->twigCssExtension->fade($originalColor, $opacity)
-        );
+        $this->assertSame($expectedColor, $this->twigCssExtension->fade($originalColor, $opacity));
     }
 
-    public function getFadeColors()
+    public function getFadeColors(): Iterator
     {
         yield ['#FFF', '0', 'rgba(255, 255, 255, 0.00)'];
         yield ['#FFF', '0.5', 'rgba(255, 255, 255, 0.50)'];
@@ -143,10 +125,7 @@ final class TwigCssExtensionTest extends AbstractContainerAwareTestCase
      */
     public function testCssAdd(string $length, string $factor, string $expectedLength): void
     {
-        $this->assertEquals(
-            $expectedLength,
-            $this->twigCssExtension->cssAdd($length, $factor)
-        );
+        $this->assertSame($expectedLength, $this->twigCssExtension->cssAdd($length, $factor));
     }
 
     public function getCssAddLengths(): Iterator
@@ -176,12 +155,9 @@ final class TwigCssExtensionTest extends AbstractContainerAwareTestCase
     /**
      * @dataProvider getCssSubstractLengths
      */
-    public function testCssSubstract($length, $factor, $expectedLength)
+    public function testCssSubstract(string $length, string $factor, string $expectedLength): void
     {
-        $this->assertEquals(
-            $expectedLength,
-            $this->twigCssExtension->cssSubstract($length, $factor)
-        );
+        $this->assertSame($expectedLength, $this->twigCssExtension->cssSubstract($length, $factor));
     }
 
     public function getCssSubstractLengths(): Iterator
@@ -213,10 +189,7 @@ final class TwigCssExtensionTest extends AbstractContainerAwareTestCase
      */
     public function testCssMultiply(string $length, string $factor, string $expectedLength): void
     {
-        $this->assertEquals(
-            $expectedLength,
-            $this->twigCssExtension->cssMultiply($length, $factor)
-        );
+        $this->assertSame($expectedLength, $this->twigCssExtension->cssMultiply($length, $factor));
     }
 
     public function getCssMultiplyLengths(): Iterator
@@ -248,10 +221,7 @@ final class TwigCssExtensionTest extends AbstractContainerAwareTestCase
      */
     public function testCssDivide(string $length, string $factor, string $expectedLength): void
     {
-        $this->assertEquals(
-            $expectedLength,
-            $this->twigCssExtension->cssDivide($length, $factor)
-        );
+        $this->assertSame($expectedLength, $this->twigCssExtension->cssDivide($length, $factor));
     }
 
     public function getCssDivideLengths(): Iterator

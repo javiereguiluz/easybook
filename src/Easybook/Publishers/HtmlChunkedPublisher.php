@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Publishers;
 
 use Easybook\Events\BaseEvent;
@@ -24,9 +15,10 @@ use Twig_Error_Loader;
  * The 'HtmlChunked' name was selected because that is the term traditionally
  * used by tools like DocBook (http://www.sagehill.net/docbookxsl/Chunking.html)
  */
-final class HtmlChunkedPublisher extends HtmlPublisher
+final class HtmlChunkedPublisher extends AbstractPublisher
 {
     // these elements are so special that they cannot define a TOC
+
     /**
      * @var string[]
      */
@@ -105,7 +97,7 @@ final class HtmlChunkedPublisher extends HtmlPublisher
             [
                 'items' => $this->app['publishing.items'],
                 'toc' => $toc,
-                'has_custom_css' => $hasCustomCss
+                'has_custom_css' => $hasCustomCss,
             ],
             $this->app['publishing.dir.output'] . '/index.html'
         );
@@ -532,7 +524,7 @@ final class HtmlChunkedPublisher extends HtmlPublisher
             ?? [
                 'level' => 1,
                 'slug' => 'index',
-                'url' => 'index.html'
+                'url' => 'index.html',
             ];
     }
 

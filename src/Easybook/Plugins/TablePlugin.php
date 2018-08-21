@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents as Events;
@@ -31,8 +22,6 @@ final class TablePlugin implements EventSubscriberInterface
     /**
      * It decorates each table with a template and, if the edition configures it,
      * with the appropriate auto-numbered label.
-     *
-     * @param ParseEvent $event The object that contains the item being processed
      */
     public function decorateAndLabelTables(ParseEvent $parseEvent): void
     {

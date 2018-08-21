@@ -1,13 +1,4 @@
-<?php
-
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+<?php declare(strict_types=1);
 
 namespace Easybook\Tests\Plugins;
 
@@ -23,34 +14,37 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
      */
     private $parser;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parser = $this->container->get(Parser::class);
     }
 
-
     /**
-     * @dataProvider  getCodeBlockConfiguration
+     * @dataProvider getCodeBlockConfiguration
      *
      * @param string $inputFilePath        The contents to be parsed
      * @param string $expectedFilePath     The expected result of parsing the contents
      * @param string $codeBlockType        The type of code block used in the content
      * @param bool   $enableCodeHightlight Whether or not code listings should be highlighted
      */
-    public function testCodeBlocksTypes($inputFilePath, $expectedFilePath, $codeBlockType, $enableCodeHightlight)
-    {
-        $fixturesDir = __DIR__.'/fixtures/code/';
+    public function testCodeBlocksTypes(
+        string $inputFilePath,
+        string $expectedFilePath,
+        string $codeBlockType,
+        bool $enableCodeHightlight
+    ): void {
+        $fixturesDir = __DIR__ . '/fixtures/code/';
 
         $app = $this->getApp($codeBlockType, $enableCodeHightlight);
         $plugin = new CodePlugin();
         $event = new ParseEvent($app);
 
-        $event->setItem(array(
-            'config' => array('format' => 'md'),
-            'original' => file_get_contents($fixturesDir.'/'.$inputFilePath),
+        $event->setItem([
+            'config' => ['format' => 'md'],
+            'original' => file_get_contents($fixturesDir . '/' . $inputFilePath),
             'content' => '',
-        ));
+        ]);
 
         // execute pre-parse method of the plugin
         $plugin->parseCodeBlocks($event);
@@ -64,24 +58,21 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
         $plugin->fixParsedCodeBlocks($event);
         $item = $event->getItem();
 
-        $this->assertEquals(
-            file_get_contents($fixturesDir.'/'.$expectedFilePath),
-            $item['content']
-        );
+        $this->assertSame(file_get_contents($fixturesDir . '/' . $expectedFilePath), $item['content']);
     }
 
     public function getCodeBlockConfiguration()
     {
-        return array(
-            array('input_1.md', 'expected_easybook_type_disabled_highlight.html', 'easybook', false),
-            array('input_1.md', 'expected_easybook_type_enabled_highlight.html',  'easybook', true),
+        return [
+            ['input_1.md', 'expected_easybook_type_disabled_highlight.html', 'easybook', false],
+            ['input_1.md', 'expected_easybook_type_enabled_highlight.html',  'easybook', true],
 
-            array('input_2.md', 'expected_fenced_type_disabled_highlight.html',   'fenced',   false),
-            array('input_2.md', 'expected_fenced_type_enabled_highlight.html',    'fenced',   true),
+            ['input_2.md', 'expected_fenced_type_disabled_highlight.html',   'fenced',   false],
+            ['input_2.md', 'expected_fenced_type_enabled_highlight.html',    'fenced',   true],
 
-            array('input_3.md', 'expected_github_type_disabled_highlight.html',   'github',   false),
-            array('input_3.md', 'expected_github_type_enabled_highlight.html',    'github',   true),
-        );
+            ['input_3.md', 'expected_github_type_disabled_highlight.html',   'github',   false],
+            ['input_3.md', 'expected_github_type_enabled_highlight.html',    'github',   true],
+        ];
     }
 
     private function getApp($codeBlockType, $enableCodeHightlight)
@@ -90,20 +81,20 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
 
         $app['publishing.book.slug'] = 'test_book';
         $app['publishing.edition'] = 'test_edition';
-        $app['publishing.book.config'] = array(
-            'book' => array(
+        $app['publishing.book.config'] = [
+            'book' => [
                 'slug' => 'test_book',
                 'language' => 'en',
-                'editions' => array(
-                    'test_edition' => array(
+                'editions' => [
+                    'test_edition' => [
                         'format' => 'html',
                         'highlight_cache' => false,
                         'highlight_code' => $enableCodeHightlight,
                         'theme' => 'clean',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
 
         // don't try to optimize the following code or you'll end up
         // with this error: 'Indirect modification of overloaded element'

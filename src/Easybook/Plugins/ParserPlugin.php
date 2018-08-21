@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents as Events;
@@ -23,14 +14,8 @@ final class ParserPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::PRE_PARSE => [
-                ['normalizeMarkdownHeaders', -1000],
-            ],
-            Events::POST_PARSE => [
-                ['fixHtmlCode', -1000],
-                ['setItemTitle', -1000],
-                ['addSectionLabels', -1000],
-            ],
+            Events::PRE_PARSE => [['normalizeMarkdownHeaders', -1000]],
+            Events::POST_PARSE => [['fixHtmlCode', -1000], ['setItemTitle', -1000], ['addSectionLabels', -1000]],
         ];
     }
 
@@ -38,8 +23,6 @@ final class ParserPlugin implements EventSubscriberInterface
      * It modifies the original Markdown content to replace the SetExt-style
      * headers by ATX-style headers. This is necessary to avoid problems with
      * auto-numbering of sections when mixing both styles in a single book.
-     *
-     * @param ParseEvent $event The object that contains the item being processed
      */
     public function normalizeMarkdownHeaders(ParseEvent $parseEvent): void
     {
@@ -66,8 +49,6 @@ final class ParserPlugin implements EventSubscriberInterface
      * It fixes the resulting HTML code of the book item. This is necessary
      * to avoid problems with the invalid-HTML-markup-sensitive editions such
      * as the ePub books.
-     *
-     * @param ParseEvent $event The object that contains the item being processed
      */
     public function fixHtmlCode(ParseEvent $parseEvent): void
     {
@@ -80,8 +61,6 @@ final class ParserPlugin implements EventSubscriberInterface
     /**
      * Sets the book item title by extracting it from its contents or
      * by using the default title for that book item type.
-     *
-     * @param ParseEvent $event The object that contains the item being processed
      */
     public function setItemTitle(ParseEvent $parseEvent): void
     {
@@ -113,8 +92,6 @@ final class ParserPlugin implements EventSubscriberInterface
 
     /**
      * It adds the appropriate auto-numbered labels to the book item sections.
-     *
-     * @param ParseEvent $event The object that contains the item being processed
      */
     public function addSectionLabels(ParseEvent $parseEvent): void
     {
@@ -131,7 +108,7 @@ final class ParserPlugin implements EventSubscriberInterface
             3 => 0,
             4 => 0,
             5 => 0,
-            6 => 0
+            6 => 0,
         ];
         $addSectionLabels = in_array($item['config']['element'], $parseEvent->app->edition('labels') ?: [], true);
 

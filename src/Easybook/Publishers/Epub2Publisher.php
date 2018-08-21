@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Publishers;
 
 use Easybook\Events\BaseEvent;
@@ -22,7 +13,7 @@ use Twig_Error_Loader;
  * It publishes the book as an EPUB file. All the internal links are transformed
  * into clickable cross-section book links.
  */
-final class Epub2Publisher extends HtmlPublisher
+final class Epub2Publisher extends AbstractPublisher
 {
     // 'toc' content type usually makes no sense in epub books (see below)
     // 'cover' is a very special content for epub books

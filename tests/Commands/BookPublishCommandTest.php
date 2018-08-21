@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Tests\Commands;
 
 use Easybook\Console\Command\BookNewCommand;
@@ -136,9 +127,9 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
     {
         return [
             //    edition    $publishedBookFilePath
-            ['web',     'web/book.html'],
+            ['web', 'web/book.html'],
             ['website', 'website/book/index.html'],
-            ['ebook',   'ebook/book.epub'],
+            ['ebook', 'ebook/book.epub'],
         ];
     }
 
@@ -221,9 +212,7 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
             'book' => [
                 'editions' => [
                     'web' => [
-                        'before_publish' => [
-                            uniqid('this_command_does_not_exist_'),
-                        ],
+                        'before_publish' => [uniqid('this_command_does_not_exist_')],
                     ],
                 ],
             ],
@@ -258,7 +247,7 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 
         return $stream;
     }
-    
+
     private function publishBook($edition = 'web', $slug = 'the-origin-of-species'): CommandTester
     {
         $command = $this->container->get(BookPublishCommand::class);

@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Util;
 
 use Twig_Extension;
@@ -184,11 +175,7 @@ final class TwigCssExtension extends Twig_Extension
         // expanded hex colors can only have 6 characters
         $hex = substr($hex, 0, 6);
 
-        return [
-            hexdec(substr($hex, 0, 2)),
-            hexdec(substr($hex, 2, 2)),
-            hexdec(substr($hex, 4, 2)),
-        ];
+        return [hexdec(substr($hex, 0, 2)), hexdec(substr($hex, 2, 2)), hexdec(substr($hex, 4, 2))];
     }
 
     /**
@@ -265,10 +252,6 @@ final class TwigCssExtension extends Twig_Extension
             return $m1;
         };
 
-        return [
-            $hue($h + 0.33333) * 255,
-            $hue($h) * 255,
-            $hue($h - 0.33333) * 255,
-        ];
+        return [$hue($h + 0.33333) * 255, $hue($h) * 255, $hue($h - 0.33333) * 255];
     }
 }

@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Tests\Commands;
 
 use Easybook\Console\Command\BookCustomizeCommand;
@@ -140,12 +131,7 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
 
     public function getNonInteractiveCommandData()
     {
-        return [
-            ['web'],
-            ['website'],
-            ['print'],
-            ['ebook'],
-        ];
+        return [['web'], ['website'], ['print'], ['ebook']];
     }
 
     /**
@@ -225,7 +211,7 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
 
         return $stream;
     }
-    
+
     private function customizeBook($edition = 'web', $slug = 'the-origin-of-species'): CommandTester
     {
         $command = $this->container->get(BookCustomizeCommand::class);

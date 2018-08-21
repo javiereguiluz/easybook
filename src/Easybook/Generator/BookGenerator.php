@@ -67,10 +67,7 @@ final class BookGenerator extends Generator
      */
     public function generate(): void
     {
-        $this->filesystem->mkdir([
-            $this->bookDirectory . '/Contents/images',
-            $this->bookDirectory . '/Output',
-        ]);
+        $this->filesystem->mkdir([$this->bookDirectory . '/Contents/images', $this->bookDirectory . '/Output']);
 
         foreach (['chapter1.md', 'chapter2.md'] as $file) {
             $file = 'Contents/' . $file;

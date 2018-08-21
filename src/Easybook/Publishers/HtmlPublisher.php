@@ -1,14 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * This file is part of the easybook application.
- *
- * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Easybook\Publishers;
 
 /**
@@ -16,7 +7,7 @@ namespace Easybook\Publishers;
  * are transformed into anchors. This means that the generated book can be
  * browsed offline or copied under any web server directory.
  */
-class HtmlPublisher extends AbstractPublisher
+final class HtmlPublisher extends AbstractPublisher
 {
     public function assembleBook(): void
     {
