@@ -9,10 +9,6 @@ matrix:
       env: CHECK_PHP_SYNTAX="yes"
     - php: 7.2
 
-before_install:
-  # remove xdebug to speed up everything
-  - phpenv config-rm xdebug.ini
-
 install:
   - composer install
 

@@ -36,10 +36,11 @@
         "zendframework/zendpdf": "^2.0"
     },
     "require-dev": {
+        "phpstan/phpstan": "^0.10.3",
         "phpunit/phpunit": "^7.3",
         "rector/rector": "^0.3.4",
-        "symplify/easy-coding-standard": "^4.6",
-        "slam/php-cs-fixer-extensions": "^1.15"
+        "slam/php-cs-fixer-extensions": "^1.15",
+        "symplify/easy-coding-standard": "^4.6"
     },
     "autoload": {
         "psr-4": {

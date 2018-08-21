@@ -1,16 +1,5 @@
-app/Cache
-app/Logs
-
-doc
-!doc/easybook-doc-en/*
-doc/easybook-doc-en/Output/*
-
+/vendor
 composer.lock
-
-easybook.zip
-
-vendor
 
 # wip
 rector.yml
-UPGRADE_PLAN.md

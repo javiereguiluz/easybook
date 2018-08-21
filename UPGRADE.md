@@ -1,6 +1,12 @@
-# UPGRADE guide #
+# UPGRADE guide
 
-## Upgrade to easybook 5.0 ##
+## [WIP] Upgrade to easybook 6.0
+
+- mobi dropped as not supported since 2011
+- use wkhtmlpdf instead of paid prince
+- `book` moved to `bin/book`
+
+## Upgrade to easybook 5.0
 
 ### The Markdown headers are now normalized internally ###
 
