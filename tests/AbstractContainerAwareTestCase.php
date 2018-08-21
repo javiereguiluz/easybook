@@ -23,8 +23,13 @@ abstract class AbstractContainerAwareTestCase extends TestCase
      */
     protected $container;
 
-    protected function setUp()
+    /**
+     * @param mixed[] $data
+     */
+    public function __construct(?string $name = null, array $data = [], string $dataName = '')
     {
         $this->container = (new ContainerFactory())->create();
+
+        parent::__construct($name, $data, $dataName);
     }
 }

@@ -9,23 +9,19 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="false"
-         bootstrap="./src/Easybook/Tests/bootstrap.php"
+         bootstrap="vendor/autoload.php"
 >
 
     <!-- files considered for the code coverage -->
     <filter>
         <whitelist>
             <directory>src</directory>
-            <exclude>
-                <directory>src/Easybook/Tests</directory>
-                <file>src/Easybook/Util/Prince.php</file>
-            </exclude>
         </whitelist>
     </filter>
 
     <testsuites>
-        <testsuite name="easybook Test Suite">
-            <directory>./src/Easybook/Tests/</directory>
+        <testsuite name="main">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

@@ -14,16 +14,14 @@ namespace Easybook\DependencyInjection;
 use Easybook\DependencyInjection\CompilerPass\CollectorCompilerPass;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Yaml\Yaml;
-use Easybook\Util\Toolkit;
 
 final class EasybookKernel extends Kernel
 {
     public function __construct()
     {
+        parent::__construct('dev', true);
 //        dynamic parameters
 //        $this['publishing.edition.id'] = function ($app) {
 //            if (null !== $isbn = $app->edition('isbn')) {
@@ -96,383 +94,372 @@ final class EasybookKernel extends Kernel
         return $array;
     }
 
-    /**
-     * Transforms the string into a web-safe slug.
-     *
-     * @param string $string    The string to slug
-     * @param string $separator Used between words and to replace illegal characters
-     * @param string $prefix    Prefix to be appended at the beginning of the slug
-     *
-     * @return string The generated slug
-     */
-    public function slugify($string, $separator = null, $prefix = null)
-    {
-        $slug = $this['slugger']->slugify($string, $separator);
+//    /**
+//     * Transforms the string into a web-safe slug.
+//     *
+//     * @param string $string    The string to slug
+//     * @param string $separator Used between words and to replace illegal characters
+//     * @param string $prefix    Prefix to be appended at the beginning of the slug
+//     *
+//     * @return string The generated slug
+//     */
+//    public function slugify($string, $separator = null, $prefix = null)
+//    {
+//        $slug = $this['slugger']->slugify($string, $separator);
+//
+//        if (null !== $prefix) {
+//            $slug = $prefix.$slug;
+//        }
+//
+//        $this->append('slugger.generated_slugs', $slug);
+//
+//        return $slug;
+//    }
 
-        if (null !== $prefix) {
-            $slug = $prefix.$slug;
-        }
+//    /**
+//     * Transforms the original string into a web-safe slug. It also ensures that
+//     * the generated slug is unique for the entire book (to do so, it stores
+//     * every slug generated since the beginning of the script execution).
+//     *
+//     * @param string $string    The string to slug
+//     * @param string $separator Used between words and to replace illegal characters
+//     * @param string $prefix    Prefix to be appended at the beginning of the slug
+//     *
+//     * @return string The generated slug
+//     */
+//    public function slugifyUniquely($string, $separator = null, $prefix = null)
+//    {
+//        $defaultOptions = $this['slugger.options'];
+//
+//        $separator = $separator ?: $defaultOptions['separator'];
+//        $prefix = $prefix ?: $defaultOptions['prefix'];
+//
+//        $slug = $this->slugify($string, $separator, $prefix);
+//
+//        // ensure the uniqueness of the slug
+//        $occurrences = array_count_values($this['slugger.generated_slugs']);
+//        $count = isset($occurrences[$slug]) ? $occurrences[$slug] : 0;
+//        if ($count > 1) {
+//            $slug = $slug.$separator.$count;
+//        }
+//
+//        return $slug;
+//    }
 
-        $this->append('slugger.generated_slugs', $slug);
+//    /**
+//     * Shortcut method to get the label of any element type.
+//     *
+//     * @param string $element   The element type ('chapter', 'foreword', ...)
+//     * @param array  $variables Optional variables used to render the label
+//     *
+//     * @return string The label of the element or an empty string
+//     */
+//    public function getLabel($element, $variables = array())
+//    {
+//        $label = isset($this['labels']['label'][$element])
+//            ? $this['labels']['label'][$element]
+//            : '';
+//
+//        // some elements (mostly chapters and appendices) have a different label for each level (h1, ..., h6)
+//        if (is_array($label)) {
+//            $index = $variables['item']['level'] - 1;
+//            $label = $label[$index];
+//        }
+//
+//        return $this->renderString($label, $variables);
+//    }
+//
+//    /**
+//     * Shortcut method to get the title of any element type.
+//     *
+//     * @param string $element The element type ('chapter', 'foreword', ...)
+//     *
+//     * @return string The title of the element or an empty string
+//     */
+//    public function getTitle($element)
+//    {
+//        return isset($this['titles']['title'][$element])
+//            ? $this['titles']['title'][$element]
+//            : '';
+////    }
+//
+//    /**
+//     * Renders any string as a Twig template. It automatically injects two global
+//     * variables called 'book' and 'edition', which offer direct access to any
+//     * book or edition configuration option.
+//     *
+//     * @param string $string    The original content to render
+//     * @param array  $variables Optional variables passed to the template
+//     *
+//     * @return string The result of rendering the original string as a Twig template
+//     */
+//    public function renderString($string, $variables = array())
+//    {
+//        $twig = new \Twig_Environment(new \Twig_Loader_String(), $this['twig.options']);
+//
+//        $twig->addGlobal('app', $this);
+//
+//        if (null !== $bookConfig = $this['publishing.book.config']) {
+//            $twig->addGlobal('book', $bookConfig['book']);
+//
+//            $publishingEdition = $this['publishing.edition'];
+//            $editions = $this->book('editions');
+//            $twig->addGlobal('edition', $editions[$publishingEdition]);
+//        }
+//
+//        return $twig->render($string, $variables);
+//    }
 
-        return $slug;
-    }
+//    /**
+//     * Renders any template (currently only supports Twig templates).
+//     *
+//     * @param string $template   The template name (it can include a namespace)
+//     * @param array  $variables  Optional variables passed to the template
+//     * @param string $targetFile Optional output file path. If set, the rendered
+//     *                           template is saved in this file.
+//     *
+//     * @return string The result of rendering the Twig template
+//     *
+//     *  @throws \RuntimeException  If the given template is not a Twig template
+//     */
+//    public function render($template, $variables = array(), $targetFile = null)
+//    {
+//        if ('.twig' != substr($template, -5)) {
+//            throw new \RuntimeException(sprintf(
+//                'Unsupported format for "%s" template (easybook only supports Twig)',
+//                $template
+//            ));
+//        }
+//
+//        $rendered = $this['twig']->render($template, $variables);
+//
+//        if (null !== $targetFile) {
+//            if (!is_dir($dir = dirname($targetFile))) {
+//                $this['filesystem']->mkdir($dir);
+//            }
+//
+//            file_put_contents($targetFile, $rendered);
+//        }
+//
+//        return $rendered;
+//    }
 
-    /**
-     * Transforms the original string into a web-safe slug. It also ensures that
-     * the generated slug is unique for the entire book (to do so, it stores
-     * every slug generated since the beginning of the script execution).
-     *
-     * @param string $string    The string to slug
-     * @param string $separator Used between words and to replace illegal characters
-     * @param string $prefix    Prefix to be appended at the beginning of the slug
-     *
-     * @return string The generated slug
-     */
-    public function slugifyUniquely($string, $separator = null, $prefix = null)
-    {
-        $defaultOptions = $this['slugger.options'];
+//    /*
+//     * If the book overrides the given templateName, this method returns the path
+//     * of the custom template. The search order is:
+//     *
+//     *   1. <book>/Resources/Templates/<edition-name>/<templateName>
+//     *   2. <book>/Resources/Templates/<edition-format>/<templateName>
+//     *   3. <book>/Resources/Templates/<templateName>
+//     *
+//     * @param string $templateName The name of the template to look for
+//     *
+//     * @return string|null The path of the custom template or null if there is none
+//     */
+//    public function getCustomTemplate($templateName)
+//    {
+//        $paths = array(
+//            $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
+//            $this['publishing.dir.templates'].'/'.$this->edition('format'),
+//            $this['publishing.dir.templates'],
+//        );
+//
+//        return $this->getFirstExistingFile($templateName, $paths);
+//    }
+//
+//    /*
+//     * It looks for custom book labels. The search order is:
+//     *   1. <book>/Resources/Translations/<edition-name>/labels.<book-language>.yml
+//     *   2. <book>/Resources/Translations/<edition-format>/labels.<book-language>.yml
+//     *   3. <book>/Resources/Translations/labels.<book-language>.yml
+//     *
+//     * @return string|null The path of the custom labels file or null if there is none
+//     */
+//    public function getCustomLabelsFile()
+//    {
+//        $labelsFileName = 'labels.'.$this->book('language').'.yml';
+//        $paths = array(
+//            $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
+//            $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
+//            $this['publishing.dir.resources'].'/Translations',
+//        );
+//
+//        return $this->getFirstExistingFile($labelsFileName, $paths);
+//    }
+//
+//    /*
+//     * It looks for custom book titles. The search order is:
+//     *   1. <book>/Resources/Translations/<edition-name>/titles.<book-language>.yml
+//     *   2. <book>/Resources/Translations/<edition-format>/titles.<book-language>.yml
+//     *   3. <book>/Resources/Translations/titles.<book-language>.yml
+//     *
+//     * @return string|null The path of the custom titles file or null if there is none
+//     */
+//    public function getCustomTitlesFile()
+//    {
+//        $titlesFileName = 'titles.'.$this->book('language').'.yml';
+//        $paths = array(
+//            $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
+//            $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
+//            $this['publishing.dir.resources'].'/Translations',
+//        );
+//
+//        return $this->getFirstExistingFile($titlesFileName, $paths);
+//    }
+//
+//    /*
+//     * It looks for custom book cover images. The search order is:
+//     *   1. <book>/Resources/Templates/<edition-name>/cover.jpg
+//     *   2. <book>/Resources/Templates/<edition-format>/cover.jpg
+//     *   3. <book>/Resources/Templates/cover.jpg
+//     *
+//     * @return string|null The path of the custom cover image or null if there is none
+//     */
+//    public function getCustomCoverImage()
+//    {
+//        $coverFileName = 'cover.jpg';
+//        $paths = array(
+//            $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
+//            $this['publishing.dir.templates'].'/'.$this->edition('format'),
+//            $this['publishing.dir.templates'],
+//        );
+//
+//        return $this->getFirstExistingFile($coverFileName, $paths);
+//    }
+//
+//    /**
+//     * Looks for a file in several paths and it returns the absolute filepath
+//     * of the first file occurrence or null if no file is found in those paths.
+//     *
+//     * @param string $file  The name of the file to look for
+//     * @param array  $paths The paths where the file can exist
+//     *
+//     * @return string|null The absolute filepath of the first found file or
+//     *                     null if the file isn't found in any of those paths.
+//     */
+//    public function getFirstExistingFile($file, array $paths)
+//    {
+//        foreach ($paths as $path) {
+//            if (file_exists($path.'/'.$file)) {
+//                return $path.'/'.$file;
+//            }
+//        }
+//
+//        return;
+//    }
+//
+//    /**
+//     * Highlights the given code according to the specified programming language.
+//     *
+//     * @param string $code     The source code to be highlighted
+//     * @param string $language The name of the programming language used in the code
+//     *
+//     * @return string The highlighted code
+//     *
+//     * @throws \RuntimeException If the cache used to store the highlighted code isn't writable
+//     */
+//    public function highlight($code, $language = 'code')
+//    {
+//        return $this['highlighter']->highlight($code, $language);
+//    }
 
-        $separator = $separator ?: $defaultOptions['separator'];
-        $prefix = $prefix ?: $defaultOptions['prefix'];
+//    /**
+//     * It loads the full book configuration by combining all the different sources
+//     * (config.yml file, console command option and default values). It also loads
+//     * the edition configuration and resolves the edition inheritance (if used).
+//     *
+//     * @param string $configurationViaCommand The configuration options provided via the console command
+//     */
+//    public function loadBookConfiguration($configurationViaCommand = '')
+//    {
+//        $config = $this['configurator']->loadBookConfiguration($this['publishing.dir.book'], $configurationViaCommand);
+//        $this['publishing.book.config'] = $config;
+//
+//        $this['validator']->validatePublishingEdition($this['publishing.edition']);
+//
+//        $config = $this['configurator']->loadEditionConfiguration();
+//        $this['publishing.book.config'] = $config;
+//
+//        $config = $this['configurator']->processConfigurationValues();
+//        $this['publishing.book.config'] = $config;
+//    }
+//
+////    /**
+//     * It loads the (optional) easybook configuration parameters defined by the book.
+//     */
+//    public function loadEasybookConfiguration()
+//    {
+//        $bookFileConfig = $this['configurator']->loadBookFileConfiguration($this['publishing.dir.book']);
+//
+//        if (!isset($bookFileConfig['easybook'])) {
+//            return;
+//        }
+//
+//        foreach ($bookFileConfig['easybook']['parameters'] as $option => $value) {
+//            if (is_array($value)) {
+//                $previousArray = $this->offsetExists($option) ? $this[$option] : array();
+//                $newArray = array_merge($previousArray, $value);
+//                $this[$option] = $newArray;
+//            } else {
+//                $this[$option] = $value;
+//            }
+//        }
+//    }
 
-        $slug = $this->slugify($string, $separator, $prefix);
-
-        // ensure the uniqueness of the slug
-        $occurrences = array_count_values($this['slugger.generated_slugs']);
-        $count = isset($occurrences[$slug]) ? $occurrences[$slug] : 0;
-        if ($count > 1) {
-            $slug = $slug.$separator.$count;
-        }
-
-        return $slug;
-    }
-
-    /**
-     * Shortcut method to get the label of any element type.
-     *
-     * @param string $element   The element type ('chapter', 'foreword', ...)
-     * @param array  $variables Optional variables used to render the label
-     *
-     * @return string The label of the element or an empty string
-     */
-    public function getLabel($element, $variables = array())
-    {
-        $label = isset($this['labels']['label'][$element])
-            ? $this['labels']['label'][$element]
-            : '';
-
-        // some elements (mostly chapters and appendices) have a different label for each level (h1, ..., h6)
-        if (is_array($label)) {
-            $index = $variables['item']['level'] - 1;
-            $label = $label[$index];
-        }
-
-        return $this->renderString($label, $variables);
-    }
-
-    /**
-     * Shortcut method to get the title of any element type.
-     *
-     * @param string $element The element type ('chapter', 'foreword', ...)
-     *
-     * @return string The title of the element or an empty string
-     */
-    public function getTitle($element)
-    {
-        return isset($this['titles']['title'][$element])
-            ? $this['titles']['title'][$element]
-            : '';
-    }
-
-    /**
-     * Renders any string as a Twig template. It automatically injects two global
-     * variables called 'book' and 'edition', which offer direct access to any
-     * book or edition configuration option.
-     *
-     * @param string $string    The original content to render
-     * @param array  $variables Optional variables passed to the template
-     *
-     * @return string The result of rendering the original string as a Twig template
-     */
-    public function renderString($string, $variables = array())
-    {
-        $twig = new \Twig_Environment(new \Twig_Loader_String(), $this['twig.options']);
-
-        $twig->addGlobal('app', $this);
-
-        if (null !== $bookConfig = $this['publishing.book.config']) {
-            $twig->addGlobal('book', $bookConfig['book']);
-
-            $publishingEdition = $this['publishing.edition'];
-            $editions = $this->book('editions');
-            $twig->addGlobal('edition', $editions[$publishingEdition]);
-        }
-
-        return $twig->render($string, $variables);
-    }
-
-    /**
-     * Renders any template (currently only supports Twig templates).
-     *
-     * @param string $template   The template name (it can include a namespace)
-     * @param array  $variables  Optional variables passed to the template
-     * @param string $targetFile Optional output file path. If set, the rendered
-     *                           template is saved in this file.
-     *
-     * @return string The result of rendering the Twig template
-     *
-     *  @throws \RuntimeException  If the given template is not a Twig template
-     */
-    public function render($template, $variables = array(), $targetFile = null)
-    {
-        if ('.twig' != substr($template, -5)) {
-            throw new \RuntimeException(sprintf(
-                'Unsupported format for "%s" template (easybook only supports Twig)',
-                $template
-            ));
-        }
-
-        $rendered = $this['twig']->render($template, $variables);
-
-        if (null !== $targetFile) {
-            if (!is_dir($dir = dirname($targetFile))) {
-                $this['filesystem']->mkdir($dir);
-            }
-
-            file_put_contents($targetFile, $rendered);
-        }
-
-        return $rendered;
-    }
-
-    /*
-     * If the book overrides the given templateName, this method returns the path
-     * of the custom template. The search order is:
-     *
-     *   1. <book>/Resources/Templates/<edition-name>/<templateName>
-     *   2. <book>/Resources/Templates/<edition-format>/<templateName>
-     *   3. <book>/Resources/Templates/<templateName>
-     *
-     * @param string $templateName The name of the template to look for
-     *
-     * @return string|null The path of the custom template or null if there is none
-     */
-    public function getCustomTemplate($templateName)
-    {
-        $paths = array(
-            $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
-            $this['publishing.dir.templates'].'/'.$this->edition('format'),
-            $this['publishing.dir.templates'],
-        );
-
-        return $this->getFirstExistingFile($templateName, $paths);
-    }
-
-    /*
-     * It looks for custom book labels. The search order is:
-     *   1. <book>/Resources/Translations/<edition-name>/labels.<book-language>.yml
-     *   2. <book>/Resources/Translations/<edition-format>/labels.<book-language>.yml
-     *   3. <book>/Resources/Translations/labels.<book-language>.yml
-     *
-     * @return string|null The path of the custom labels file or null if there is none
-     */
-    public function getCustomLabelsFile()
-    {
-        $labelsFileName = 'labels.'.$this->book('language').'.yml';
-        $paths = array(
-            $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
-            $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
-            $this['publishing.dir.resources'].'/Translations',
-        );
-
-        return $this->getFirstExistingFile($labelsFileName, $paths);
-    }
-
-    /*
-     * It looks for custom book titles. The search order is:
-     *   1. <book>/Resources/Translations/<edition-name>/titles.<book-language>.yml
-     *   2. <book>/Resources/Translations/<edition-format>/titles.<book-language>.yml
-     *   3. <book>/Resources/Translations/titles.<book-language>.yml
-     *
-     * @return string|null The path of the custom titles file or null if there is none
-     */
-    public function getCustomTitlesFile()
-    {
-        $titlesFileName = 'titles.'.$this->book('language').'.yml';
-        $paths = array(
-            $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
-            $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
-            $this['publishing.dir.resources'].'/Translations',
-        );
-
-        return $this->getFirstExistingFile($titlesFileName, $paths);
-    }
-
-    /*
-     * It looks for custom book cover images. The search order is:
-     *   1. <book>/Resources/Templates/<edition-name>/cover.jpg
-     *   2. <book>/Resources/Templates/<edition-format>/cover.jpg
-     *   3. <book>/Resources/Templates/cover.jpg
-     *
-     * @return string|null The path of the custom cover image or null if there is none
-     */
-    public function getCustomCoverImage()
-    {
-        $coverFileName = 'cover.jpg';
-        $paths = array(
-            $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
-            $this['publishing.dir.templates'].'/'.$this->edition('format'),
-            $this['publishing.dir.templates'],
-        );
-
-        return $this->getFirstExistingFile($coverFileName, $paths);
-    }
-
-    /**
-     * Looks for a file in several paths and it returns the absolute filepath
-     * of the first file occurrence or null if no file is found in those paths.
-     *
-     * @param string $file  The name of the file to look for
-     * @param array  $paths The paths where the file can exist
-     *
-     * @return string|null The absolute filepath of the first found file or
-     *                     null if the file isn't found in any of those paths.
-     */
-    public function getFirstExistingFile($file, array $paths)
-    {
-        foreach ($paths as $path) {
-            if (file_exists($path.'/'.$file)) {
-                return $path.'/'.$file;
-            }
-        }
-
-        return;
-    }
-
-    /**
-     * Highlights the given code according to the specified programming language.
-     *
-     * @param string $code     The source code to be highlighted
-     * @param string $language The name of the programming language used in the code
-     *
-     * @return string The highlighted code
-     *
-     * @throws \RuntimeException If the cache used to store the highlighted code isn't writable
-     */
-    public function highlight($code, $language = 'code')
-    {
-        return $this['highlighter']->highlight($code, $language);
-    }
-
-    /**
-     * Shortcut method to dispatch events.
-     *
-     * @param string $eventName   The name of the dispatched event
-     * @param Event  $eventObject The object that stores event data
-     */
-    public function dispatch($eventName, $eventObject = null)
-    {
-        $this['dispatcher']->dispatch($eventName, $eventObject);
-    }
-
-    /**
-     * It loads the full book configuration by combining all the different sources
-     * (config.yml file, console command option and default values). It also loads
-     * the edition configuration and resolves the edition inheritance (if used).
-     *
-     * @param string $configurationViaCommand The configuration options provided via the console command
-     */
-    public function loadBookConfiguration($configurationViaCommand = '')
-    {
-        $config = $this['configurator']->loadBookConfiguration($this['publishing.dir.book'], $configurationViaCommand);
-        $this['publishing.book.config'] = $config;
-
-        $this['validator']->validatePublishingEdition($this['publishing.edition']);
-
-        $config = $this['configurator']->loadEditionConfiguration();
-        $this['publishing.book.config'] = $config;
-
-        $config = $this['configurator']->processConfigurationValues();
-        $this['publishing.book.config'] = $config;
-    }
-
-    /**
-     * It loads the (optional) easybook configuration parameters defined by the book.
-     */
-    public function loadEasybookConfiguration()
-    {
-        $bookFileConfig = $this['configurator']->loadBookFileConfiguration($this['publishing.dir.book']);
-
-        if (!isset($bookFileConfig['easybook'])) {
-            return;
-        }
-
-        foreach ($bookFileConfig['easybook']['parameters'] as $option => $value) {
-            if (is_array($value)) {
-                $previousArray = $this->offsetExists($option) ? $this[$option] : array();
-                $newArray = array_merge($previousArray, $value);
-                $this[$option] = $newArray;
-            } else {
-                $this[$option] = $value;
-            }
-        }
-    }
-
-    /**
-     * Shortcut to get/set book configuration options:.
-     *
-     *   // returns 'author' option value
-     *   $app->book('author');
-     *
-     *   // sets 'New author' as the value of 'author' option
-     *   $app->book('author', 'New author');
-     *
-     * @param string $key      The configuration option key
-     * @param mixed  $newValue The new value of the configuration option
-     *
-     * @return mixed It only returns a value when the second argument is null
-     */
-    public function book($key, $newValue = null)
-    {
-        $bookConfig = $this['publishing.book.config'];
-
-        if (null === $newValue) {
-            return isset($bookConfig['book'][$key]) ? $bookConfig['book'][$key] : null;
-        } else {
-            $bookConfig['book'][$key] = $newValue;
-            $this['publishing.book.config'] = $bookConfig;
-        }
-    }
-
-    /**
-     * Shortcut to get/set edition configuration options:.
-     *
-     *   // returns 'page_size' option value
-     *   $app->edition('page_size');
-     *
-     *   // sets 'US-letter' as the value of 'page_size' option
-     *   $app->edition('page_size', 'US-Letter');
-     *
-     * @param string $key      The configuration option key
-     * @param mixed  $newValue The new value of the configuration option
-     *
-     * @return mixed It only returns a value when the second argument is null
-     */
-    public function edition($key, $newValue = null)
-    {
-        $bookConfig = $this['publishing.book.config'];
-        $publishingEdition = $this['publishing.edition'];
-
-        if (null === $newValue) {
-            return isset($bookConfig['book']['editions'][$publishingEdition][$key])
-                ? $bookConfig['book']['editions'][$publishingEdition][$key]
-                : null;
-        } else {
-            $bookConfig['book']['editions'][$publishingEdition][$key] = $newValue;
-            $this['publishing.book.config'] = $bookConfig;
-        }
-    }
+//    /**
+//     * Shortcut to get/set book configuration options:.
+//     *
+//     *   // returns 'author' option value
+//     *   $app->book('author');
+//     *
+//     *   // sets 'New author' as the value of 'author' option
+//     *   $app->book('author', 'New author');
+//     *
+//     * @param string $key      The configuration option key
+//     * @param mixed  $newValue The new value of the configuration option
+//     *
+//     * @return mixed It only returns a value when the second argument is null
+//     */
+//    public function book($key, $newValue = null)
+//    {
+//        $bookConfig = $this['publishing.book.config'];
+//
+//        if (null === $newValue) {
+//            return isset($bookConfig['book'][$key]) ? $bookConfig['book'][$key] : null;
+//        } else {
+//            $bookConfig['book'][$key] = $newValue;
+//            $this['publishing.book.config'] = $bookConfig;
+//        }
+//    }
+//
+//    /**
+//     * Shortcut to get/set edition configuration options:.
+//     *
+//     *   // returns 'page_size' option value
+//     *   $app->edition('page_size');
+//     *
+//     *   // sets 'US-letter' as the value of 'page_size' option
+//     *   $app->edition('page_size', 'US-Letter');
+//     *
+//     * @param string $key      The configuration option key
+//     * @param mixed  $newValue The new value of the configuration option
+//     *
+//     * @return mixed It only returns a value when the second argument is null
+//     */
+//    public function edition($key, $newValue = null)
+//    {
+//        $bookConfig = $this['publishing.book.config'];
+//        $publishingEdition = $this['publishing.edition'];
+//
+//        if (null === $newValue) {
+//            return isset($bookConfig['book']['editions'][$publishingEdition][$key])
+//                ? $bookConfig['book']['editions'][$publishingEdition][$key]
+//                : null;
+//        } else {
+//            $bookConfig['book']['editions'][$publishingEdition][$key] = $newValue;
+//            $this['publishing.book.config'] = $bookConfig;
+//        }
+//    }
 
     /**
      * @return BundleInterface[]

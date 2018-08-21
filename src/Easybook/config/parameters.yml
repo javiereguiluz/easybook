@@ -62,11 +62,11 @@ parameters:
 
     # the common installation dirs for KindleGen in several OS
     kindlegen.default_paths:
-    # Mac OS X & Linux
-    - '/usr/local/bin/kindlegen'
-    - '/usr/bin/kindlegen'
-    # Windows
-    - 'c:\KindleGen\kindlegen'
+        # Mac OS X & Linux
+        - '/usr/local/bin/kindlegen'
+        - '/usr/bin/kindlegen'
+        # Windows
+        - 'c:\KindleGen\kindlegen'
 
     # -c0: no compression
     # -c1: standard DOC compression

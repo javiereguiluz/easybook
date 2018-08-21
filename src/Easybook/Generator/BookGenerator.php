@@ -11,6 +11,11 @@ class BookGenerator extends Generator
     private $skeletonDirectory;
     private $configuration;
 
+    public function __construct(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
+    }
+
     /**
      * Sets the configuration variables used to render the config.yml template.
      *
@@ -19,16 +24,6 @@ class BookGenerator extends Generator
     public function setConfiguration(array $configuration)
     {
         $this->configuration = $configuration;
-    }
-
-    /**
-     * Sets the Filesystem instance.
-     *
-     * @param Filesystem $filesystem
-     */
-    public function setFilesystem(Filesystem $filesystem)
-    {
-        $this->filesystem = $filesystem;
     }
 
     /**

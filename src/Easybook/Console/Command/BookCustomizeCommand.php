@@ -11,41 +11,26 @@
 
 namespace Easybook\Console\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Easybook\Util\Validator;
 
-class BookCustomizeCommand extends BaseCommand
+final class BookCustomizeCommand extends Command
 {
-    protected function configure()
+    protected function configure(): void
     {
-        $this
-            ->setName('customize')
-            ->setDescription('Eases the customization of the book design')
-            ->setDefinition(array(
-                new InputArgument(
-                    'slug',
-                    InputArgument::REQUIRED,
-                    'Book slug (no spaces allowed)'
-                ),
-                new InputArgument(
-                    'edition',
-                    InputArgument::REQUIRED,
-                    'The name of the edition to be customized'
-                ),
-                new InputOption(
-                    'dir',
-                    '',
-                    InputOption::VALUE_OPTIONAL,
-                    'Path of the documentation directory'
-                ),
-            ))
-            ->setHelp(file_get_contents(__DIR__.'/Resources/BookCustomizeCommandHelp.txt'));
+        $this->setName('customize');
+        $this->setDescription('Eases the customization of the book design');
+        $this->addArgument('slug', InputArgument::REQUIRED, 'Book slug (no spaces allowed)' );
+        $this->addArgument('edition', InputArgument::REQUIRED, 'The name of the edition to be customized' );
+        $this->addOption('dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
+        $this->setHelp(file_get_contents(__DIR__.'/Resources/BookCustomizeCommandHelp.txt'));
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $slug = $input->getArgument('slug');
         $edition = $input->getArgument('edition');
@@ -53,8 +38,6 @@ class BookCustomizeCommand extends BaseCommand
 
         $dialog = $this->getHelperSet()->get('dialog');
 
-        $this->app['console.input'] = $input;
-        $this->app['console.output'] = $output;
         $this->app['console.dialog'] = $dialog;
 
         // validate book dir and add some useful values to the app configuration
@@ -144,10 +127,10 @@ class BookCustomizeCommand extends BaseCommand
         // check 'slug' argument
         $slug = $input->getArgument('slug') ?: $dialog->askAndValidate(
             $output,
-            array(
+            [
                 " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n",
                 ' > ',
-            ),
+            ],
             function ($slug) {
                 return Validator::validateBookSlug($slug);
             }
@@ -157,10 +140,10 @@ class BookCustomizeCommand extends BaseCommand
         // check 'edition' argument
         $edition = $input->getArgument('edition') ?: $dialog->askAndValidate(
             $output,
-            array(
+            [
                 " Please, type the name of the <info>edition</info> to be customized (e.g. <comment>web</comment>)\n",
                 ' > ',
-            ),
+            ],
             function ($edition) {
                 return Validator::validateEditionSlug($edition);
             }

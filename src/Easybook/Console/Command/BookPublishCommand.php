@@ -11,6 +11,7 @@
 
 namespace Easybook\Console\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,39 +21,17 @@ use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
 use Easybook\Util\Validator;
 
-class BookPublishCommand extends BaseCommand
+final class BookPublishCommand extends Command
 {
     protected function configure()
     {
-        $this
-            ->setName('publish')
-            ->setDescription('Publishes an edition of a book')
-            ->setDefinition(array(
-                new InputArgument(
-                    'slug',
-                    InputArgument::REQUIRED,
-                    'Book slug (no spaces allowed, use dashes instead)'
-                ),
-                new InputArgument(
-                    'edition',
-                    InputArgument::REQUIRED,
-                    'Edition to be published'
-                ),
-                new InputOption(
-                    'dir',
-                    '',
-                    InputOption::VALUE_OPTIONAL,
-                    'Path of the documentation directory'
-                ),
-                new InputOption(
-                    'configuration',
-                    '',
-                    InputOption::VALUE_OPTIONAL,
-                    'Additional book configuration options',
-                    ''
-                ),
-            ))
-            ->setHelp(file_get_contents(__DIR__.'/Resources/BookPublishCommandHelp.txt'));
+        $this->setName('publish');
+        $this->setDescription('Publishes an edition of a book');
+        $this->addArgument('slug', InputArgument::REQUIRED, 'Book slug (no spaces allowed, use dashes instead)' );
+        $this->addArgument('edition', InputArgument::REQUIRED, 'Edition to be published' );
+        $this->addOption('dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
+        $this->addOption('configuration', '', InputOption::VALUE_OPTIONAL, 'Additional book configuration options');
+        $this->setHelp(file_get_contents(__DIR__.'/Resources/BookPublishCommandHelp.txt'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

@@ -11,6 +11,7 @@
 
 namespace Easybook\Console\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,27 +21,15 @@ use Easybook\Events\BaseEvent;
 use Easybook\Generator\BookGenerator;
 use Easybook\Util\Validator;
 
-class BookNewCommand extends BaseCommand
+final class BookNewCommand extends Command
 {
     protected function configure()
     {
-        $this
-            ->setName('new')
-            ->setDescription('Creates a new empty book')
-            ->setDefinition(array(
-                new InputArgument(
-                    'title',
-                    InputArgument::REQUIRED,
-                    'Book title'
-                ),
-                new InputOption(
-                    'dir',
-                    '',
-                    InputOption::VALUE_OPTIONAL,
-                    'Path of the documentation directory'
-                ),
-            ))
-            ->setHelp(file_get_contents(__DIR__.'/Resources/BookNewCommandHelp.txt'));
+        $this->setName('new');
+        $this->setDescription('Creates a new empty book');
+        $this->addArgument('title', InputArgument::REQUIRED, 'Book title' );
+        $this->addOption('dir', '', InputOption::VALUE_OPTIONAL,  'Path of the documentation directory' );
+        $this->setHelp(file_get_contents(__DIR__.'/Resources/BookNewCommandHelp.txt'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -56,7 +45,6 @@ class BookNewCommand extends BaseCommand
 
         $slug = $this->app->slugify($title);
 
-        $this->registerPlugins();
         $this->app->dispatch(Events::PRE_NEW, new BaseEvent($this->app));
 
         $generator = new BookGenerator();

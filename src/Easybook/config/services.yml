@@ -13,7 +13,7 @@ services:
             $version: '%version%'
 
     Easybook\:
-        resource: '../src/Easybook'
+        resource: '../../../src/Easybook'
 
     # from providers
     GeSHi:
