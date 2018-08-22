@@ -18,37 +18,19 @@ final class BookGenerator
     private $bookDirectory;
 
     /**
-     * @var string
-     */
-    private $skeletonDirectory;
-
-    /**
-     * @var mixed[]
-     */
-    private $configuration = [];
-    /**
      * @var Renderer
      */
     private $renderer;
+    /**
+     * @var string
+     */
+    private $skeletonBookDirectory;
 
-    public function __construct(Filesystem $filesystem, Renderer $renderer, string $bookDirectory)
+    public function __construct(Filesystem $filesystem, Renderer $renderer, string $skeletonBookDirectory)
     {
         $this->filesystem = $filesystem;
         $this->renderer = $renderer;
-        $this->bookDirectory = $bookDirectory;
-    }
-
-    /**
-     * @param mixed[] $configuration
-     */
-    public function setConfiguration(array $configuration): void
-    {
-        $this->configuration = $configuration;
-    }
-
-    public function setSkeletonDirectory(string $skeletonDirectory): void
-    {
-        $this->skeletonDirectory = $skeletonDirectory;
+        $this->skeletonBookDirectory = $skeletonBookDirectory;
     }
 
     public function setBookDirectory(string $bookDirectory): void
@@ -77,12 +59,12 @@ final class BookGenerator
         // why is this hardcoded? Finder?
         foreach (['chapter1.md', 'chapter2.md'] as $file) {
             $file = 'Contents/' . $file;
-            $this->filesystem->copy($this->skeletonDirectory . '/' . $file, $this->bookDirectory . '/' . $file);
+            $this->filesystem->copy($this->skeletonBookDirectory. '/' . $file, $this->bookDirectory . '/' . $file);
         }
 
         $this->renderer->renderToFile(
-            $this->skeletonDirectory . '/config.yml.twig',
-            $this->configuration,
+            $this->skeletonBookDirectory . '/config.yml.twig',
+            [],
             $this->bookDirectory . '/config.yml'
         );
     }

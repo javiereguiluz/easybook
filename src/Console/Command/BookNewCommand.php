@@ -3,13 +3,11 @@
 namespace Easybook\Console\Command;
 
 use Easybook\Configuration\Option;
-use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Generator\BookGenerator;
 use Easybook\Util\Slugger;
 use Easybook\Util\Validator;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,28 +21,38 @@ final class BookNewCommand extends Command
      * @var BookGenerator
      */
     private $bookGenerator;
+
     /**
      * @var SymfonyStyle
      */
     private $symfonyStyle;
+
     /**
      * @var Slugger
      */
     private $slugger;
+
     /**
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
+
     /**
      * @var string
      */
     private $bookTitle;
+
+    /**
+     * @var Validator
+     */
+    private $validator;
 
     public function __construct(
         BookGenerator $bookGenerator,
         SymfonyStyle $symfonyStyle,
         Slugger $slugger,
         EventDispatcherInterface $eventDispatcher,
+        Validator $validator,
         string $bookTitle
     )
     {
@@ -54,6 +62,7 @@ final class BookNewCommand extends Command
         $this->slugger = $slugger;
         $this->eventDispatcher = $eventDispatcher;
         $this->bookTitle = $bookTitle;
+        $this->validator = $validator;
     }
 
     protected function configure(): void
@@ -68,25 +77,13 @@ final class BookNewCommand extends Command
     {
         // yaml vs CLI?
 
-        $dir = Validator::validateDirExistsAndWritable($input->getOption('dir') ?: $this->app['app.dir.doc']);
-
+        $dir = $this->validator->validateDirExistsAndWritable($input->getOption('dir') ?: $this->app['app.dir.doc']);
 
         $bookSlug = $this->slugger->slugify($this->bookTitle);
 
         $this->eventDispatcher->dispatch(Events::PRE_NEW, new Event());
 
-        $this->bookGenerator->setSkeletonDirectory($this->app['app.dir.skeletons'] . '/Book');
-
         $this->bookGenerator->setBookDirectory($dir . '/' . $bookSlug);
-
-        $this->bookGenerator->setConfiguration([
-            'generator' => [
-                'name' => $this->getName(),
-                'version' => $this-> app->getVersion(),
-            ],
-            'title' => $this->bookTitle,
-        ]);
-
         $this->bookGenerator->generate();
 
         $this->eventDispatcher->dispatch(Events::POST_NEW, new Event());

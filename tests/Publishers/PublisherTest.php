@@ -2,6 +2,7 @@
 
 namespace Easybook\Tests\Publishers;
 
+use Easybook\Console\Command\BookPublishCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Easybook\Util\Toolkit;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -12,8 +13,6 @@ use Symfony\Component\Yaml\Yaml;
 
 final class PublisherTest extends AbstractContainerAwareTestCase
 {
-    private $app;
-
     /**
      * @var Filesystem
      */
@@ -30,23 +29,6 @@ final class PublisherTest extends AbstractContainerAwareTestCase
     {
         $this->finder = $this->container->get(Finder::class);
     }
-
-//    protected function setUp(): void
-//    {
-    // setup temp dir for generated files
-//        $this->tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('phpunit_', true);
-//        $this->filesystem = new Filesystem();
-//        $this->filesystem->mkdir($this->tmpDir);
-
-//        parent::setUp();
-//    }
-
-//    protected function tearDown(): void
-//    {
-//        $this->filesystem->remove($this->tmpDir);
-//
-//        parent::tearDown();
-    //    }
 
     public function testBookPublish(): void
     {
@@ -84,7 +66,9 @@ final class PublisherTest extends AbstractContainerAwareTestCase
                     '--dir' => $this->tmpDir,
                 ]);
 
-                $console->find('publish')->run($input, new NullOutput());
+                /** @var BookPublishCommand $bookPublishCommand */
+                $bookPublishCommand = $this->container->get(BookPublishCommand::class);
+                $bookPublishCommand->run($input, new NullOutput());
 
                 // assert that generated files are exactly the same as expected
                 $generatedFiles = $this->finder->files()

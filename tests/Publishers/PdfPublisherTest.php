@@ -33,7 +33,7 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
      */
     public function testBookUsesTheRightCustomCover($existingCoverFiles, $coverThatShouldBeUsed): void
     {
-        $app['publishing.dir.templates'] = $app['app.dir.cache'] . '/' . uniqid('phpunit_');
+        $app['publishing.dir.templates'] = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid('phpunit_');
         $app['publishing.edition'] = 'print';
 
         $this->filesystem->mkdir([
@@ -98,7 +98,7 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
 
     public function testAddBookCover(): void
     {
-        $tmpDir = $app['app.dir.cache'] . '/' . uniqid('phpunit_');
+        $tmpDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid('phpunit_');
         $this->filesystem->mkdir($tmpDir);
 
         $coverFilePath = $tmpDir . '/cover.pdf';

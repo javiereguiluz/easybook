@@ -1,0 +1,3 @@
+parameters:
+    ignoreErrors:
+        - '#Parameter (.*?) of function (.*?) expects resource, resource\|false given#'

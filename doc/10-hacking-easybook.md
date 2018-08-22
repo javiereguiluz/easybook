@@ -121,7 +121,7 @@ following configuration to modify the directory where the book is generated:
 
 ```yaml
 parameters:
-    publishing.dir.output:  '/my/path/for/books/my-book'
+    publishing_dir_output:  '/my/path/for/books/my-book'
 
 book:
     title: '...'

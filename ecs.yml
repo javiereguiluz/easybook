@@ -26,3 +26,7 @@ parameters:
 #        # exclude from psr12.yml
 #        - 'PhpCsFixer\Fixer\PhpTag\BlankLineAfterOpeningTagFixer'
 #        - 'PhpCsFixer\Fixer\Operator\UnaryOperatorSpacesFixer'
+
+    skip:
+        Symplify\CodingStandard\Sniffs\CleanCode\ForbiddenStaticFunctionSniff:
+            -  'src/Plugins/*Subscriber.php'

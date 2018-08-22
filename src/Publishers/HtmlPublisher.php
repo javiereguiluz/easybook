@@ -12,17 +12,17 @@ final class HtmlPublisher extends AbstractPublisher
     /**
      * @var bool
      */
-    private $shouldIncludeStyles;
+    private $bookEditionIncludeStyles;
 
-    public function __construct(bool $shouldIncludeStyles)
+    public function __construct(bool $bookEditionIncludeStyles)
     {
-        $this->shouldIncludeStyles = $shouldIncludeStyles;
+        $this->bookEditionIncludeStyles = $bookEditionIncludeStyles;
     }
 
     public function assembleBook(): void
     {
         // generate easybook CSS file
-        if ($this->app->edition('include_styles')) { // @todo move to params
+        if ($this->bookEditionIncludeStyles) {
             $this->renderer->renderToFile(
                 '@theme/style.css.twig',
                 ['resources_dir' => $this->app['app.dir.resources'] . '/'],

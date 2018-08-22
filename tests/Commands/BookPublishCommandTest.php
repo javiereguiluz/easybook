@@ -20,16 +20,13 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 
     protected function setUp(): void
     {
-        // setup temp dir for generated files
-//        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
-//        $this->filesystem = new Filesystem();
-//        $this->filesystem->mkdir($this->tmpDir);
-
         // generate a sample book before testing its publication
-        $command = $this->container->get(BookNewCommand::class);
-        $tester = new CommandTester($command);
+
+        /** @var BookNewCommand $bookNewCommand */
+        $bookNewCommand = $this->container->get(BookNewCommand::class);
+        $tester = new CommandTester($bookNewCommand);
         $tester->execute([
-            'command' => $command->getName(),
+            'command' => $bookNewCommand->getName(),
             'title' => 'The Origin of Species',
             //            '--dir' => $this->tmpDir,
         ]);

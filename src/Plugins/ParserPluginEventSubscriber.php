@@ -4,6 +4,7 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Easybook\Util\Slugger;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -12,6 +13,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class ParserPluginEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var Slugger
+     */
+    private $slugger;
+
+    public function __construct(Slugger $slugger)
+    {
+        $this->slugger = $slugger;
+    }
+
     public static function getSubscribedEvents(): Iterator
     {
         yield EasybookEvents::PRE_PARSE => [['normalizeMarkdownHeaders', -1000]];
@@ -88,7 +99,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
         // the default title if necessary
         if ($item['title'] === '') {
             $item['title'] = $parseEvent->app->getTitle($item['config']['element']);
-            $item['slug'] = $parseEvent->app->slugify($item['title']);
+            $item['slug'] = $this->slugger->slugify($item['title']);
         }
 
         $parseEvent->setItem($item);

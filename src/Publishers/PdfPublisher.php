@@ -49,7 +49,7 @@ final class PdfPublisher extends AbstractPublisher
 
     public function assembleBook(): void
     {
-        $tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('easybook_pdf_');
+        $tmpDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid('easybook_pdf_');
         $this->filesystem->mkdir($tmpDir);
 
         // implode all the contents to create the whole book

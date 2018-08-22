@@ -101,58 +101,6 @@ final class EasybookKernel extends Kernel
     }
 
 //    /**
-//     * Transforms the string into a web-safe slug.
-//     *
-//     * @param string $string    The string to slug
-//     * @param string $separator Used between words and to replace illegal characters
-//     * @param string $prefix    Prefix to be appended at the beginning of the slug
-//     *
-//     * @return string The generated slug
-//     */
-//    public function slugify($string, $separator = null, $prefix = null)
-//    {
-//        $slug = $this['slugger']->slugify($string, $separator);
-//
-//        if (null !== $prefix) {
-//            $slug = $prefix.$slug;
-//        }
-//
-//        $this->append('slugger.generated_slugs', $slug);
-//
-//        return $slug;
-//    }
-
-//    /**
-//     * Transforms the original string into a web-safe slug. It also ensures that
-//     * the generated slug is unique for the entire book (to do so, it stores
-//     * every slug generated since the beginning of the script execution).
-//     *
-//     * @param string $string    The string to slug
-//     * @param string $separator Used between words and to replace illegal characters
-//     * @param string $prefix    Prefix to be appended at the beginning of the slug
-//     *
-//     * @return string The generated slug
-//     */
-//    public function slugifyUniquely($string, $separator = null, $prefix = null)
-//    {
-//        $defaultOptions = $this['slugger.options'];
-//
-//        $separator = $separator ?: $defaultOptions['separator'];
-//        $prefix = $prefix ?: $defaultOptions['prefix'];
-//
-//        $slug = $this->slugify($string, $separator, $prefix);
-//
-//        // ensure the uniqueness of the slug
-//        $occurrences = array_count_values($this['slugger.generated_slugs']);
-//        $count = isset($occurrences[$slug]) ? $occurrences[$slug] : 0;
-//        if ($count > 1) {
-//            $slug = $slug.$separator.$count;
-//        }
-//
-//        return $slug;
-//    }
-
-//    /**
 //     * Shortcut method to get the label of any element type.
 //     *
 //     * @param string $element   The element type ('chapter', 'foreword', ...)
@@ -189,20 +137,6 @@ final class EasybookKernel extends Kernel
 //            : '';
     ////    }
 //
-//    /**
-//     * Renders any string as a Twig template. It automatically injects two global
-//     * variables called 'book' and 'edition', which offer direct access to any
-//     * book or edition configuration option.
-//     *
-//     * @param string $string    The original content to render
-//     * @param array  $variables Optional variables passed to the template
-//     *
-//     * @return string The result of rendering the original string as a Twig template
-//     */
-//    public function renderString($string, $variables = array())
-//    {
-//        $twig = new \Twig_Environment(new \Twig_Loader_String(), $this['twig.options']);
-//
 //        if (null !== $bookConfig = $this['publishing.book.config']) {
 //            $twig->addGlobal('book', $bookConfig['book']);
 //
@@ -212,40 +146,6 @@ final class EasybookKernel extends Kernel
 //        }
 //
 //        return $twig->render($string, $variables);
-//    }
-
-//    /**
-//     * Renders any template (currently only supports Twig templates).
-//     *
-//     * @param string $template   The template name (it can include a namespace)
-//     * @param array  $variables  Optional variables passed to the template
-//     * @param string $targetFile Optional output file path. If set, the rendered
-//     *                           template is saved in this file.
-//     *
-//     * @return string The result of rendering the Twig template
-//     *
-//     *  @throws \RuntimeException  If the given template is not a Twig template
-//     */
-//    public function render($template, $variables = array(), $targetFile = null)
-//    {
-//        if ('.twig' != substr($template, -5)) {
-//            throw new \RuntimeException(sprintf(
-//                'Unsupported format for "%s" template (easybook only supports Twig)',
-//                $template
-//            ));
-//        }
-//
-//        $rendered = $this['twig']->render($template, $variables);
-//
-//        if (null !== $targetFile) {
-//            if (!is_dir($dir = dirname($targetFile))) {
-//                $this['filesystem']->mkdir($dir);
-//            }
-//
-//            file_put_contents($targetFile, $rendered);
-//        }
-//
-//        return $rendered;
 //    }
 
 //    /*

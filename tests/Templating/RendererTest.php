@@ -1,30 +1,36 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Tests\DependencyInjection;
+namespace Easybook\Tests\Templating;
 
+use Easybook\Templating\Renderer;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig_Loader_Filesystem;
 
-/**
- * Tests related to the render() method
- */
-final class RenderTest extends AbstractContainerAwareTestCase
+final class RendererTest extends AbstractContainerAwareTestCase
 {
-    private $app;
-
     /**
      * @var Filesystem
      */
     private $filesystem;
 
+    /**
+     * @var string
+     */
     private $templateDir;
+
+    /**
+     * @var Renderer
+     */
+    private $renderer;
 
     protected function setUp(): void
     {
+        $this->filesystem = $this->container->get(Filesystem::class);
+        $this->renderer = $this->container->get(Renderer::class);
+
         // setup temp dir for generated files
-        $this->templateDir = $this->app['app.dir.cache'] . '/' . uniqid('phpunit_', true);
-        $this->filesystem = new Filesystem();
+        $this->templateDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid('phpunit_', true);
         $this->filesystem->mkdir($this->templateDir);
 
         $this->app['twig.loader'] = new Twig_Loader_Filesystem($this->templateDir);
@@ -40,21 +46,21 @@ final class RenderTest extends AbstractContainerAwareTestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage (easybook only supports Twig)
      */
     public function testNonTwigTemplate(): void
     {
-        $this->app->render('template.tpl');
+        $this->renderer->render('template.tpl');
     }
 
     /**
-     * @expectedException Twig_Error_Loader
+     * @expectedException \Twig_Error_Loader
      * @expectedExceptionRegExp /Unable to find template (.*)/
      */
     public function testUndefinedTwigTemplate(): void
     {
-        $this->app->render('template.twig');
+        $this->renderer->render('template.twig');
     }
 
     public function testSimpleTemplate(): void
@@ -63,7 +69,7 @@ final class RenderTest extends AbstractContainerAwareTestCase
 
         file_put_contents($this->templateDir . '/' . $templateFileName, 'Template for "{{ book.title }}"');
 
-        $this->assertSame('Template for "Custom Test Book Title"', $this->app->render($templateFileName));
+        $this->assertSame('Template for "Custom Test Book Title"', $this->renderer->render($templateFileName));
     }
 
     public function testTemplateWithCustomVariables(): void
@@ -77,7 +83,7 @@ final class RenderTest extends AbstractContainerAwareTestCase
 
         $this->assertSame(
             'Template for "Custom Test Book Title" (by easybook tests)',
-            $this->app->render($templateFileName, ['author' => 'easybook tests'])
+            $this->renderer->render($templateFileName, ['author' => 'easybook tests'])
         );
     }
 
@@ -97,7 +103,7 @@ final class RenderTest extends AbstractContainerAwareTestCase
             'Template for "Custom Test Book Title" (by easybook tests)'
         );
 
-        $this->app->render(
+        $this->renderer->render(
             $templateFileName,
             ['author' => 'easybook tests'],
             $this->templateDir . '/' . $targetFileName

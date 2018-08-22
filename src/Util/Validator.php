@@ -29,7 +29,12 @@ final class Validator
      */
     private $bookDir;
 
-    public function __construct(InputInterface $input, OutputInterface $output, SymfonyStyle $symfonyStyle, string $bookDir)
+    public function __construct(
+        InputInterface $input,
+        OutputInterface $output,
+        SymfonyStyle $symfonyStyle,
+        string $bookDir
+    )
     {
         $this->input = $input;
         $this->output = $output;
@@ -55,19 +60,6 @@ final class Validator
         }
 
         return $dir;
-    }
-
-    /**
-     * Validates that the given $slug is a valid string for a book slug.
-     */
-    public function validateBookSlug($slug)
-    {
-        if (! preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
-            // it throws an exception for invalid values because it's used in console commands
-            throw new InvalidArgumentException('The slug can only contain letters, numbers and dashes (no spaces)');
-        }
-
-        return $slug;
     }
 
     /**
@@ -110,20 +102,6 @@ final class Validator
         }
 
         return $bookDir;
-    }
-
-    /**
-     * Validates that the given $slug is a valid string for a edition slug.
-     */
-    public function validateEditionSlug($slug)
-    {
-        if (! preg_match('/^[a-zA-Z0-9\-\_]+$/', $slug)) {
-            throw new InvalidArgumentException(
-                'The edition name can only contain letters, numbers and dashes (no spaces)'
-            );
-        }
-
-        return $slug;
     }
 
     /**

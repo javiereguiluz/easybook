@@ -23,7 +23,7 @@
 
 ## Upgrade to easybook 5.0
 
-### The Markdown headers are now normalized internally ###
+### The Markdown headers are now normalized internally
 
 Markdown format support two styles of headers:
 
@@ -59,7 +59,7 @@ style, even mixing them in the same book, and everything will work fine.
 This change won't affect you unless you are a very advanced developer which
 has modified **easybook** internals.
 
-### The directory for the code highlighting cache has changed ###
+### The directory for the code highlighting cache has changed
 
 This internal change should not affect to any **easybook** user.
 The directory where the highlighted code is cached now is called
@@ -67,7 +67,7 @@ The directory where the highlighted code is cached now is called
 **easybook** to support more code highlighting libraries in addition
 to the current GeSHi library.
 
-### `ParserEvent` no longer supports magic methods ###
+### `ParserEvent` no longer supports magic methods
 
 The `ParseEvent $event` object dispatched with some events no longer supports
 the magic setter and getter methods. The reason is that this *feature* is
@@ -117,7 +117,7 @@ class MyPlugin implements EventSubscriberInterface
 }
 ```
 
-### `Epub2` format is replaced by `Epub` format ###
+### `Epub2` format is replaced by `Epub` format
 
 The previous versions of **easybook** always used the `epub` format but they
 allowed to use `epub2` as an alias. This `epub2` format is no longer supported
@@ -126,7 +126,7 @@ and you must always use `epub`.
 **If you have created your own theme, you must rename its `Epub2/` directory
 to `Epub/` and everything will continue working as expected.**
 
-### Configuring easybook parameters ###
+### Configuring easybook parameters
 
 You can now override any **easybook** parameter easily in your books. Create a
 new `easybook` section in your `config.yml` book and define the new value of
@@ -153,7 +153,7 @@ book:
 You can override any `src/Easybook/DependencyInjection/Application.php` parameter,
 as explained in the updated chapter 3 of the documentation.
 
-### Added support for Kindle readers and apps ###
+### Added support for Kindle readers and apps
 
 **easybook** can now generate Kindle-compatible ebooks, thanks to
 the new `mobi` format. In most cases, you should create a new
@@ -184,13 +184,13 @@ book:
                 elements:    ["appendix", "chapter"]
 ```
 
-### Removed the `use_html_toc` option ###
+### Removed the `use_html_toc` option
 
 This was an option needed for .ePub books in order to transform
 them to .mobi books. Now that easybook can generate Kindle
 compatible .mobi ebooks, this option is no longer needed.
 
-### Custom CSS styles ###
+### Custom CSS styles
 
 Themes and templates have been greatly improved. If you have designed a custom
 CSS for books created with previous versions of **easybook** you must change
@@ -210,7 +210,7 @@ some selectors. This is a one-time and easy-to-do change:
 ...
 ```
 
-### Customize books ###
+### Customize books
 
 **easybook** now includes a command to easily generate the needed CSS to customize
 the book design. Execute the command passing to it the slug of the book and the
@@ -224,7 +224,7 @@ If the command executes successfully, the following CSS will be created:
 
   <easybook-dir>/doc/the-origin-of-species/Resources/Templates/ebook/style.css
 
-### New `images_base_dir` option ###
+### New `images_base_dir` option
 
 **easybook** now allows to set the base directory for web images. The default
 value (`images/`) maintains backwards compatibility.
@@ -247,7 +247,7 @@ book:
 
 ## Upgrade to easybook 4.8 ##
 
-### Introduced a new highlight cache ###
+### Introduced a new highlight cache
 
 If you write technical books about any programming language, you can now reduce
 book publishing time very significantly. **easybook** now supports `highlight_cache`
@@ -270,13 +270,13 @@ thousands of highlighted code lines went from 60 seconds to 4 seconds.
 
 ## Upgrade to easybook 4.4 ##
 
-### Renamed `parsing_item` to `active_item` ###
+### Renamed `parsing_item` to `active_item`
 
 Access to the specific item being parsed/decorated/transformed is no longer
 exclusive of the parsing methods. Therefore, `publishing.parsing_item` variable
 is renamed to `publishing.active_item` in `Application.php`.
 
-### Slugger ###
+### Slugger
 
 The slugger options are now passed to the `slugify()` method instead of the
 slugger constructor. This way you can use different slugger options for the same
@@ -306,7 +306,7 @@ Available options:
 'unique'    => true // should this slug be unique across the entire book?
 ```
 
-### New events ###
+### New events
 
 easybook 4.4 adds two new events:
 
@@ -315,7 +315,7 @@ easybook 4.4 adds two new events:
   * `POST_DECORATE`, notified just after an item has been decorated with the 
     appropriate template.
 
-### Updated `BaseEvent` event ###
+### Updated `BaseEvent` event
 
 `BaseEvent` has been modified to include two new getter/setter methods. Now you
 don't have to create a new event class to perform basic operations on the active
@@ -335,11 +335,11 @@ public function setItem($item)
 
 ## Upgrade to easybook 4.2 ##
 
-### 1. Books can now define their own labels and titles for each edition ###
+### 1. Books can now define their own labels and titles for each edition
 
 Explained in the *[custom labels and titles](http://easybook-project.org/doc/chapter-2.html#custom-labels-and-titles)* section of the documentation.
 
-### 2. auto_label configuration option no longer exists ###
+### 2. auto_label configuration option no longer exists
 
 This option enabled/disabled labels for all the elements types of the book:
 chapters, appendices, figures, ...
@@ -368,7 +368,7 @@ book:
 `figure` and `table` aren't content types, but special values used only
 in `labels` option.
 
-### 3. Default labels for appendices have been modified ###
+### 3. Default labels for appendices have been modified
 
 Appendix labels - before:
 
@@ -390,7 +390,7 @@ label:
         - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
 ```
 
-### 4. Some label parameters have been renamed ###
+### 4. Some label parameters have been renamed
 
 The main parameters available for each label are now grouped under `item`
 variable. Other special parameters may also exist for some labels, as explained
@@ -438,7 +438,7 @@ label:
     table:  'Table {{ element.number }}.{{ item.number }}'
 ```
 
-### 5. Images are now decorated with their own Twig template ###
+### 5. Images are now decorated with their own Twig template
 
 ```jinja
 <div class="figure">
@@ -459,7 +459,7 @@ following content:
 {{ item.content }}
 ```
 
-### 6. Tables are now decorated with their own Twig template ###
+### 6. Tables are now decorated with their own Twig template
 
 ```jinja
 <div class="table">
@@ -480,7 +480,7 @@ following content:
 {{ item.content }}
 ```
 
-### 7. It's no longer necessary to define a default content ###
+### 7. It's no longer necessary to define a default content
 
 Previous versions of **easybook** required that every content type had a default
 content, just in case book config hadn't defined it. This also simplifies the creation
@@ -491,7 +491,7 @@ and `edition` content type. The other empty defeault files have been deleted.
 
 Documentation has been updated to better explain how to define a custom content type.
 
-### 8. Added eight new content types ###
+### 8. Added eight new content types
 
 **easybook** has added eight new content types (`afterword`, `conclusion`, `epilogue`,
 `foreword`, `glossary`, `introduction`, `preface`, `prologue`).
@@ -500,7 +500,7 @@ This means that you no longer need to define a custom content type if you need a
 new content types. Moreover, eight new default labels, titles and templates have been defined
 for the new contents.
 
-### 9. Added list-of-figures and list-of-tables content types ###
+### 9. Added list-of-figures and list-of-tables content types
 
 **easybook** has added two new content types: `lof` (list of figures) and `lot` (list of tables).
 You can easily add these types on your books:
@@ -520,7 +520,7 @@ linking tables and images.
 Two new templates have been created: `lof.twig` and `lot.twig` and two new default titles
 have been defined for all supported languages.
 
-### 10. Code listings are now decorated with their own Twig template ###
+### 10. Code listings are now decorated with their own Twig template
 
 ```jinja
 <div class="code {{ item.language }}">
@@ -537,7 +537,7 @@ following content:
 {{ item.content }}
 ```
 
-### 11. Added syntax highlighting for code listings ###
+### 11. Added syntax highlighting for code listings
 
 **easybook** now can highlight any code listing. Just add the programming, markup
 or configuration language as the first line of the listing.
@@ -567,7 +567,7 @@ the code listings. Therefore, it supports more than 200 programming languages
 `[erlang]`, `[haskell]`, ...), markup languages ​​(`[html]`, `[yaml]`, `[xml]`, ...)
 and configuration (`[ini]`, `[apache]`, ...).
 
-### 12. Added ePub support ###
+### 12. Added ePub support
 
 Read the updated documentation for details, but in short you can now
 define editions of type `epub` which generates `.epub` version 2 books:

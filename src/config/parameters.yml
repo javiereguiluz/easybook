@@ -8,12 +8,12 @@ parameters:
     book_slug: ''
 
     # global directories location
-    app.dir.cache: '%kernel.project_dir%/cache'
     app.dir.doc: '%kernel.project_dir%/doc'
     app.dir.resources: '%kernel.project_dir%/app/Resources'
     app.dir.plugins: '%kernel.project_dir%/src/Easybook/Plugins'
     app.dir.translations: '%kernel.project_dir%/app/Resources/Translations'
     app.dir.skeletons: '%kernel.project_dir%/app/Resources/Skeletons'
+    skeleton_book_directory: '%kernel.project_dir%/app/Resources/Skeletons/Book'
     app.dir.themes: '%kernel.project_dir%/app/Resources/Themes'
 
     # timer
@@ -28,15 +28,13 @@ parameters:
     publishing.dir.resources: ''
     publishing.dir.plugins: ''
     publishing.dir.templates: ''
-    publishing.dir.output: '%kernel.project_dir%/output'
+    publishing_dir_output: '%kernel.project_dir%/output'
     publishing.dir.slug: '%kernel.project_dir%/output'
     publishing.items: []
 
     # the specific item currently being parsed/modified/decorated/...
     publishing.active_item: []
     publishing.active_item.toc: []
-
-    book_title: '...'
 
     publishing.book.items: []
 
@@ -78,10 +76,4 @@ parameters:
 
     # stores all the generated slugs to ensure slug uniqueness
     slugger.generated_slugs: []
-
-    twig.options:
-        autoescape: false
-        cache: '%kernel.cache_dir%/Twig'
-        charset: '%app.charset%'
-        debug: '%kernel.debug%'
-        strict_variables: '%kernel.debug%'
+x
