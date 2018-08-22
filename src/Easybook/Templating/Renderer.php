@@ -4,6 +4,7 @@ namespace Easybook\Templating;
 
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
+use Twig\Environment;
 
 final class Renderer
 {
@@ -12,34 +13,48 @@ final class Renderer
      */
     private $filesystem;
 
-    public function __construct(Filesystem $filesystem)
+    /**
+     * @var Environment
+     */
+    private $twigEnvironment;
+
+    public function __construct(Filesystem $filesystem, Environment $twigEnvironment)
     {
         $this->filesystem = $filesystem;
+        $this->twigEnvironment = $twigEnvironment;
+    }
+
+
+    /**
+     * @param mixed[] $variables
+     */
+    public function render(string $template, array $variables = []): string
+    {
+        $this->ensureIsTwig($template);
+
+        return $this->twigEnvironment->render($template, $variables);
     }
 
     /**
-     * Renders any template (currently only supports Twig templates).
-     *
-     * @param string $template   The template name (it can include a namespace)
-     * @param array  $variables  Optional variables passed to the template
-     * @param string $targetFile Optional output file path. If set, the rendered
-     *                           template is saved in this file.
-     *
-     * @return string The result of rendering the Twig template
+     * @param mixed[] $variables
      */
-    public function render(string $template, array $variables = [], ?string $targetFile = null): string
+    public function renderToFile(string $template, array $variables, string $targetFile): void
     {
-        if (substr($template, -5) !== '.twig') {
-            throw new RuntimeException(sprintf(
-                'Unsupported format for "%s" template (easybook only supports Twig)',
-                $template
-            ));
-        }
-        $rendered = $this['twig']->render($template, $variables);
-        if ($targetFile !== null) {
-            $this->filesystem->dumpFile($targetFile, $rendered);
+        $this->ensureIsTwig($template);
+
+        $rendered = $this->twigEnvironment->render($template, $variables);
+        $this->filesystem->dumpFile($targetFile, $rendered);
+    }
+
+    private function ensureIsTwig(string $template): void
+    {
+        if (substr($template, -5) === '.twig') {
+            return;
         }
 
-        return $rendered;
+        throw new RuntimeException(sprintf(
+            'Unsupported format for "%s" template (easybook only supports Twig, _s given)',
+            $template
+        ));
     }
 }

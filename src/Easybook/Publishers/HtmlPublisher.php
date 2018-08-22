@@ -9,11 +9,21 @@ namespace Easybook\Publishers;
  */
 final class HtmlPublisher extends AbstractPublisher
 {
+    /**
+     * @var bool
+     */
+    private $shouldIncludeStyles;
+
+    public function __construct(bool $shouldIncludeStyles)
+    {
+        $this->shouldIncludeStyles = $shouldIncludeStyles;
+    }
+
     public function assembleBook(): void
     {
         // generate easybook CSS file
-        if ($this->app->edition('include_styles')) {
-            $this->app->render(
+        if ($this->app->edition('include_styles')) { // @todo move to params
+            $this->renderer->renderToFile(
                 '@theme/style.css.twig',
                 ['resources_dir' => $this->app['app.dir.resources'] . '/'],
                 $this->app['publishing.dir.output'] . '/css/easybook.css'
@@ -28,7 +38,7 @@ final class HtmlPublisher extends AbstractPublisher
         }
 
         // implode all the contents to create the whole book
-        $this->app->render(
+        $this->renderer->renderToFile(
             'book.twig',
             [
                 'items' => $this->app['publishing.items'],

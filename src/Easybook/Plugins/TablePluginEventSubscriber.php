@@ -4,6 +4,7 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Easybook\Templating\Renderer;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -12,6 +13,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class TablePluginEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var Renderer
+     */
+    private $renderer;
+
+    public function __construct(Renderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
+
     public static function getSubscribedEvents(): Iterator
     {
         yield EasybookEvents::POST_PARSE => ['decorateAndLabelTables', -500];
@@ -57,7 +68,7 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
                 // add table details to the list-of-tables
                 $listOfTables[] = $parameters;
 
-                return $parseEvent->app->render('table.twig', $parameters);
+                return $this->renderer->render('table.twig', $parameters);
             },
             $item['content']
         );

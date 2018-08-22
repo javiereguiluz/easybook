@@ -58,7 +58,7 @@ final class HtmlChunkedPublisher extends AbstractPublisher
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
-            $this->app->render(
+            $this->renderer->renderToFile(
                 '@theme/style.css.twig',
                 ['resources_dir' => $this->app['app.dir.resources'] . '/'],
                 $this->app['publishing.dir.output'] . '/css/easybook.css'
@@ -90,7 +90,7 @@ final class HtmlChunkedPublisher extends AbstractPublisher
         }
 
         // generate index page
-        $this->app->render(
+        $this->renderer->renderToFile(
             'index.twig',
             [
                 'items' => $this->app['publishing.items'],
@@ -291,9 +291,9 @@ final class HtmlChunkedPublisher extends AbstractPublisher
         // use chunk.twig as the fallback template
         try {
             $templateName = $item['config']['element'] . '.twig';
-            $this->app->render($templateName, $templateVariables, $chunkFilePath);
+            $this->renderer->renderToFile($templateName, $templateVariables, $chunkFilePath);
         } catch (Twig_Error_Loader $e) {
-            $this->app->render('chunk.twig', $templateVariables, $chunkFilePath);
+            $this->renderer->renderToFile('chunk.twig', $templateVariables, $chunkFilePath);
         }
 
         return $bookToc;
@@ -344,9 +344,9 @@ final class HtmlChunkedPublisher extends AbstractPublisher
             // use chunk.twig as the fallback template
             try {
                 $templateName = $item['config']['element'] . '.twig';
-                $this->app->render($templateName, $templateVariables, $chunkFilePath);
+                $this->renderer->renderToFile($templateName, $templateVariables, $chunkFilePath);
             } catch (Twig_Error_Loader $e) {
-                $this->app->render('chunk.twig', $templateVariables, $chunkFilePath);
+                $this->renderer->renderToFile('chunk.twig', $templateVariables, $chunkFilePath);
             }
         }
 

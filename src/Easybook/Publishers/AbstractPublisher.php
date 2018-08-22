@@ -5,6 +5,7 @@ namespace Easybook\Publishers;
 use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
+use Easybook\Templating\Renderer;
 use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\Event;
@@ -31,17 +32,24 @@ abstract class AbstractPublisher implements PublisherInterface
     private $symfonyStyle;
 
     /**
+     * @var Renderer
+     */
+    protected $renderer;
+
+    /**
      * @required
      */
     public function setRequiredDependencies(
         EventDispatcherInterface $eventDispatcher,
         Filesystem $filesystem,
-        SymfonyStyle $symfonyStyle
+        SymfonyStyle $symfonyStyle,
+        Renderer $renderer
     )
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->filesystem = $filesystem;
         $this->symfonyStyle = $symfonyStyle;
+        $this->renderer = $renderer;
     }
 
     /**
@@ -114,7 +122,7 @@ abstract class AbstractPublisher implements PublisherInterface
             // get again 'item' object because PRE_DECORATE event can modify it
             $item = $this->app['publishing.active_item'];
 
-            $item['content'] = $this->app->render($item['config']['element'] . '.twig', ['item' => $item]);
+            $item['content'] = $this->renderer->render($item['config']['element'] . '.twig', ['item' => $item]);
 
             $this->app['publishing.active_item'] = $item;
 
@@ -232,7 +240,7 @@ abstract class AbstractPublisher implements PublisherInterface
         $contentFileName = $itemType . '.md.twig';
 
         try {
-            return $this->app->render('@content/' . $contentFileName);
+            return $this->renderer->render('@content/' . $contentFileName);
         } catch (Twig_Error_Loader $e) {
             // if Twig throws a Twig_Error_Loader exception,
             // there is no default content

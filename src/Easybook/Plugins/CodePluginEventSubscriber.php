@@ -4,6 +4,7 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Easybook\Templating\Renderer;
 use Easybook\Util\CodeHighlighter;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -17,10 +18,15 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      * @var CodeHighlighter
      */
     private $codeHighlighter;
+    /**
+     * @var Renderer
+     */
+    private $renderer;
 
-    public function __construct(CodeHighlighter $codeHighlighter)
+    public function __construct(CodeHighlighter $codeHighlighter, Renderer $renderer)
     {
         $this->codeHighlighter = $codeHighlighter;
+        $this->renderer = $renderer;
     }
 
     public static function getSubscribedEvents(): Iterator
@@ -79,7 +85,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
                 . '</pre>';
         }
 
-        return $application->render('code.twig', [
+        return $this->renderer->render('code.twig', [
             'item' => [
                 'content' => $code,
                 'language' => $language,

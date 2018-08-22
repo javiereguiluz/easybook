@@ -54,13 +54,13 @@ final class PdfPublisher extends AbstractPublisher
 
         // implode all the contents to create the whole book
         $htmlBookFilePath = $tmpDir . '/book.html';
-        $this->app->render('book.twig', ['items' => $this->app['publishing.items']], $htmlBookFilePath);
+        $this->renderer->renderToFile('book.twig', ['items' => $this->app['publishing.items']], $htmlBookFilePath);
 
         // use PrinceXML to transform the HTML book into a PDF book
         // Prepare and add stylesheets before PDF conversion
         if ($this->app->edition('include_styles')) {
             $defaultStyles = $tmpDir . '/default_styles.css';
-            $this->app->render(
+            $this->renderer->renderToFile(
                 '@theme/style.css.twig',
                 ['resources_dir' => $this->app['app.dir.resources'] . '/'],
                 $defaultStyles

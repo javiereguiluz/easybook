@@ -66,7 +66,7 @@ final class Epub2Publisher extends AbstractPublisher
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
-            $this->app->render(
+            $this->renderer->renderToFile(
                 '@theme/style.css.twig',
                 ['resources_dir' => '..'],
                 $bookTmpDir . '/book/OEBPS/css/easybook.css'
@@ -97,9 +97,9 @@ final class Epub2Publisher extends AbstractPublisher
             try {
                 $templateName = $item['config']['element'] . '.twig';
 
-                $this->app->render($templateName, $templateVariables, $renderedTemplatePath);
+                $this->renderer->renderToFile($templateName, $templateVariables, $renderedTemplatePath);
             } catch (Twig_Error_Loader $e) {
-                $this->app->render('chunk.twig', $templateVariables, $renderedTemplatePath);
+                $this->renderer->renderToFile('chunk.twig', $templateVariables, $renderedTemplatePath);
             }
         }
 
@@ -108,14 +108,14 @@ final class Epub2Publisher extends AbstractPublisher
         $bookFonts = $this->prepareBookFonts($bookTmpDir . '/book/OEBPS/fonts');
 
         // generate the book cover page
-        $this->app->render(
+        $this->renderer->renderToFile(
             'cover.twig',
             ['customCoverImage' => $bookCover],
             $bookTmpDir . '/book/OEBPS/titlepage.html'
         );
 
         // generate the OPF file (the ebook manifest)
-        $this->app->render(
+        $this->renderer->renderToFile(
             'content.opf.twig',
             [
                 'cover' => $bookCover,
@@ -128,11 +128,11 @@ final class Epub2Publisher extends AbstractPublisher
         );
 
         // generate the NCX file (the table of contents)
-        $this->app->render('toc.ncx.twig', ['items' => $bookItems], $bookTmpDir . '/book/OEBPS/toc.ncx');
+        $this->renderer->renderToFile('toc.ncx.twig', ['items' => $bookItems], $bookTmpDir . '/book/OEBPS/toc.ncx');
 
         // generate container.xml and mimetype files
-        $this->app->render('container.xml.twig', [], $bookTmpDir . '/book/META-INF/container.xml');
-        $this->app->render('mimetype.twig', [], $bookTmpDir . '/book/mimetype');
+        $this->renderer->renderToFile('container.xml.twig', [], $bookTmpDir . '/book/META-INF/container.xml');
+        $this->renderer->renderToFile('mimetype.twig', [], $bookTmpDir . '/book/mimetype');
 
         $this->fixInternalLinks($bookTmpDir . '/book/OEBPS');
 

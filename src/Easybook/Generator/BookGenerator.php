@@ -2,6 +2,7 @@
 
 namespace Easybook\Generator;
 
+use Easybook\Templating\Renderer;
 use Symfony\Component\Filesystem\Filesystem;
 
 final class BookGenerator
@@ -25,10 +26,15 @@ final class BookGenerator
      * @var mixed[]
      */
     private $configuration = [];
+    /**
+     * @var Renderer
+     */
+    private $renderer;
 
-    public function __construct(Filesystem $filesystem)
+    public function __construct(Filesystem $filesystem, Renderer $renderer)
     {
         $this->filesystem = $filesystem;
+        $this->renderer = $renderer;
     }
 
     /**
@@ -67,32 +73,16 @@ final class BookGenerator
      */
     public function generate(): void
     {
-        $this->filesystem->mkdir([$this->bookDirectory . '/Contents/images', $this->bookDirectory . '/Output']);
-
+        // why is this hardcoded? Finder?
         foreach (['chapter1.md', 'chapter2.md'] as $file) {
             $file = 'Contents/' . $file;
             $this->filesystem->copy($this->skeletonDirectory . '/' . $file, $this->bookDirectory . '/' . $file);
         }
 
-        $this->filesystem->dumpFile(
-            $this->bookDirectory . '/config.yml',
-            $this->render($this->skeletonDirectory, 'config.yml.twig', $this->configuration)
+        $this->renderer->renderToFile(
+            $this->skeletonDirectory . '/config.yml.twig',
+            $this->configuration,
+            $this->bookDirectory . '/config.yml'
         );
-    }
-
-    /**
-     * @param mixed[] $parameters
-     */
-    private function render(string $skeletonDir, string $template, array $parameters): string
-    {
-        $loader = new Twig_Loader_Filesystem($skeletonDir);
-        $twig = new Twig_Environment($loader, [
-            'debug' => true,
-            'cache' => false,
-            'strict_variables' => true,
-            'autoescape' => false,
-        ]);
-
-        return $twig->render($template, $parameters);
     }
 }

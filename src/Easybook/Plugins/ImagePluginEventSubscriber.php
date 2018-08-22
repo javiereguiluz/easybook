@@ -4,6 +4,7 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Easybook\Templating\Renderer;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -13,6 +14,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class ImagePluginEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var Renderer
+     */
+    private $renderer;
+
+    public function __construct(Renderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
+
     public static function getSubscribedEvents(): Iterator
     {
         yield EasybookEvents::POST_PARSE => [['fixImageUris', -500], ['decorateAndLabelImages', -500]];
@@ -100,7 +111,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
                     $listOfImages[] = $parameters;
                 }
 
-                return $parseEvent->app->render('figure.twig', $parameters);
+                return $this->renderer->render('figure.twig', $parameters);
             },
             $item['content']
         );
