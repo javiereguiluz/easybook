@@ -1,3 +1,6 @@
+imports:
+    - { resource: 'parameters/*.yml' }
+
 parameters:
     app.charset: 'UTF-8'
 

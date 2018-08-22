@@ -1,21 +1,23 @@
 # default values for the configuration options of every edition format
 parameters:
-    edition:
-        format: ~
-        chunk_level:     1
-        highlight_code:  false
-        images_base_dir: 'images/'
-        include_styles:  true
-        isbn:            ~
-        labels:          ['appendix', 'chapter', 'figure']
-        margin:
-            top:         '25mm'
-            bottom:      '25mm'
-            inner:       '30mm'
-            outter:      '20mm'
-        page_size:       'A4'
-        theme:           'clean'
-        toc:
-            deep:        2
-            elements:    ['appendix', 'chapter']
-        two_sided:       true
+    book_edition:
+    book_edition_format: ~
+    book_edition_chunk_level: 1
+    book_edition_highlight_code: false
+    book_edition_images_base_dir: 'images/'
+    book_edition_include_styles: true
+    book_edition_isbn: ~
+    book_edition_labels: ['appendix', 'chapter', 'figure']
+    # margins
+    book_edition_margin_top: '25mm'
+    book_edition_margin_bottom: '25mm'
+    book_edition_margin_inner: '30mm'
+    book_edition_margin_outter: '20mm'
+
+    book_edition_page_size: 'A4'
+    book_edition_theme: 'clean'
+
+    book_edition_toc_deep: 2
+    book_edition_tco_elements: ['appendix', 'chapter']
+
+    book_edition_two_sided: true
