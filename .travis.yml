@@ -8,6 +8,7 @@ matrix:
     - php: 7.1
       env: CHECK_PHP_SYNTAX="yes"
     - php: 7.2
+    - php: nigtly
 
 install:
   - composer install
