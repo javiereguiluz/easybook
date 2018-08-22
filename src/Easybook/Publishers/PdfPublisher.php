@@ -6,6 +6,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use ZendPdf\PdfDocument;
 
 /**
+ * @todo use open-sourced wkhtmlpdf
+ *
  * It publishes the book as a PDF file. All the internal links are transformed
  * into clickable cross-section book links. These links even display automatically
  * the page number where they point into, so no information is lost when printing
@@ -20,7 +22,6 @@ final class PdfPublisher extends AbstractPublisher
 
     public function __construct(SymfonyStyle $symfonyStyle)
     {
-        // @todo use open-sourced wkhtmlpdf
         $this->symfonyStyle = $symfonyStyle;
     }
 
@@ -49,7 +50,7 @@ final class PdfPublisher extends AbstractPublisher
     public function assembleBook(): void
     {
         $tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('easybook_pdf_');
-        $this->app['filesystem']->mkdir($tmpDir);
+        $this->filesystem->mkdir($tmpDir);
 
         // implode all the contents to create the whole book
         $htmlBookFilePath = $tmpDir . '/book.html';
@@ -146,25 +147,5 @@ final class PdfPublisher extends AbstractPublisher
     public function getFormat(): string
     {
         return 'pdf';
-    }
-
-    /**
-     * It returns the needed configuration to set up the custom PrinceXML path
-     * using YAML format.
-     *
-     * @return string The sample YAML configuration
-     */
-    private function getSampleYamlConfiguration(): string
-    {
-        return <<<YAML
-  easybook:
-      parameters:
-          prince.path: '/path/to/utils/PrinceXML/prince'
-
-  book:
-      title:  ...
-      author: ...
-      # ...
-YAML;
     }
 }

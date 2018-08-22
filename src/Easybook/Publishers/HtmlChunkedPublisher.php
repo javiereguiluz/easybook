@@ -54,7 +54,7 @@ final class HtmlChunkedPublisher extends AbstractPublisher
     public function assembleBook(): void
     {
         $this->app['publishing.dir.output'] = $this->app['publishing.dir.output'] . '/book';
-        $this->app['filesystem']->mkdir($this->app['publishing.dir.output']);
+        $this->filesystem->mkdir($this->app['publishing.dir.output']);
 
         // generate easybook CSS file
         if ($this->app->edition('include_styles')) {
@@ -69,7 +69,7 @@ final class HtmlChunkedPublisher extends AbstractPublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app['filesystem']->copy($customCss, $this->app['publishing.dir.output'] . '/css/styles.css', true);
+            $this->filesystem->copy($customCss, $this->app['publishing.dir.output'] . '/css/styles.css', true);
         }
 
         // generate the chunks (HTML pages) of the published book
@@ -102,7 +102,7 @@ final class HtmlChunkedPublisher extends AbstractPublisher
 
         // copy book images
         if (file_exists($imagesDir = $this->app['publishing.dir.contents'] . '/images')) {
-            $this->app['filesystem']->mirror($imagesDir, $this->app['publishing.dir.output'] . '/images');
+            $this->filesystem->mirror($imagesDir, $this->app['publishing.dir.output'] . '/images');
         }
     }
 
@@ -325,7 +325,7 @@ final class HtmlChunkedPublisher extends AbstractPublisher
                 $chunkFilePath = $this->app['publishing.dir.output'] . '/' . $item['page_name'] . '.html';
             } elseif ($chunk['level'] === 2) {
                 if (! file_exists($chunksDir)) {
-                    $this->app['filesystem']->mkdir($chunksDir);
+                    $this->filesystem->mkdir($chunksDir);
                 }
 
                 $chunkFilePath = $chunksDir . '/' . $chunk['slug'] . '.html';

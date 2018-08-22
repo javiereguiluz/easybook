@@ -77,7 +77,7 @@ final class Epub2Publisher extends AbstractPublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app['filesystem']->copy($customCss, $bookTmpDir . '/book/OEBPS/css/styles.css', true);
+            $this->filesystem->copy($customCss, $bookTmpDir . '/book/OEBPS/css/styles.css', true);
         }
 
         $bookItems = $this->normalizePageNames($this->app['publishing.items']);
@@ -138,14 +138,14 @@ final class Epub2Publisher extends AbstractPublisher
 
         // compress book contents as ZIP file and rename to .epub
         $this->zipBookContents($bookTmpDir . '/book', $bookTmpDir . '/book.zip');
-        $this->app['filesystem']->copy(
+        $this->filesystem->copy(
             $bookTmpDir . '/book.zip',
             $this->app['publishing.dir.output'] . '/book.epub',
             true
         );
 
         // remove temp directory used to build the book
-        $this->app['filesystem']->remove($bookTmpDir);
+        $this->filesystem->remove($bookTmpDir);
     }
 
     public function getFormat(): string
@@ -165,7 +165,7 @@ final class Epub2Publisher extends AbstractPublisher
         $bookDir = $this->app['app.dir.cache'] . '/'
                    . uniqid($this->app['publishing.book.slug']);
 
-        $this->app['filesystem']->mkdir([
+        $this->filesystem->mkdir([
             $bookDir,
             $bookDir . '/book',
             $bookDir . '/book/META-INF',
@@ -208,7 +208,7 @@ final class Epub2Publisher extends AbstractPublisher
 
             $i = 1;
             foreach ($images as $image) {
-                $this->app['filesystem']->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
+                $this->filesystem->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
 
                 $imagesData[] = [
                     'id' => 'figure-' . $i++,
@@ -243,7 +243,7 @@ final class Epub2Publisher extends AbstractPublisher
                 'mediaType' => image_type_to_mime_type($type),
             ];
 
-            $this->app['filesystem']->copy($image, $targetDir . '/' . basename($image));
+            $this->filesystem->copy($image, $targetDir . '/' . basename($image));
         }
 
         return $cover;
@@ -280,7 +280,7 @@ final class Epub2Publisher extends AbstractPublisher
 
             $i = 1;
             foreach ($fonts as $font) {
-                $this->app['filesystem']->copy($font->getPathName(), $targetDir . '/' . $font->getFileName());
+                $this->filesystem->copy($font->getPathName(), $targetDir . '/' . $font->getFileName());
 
                 $fontsData[] = [
                     'id' => 'font-' . $i++,

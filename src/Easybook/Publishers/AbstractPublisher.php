@@ -23,7 +23,7 @@ abstract class AbstractPublisher implements PublisherInterface
     /**
      * @var Filesystem
      */
-    private $filesystem;
+    protected $filesystem;
 
     /**
      * @var SymfonyStyle
@@ -162,7 +162,7 @@ abstract class AbstractPublisher implements PublisherInterface
             ?: $this->app['publishing.dir.book'] . '/Output/' . $this->app['publishing.edition'];
 
         if (! file_exists($bookOutputDir)) {
-            $this->app['filesystem']->mkdir($bookOutputDir);
+            $this->filesystem->mkdir($bookOutputDir);
         }
 
         $this->app['publishing.dir.output'] = $bookOutputDir;

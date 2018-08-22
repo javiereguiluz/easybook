@@ -24,7 +24,7 @@ final class HtmlPublisher extends AbstractPublisher
         $customCss = $this->app->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
-            $this->app['filesystem']->copy($customCss, $this->app['publishing.dir.output'] . '/css/styles.css', true);
+            $this->filesystem->copy($customCss, $this->app['publishing.dir.output'] . '/css/styles.css', true);
         }
 
         // implode all the contents to create the whole book
@@ -39,7 +39,7 @@ final class HtmlPublisher extends AbstractPublisher
 
         // copy book images
         if (file_exists($imagesDir = $this->app['publishing.dir.contents'] . '/images')) {
-            $this->app['filesystem']->mirror($imagesDir, $this->app['publishing.dir.output'] . '/images');
+            $this->filesystem->mirror($imagesDir, $this->app['publishing.dir.output'] . '/images');
         }
     }
 
