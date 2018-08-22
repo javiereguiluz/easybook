@@ -37,19 +37,26 @@ abstract class AbstractPublisher implements PublisherInterface
     protected $renderer;
 
     /**
+     * @var string
+     */
+    private $publishingDirOutput;
+
+    /**
      * @required
      */
     public function setRequiredDependencies(
         EventDispatcherInterface $eventDispatcher,
         Filesystem $filesystem,
         SymfonyStyle $symfonyStyle,
-        Renderer $renderer
+        Renderer $renderer,
+        string $publishingDirOutput
     )
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->filesystem = $filesystem;
         $this->symfonyStyle = $symfonyStyle;
         $this->renderer = $renderer;
+        $this->publishingDirOutput = $publishingDirOutput;
     }
 
     /**
@@ -161,19 +168,9 @@ abstract class AbstractPublisher implements PublisherInterface
         }
     }
 
-    /**
-     * It creates the directory where the final book contents will be copied.
-     */
-    protected function prepareOutputDir(): void
+    private function prepareOutputDir(): void
     {
-        $bookOutputDir = $this->app['publishing.dir.output']
-            ?: $this->app['publishing.dir.book'] . '/Output/' . $this->app['publishing.edition'];
-
-        if (! file_exists($bookOutputDir)) {
-            $this->filesystem->mkdir($bookOutputDir);
-        }
-
-        $this->app['publishing.dir.output'] = $bookOutputDir;
+        $this->filesystem->mkdir($this->publishingDirOutput);
     }
 
     /**
@@ -211,16 +208,7 @@ abstract class AbstractPublisher implements PublisherInterface
         // if the element content uses Twig (such as *.md.twig), parse
         // the Twig template before parsing the Markdown contents
         if (substr($contentFilePath, -5) === '.twig') {
-            try {
-                return $this->app->renderString(file_get_contents($contentFilePath));
-            } catch (Twig_Error_Syntax $e) {
-                // if there is a Twig parsing error, notify the user but don't
-                // stop the book publication
-                $this->symfonyStyle->warning(sprintf(
-                    'There was an error while parsing "%s" file as a Twig template',
-                    $contentFilePath
-                ));
-            }
+            return $this->renderer->render(file_get_contents($contentFilePath));
         }
 
         // if the element content only uses Markdown (*.md), load
@@ -232,8 +220,6 @@ abstract class AbstractPublisher implements PublisherInterface
      * Tries to load the default content defined by easybook for this item type.
      *
      * @param string $itemType The type of item (e.g. 'cover', 'license', 'title')
-     *
-     * @return string The default content or an empty string if it doesn't exist
      */
     private function loadDefaultItemContent(string $itemType): string
     {
@@ -288,4 +274,6 @@ abstract class AbstractPublisher implements PublisherInterface
 
         return $item;
     }
+
+    abstract protected function assembleBook();
 }

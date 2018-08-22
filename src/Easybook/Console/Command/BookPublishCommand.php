@@ -3,9 +3,7 @@
 namespace Easybook\Console\Command;
 
 use Easybook\Configuration\Option;
-use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
-use Easybook\Util\Validator;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -22,18 +20,21 @@ final class BookPublishCommand extends Command
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
+    /**
+     * @var string
+     */
+    private $bookTitle;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(EventDispatcherInterface $eventDispatcher, string $bookTitle)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->bookTitle = $bookTitle;
     }
 
     protected function configure(): void
     {
         $this->setName('publish');
         $this->setDescription('Publishes an edition of a book');
-        $this->addArgument(Option::SLUG, InputArgument::REQUIRED, 'Book slug (no spaces allowed, use dashes instead)');
-        $this->addArgument(Option::EDITION, InputArgument::REQUIRED, 'Edition to be published');
         $this->addOption(Option::DIR, '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
 
         $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookPublishCommandHelp.txt'));
@@ -42,10 +43,7 @@ final class BookPublishCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $slug = $input->getArgument('slug');
-        $edition = $input->getArgument('edition');
         $dir = $input->getOption('dir') ?: $this->app['app.dir.doc'];
-
-        $this->app['console.dialog'] = $this->getHelperSet()->get('dialog');
 
         // validate book dir and add some useful values to the app configuration
         $bookDir = $this->app['validator']->validateBookDir($slug, $dir);
@@ -55,14 +53,9 @@ final class BookPublishCommand extends Command
         $this->app['publishing.dir.resources'] = $bookDir . '/Resources';
         $this->app['publishing.dir.plugins'] = $bookDir . '/Resources/Plugins';
         $this->app['publishing.dir.templates'] = $bookDir . '/Resources/Templates';
-        $this->app['publishing.book.slug'] = $slug;
-        $this->app['publishing.edition'] = $edition;
 
         // load book configuration
         $this->app->loadBookConfiguration($input->getOption('configuration'));
-
-        // register easybook and custom book plugins
-        $this->registerPlugins();
 
         // load the custom easybook parameters defined by the book
         $this->app->loadEasybookConfiguration();
@@ -76,7 +69,7 @@ final class BookPublishCommand extends Command
         $output->writeln(sprintf(
             "\n Publishing <comment>%s</comment> edition of <info>%s</info> book...\n",
             $edition,
-            $this->app->book('title')
+            $this->bookTitle
         ));
 
         // 1-line magic publication!

@@ -28,8 +28,8 @@ final class BookCustomizeCommand extends Command
     {
         $this->setName('customize');
         $this->setDescription('Eases the customization of the book design');
-        $this->addArgument('slug', InputArgument::REQUIRED, 'Book slug (no spaces allowed)');
-        $this->addArgument('edition', InputArgument::REQUIRED, 'The name of the edition to be customized');
+        $this->addArgument(Option::SLUG, InputArgument::REQUIRED, 'Book slug (no spaces allowed)');
+        $this->addArgument(Option::EDITION, InputArgument::REQUIRED, 'The name of the edition to be customized');
         $this->addOption('dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
         $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookCustomizeCommandHelp.txt'));
     }

@@ -1,7 +1,7 @@
 {
     "name": "easybook/easybook",
     "bin": [
-        "bin/book"
+        "bin/easybook"
     ],
     "description": "Book publishing application",
     "keywords": ["book", "publish", "ebook", "e-book", "documentation", "pdf", "epub"],
@@ -25,6 +25,7 @@
         "ext-zip": "*",
         "easybook/geshi": "^1.0",
         "javiereguiluz/easyslugger": "^1.0",
+        "jean85/pretty-package-versions": "^1.2",
         "michelf/php-markdown": "^1.4",
         "mikehaertl/phpwkhtmltopdf": "^2.3",
         "symfony/console": "^4.1",

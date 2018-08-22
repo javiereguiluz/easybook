@@ -35,12 +35,17 @@ final class BookNewCommand extends Command
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
+    /**
+     * @var string
+     */
+    private $bookTitle;
 
     public function __construct(
         BookGenerator $bookGenerator,
         SymfonyStyle $symfonyStyle,
         Slugger $slugger,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        string $bookTitle
     )
     {
         parent::__construct();
@@ -48,13 +53,13 @@ final class BookNewCommand extends Command
         $this->symfonyStyle = $symfonyStyle;
         $this->slugger = $slugger;
         $this->eventDispatcher = $eventDispatcher;
+        $this->bookTitle = $bookTitle;
     }
 
     protected function configure(): void
     {
         $this->setName('new');
         $this->setDescription('Creates a new empty book');
-        $this->addArgument(Option::TITLE, InputArgument::REQUIRED, 'Book title');
         $this->addOption(Option::DIR, null, InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
         $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookNewCommandHelp.txt'));
     }
@@ -65,19 +70,19 @@ final class BookNewCommand extends Command
 
         $dir = Validator::validateDirExistsAndWritable($input->getOption('dir') ?: $this->app['app.dir.doc']);
 
-        $title = $input->getArgument(Option::TITLE);
-        $slug = $this->slugger->slugify($title);
+
+        $bookSlug = $this->slugger->slugify($this->bookTitle);
 
         $this->eventDispatcher->dispatch(Events::PRE_NEW, new Event());
 
         $this->bookGenerator->setSkeletonDirectory($this->app['app.dir.skeletons'] . '/Book');
-        $this->bookGenerator->setBookDirectory($dir . '/' . $slug);
+        $this->bookGenerator->setBookDirectory($dir . '/' . $bookSlug);
         $this->bookGenerator->setConfiguration([
             'generator' => [
                 'name' => $this->getName(),
                 'version' => $this->app->getVersion(),
             ],
-            'title' => $title,
+            'title' => $this->bookTitle,
         ]);
 
         $this->bookGenerator->generate();

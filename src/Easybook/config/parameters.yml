@@ -1,8 +1,8 @@
 parameters:
-    version: '5.0-DEV'
-
     app.charset: 'UTF-8'
-    app.name: 'easybook'
+
+    # to be configured by the user
+    book_slug: ''
 
     # global directories location
     app.dir.cache: '%kernel.project_dir%/cache'
@@ -25,16 +25,16 @@ parameters:
     publishing.dir.resources: ''
     publishing.dir.plugins: ''
     publishing.dir.templates: ''
-    publishing.dir.output: ''
-    publishing_edition: ''
+    publishing.dir.output: '%kernel.project_dir%/output'
+    publishing.dir.slug: '%kernel.project_dir%/output'
     publishing.items: []
 
     # the specific item currently being parsed/modified/decorated/...
     publishing.active_item: []
     publishing.active_item.toc: []
-    publishing.book.config:
-        book: []
-    publishing.book.slug: ''
+
+    book_title: '...'
+
     publishing.book.items: []
 
     # the real TOC used to generate the book (needed for html_chunked editions)

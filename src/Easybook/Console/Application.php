@@ -2,12 +2,19 @@
 
 namespace Easybook\Console;
 
+use Jean85\PrettyVersions;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 
 final class Application extends SymfonyApplication
 {
+
+    public function __construct()
+    {
+        parent::__construct('easybook', $this->getPrettyVersion());
+    }
+
     protected function getDefaultInputDefinition(): InputDefinition
     {
         $defaultInputDefinition = parent::getDefaultInputDefinition();
@@ -17,5 +24,12 @@ final class Application extends SymfonyApplication
         );
 
         return $defaultInputDefinition;
+    }
+
+    private function getPrettyVersion(): string
+    {
+        $version = PrettyVersions::getVersion('easybook/easybook');
+
+        return $version->getPrettyVersion();
     }
 }

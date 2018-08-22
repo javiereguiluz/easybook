@@ -3,24 +3,22 @@ Book with some dynamic options defined by Twig expressions via configuration fil
 --COMMAND_CONFIG--
 ""
 --BOOK_CONFIG--
-book:
-    title:            "{{ book.author }} diary"
-    author:           "John Smith"
-    edition:          "{{ 'First' ~ ' ' ~ 'edition' }}"
-    language:         "{{ ['es', 'fr', 'en']|reverse|first }}"
-    publication_date: "{{ 'yyyy-mm-dd'|upper }}"
-    generator:
+book_title:            "{{ book.author }} diary"
+book_author:           "John Smith"
+book_edition:          "{{ 'First' ~ ' ' ~ 'edition' }}"
+book_language:         "{{ ['es', 'fr', 'en']|reverse|first }}"
+book_publication_date: "{{ 'yyyy-mm-dd'|upper }}"
+book_generator:
         version:      "N"
 # uncomment this when the BookConfigurator->processConfigurationValues()
 # works recursively
 #        version:      " {{ 10 // 3 }}"
 --EXPECT--
-book:
-    title: John Smith diary
-    author: John Smith
-    edition: First edition
-    language: en
-    publication_date: YYYY-MM-DD
-    generator: { name: easybook, version: N }
-    contents: null
-    editions: null
+book_title: John Smith diary
+book_author: John Smith
+book_edition: First edition
+book_language: en
+book_publication_date: YYYY-MM-DD
+book_generator: { name: easybook, version: N }
+book_contents: null
+book_editions: null

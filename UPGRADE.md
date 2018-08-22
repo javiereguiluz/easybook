@@ -17,6 +17,9 @@
     +        name: 'lala'
     ```
 
+- use parameters in YAML instead of --dir and --title and --edition CLI options
+
+
 ## Upgrade to easybook 5.0
 
 ### The Markdown headers are now normalized internally ###

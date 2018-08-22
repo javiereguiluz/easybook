@@ -5,7 +5,9 @@ namespace Easybook\Plugins;
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
 use Easybook\Templating\Renderer;
+use Easybook\Util\Slugger;
 use Iterator;
+use Nette\Utils\Strings;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -17,10 +19,15 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
      * @var Renderer
      */
     private $renderer;
+    /**
+     * @var Slugger
+     */
+    private $slugger;
 
-    public function __construct(Renderer $renderer)
+    public function __construct(Renderer $renderer, Slugger $slugger)
     {
         $this->renderer = $renderer;
+        $this->slugger = $slugger;
     }
 
     public static function getSubscribedEvents(): Iterator
@@ -41,8 +48,9 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
         $listOfTables = [];
         $counter = 0;
 
-        $item['content'] = preg_replace_callback(
-            "/(?<content><table.*\n<\/table>)/Ums",
+        $item['content'] = Strings::replace(
+            $item['content'],
+            "#(?<content><table.*\n<\/table>)#Ums",
             function ($matches) use ($parseEvent, $addTableLabels, $parentItemNumber, &$listOfTables, &$counter) {
                 // prepare table parameters for template and label
                 $counter++;
@@ -52,7 +60,7 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
                         'content' => $matches['content'],
                         'label' => '',
                         'number' => $counter,
-                        'slug' => $parseEvent->app->slugify('Table ' . $parentItemNumber . '-' . $counter),
+                        'slug' => $this->slugger->slugify('Table ' . $parentItemNumber . '-' . $counter),
                     ],
                     'element' => [
                         'number' => $parentItemNumber,
@@ -69,8 +77,8 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
                 $listOfTables[] = $parameters;
 
                 return $this->renderer->render('table.twig', $parameters);
-            },
-            $item['content']
+            }
+
         );
 
         if (count($listOfTables) > 0) {
