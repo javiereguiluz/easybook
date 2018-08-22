@@ -8,9 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * Groups several validators used across the application.
- */
 final class Validator
 {
     /**
@@ -35,21 +32,21 @@ final class Validator
         $this->symfonyStyle = $symfonyStyle;
     }
 
-    public static function validateDirExistsAndWritable($dir)
+    public function validateDirExistsAndWritable($dir)
     {
         if ($dir === null || trim($dir) === '') {
             // it throws an exception for invalid values because it's used in console commands
-            throw new InvalidArgumentException('ERROR: The directory cannot be empty.');
+            throw new InvalidArgumentException('The directory cannot be empty.');
         }
 
         if (! is_dir($dir)) {
             // it throws an exception for invalid values because it's used in console commands
-            throw new InvalidArgumentException("ERROR: '${dir}' directory doesn't exist.");
+            throw new InvalidArgumentException("'${dir}' directory doesn't exist.");
         }
 
         if (! is_writable($dir)) {
             // it throws an exception for invalid values because it's used in console commands
-            throw new InvalidArgumentException("ERROR: '${dir}' directory is not writable.");
+            throw new InvalidArgumentException("'${dir}' directory is not writable.");
         }
 
         return $dir;
@@ -58,12 +55,12 @@ final class Validator
     /**
      * Validates that the given $slug is a valid string for a book slug.
      */
-    public static function validateBookSlug($slug)
+    public function validateBookSlug($slug)
     {
         if (! preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
             // it throws an exception for invalid values because it's used in console commands
             throw new InvalidArgumentException(
-                'ERROR: The slug can only contain letters, numbers and dashes (no spaces)'
+                'The slug can only contain letters, numbers and dashes (no spaces)'
             );
         }
 
@@ -80,7 +77,7 @@ final class Validator
 
         if (! $this->input->isInteractive() && ! file_exists($bookDir)) {
             throw new RuntimeException(sprintf(
-                "ERROR: The directory of the book cannot be found.\n"
+                "The directory of the book cannot be found.\n"
                 . " Check that '%s' directory \n"
                 . " has a folder named as the book slug ('%s')",
                 $baseDir,
@@ -92,7 +89,7 @@ final class Validator
         while (! file_exists($bookDir) && $attempts--) {
             if (! $attempts) {
                 throw new InvalidArgumentException(sprintf(
-                    "ERROR: Too many failed attempts of getting the book directory.\n"
+                    "Too many failed attempts of getting the book directory.\n"
                     . " Check that '%s' directory \n"
                     . " has a folder named as the book slug ('%s')",
                     $baseDir,
@@ -100,19 +97,11 @@ final class Validator
                 ));
             }
 
-            $this->output->writeln([
-                '',
-                " <bg=red;fg=white> ERROR </> The given <info>${slug}</info> slug doesn't match any book in",
-                ' <comment>' . realpath($baseDir) . '/</comment> directory',
-            ]);
-
-            $slug = $this->app['console.dialog']->ask(
-                $this->output,
-                [
-                    "\n Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n"
-                    . ' > ',
-                ]
-            );
+            throw new \RuntimeException(sprintf(
+                'The given "%s" slug does not match any book in "%s" directory.',
+                $slug,
+                realpath($baseDir)
+            ));
 
             $bookDir = $baseDir . '/' . $slug;
         }
@@ -123,11 +112,11 @@ final class Validator
     /**
      * Validates that the given $slug is a valid string for a edition slug.
      */
-    public static function validateEditionSlug($slug)
+    public function validateEditionSlug($slug)
     {
         if (! preg_match('/^[a-zA-Z0-9\-\_]+$/', $slug)) {
             throw new InvalidArgumentException(
-                'ERROR: The edition name can only contain letters, numbers and dashes (no spaces)'
+                'The edition name can only contain letters, numbers and dashes (no spaces)'
             );
         }
 
@@ -142,7 +131,7 @@ final class Validator
         // if the book defines no edition, raise an exception
         if (count($this->app->book('editions') ?: []) === 0) {
             throw new RuntimeException(sprintf(
-                " ERROR: Book hasn't defined any edition.\n"
+                " Book hasn't defined any edition.\n"
                 . "\n"
                 . " Check that your book has at least one edition defined under\n"
                 . " 'editions' option in the following configuration file:\n"
@@ -157,7 +146,7 @@ final class Validator
                 $edition = $this->askForPublishingEdition();
             } else {
                 throw new RuntimeException(sprintf(
-                    "ERROR: The '%s' edition isn't defined for\n"
+                    "The '%s' edition isn't defined for\n"
                         . "'%s' book.",
                     $edition,
                     $this->app->book('title')
@@ -187,7 +176,7 @@ final class Validator
         while (! array_key_exists($edition, $this->app->book('editions')) && $attempts--) {
             if (! $attempts) {
                 throw new RuntimeException(sprintf(
-                    " ERROR: Too many failed attempts. Check that your book has a\n"
+                    " Too many failed attempts. Check that your book has a\n"
                     . " '%s' edition defined in the following configuration file:\n"
                     . " '%s'",
                     $edition,

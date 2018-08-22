@@ -94,46 +94,6 @@ final class BookPublishCommand extends Command
         ]);
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output): void
-    {
-        $slug = $input->getArgument('slug');
-        $edition = $input->getArgument('edition');
-
-        if (! empty($slug) && ! empty($edition)) {
-            return;
-        }
-
-        $output->writeln(['', ' Welcome to the <comment>easybook</comment> interactive book publisher', '']);
-
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        // check 'slug' argument
-        $slug = $input->getArgument('slug') ?: $dialog->askAndValidate(
-            $output,
-            [
-                " Please, type the <info>slug</info> of the book (e.g. <comment>the-origin-of-species</comment>)\n",
-                ' > ',
-            ],
-            function ($slug) {
-                return Validator::validateBookSlug($slug);
-            }
-        );
-        $input->setArgument('slug', $slug);
-
-        // check 'edition' argument
-        $edition = $input->getArgument('edition') ?: $dialog->askAndValidate(
-            $output,
-            [
-                " Please, type the name of the <info>edition</info> to be published (e.g. <comment>web</comment>)\n",
-                ' > ',
-            ],
-            function ($edition) {
-                return Validator::validateEditionSlug($edition);
-            }
-        );
-        $input->setArgument('edition', $edition);
-    }
-
     /**
      * Run the given scripts before/after the book publication.
      *
