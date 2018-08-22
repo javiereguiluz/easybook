@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symplify\PackageBuilder\DependencyInjection\CompilerPass\AutoBindParametersCompilerPass;
+use Symplify\PackageBuilder\DependencyInjection\CompilerPass\AutowireSinglyImplementedCompilerPass;
 
 final class EasybookKernel extends Kernel
 {
@@ -350,21 +351,6 @@ final class EasybookKernel extends Kernel
 //
 //        return;
 //    }
-//
-//    /**
-//     * Highlights the given code according to the specified programming language.
-//     *
-//     * @param string $code     The source code to be highlighted
-//     * @param string $language The name of the programming language used in the code
-//     *
-//     * @return string The highlighted code
-//     *
-//     * @throws \RuntimeException If the cache used to store the highlighted code isn't writable
-//     */
-//    public function highlight($code, $language = 'code')
-//    {
-//        return $this['highlighter']->highlight($code, $language);
-//    }
 
 //    /**
 //     * It loads the full book configuration by combining all the different sources
@@ -482,5 +468,6 @@ final class EasybookKernel extends Kernel
     {
         $containerBuilder->addCompilerPass(new CollectorCompilerPass());
         $containerBuilder->addCompilerPass(new AutoBindParametersCompilerPass());
+        $containerBuilder->addCompilerPass(new AutowireSinglyImplementedCompilerPass());
     }
 }

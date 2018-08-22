@@ -4,6 +4,7 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
+use Easybook\Util\CodeHighlighter;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -12,6 +13,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class CodePluginEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var CodeHighlighter
+     */
+    private $codeHighlighter;
+
+    public function __construct(CodeHighlighter $codeHighlighter)
+    {
+        $this->codeHighlighter = $codeHighlighter;
+    }
+
     public static function getSubscribedEvents(): Iterator
     {
         yield EasybookEvents::PRE_PARSE => ['parseCodeBlocks', -500];
@@ -26,22 +37,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      */
     public function parseCodeBlocks(ParseEvent $parseEvent): void
     {
-        $codeBlockType = $parseEvent->app['parser.options']['code_block_type'];
-
-        switch ($codeBlockType) {
-            case 'fenced':
-                $this->parseFencedTypeCodeBlocks($parseEvent);
-                break;
-
-            case 'github':
-                $this->parseGithubTypeCodeBlocks($parseEvent);
-                break;
-
-            case 'markdown':
-            default:
-                $this->parseMarkdownTypeCodeBlocks($parseEvent);
-                break;
-        }
+        $this->parseGithubTypeCodeBlocks($parseEvent);
     }
 
     /**
@@ -68,11 +64,11 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      *
      * @return string The resulting code after the highlight and rendering process
      */
-    public function highlightAndDecorateCode(string $code, string $language, Application $application): string
+    public function highlightAndDecorateCode(string $code, string $language): string
     {
         if ($application->edition('highlight_code')) {
             // highlight code if the edition wants to
-            $code = $application->highlight($code, $language);
+            $code = $this->codeHighlighter->highlight($code, $language);
         } else {
             // escape code to show it instead of interpreting it
 
@@ -91,80 +87,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
                 'slug' => '',
             ],
         ]);
-    }
-
-    /**
-     * It parses the code blocks of the item content that use the
-     * Markdown style for code blocks:.
-     *
-     *   * every line of code indented by 4 spaces or a tab
-     *   * (optionally) the firs line describes the language of the code
-     *
-     * Examples:
-     *
-     *     [php]
-     *     $lorem = 'ipsum';
-     *     // ...
-     *
-     *     [javascript]
-     *     var lorem = 'ipsum';
-     *     // ...
-     *
-     *     [code]
-     *     Generic code not associated with any language
-     *
-     *                          the $item being parsed
-     */
-    private function parseMarkdownTypeCodeBlocks(ParseEvent $parseEvent): void
-    {
-        // variable needed for PHP 5.3
-        $self = $this;
-
-        $item = $parseEvent->getItem();
-        // regexp copied from PHP-Markdown
-        $item['original'] = preg_replace_callback(
-            '{
-                (?:\n(?<indent>(?:[ ]{4})*)\n|\A\n?)
-                (?<code>                    # $1 = the code block -- one or more lines, starting with a space/tab
-                    (?:(?>
-                        ^\g{indent}[ ]{4}   # Lines must start with a tab or a tab-width of spaces
-                        .*\n
-                    ))*
-                    (?:(?>
-                        ^\g{indent}[ ]{4}   # Lines must start with a tab or a tab-width of spaces
-                        .*
-                    ))
-                )
-            }xm',
-            function ($matches) use ($self, $parseEvent) {
-                $code = $matches['code'];
-                $indent = $matches['indent'];
-
-                // outdent codeblock
-                $code = preg_replace('/^(' . $indent . '[ ]{4})/m', '', $code);
-
-                // if present, strip code language declaration ([php], [js], ...)
-                $language = 'code';
-                $code = preg_replace_callback(
-                    '{
-                        ^\[(?<lang>.*)\]\n(?<code>.*)
-                    }x',
-                    function ($matches) use (&$language) {
-                        $language = trim($matches['lang']);
-
-                        return $matches['code'];
-                    },
-                    $code
-                );
-
-                $code = $self->highlightAndDecorateCode($code, $language, $parseEvent->app);
-
-                // indent code block
-                return "\n${indent}\n${indent}" . str_replace("\n", "\n" . $indent, $code);
-            },
-            $item['original']
-        );
-        $parseEvent->setItem($item);
     }
 
     /**
@@ -195,9 +117,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      */
     private function parseGithubTypeCodeBlocks(ParseEvent $parseEvent): void
     {
-        // variable needed for PHP 5.3
-        $self = $this;
-
         $item = $parseEvent->getItem();
         // regexp adapted from PHP-Markdown
         $item['original'] = preg_replace_callback(
@@ -237,89 +156,11 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
                     $language = 'code';
                 }
 
-                $code = $self->highlightAndDecorateCode($code, $language, $parseEvent->app);
+                $code = $self->highlightAndDecorateCode($code, $language);
 
-                return "\n\n" . $code;
+                return PHP_EOL . PHP_EOL . $code;
             },
-            $item['original']
-        );
-        $parseEvent->setItem($item);
-    }
 
-    /**
-     * It parses the code blocks of the item content that use the
-     * fenced style for code blocks:
-     *   * the code listing starts with at least three ~~~
-     *   * (optionally) followed by a whitespace + a dot + the programming language name
-     *   * the lines of code don't include any leading tab or whitespace
-     *   * the code listing ends with the same number of opening ~~~.
-     *
-     * Examples:
-     *
-     *     ~~~ .php
-     *     $lorem = 'ipsum';
-     *     // ...
-     *     ~~~
-     *
-     *     ~~~~~~~~~~ .javascript
-     *     var lorem = 'ipsum';
-     *     // ...
-     *     ~~~~~~~~~~
-     *
-     *     ~~~
-     *     Generic code not associated with any language
-     *     ~~~
-     *
-     *                          the $item being parsed
-     */
-    private function parseFencedTypeCodeBlocks(ParseEvent $parseEvent): void
-    {
-        // variable needed for PHP 5.3
-        $self = $this;
-
-        $item = $parseEvent->getItem();
-        // regexp adapted from PHP-Markdown
-        $item['original'] = preg_replace_callback(
-            '{
-                (?:\n|\A)
-                # 1: Opening marker
-                (
-                    ~{3,} # Marker: three tilde or more.
-                )
-                [ ]*
-                (?:
-                    \.?([-_:a-zA-Z0-9]+) # 2: standalone class name
-                )?
-                [ ]* \n # Whitespace and newline following marker.
-
-                # 4: Content
-                (
-                    (?>
-                        (?!\1 [ ]* \n)    # Not a closing marker.
-                        .*\n+
-                    )+
-                )
-
-                # Closing marker.
-                \1 [ ]* \n
-            }Uxm',
-            function ($matches) use ($self, $parseEvent) {
-                $language = $matches[2];
-
-                // codeblocks always end with an empty new line (due to the regexp used)
-                // the current solution rtrims() the whole block. This would not work
-                // in the (very) rare situations where a code block must end with
-                // whitespaces, tabs or new lines
-                $code = rtrim($matches[3]);
-
-                if ($language === '') {
-                    $language = 'code';
-                }
-
-                $code = $self->highlightAndDecorateCode($code, $language, $parseEvent->app);
-
-                return "\n\n" . $code;
-            },
             $item['original']
         );
         $parseEvent->setItem($item);

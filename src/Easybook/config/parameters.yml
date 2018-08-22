@@ -68,8 +68,6 @@ parameters:
     parser.options:
         # available syntaxes: 'original', 'php-markdown-extra', 'easybook'
         markdown_syntax: 'easybook'
-        # available types: 'markdown', 'fenced', 'github'
-        code_block_type: 'markdown'
 
     slugger_separator: '-' # used between words and instead of illegal characters
     slugger.options:
