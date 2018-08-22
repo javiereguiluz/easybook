@@ -12,6 +12,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symplify\PackageBuilder\DependencyInjection\DefinitionCollector;
 use Symplify\PackageBuilder\DependencyInjection\DefinitionFinder;
+use Twig\Environment;
+use Twig_Extension;
 
 final class CollectorCompilerPass implements CompilerPassInterface
 {
@@ -46,6 +48,13 @@ final class CollectorCompilerPass implements CompilerPassInterface
             PublisherProvider::class,
             PublisherInterface::class,
             'addPublisher'
+        );
+
+        $this->definitionCollector->loadCollectorWithType(
+            $containerBuilder,
+            Environment::class,
+            Twig_Extension::class,
+            'addExtension'
         );
     }
 }

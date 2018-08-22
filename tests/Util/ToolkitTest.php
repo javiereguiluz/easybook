@@ -34,7 +34,10 @@ final class ToolkitTest extends AbstractContainerAwareTestCase
         );
     }
 
-    public function getArrayDeepMergeAndReplaceData()
+    /**
+     * @return mixed[]
+     */
+    public function getArrayDeepMergeAndReplaceData(): array
     {
         return [
             [

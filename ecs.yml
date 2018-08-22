@@ -7,9 +7,6 @@ imports:
     - { resource: 'vendor/symplify/easy-coding-standard/config/psr12.yml' }
 
 services:
-    PhpCsFixer\Fixer\Comment\HeaderCommentFixer:
-        header: ''
-
     Symplify\CodingStandard\Sniffs\CleanCode\CognitiveComplexitySniff:
         maxCognitiveComplexity: 50
 

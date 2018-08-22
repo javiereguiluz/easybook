@@ -25,12 +25,10 @@ final class Toolkit
     {
         $merged = [];
 
-        while (! empty($arrays)) {
-            $array = array_shift($arrays);
-
+        foreach ($arrays as $array) {
             foreach ($array as $key => $value) {
                 if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                    $merged[$key] = call_user_func(__CLASS__ . '::' . __FUNCTION__, $merged[$key], $value);
+                    $merged[$key] = self::array_deep_merge_and_replace($merged[$key], $value);
                 } else {
                     $merged[$key] = $value;
                 }

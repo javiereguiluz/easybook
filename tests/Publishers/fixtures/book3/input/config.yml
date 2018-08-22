@@ -1,38 +1,39 @@
-book:
-    title:            'easybook test book #3'
-    author:           'Javier Eguiluz'
-    edition:          'First edition'
-    language:         en
-    publication_date: '09-02-2012'
+parameters:
+    book:
+        title:            'easybook test book #3'
+        author:           'Javier Eguiluz'
+        edition:          'First edition'
+        language:         en
+        publication_date: '09-02-2012'
 
-    generator: { name: easybook, version: 4.0 }
+        generator: { name: easybook, version: 4.0 }
 
-    contents:
-        - { element: cover }
-        - { element: chapter, number: 1, content: chapter1.md }
-        - { element: chapter, number: 2, content: chapter2.md }
-        - { element: appendix, number: A, content: chapter3.md }
-        - { element: toc   }
+        contents:
+            - { element: cover }
+            - { element: chapter, number: 1, content: chapter1.md }
+            - { element: chapter, number: 2, content: chapter2.md }
+            - { element: appendix, number: A, content: chapter3.md }
+            - { element: toc   }
 
-    editions:
-        my_edition_1:
-            format:         html
-            highlight_code: false
-            include_styles: false
-            labels:         ['appendix', 'chapter', 'figure', 'table']
-            toc:
-                deep:       1
-                elements:   ["chapter"]
+        editions:
+            my_edition_1:
+                format:         html
+                highlight_code: false
+                include_styles: false
+                labels:         ['appendix', 'chapter', 'figure', 'table']
+                toc:
+                    deep:       1
+                    elements:   ["chapter"]
 
-        my_edition_2:
-            format:         html_chunked
-            highlight_code: true
-            include_styles: true
-            labels:         ['appendix', 'chapter', 'figure', 'table']
-            toc:
-                deep:       1
-                elements:   ["chapter"]
+            my_edition_2:
+                format:         html_chunked
+                highlight_code: true
+                include_styles: true
+                labels:         ['appendix', 'chapter', 'figure', 'table']
+                toc:
+                    deep:       1
+                    elements:   ["chapter"]
 
-        my_edition_3:
-            extends:        my_edition_1
-            include_styles: false
+            my_edition_3:
+                extends:        my_edition_1
+                include_styles: false

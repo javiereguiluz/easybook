@@ -11,9 +11,26 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class BookNewCommand extends Command
 {
+    /**
+     * @var BookGenerator
+     */
+    private $bookGenerator;
+    /**
+     * @var SymfonyStyle
+     */
+    private $symfonyStyle;
+
+    public function __construct(BookGenerator $bookGenerator, SymfonyStyle $symfonyStyle)
+    {
+        parent::__construct();
+        $this->bookGenerator = $bookGenerator;
+        $this->symfonyStyle = $symfonyStyle;
+    }
+
     protected function configure(): void
     {
         $this->setName('new');
@@ -33,52 +50,32 @@ final class BookNewCommand extends Command
 
         $this->app->dispatch(Events::PRE_NEW, new AbstractEvent($this->app));
 
-        $generator = new BookGenerator();
-        $generator->setFilesystem($this->app['filesystem']);
-        $generator->setSkeletonDirectory($this->app['app.dir.skeletons'] . '/Book');
-        $generator->setBookDirectory($dir . '/' . $slug);
-        $generator->setConfiguration([
+        $this->bookGenerator->setSkeletonDirectory($this->app['app.dir.skeletons'] . '/Book');
+        $this->bookGenerator->setBookDirectory($dir . '/' . $slug);
+        $this->bookGenerator->setConfiguration([
             'generator' => [
                 'name' => $this->app['app.name'],
                 'version' => $this->app->getVersion(),
             ],
             'title' => $title,
         ]);
-        $generator->generate();
+        $this->bookGenerator->generate();
 
         $this->app->dispatch(Events::POST_NEW, new AbstractEvent($this->app));
 
-        $output->writeln([
-            '',
-            ' <bg=green;fg=black> OK </> You can start writing your book in the following directory:',
-            ' <comment>' . realpath($generator->getBookDirectory()) . '</comment>',
-            '',
-        ]);
+        $this->symfonyStyle->success(
+            'You can start writing your book in the following directory:' .
+            ' <comment>' . realpath($this->bookGenerator->getBookDirectory()) . '</comment>'
+        );
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        $output->writeln($this->app['app.signature']);
-
         $title = $input->getArgument('title');
         if ($title !== null && $title !== '') {
             return;
         }
 
-        $output->writeln(['', ' Welcome to the <comment>easybook</comment> interactive book generator', '']);
-
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        // check `title` argument
-        $title = $input->getArgument('title') ?: $dialog->askAndValidate(
-            $output,
-            "\n Please, type the <info>title</info> of the book"
-            . ' (e.g. <comment>The Origin of Species</comment>)'
-            . "\n > ",
-            function ($title) {
-                return Validator::validateNonEmptyString('title', $title);
-            }
-        );
-        $input->setArgument('title', $title);
+        $this->symfonyStyle->writeln('Welcome to the <comment>easybook</comment> interactive book generator');
     }
 }

@@ -48,16 +48,4 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
             'The "version" command shows the version of the application.'
         );
     }
-
-    public function testApplicationSignature(): void
-    {
-        $tester = new ApplicationTester($this->console);
-        $tester->run([], ['decorated' => false]);
-
-        $this->assertContains(
-            $this->app['app.signature'],
-            $tester->getDisplay(),
-            'The default command displays the signature of the application.'
-        );
-    }
 }

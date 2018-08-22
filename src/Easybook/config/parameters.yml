@@ -1,7 +1,6 @@
 parameters:
     version: '5.0-DEV'
 
-    app.debug: '%kernel.debug%'
     app.charset: 'UTF-8'
     app.name: 'easybook'
     signature: |
@@ -91,7 +90,7 @@ parameters:
     slugger.generated_slugs: []
 
     twig.options:
-        autoescape: false,
+        autoescape: false
         cache: '%kernel.cache_dir%/Twig'
         charset: '%app.charset%'
         debug: '%kernel.debug%'

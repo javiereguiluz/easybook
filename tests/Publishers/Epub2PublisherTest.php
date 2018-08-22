@@ -5,10 +5,27 @@ namespace Easybook\Tests\Publishers;
 use Easybook\Publishers\Epub2Publisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use ReflectionMethod;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class Epub2PublisherTest extends AbstractContainerAwareTestCase
 {
+    /**
+     * @var Epub2Publisher
+     */
+    private $epub2Publisher;
+
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
     private $app;
+
+    protected function setUp(): void
+    {
+        $this->epub2Publisher = $this->container->get(Epub2Publisher::class);
+        $this->filesystem = $this->container->get(Filesystem::class);
+    }
 
     public function testPrepareBookTemporaryDirectory(): void
     {
@@ -22,18 +39,17 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
         ];
 
         $this->app['publishing.book.slug'] = uniqid('phpunit_');
-        $publisher = new Epub2Publisher($this->app);
 
         $method = new ReflectionMethod(Epub2Publisher::class, 'prepareBookTemporaryDirectory');
         $method->setAccessible(true);
-        $bookDir = $method->invoke($publisher);
+        $bookDir = $method->invoke($this->epub2Publisher);
 
         foreach ($directoriesRequiredForEpubBooks as $expectedDirectory) {
             $this->assertFileExists($bookDir . '/' . $expectedDirectory);
         }
 
         // filesystem
-        $this->app['filesystem']->remove($bookDir);
+        $this->filesystem->remove($bookDir);
     }
 
     public function testPrepareBookCoverImageIfTheBookDefinesNoCoverImage(): void
@@ -43,12 +59,10 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
             ->method('getCustomCoverImage')
             ->will($this->returnValue(null));
 
-        $publisher = new Epub2Publisher($app);
-
         $method = new ReflectionMethod(Epub2Publisher::class, 'prepareBookCoverImage');
         $method->setAccessible(true);
 
-        $this->assertSame(null, $method->invoke($publisher, ''));
+        $this->assertSame(null, $method->invoke($this->epub2Publisher, ''));
     }
 
     /**

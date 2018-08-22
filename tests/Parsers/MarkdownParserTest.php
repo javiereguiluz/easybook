@@ -4,31 +4,41 @@ namespace Easybook\Tests\Parsers;
 
 use Easybook\Parsers\MarkdownParser;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use Symfony\Component\Finder\Finder;
 
 final class MarkdownParserTest extends AbstractContainerAwareTestCase
 {
-    protected $app;
+    /**
+     * @var string
+     */
+    private $fixturesDir;
 
-    protected $parser;
+    /**
+     * @var MarkdownParser
+     */
+    private $markdownParser;
 
-    protected $fixtures_dir;
+    /**
+     * @var Finder
+     */
+    private $finder;
 
     protected function setUp(): void
     {
-        $this->fixtures_dir = __DIR__ . '/fixtures';
+        $this->fixturesDir = __DIR__ . '/fixtures';
+        $this->markdownParser = $this->container->get(MarkdownParser::class);
+        $this->finder = $this->container->get(Finder::class);
     }
 
     public function testOriginalMarkdown(): void
     {
         $this->app['parser.options'] = ['markdown_syntax' => 'original'];
-        $this->parser = new MarkdownParser($this->app);
 
         // get...
-        $docs = $this->app['finder']
-            ->files()
+        $docs = $this->finder->files()
             ->name('*.md')
             ->depth(0)
-            ->in($this->fixtures_dir . '/input/markdown-original');
+            ->in($this->fixturesDir . '/input/markdown-original');
 
         $this->parseAndTestDocs($docs, '[Markdown] Original Syntax:');
     }
@@ -36,15 +46,13 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
     public function testPHPMarkdown(): void
     {
         $this->app['parser.options'] = ['markdown_syntax' => 'php-markdown-extra'];
-        $this->parser = new MarkdownParser($this->app);
 
         // get...
-        $docs = $this->app['finder']
-            ->files()
+        $docs = $this->finder->files()
             ->name('*.md')
             ->notName('Backslash escapes.md')
             ->depth(0)
-            ->in($this->fixtures_dir . '/input/markdown-php');
+            ->in($this->fixturesDir . '/input/markdown-php');
 
         $this->parseAndTestDocs($docs, '[Markdown] PHP Syntax:');
     }
@@ -52,14 +60,12 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
     public function testPHPExtraMarkdown(): void
     {
         $this->app['parser.options'] = ['markdown_syntax' => 'php-markdown-extra'];
-        $this->parser = new MarkdownParser($this->app);
 
         // get...
-        $docs = $this->app['finder']
-            ->files()
+        $docs = $this->finder->files()
             ->name('*.md')
             ->depth(0)
-            ->in($this->fixtures_dir . '/input/markdown-php-extra');
+            ->in($this->fixturesDir . '/input/markdown-php-extra');
 
         $this->parseAndTestDocs($docs, '[Markdown] PHP Extra Syntax:');
     }
@@ -70,22 +76,23 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
             'markdown_syntax' => 'easybook',
             'code_block_type' => 'easybook',
         ];
-        $this->parser = new MarkdownParser($this->app);
 
-        $docs = $this->app['finder']
-            ->files()
+        $docs = $this->finder->files()
             ->name('*.md')
             ->depth(0)
-            ->in($this->fixtures_dir . '/input/markdown-easybook');
+            ->in($this->fixturesDir . '/input/markdown-easybook');
 
         $this->parseAndTestDocs($docs, '[Markdown] easybook Syntax:');
     }
 
-    private function parseAndTestDocs($docs, $message = ''): void
+    /**
+     * @param \SplFileInfo[] $docs
+     */
+    private function parseAndTestDocs(array $docs, string $message = ''): void
     {
         foreach ($docs as $doc) {
             $inputFilepath = $doc->getPathName();
-            $parsed = $this->parser->transform(file_get_contents($inputFilepath));
+            $parsed = $this->markdownParser->transform(file_get_contents($inputFilepath));
 
             $expectedFilepath = str_replace(
                 ['/fixtures/input/', '.md'],

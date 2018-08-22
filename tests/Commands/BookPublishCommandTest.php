@@ -62,12 +62,6 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
         $app = $command->getApp();
 
         $this->assertContains(
-            $app['app.signature'],
-            $tester->getDisplay(),
-            'The interactive publisher displays the application signature'
-        );
-
-        $this->assertContains(
             'Welcome to the easybook interactive book publisher',
             $tester->getDisplay(),
             'The interactive publisher welcome message is shown'

@@ -1,44 +1,45 @@
-book:
-    title:            'easybook test book #1'
-    author:           'Javier Eguiluz'
-    edition:          'First edition'
-    language:         en
-    publication_date: '09-02-2012'
+parameters:
+    book:
+        title:            'easybook test book #1'
+        author:           'Javier Eguiluz'
+        edition:          'First edition'
+        language:         en
+        publication_date: '09-02-2012'
 
-    generator: { name: easybook, version: 4.0 }
+        generator: { name: easybook, version: 4.0 }
 
-    contents:
-        - { element: cover }
-        - { element: toc   }
-        - { element: chapter, number: 1, content: chapter1.md }
-        - { element: chapter, number: 2, content: chapter2.md }
-        - { element: chapter, number: 3, content: chapter3.md }
+        contents:
+            - { element: cover }
+            - { element: toc   }
+            - { element: chapter, number: 1, content: chapter1.md }
+            - { element: chapter, number: 2, content: chapter2.md }
+            - { element: chapter, number: 3, content: chapter3.md }
 
-    editions:
-        web:
-            format:         html
-            highlight_code: true
-            include_styles: true
-            labels:         ['appendix', 'chapter', 'figure', 'table']
-            toc:
-                deep:       2
-                elements:   ["appendix", "chapter"]
+        editions:
+            web:
+                format:         html
+                highlight_code: true
+                include_styles: true
+                labels:         ['appendix', 'chapter', 'figure', 'table']
+                toc:
+                    deep:       2
+                    elements:   ["appendix", "chapter"]
 
-        website:
-            extends:        web
-            format:         html_chunked
+            website:
+                extends:        web
+                format:         html_chunked
 
-        website_chunked:
-            extends:        web
-            format:         html_chunked
-            chunk_level:    2
+            website_chunked:
+                extends:        web
+                format:         html_chunked
+                chunk_level:    2
 
-        ebook:
-            format:         epub
-            # as this ISBN value is only used for tests, it's irrelevant that
-            # it doesn't follow the ISBN format
-            isbn:           "4e2d12fe-c082-43f7-a3fa-e5379d26c5c6"
-            labels:         ['appendix', 'chapter', 'figure', 'table']
-            toc:
-                deep:       2
-                elements:   ["appendix", "chapter"]
+            ebook:
+                format:         epub
+                # as this ISBN value is only used for tests, it's irrelevant that
+                # it doesn't follow the ISBN format
+                isbn:           "4e2d12fe-c082-43f7-a3fa-e5379d26c5c6"
+                labels:         ['appendix', 'chapter', 'figure', 'table']
+                toc:
+                    deep:       2
+                    elements:   ["appendix", "chapter"]

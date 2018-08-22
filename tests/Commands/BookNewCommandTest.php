@@ -2,9 +2,11 @@
 
 namespace Easybook\Tests\Commands;
 
+use Easybook\Console\Command\BookNewCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
@@ -17,8 +19,15 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
 
     protected $console;
 
-//    public function setUp()
-//    {
+    /**
+     * @var QuestionHelper
+     */
+    private $questionHelper;
+
+    protected function setUp(): void
+    {
+        $this->questionHelper = $this->container->get(QuestionHelper::class);
+    }
     // setup temp dir for generated files
 //        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
 //        $this->filesystem = new Filesystem();
@@ -32,14 +41,16 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
 
     public function testInteractiveCommand(): void
     {
-        $command = $this->console->find('new');
+        $command = $this->container->get(BookNewCommand::class);
 
         // prepare the data that will be input interactively
         // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
-        $dialog = new DialogHelper();
-        $dialog->setInputStream($this->getInputStream("\n\nThe Origin of Species\n"));
-        $helper = new HelperSet([new FormatterHelper(), $dialog]);
-        $command->setHelperSet($helper);
+//        $dialog = new DialogHelper();
+//        $this->questionHelper->setInputStream($this->getInputStream("\n\nThe Origin of Species\n"));
+
+//        $helper = new HelperSet([new FormatterHelper(), $dialog]);
+
+        //        $command->setHelperSet($helper);
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -48,14 +59,6 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
         ], [
             'interactive' => true,
         ]);
-
-        $app = $command->getApp();
-
-        $this->assertContains(
-            $app['app.signature'],
-            $tester->getDisplay(),
-            'The interactive generator displays the application signature'
-        );
 
         $this->assertContains(
             'ERROR: The title cannot be empty.',

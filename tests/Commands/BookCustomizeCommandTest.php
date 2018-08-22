@@ -72,12 +72,6 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
         $app = $command->getApp();
 
         $this->assertContains(
-            $app['app.signature'],
-            $tester->getDisplay(),
-            'The interactive customizer displays the application signature'
-        );
-
-        $this->assertContains(
             'Welcome to the easybook interactive book customizer',
             $tester->getDisplay(),
             'The interactive customizer welcome message is shown'

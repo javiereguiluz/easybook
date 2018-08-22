@@ -4,6 +4,8 @@ namespace Easybook\Tests\Publishers;
 
 use Easybook\Publishers\PdfPublisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use Iterator;
+use Symfony\Component\Filesystem\Filesystem;
 use ZendPdf\Font;
 use ZendPdf\Page;
 use ZendPdf\PdfDocument;
@@ -15,11 +17,15 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
      */
     private $pdfPublisher;
 
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->pdfPublisher = $this->container->get(PdfPublisher::class);
+        $this->filesystem = $this->container->get(Filesystem::class);
     }
 
     /**
@@ -30,14 +36,14 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
         $app['publishing.dir.templates'] = $app['app.dir.cache'] . '/' . uniqid('phpunit_');
         $app['publishing.edition'] = 'print';
 
-        $app['filesystem']->mkdir([
+        $this->filesystem->mkdir([
             $app['publishing.dir.templates'],
             $app['publishing.dir.templates'] . '/print',
             $app['publishing.dir.templates'] . '/pdf',
         ]);
 
         foreach ($existingCoverFiles as $cover) {
-            $app['filesystem']->touch($app['publishing.dir.templates'] . '/' . $cover);
+            $this->filesystem->touch($app['publishing.dir.templates'] . '/' . $cover);
         }
 
         $selectedCoverPath = $this->pdfPublisher->getCustomCover();
@@ -45,7 +51,7 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
 
         $this->assertSame($coverThatShouldBeUsed, $selectedCover);
 
-        $app['filesystem']->remove($app['publishing.dir.templates']);
+        $this->filesystem->remove($app['publishing.dir.templates']);
     }
 
     public function provideCoverSampleData()
@@ -93,7 +99,7 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
     public function testAddBookCover(): void
     {
         $tmpDir = $app['app.dir.cache'] . '/' . uniqid('phpunit_');
-        $app['filesystem']->mkdir($tmpDir);
+        $this->filesystem->mkdir($tmpDir);
 
         $coverFilePath = $tmpDir . '/cover.pdf';
         $bookFilePath = $tmpDir . '/book.pdf';
@@ -120,20 +126,18 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
             'The resulting book contains the original book contents.'
         );
 
-        $app['filesystem']->remove($tmpDir);
+        $this->filesystem->remove($tmpDir);
     }
 
-    private function getBookConfig($twoSided)
+    private function getBookConfig($twoSided): Iterator
     {
-        return [
-            'book' => [
-                'language' => 'en',
-                'editions' => [
-                    'print' => [
-                        'format' => 'pdf',
-                        'theme' => 'clean',
-                        'two_sided' => $twoSided,
-                    ],
+        yield 'book' => [
+            'language' => 'en',
+            'editions' => [
+                'print' => [
+                    'format' => 'pdf',
+                    'theme' => 'clean',
+                    'two_sided' => $twoSided,
                 ],
             ],
         ];

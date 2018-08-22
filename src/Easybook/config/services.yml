@@ -7,6 +7,8 @@ services:
     Symfony\Component\Finder\Finder: ~
     Symfony\Component\Filesystem\Filesystem: ~
 
+    Symfony\Component\Console\Helper\QuestionHelper:
+
     Symfony\Component\Console\Application:
         arguments:
             $name: 'easybook'
@@ -32,9 +34,6 @@ services:
     Twig\Environment:
         arguments:
             $options: '%twig.options%'
-        calls:
-            # @todo use collector
-             - ['addExtension', ['@Easybook\Util\TwigCssExtension']]
 
     Twig_LoaderInterface:
         class: 'Twig_Loader_Filesystem'
@@ -45,6 +44,7 @@ services:
 #        $editions = $app->book('editions');
 #        $twig->addGlobal('edition', $editions[$publishingEdition]);
 
+    Michelf\Markdown: ~
     Michelf\MarkdownExtra: ~
 
     # Console

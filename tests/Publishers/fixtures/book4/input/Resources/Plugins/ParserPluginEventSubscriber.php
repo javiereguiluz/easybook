@@ -4,7 +4,7 @@ use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final class ParserPlugin implements EventSubscriberInterface
+final class ParserPluginEventSubscriber implements EventSubscriberInterface
 {
     public static function getSubscribedEvents(): Iterator
     {

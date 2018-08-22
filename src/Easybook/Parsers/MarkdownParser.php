@@ -3,14 +3,39 @@
 namespace Easybook\Parsers;
 
 use Exception;
-use Michelf\Markdown as OriginalMarkdownParser;
-use Michelf\MarkdownExtra as ExtraMarkdownParser;
+use Michelf\Markdown;
+use Michelf\MarkdownExtra;
 
 /**
  * This class implements a full-featured Markdown parser.
  */
 final class MarkdownParser implements ParserInterface
 {
+    /**
+     * @var Markdown
+     */
+    private $markdown;
+
+    /**
+     * @var MarkdownExtra
+     */
+    private $markdownExtra;
+
+    /**
+     * @var EasybookMarkdownParser
+     */
+    private $easybookMarkdownParser;
+
+    public function __construct(
+        Markdown $markdown,
+        MarkdownExtra $markdownExtra,
+        EasybookMarkdownParser $easybookMarkdownParser
+    ) {
+        $this->markdown = $markdown;
+        $this->markdownExtra = $markdownExtra;
+        $this->easybookMarkdownParser = $easybookMarkdownParser;
+    }
+
     /**
      * Transforms the original Markdown content into the desired output format.
      *
@@ -58,22 +83,20 @@ final class MarkdownParser implements ParserInterface
 
         switch ($syntax) {
             case 'original':
-                $parser = new OriginalMarkdownParser();
-                break;
+                $parser = $this->markdown;
+                return $parser->transform($content);
 
             case 'php-markdown-extra':
-                $parser = new ExtraMarkdownParser();
-                break;
+                $parser = $this->markdownExtra;
+                return $parser->transform($content);
 
             case 'easybook':
-                $parser = new EasybookMarkdownParser();
+                $parser = $this->easybookMarkdownParser;
 
                 // replace <!--BREAK--> with {pagebreak} to prevent Markdown
                 // parser from considering <!--BREAK--> as a regular HTML comment
                 $content = str_replace('<!--BREAK-->', '{pagebreak}', $content);
-                break;
+                return $parser->transform($content);
         }
-
-        return $parser->transform($content);
     }
 }

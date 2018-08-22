@@ -71,8 +71,6 @@ final class BookCustomizeCommand extends Command
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        $output->writeln($this->app['app.signature']);
-
         $slug = $input->getArgument('slug');
         $edition = $input->getArgument('edition');
 

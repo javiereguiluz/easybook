@@ -1,25 +1,26 @@
-book:
-    title:            'easybook test book #4'
-    author:           'Javier Eguiluz'
-    edition:          'First edition'
-    language:         en
-    publication_date: '09-02-2012'
+parameters:
+    book:
+        title:            'easybook test book #4'
+        author:           'Javier Eguiluz'
+        edition:          'First edition'
+        language:         en
+        publication_date: '09-02-2012'
 
-    generator: { name: easybook, version: 4.0 }
+        generator: { name: easybook, version: 4.0 }
 
-    contents:
-        - { element: cover }
-        - { element: toc   }
-        - { element: chapter, number: 1, content: first/chapter1.md }
-        - { element: chapter, number: 2, content: second/chapter2.md }
-        - { element: chapter, number: 3, content: third/chapter3.md }
+        contents:
+            - { element: cover }
+            - { element: toc   }
+            - { element: chapter, number: 1, content: first/chapter1.md }
+            - { element: chapter, number: 2, content: second/chapter2.md }
+            - { element: chapter, number: 3, content: third/chapter3.md }
 
-    editions:
-        web:
-            format:         html
-            highlight_code: true
-            include_styles: true
-            labels:         ['appendix', 'chapter', 'figure', 'table']
-            toc:
-                deep:       2
-                elements:   ["appendix", "chapter"]
+        editions:
+            web:
+                format:         html
+                highlight_code: true
+                include_styles: true
+                labels:         ['appendix', 'chapter', 'figure', 'table']
+                toc:
+                    deep:       2
+                    elements:   ["appendix", "chapter"]
