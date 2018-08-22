@@ -98,7 +98,7 @@ final class BookCustomizeCommand extends Command
             $this->filesystem->copy($customizationSkeleton, $file);
         } else {
             throw new RuntimeException(sprintf(
-                "ERROR: The '%s' edition already contains a custom CSS stylesheet.\n"
+                "The '%s' edition already contains a custom CSS stylesheet.\n"
                     . " You can find it at the following file:\n\n"
                     . ' %s',
                 $this->app['publishing.edition'],

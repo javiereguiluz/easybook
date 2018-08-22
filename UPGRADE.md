@@ -7,7 +7,15 @@
 - `book` moved to `bin/easybook`
 - `--configuration` changed to shorter yet still clear `--config`
 - Performance command dropped, use blackfire
+- all parameters are now under "parameters:" headline
 
+    ```diff
+    +parameters:
+    -book:
+    +    book:
+    -    name: 'lala'
+    +        name: 'lala'
+    ```
 
 ## Upgrade to easybook 5.0
 

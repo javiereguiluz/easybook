@@ -59,9 +59,7 @@ final class Validator
     {
         if (! preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
             // it throws an exception for invalid values because it's used in console commands
-            throw new InvalidArgumentException(
-                'The slug can only contain letters, numbers and dashes (no spaces)'
-            );
+            throw new InvalidArgumentException('The slug can only contain letters, numbers and dashes (no spaces)');
         }
 
         return $slug;
@@ -97,7 +95,7 @@ final class Validator
                 ));
             }
 
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'The given "%s" slug does not match any book in "%s" directory.',
                 $slug,
                 realpath($baseDir)

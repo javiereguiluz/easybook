@@ -332,27 +332,6 @@ final class EasybookKernel extends Kernel
 //    }
 //
 //    /**
-//     * Looks for a file in several paths and it returns the absolute filepath
-//     * of the first file occurrence or null if no file is found in those paths.
-//     *
-//     * @param string $file  The name of the file to look for
-//     * @param array  $paths The paths where the file can exist
-//     *
-//     * @return string|null The absolute filepath of the first found file or
-//     *                     null if the file isn't found in any of those paths.
-//     */
-//    public function getFirstExistingFile($file, array $paths)
-//    {
-//        foreach ($paths as $path) {
-//            if (file_exists($path.'/'.$file)) {
-//                return $path.'/'.$file;
-//            }
-//        }
-//
-//        return;
-//    }
-
-//    /**
 //     * It loads the full book configuration by combining all the different sources
 //     * (config.yml file, console command option and default values). It also loads
 //     * the edition configuration and resolves the edition inheritance (if used).
