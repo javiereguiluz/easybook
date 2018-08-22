@@ -17,7 +17,7 @@ final class BookConfigurator
 {
     /**
      * It loads book configuration by merging all the different configuration
-     * sources (CLI command options, YAML configuration file and default configuration).
+     * sources (CLI command options, YAMltL configuration file and default configuration).
      *
      * @param string $bookDir                 The root dir of the book being published
      * @param string $configurationViaCommand The optional configuration set via the publish command
@@ -29,7 +29,7 @@ final class BookConfigurator
     {
         $configurationViaCommand = $this->loadCommandConfiguration($configurationViaCommand);
         $configurationViaFile = $this->loadBookFileConfiguration($bookDir);
-        $configurationViaDefaults = $this->loadDefaultBookConfiguration();
+//        $configurationViaDefaults = $this->loadDefaultBookConfiguration();
 
         return array_replace_recursive($configurationViaDefaults, $configurationViaFile, $configurationViaCommand);
     }
@@ -75,19 +75,6 @@ final class BookConfigurator
         }
 
         $config = Yaml::parse($bookConfigFile);
-
-        return empty($config) ? [] : $config;
-    }
-
-    /**
-     * It loads the default configuration options for the book (the default
-     * options for editions aren't loaded by this method).
-     *
-     * @return array The loaded configuration.
-     */
-    public function loadDefaultBookConfiguration(): array
-    {
-        $config = Yaml::parse(__DIR__ . '/DefaultConfigurations/book.yml');
 
         return empty($config) ? [] : $config;
     }

@@ -13,4 +13,12 @@ final class ContainerFactory
 
         return $kernel->getContainer();
     }
+
+    public function createFromConfig(string $config)
+    {
+        $kernel = new EasybookKernel();
+        $kernel->bootFromConfig($config);
+
+        return $kernel->getContainer();
+    }
 }

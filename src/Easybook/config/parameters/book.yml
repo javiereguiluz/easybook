@@ -1,0 +1,13 @@
+# default values for the main book configuration options
+parameters:
+    book:
+        title:            "Untitled"
+        author:           "Anonymous"
+        edition:          ~
+        language:         en
+        publication_date: ~
+        generator:
+            name:         "easybook"
+            version:      "{{ app.getVersion() }}"
+        contents:         ~
+        editions:         ~

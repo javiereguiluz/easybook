@@ -12,24 +12,31 @@
 
 use Easybook\DependencyInjection\ContainerFactory;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symplify\PackageBuilder\Configuration\ConfigFileFinder;
 
 if (!file_exists(__DIR__.'/../vendor/autoload.php')) {
     throw new \RuntimeException(
         "\n"
         ."[ERROR] easybook depends on some external libraries and components.\n"
         ."It seems that those dependencies aren't properly installed.\n\n"
-        ."Perhaps you forgot to execute 'php composer.phar install' before\n"
-        ."using easybook for the first time?\n\n"
-        ."This command requires that you have previously installed Composer.\n"
-        ."To do so, execute the following command:\n\n"
-        ." $ curl -s http://getcomposer.org/installer | php"
-        ."\n\n"
+        ."Try 'composer install'"
     );
 }
 
 require __DIR__.'/../vendor/autoload.php';
 
-$container = (new ContainerFactory())->create();
+ConfigFileFinder::detectFromInput('easybook', new ArgvInput());
+$configFile = ConfigFileFinder::provide('easybook');
+
+if ($configFile) {
+    $container = (new ContainerFactory())->createFromConfig();
+
+} else {
+    $container = (new ContainerFactory())->create();
+}
+die;
+
 
 /** @var Application $application */
 $application = $container->get(Application::class);

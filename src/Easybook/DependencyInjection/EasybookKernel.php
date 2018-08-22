@@ -11,6 +11,11 @@ use Symplify\PackageBuilder\DependencyInjection\CompilerPass\AutoBindParametersC
 
 final class EasybookKernel extends Kernel
 {
+    /**
+     * @var string
+     */
+    private $config;
+
     public function __construct()
     {
         parent::__construct('dev', true);
@@ -59,6 +64,10 @@ final class EasybookKernel extends Kernel
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
+        if ($this->config) {
+            $loader->load($this->config);
+        }
+
         $loader->load(__DIR__ . '/../config/config.yml');
     }
 
@@ -192,8 +201,6 @@ final class EasybookKernel extends Kernel
 //    public function renderString($string, $variables = array())
 //    {
 //        $twig = new \Twig_Environment(new \Twig_Loader_String(), $this['twig.options']);
-//
-//        $twig->addGlobal('app', $this);
 //
 //        if (null !== $bookConfig = $this['publishing.book.config']) {
 //            $twig->addGlobal('book', $bookConfig['book']);
@@ -463,6 +470,12 @@ final class EasybookKernel extends Kernel
     public function registerBundles(): array
     {
         return [];
+    }
+
+    public function bootFromConfig(string $config): void
+    {
+        $this->config = $config;
+        $this->boot();
     }
 
     protected function prepareContainer(ContainerBuilder $containerBuilder): void

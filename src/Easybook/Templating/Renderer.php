@@ -3,11 +3,18 @@
 namespace Easybook\Templating;
 
 use RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class Renderer
 {
-    public function __construct()
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    public function __construct(Filesystem $filesystem)
     {
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -19,8 +26,6 @@ final class Renderer
      *                           template is saved in this file.
      *
      * @return string The result of rendering the Twig template
-     *
-     *  @throws \RuntimeException  If the given template is not a Twig template
      */
     public function render(string $template, array $variables = [], ?string $targetFile = null): string
     {
@@ -32,11 +37,9 @@ final class Renderer
         }
         $rendered = $this['twig']->render($template, $variables);
         if ($targetFile !== null) {
-            if (! is_dir($dir = dirname($targetFile))) {
-                $this['filesystem']->mkdir($dir);
-            }
-            file_put_contents($targetFile, $rendered);
+            $this->filesystem->dumpFile($targetFile, $rendered);
         }
+
         return $rendered;
     }
 }
