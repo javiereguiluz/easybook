@@ -28,8 +28,7 @@ services:
 
     EasySlugger\Utf8Slugger:
         arguments:
-            - '%slugger_separator%'
-
+            $separator: '%slugger_separator%'
 
     Twig\Environment:
         arguments:

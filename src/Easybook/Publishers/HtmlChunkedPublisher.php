@@ -5,6 +5,7 @@ namespace Easybook\Publishers;
 use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use RuntimeException;
+use Symfony\Component\EventDispatcher\Event;
 use Twig_Error_Loader;
 
 /**
@@ -38,13 +39,10 @@ final class HtmlChunkedPublisher extends AbstractPublisher
             $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before decorating it
-            $event = new AbstractEvent($this->app);
-            $this->app->dispatch(Events::PRE_DECORATE, $event);
+            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, new Event());
 
             // Do nothing to decorate the item
-
-            $event = new AbstractEvent($this->app);
-            $this->app->dispatch(Events::POST_DECORATE, $event);
+            $this->eventDispatcher->dispatch(Events::POST_DECORATE, new Event());
 
             // get again 'item' object because POST_DECORATE event can modify it
             $decoratedItems[] = $this->app['publishing.active_item'];

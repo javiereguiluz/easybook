@@ -2,6 +2,8 @@
 
 namespace Easybook\Publishers;
 
+use Symfony\Component\EventDispatcher\Event as SymfonyEvent;
+use Composer\Script\Event;
 use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Util\Toolkit;
@@ -46,13 +48,10 @@ final class Epub2Publisher extends AbstractPublisher
             $this->app['publishing.active_item'] = $item;
 
             // filter the original item content before decorating it
-            $event = new AbstractEvent($this->app);
-            $this->app->dispatch(Events::PRE_DECORATE, $event);
+            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, new SymfonyEvent());
 
             // Do nothing to decorate the item
-
-            $event = new AbstractEvent($this->app);
-            $this->app->dispatch(Events::POST_DECORATE, $event);
+            $this->eventDispatcher->dispatch(Events::POST_DECORATE, new SymfonyEvent());
 
             // get again 'item' object because POST_DECORATE event can modify it
             $decoratedItems[] = $this->app['publishing.active_item'];

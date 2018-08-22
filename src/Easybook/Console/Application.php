@@ -12,7 +12,9 @@ final class Application extends SymfonyApplication
     {
         $defaultInputDefinition = parent::getDefaultInputDefinition();
 
-        $defaultInputDefinition->addOption(new InputOption('configuration', '', InputOption::VALUE_OPTIONAL, 'Additional book configuration options'));
+        $defaultInputDefinition->addOption(
+            new InputOption('configuration', '', InputOption::VALUE_OPTIONAL, 'Additional book configuration options')
+        );
 
         return $defaultInputDefinition;
     }

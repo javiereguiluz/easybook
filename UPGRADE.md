@@ -1,11 +1,12 @@
 # UPGRADE guide
 
-## [WIP] Upgrade to easybook 6.0
+## [WIP] Upgrade to easybook 6.0-dev
 
 - mobi dropped as not supported since 2011
 - use wkhtmlpdf instead of paid prince
 - `book` moved to `bin/easybook`
 - `--configuration` changed to shorter yet still clear `--config`
+- Performance command dropped, use blackfire
 
 
 ## Upgrade to easybook 5.0

@@ -12,10 +12,22 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
 
 final class BookPublishCommand extends Command
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     protected function configure(): void
     {
         $this->setName('publish');
@@ -59,7 +71,8 @@ final class BookPublishCommand extends Command
         $this->runScripts($this->app->edition('before_publish'));
 
         // book publishing starts
-        $this->app->dispatch(Events::PRE_PUBLISH, new AbstractEvent($this->app));
+        $this->eventDispatcher->dispatch(Events::PRE_PUBLISH, new Event());
+
         $output->writeln(sprintf(
             "\n Publishing <comment>%s</comment> edition of <info>%s</info> book...\n",
             $edition,
@@ -70,7 +83,7 @@ final class BookPublishCommand extends Command
         $this->app['publisher']->publishBook();
 
         // book publishing finishes
-        $this->app->dispatch(Events::POST_PUBLISH, new AbstractEvent($this->app));
+        $this->eventDispatcher->dispatch(Events::POST_PUBLISH, new Event());
 
         // execute the 'after_publish' scripts
         $this->runScripts($this->app->edition('after_publish'));

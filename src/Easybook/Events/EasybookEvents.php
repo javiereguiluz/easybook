@@ -42,5 +42,8 @@ final class EasybookEvents
      */
     public const PRE_DECORATE = 'item.decorate.start';
 
+    /**
+     * @var string
+     */
     public const POST_DECORATE = 'item.decorate.finish';
 }

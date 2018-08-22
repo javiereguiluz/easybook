@@ -21,6 +21,8 @@ parameters:
     exclude_checkers:
         - 'Symplify\CodingStandard\Sniffs\Debug\CommentedOutCodeSniff'
         - 'Symplify\CodingStandard\Sniffs\ControlStructure\SprintfOverContactSniff'
+        - 'Symplify\CodingStandard\Sniffs\CleanCode\CognitiveComplexitySniff'
+        - 'Symplify\CodingStandard\Sniffs\Architecture\ExplicitExceptionSniff'
 #        # exclude from psr12.yml
 #        - 'PhpCsFixer\Fixer\PhpTag\BlankLineAfterOpeningTagFixer'
 #        - 'PhpCsFixer\Fixer\Operator\UnaryOperatorSpacesFixer'
