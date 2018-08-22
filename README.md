@@ -14,23 +14,24 @@ publish any kind of book, manual or documentation website.
 ## Installation
 
 ```bash
-composer create-project easybook/easybook easybook
-cd easybook 
+composer require easybook/easybook easybook
 ```
 
 Once installed, use **easybook** with the bin:
 
 ```
-bin/easybook
+vendor/bin/easybook
 ```
 
 ## Documentation
 
 **easybook** is fully documented at [`/doc/easybook-doc-en`](/doc/easybook-doc-en)
 
-## Tests
+## Tests and Standards
 
 ```
+composer check-cs
+composer phpstan
 vendor/bin/phpunit
 ```
 

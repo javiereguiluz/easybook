@@ -26,16 +26,14 @@ final class PublisherTest extends AbstractContainerAwareTestCase
      */
     private $finder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->finder = $this->container->get(Finder::class);
     }
 
-
-
 //    protected function setUp(): void
 //    {
-        // setup temp dir for generated files
+    // setup temp dir for generated files
 //        $this->tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('phpunit_', true);
 //        $this->filesystem = new Filesystem();
 //        $this->filesystem->mkdir($this->tmpDir);
@@ -48,7 +46,7 @@ final class PublisherTest extends AbstractContainerAwareTestCase
 //        $this->filesystem->remove($this->tmpDir);
 //
 //        parent::tearDown();
-//    }
+    //    }
 
     public function testBookPublish(): void
     {

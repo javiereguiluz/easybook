@@ -4,7 +4,6 @@ namespace Easybook\Util;
 
 use Iterator;
 use Twig_Extension;
-use Twig_Function_Method;
 use Twig_SimpleFunction;
 
 final class TwigCssExtension extends Twig_Extension
@@ -142,7 +141,7 @@ final class TwigCssExtension extends Twig_Extension
             function ($matches) use ($factor) {
                 $unit = $matches['unit'] ?? 'px';
 
-                if ((int) $factor ===  0) {
+                if ((int) $factor === 0) {
                     return 0;
                 }
 

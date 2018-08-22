@@ -74,7 +74,10 @@ final class BookGenerator
             $this->filesystem->copy($this->skeletonDirectory . '/' . $file, $this->bookDirectory . '/' . $file);
         }
 
-        $this->filesystem->dumpFile($this->bookDirectory . '/config.yml', $this->render($this->skeletonDirectory, 'config.yml.twig', $this->configuration));
+        $this->filesystem->dumpFile(
+            $this->bookDirectory . '/config.yml',
+            $this->render($this->skeletonDirectory, 'config.yml.twig', $this->configuration)
+        );
     }
 
     /**
