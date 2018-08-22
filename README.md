@@ -21,7 +21,7 @@ cd easybook
 Once installed, use **easybook** with the bin:
 
 ```
-bin/book
+bin/easybook
 ```
 
 ## Documentation
