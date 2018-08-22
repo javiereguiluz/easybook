@@ -6,6 +6,7 @@ use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
 use RuntimeException;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -25,12 +26,22 @@ abstract class AbstractPublisher implements PublisherInterface
     private $filesystem;
 
     /**
+     * @var SymfonyStyle
+     */
+    private $symfonyStyle;
+
+    /**
      * @required
      */
-    public function setRequiredDependencies(EventDispatcherInterface $eventDispatcher, Filesystem $filesystem)
+    public function setRequiredDependencies(
+        EventDispatcherInterface $eventDispatcher,
+        Filesystem $filesystem,
+        SymfonyStyle $symfonyStyle
+    )
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->filesystem = $filesystem;
+        $this->symfonyStyle = $symfonyStyle;
     }
 
     /**
@@ -197,8 +208,8 @@ abstract class AbstractPublisher implements PublisherInterface
             } catch (Twig_Error_Syntax $e) {
                 // if there is a Twig parsing error, notify the user but don't
                 // stop the book publication
-                $this->app['console.output']->writeln(sprintf(
-                    " [WARNING] There was an error while parsing the contents of the\n \"%s\" file as a Twig template\n",
+                $this->symfonyStyle->warning(sprintf(
+                    'There was an error while parsing "%s" file as a Twig template',
                     $contentFilePath
                 ));
             }

@@ -2,6 +2,7 @@
 
 namespace Easybook\Publishers;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
 use ZendPdf\PdfDocument;
 
 /**
@@ -12,9 +13,15 @@ use ZendPdf\PdfDocument;
  */
 final class PdfPublisher extends AbstractPublisher
 {
-    public function __construct()
+    /**
+     * @var SymfonyStyle
+     */
+    private $symfonyStyle;
+
+    public function __construct(SymfonyStyle $symfonyStyle)
     {
         // @todo use open-sourced wkhtmlpdf
+        $this->symfonyStyle = $symfonyStyle;
     }
 
     public function loadContents(): void
@@ -83,16 +90,15 @@ final class PdfPublisher extends AbstractPublisher
     public function displayPdfConversionErrors(array $errorMessages): void
     {
         if (count($errorMessages) > 0) {
-            $this->app['console.output']->writeln("\n PrinceXML errors and warnings");
-            $this->app['console.output']->writeln(" -----------------------------\n");
+            $this->symfonyStyle->section('PrinceXML errors and warnings');
 
             foreach ($errorMessages as $message) {
-                $this->app['console.output']->writeln(
+                $this->symfonyStyle->writeln(
                     '   [' . strtoupper($message[0]) . '] ' . ucfirst($message[2]) . ' (' . $message[1] . ')'
                 );
             }
 
-            $this->app['console.output']->writeln("\n");
+            $this->symfonyStyle->newLine();
         }
     }
 

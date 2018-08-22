@@ -13,11 +13,6 @@ parameters:
     app.dir.skeletons: '%kernel.project_dir%/app/Resources/Skeletons'
     app.dir.themes: '%kernel.project_dir%/app/Resources/Themes'
 
-    # console
-    console.input: ~
-    console.output: ~
-    console.dialog: ~
-
     # timer
     app.timer.start: 0.0
     app.timer.finish: 0.0
