@@ -48,7 +48,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Easybook\\": "src/Easybook"
+            "Easybook\\": "src"
         }
     },
     "autoload-dev": {
