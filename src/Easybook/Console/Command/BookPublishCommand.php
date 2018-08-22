@@ -2,6 +2,7 @@
 
 namespace Easybook\Console\Command;
 
+use Easybook\Configuration\Option;
 use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Util\Validator;
@@ -19,10 +20,10 @@ final class BookPublishCommand extends Command
     {
         $this->setName('publish');
         $this->setDescription('Publishes an edition of a book');
-        $this->addArgument('slug', InputArgument::REQUIRED, 'Book slug (no spaces allowed, use dashes instead)');
-        $this->addArgument('edition', InputArgument::REQUIRED, 'Edition to be published');
-        $this->addOption('dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
-        $this->addOption('configuration', '', InputOption::VALUE_OPTIONAL, 'Additional book configuration options');
+        $this->addArgument(Option::SLUG, InputArgument::REQUIRED, 'Book slug (no spaces allowed, use dashes instead)');
+        $this->addArgument(Option::EDITION, InputArgument::REQUIRED, 'Edition to be published');
+        $this->addOption(Option::DIR, '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
+
         $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookPublishCommandHelp.txt'));
     }
 
@@ -32,8 +33,6 @@ final class BookPublishCommand extends Command
         $edition = $input->getArgument('edition');
         $dir = $input->getOption('dir') ?: $this->app['app.dir.doc'];
 
-        $this->app['console.input'] = $input;
-        $this->app['console.output'] = $output;
         $this->app['console.dialog'] = $this->getHelperSet()->get('dialog');
 
         // validate book dir and add some useful values to the app configuration

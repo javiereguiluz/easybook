@@ -5,6 +5,8 @@
 - mobi dropped as not supported since 2011
 - use wkhtmlpdf instead of paid prince
 - `book` moved to `bin/easybook`
+- `--configuration` changed to shorter yet still clear `--config`
+
 
 ## Upgrade to easybook 5.0
 

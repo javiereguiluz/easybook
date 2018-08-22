@@ -8,18 +8,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class AboutCommand extends Command
 {
-    /**
-     * @var string
-     */
-    private $signature;
-
-    public function __construct(string $signature)
-    {
-        parent::__construct();
-
-        $this->signature = $signature;
-    }
-
     protected function configure(): void
     {
         $this->setName('about');
@@ -28,6 +16,6 @@ final class AboutCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $output->writeln(sprintf(file_get_contents(__DIR__ . '/Resources/AboutCommandHelp.txt'), $this->signature));
+        $output->writeln(file_get_contents(__DIR__ . '/Resources/AboutCommandHelp.txt'));
     }
 }

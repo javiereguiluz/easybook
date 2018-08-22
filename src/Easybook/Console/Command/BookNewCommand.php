@@ -2,6 +2,7 @@
 
 namespace Easybook\Console\Command;
 
+use Easybook\Configuration\Option;
 use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Generator\BookGenerator;
@@ -35,18 +36,16 @@ final class BookNewCommand extends Command
     {
         $this->setName('new');
         $this->setDescription('Creates a new empty book');
-        $this->addArgument('title', InputArgument::REQUIRED, 'Book title');
-        $this->addOption('dir', '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
+        $this->addArgument(Option::TITLE, InputArgument::REQUIRED, 'Book title');
+        $this->addOption(Option::DIR, '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
         $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookNewCommandHelp.txt'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $title = Validator::validateNonEmptyString('title', $input->getArgument('title'));
-
         $dir = Validator::validateDirExistsAndWritable($input->getOption('dir') ?: $this->app['app.dir.doc']);
 
-        $slug = $this->app->slugify($title);
+        $slug = $this->app->slugify($input->getArgument('title'));
 
         $this->app->dispatch(Events::PRE_NEW, new AbstractEvent($this->app));
 

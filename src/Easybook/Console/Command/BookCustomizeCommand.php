@@ -9,9 +9,20 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class BookCustomizeCommand extends Command
 {
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    public function __construct(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
+    }
+
     protected function configure(): void
     {
         $this->setName('customize');
@@ -111,9 +122,7 @@ final class BookCustomizeCommand extends Command
 
     private function prepareCustomizationDir($dir): void
     {
-        if (! file_exists($dir)) {
-            $this->app['filesystem']->mkdir($dir);
-        }
+        $this->filesystem->mkdir($dir);
     }
 
     private function prepareCustomizationCssFile($file): void
@@ -125,7 +134,7 @@ final class BookCustomizeCommand extends Command
         );
 
         if (! file_exists($file)) {
-            $this->app['filesystem']->copy($customizationSkeleton, $file);
+            $this->filesystem->copy($customizationSkeleton, $file);
         } else {
             throw new RuntimeException(sprintf(
                 "ERROR: The '%s' edition already contains a custom CSS stylesheet.\n"

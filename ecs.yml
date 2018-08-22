@@ -1,24 +1,26 @@
 imports:
-    - { resource: 'vendor/symplify/easy-coding-standard/config/psr2.yml' }
-    - { resource: 'vendor/symplify/easy-coding-standard/config/php71.yml' }
-    - { resource: 'vendor/symplify/easy-coding-standard/config/clean-code.yml' }
+#    - { resource: 'vendor/symplify/easy-coding-standard/config/psr2.yml' }
+#    - { resource: 'vendor/symplify/easy-coding-standard/config/php71.yml' }
+#    - { resource: 'vendor/symplify/easy-coding-standard/config/clean-code.yml' }
     - { resource: 'vendor/symplify/easy-coding-standard/config/symplify.yml' }
-    - { resource: 'vendor/symplify/easy-coding-standard/config/common.yml' }
-    - { resource: 'vendor/symplify/easy-coding-standard/config/psr12.yml' }
+#    - { resource: 'vendor/symplify/easy-coding-standard/config/common.yml' }
+#    - { resource: 'vendor/symplify/easy-coding-standard/config/psr12.yml' }
 
-services:
-    Symplify\CodingStandard\Sniffs\CleanCode\CognitiveComplexitySniff:
-        maxCognitiveComplexity: 50
-
-    # class should be Abstact or Final
-    SlamCsFixer\FinalInternalClassFixer: ~
-
-    Symplify\CodingStandard\Sniffs\Naming\ClassNameSuffixByParentSniff:
-        extraParentTypesToSuffixes:
-            - 'FileDecorator'
-
+#services:
+#    Symplify\CodingStandard\Sniffs\CleanCode\CognitiveComplexitySniff:
+#        maxCognitiveComplexity: 50
+#
+#    # class should be Abstact or Final
+#    SlamCsFixer\FinalInternalClassFixer: ~
+#
+#    Symplify\CodingStandard\Sniffs\Naming\ClassNameSuffixByParentSniff:
+#        extraParentTypesToSuffixes:
+#            - 'FileDecorator'
+#
 parameters:
     exclude_checkers:
-        # exclude from psr12.yml
-        - 'PhpCsFixer\Fixer\PhpTag\BlankLineAfterOpeningTagFixer'
-        - 'PhpCsFixer\Fixer\Operator\UnaryOperatorSpacesFixer'
+        - 'Symplify\CodingStandard\Sniffs\Debug\CommentedOutCodeSniff'
+        - 'Symplify\CodingStandard\Sniffs\ControlStructure\SprintfOverContactSniff'
+#        # exclude from psr12.yml
+#        - 'PhpCsFixer\Fixer\PhpTag\BlankLineAfterOpeningTagFixer'
+#        - 'PhpCsFixer\Fixer\Operator\UnaryOperatorSpacesFixer'

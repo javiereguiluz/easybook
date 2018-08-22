@@ -22,6 +22,7 @@
         "php": "^7.1",
         "ext-json": "*",
         "ext-zip": "*",
+        "ext-gd": "*",
         "easybook/geshi": "^1.0",
         "javiereguiluz/easyslugger": "^1.0",
         "michelf/php-markdown": "^1.4",

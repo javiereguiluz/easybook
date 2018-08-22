@@ -3,12 +3,6 @@ parameters:
 
     app.charset: 'UTF-8'
     app.name: 'easybook'
-    signature: |
-        |              |   /
-        ,---.,---.,---.,   .|---.,---.,---.|__/
-        |---',---|`---.|   ||   ||   ||   ||  \
-        `---'`---^`---'`---|`---'`---'`---'`   `
-        `---'
 
     # global directories location
     app.dir.cache: '%kernel.project_dir%/cache'

@@ -70,15 +70,8 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
      */
     public function testPrepareBookCoverImage($width, $height, $mimeType, $fileName): void
     {
-        if (! extension_loaded('gd')) {
-            $this->markTestSkipped(
-                'This test generates sample image files and therefore it requires
-                to enable the GD extension in your PHP configuration'
-            );
-        }
-
         $tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('phpunit_');
-        $this->app['filesystem']->mkdir($tmpDir);
+        $this->filesystem->mkdir($tmpDir);
 
         $imageFilePath = $tmpDir . '/' . $fileName;
 
@@ -105,8 +98,6 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
                 break;
         }
 
-        $publisher = new Epub2Publisher($app);
-
         $method = new ReflectionMethod(Epub2Publisher::class, 'prepareBookCoverImage');
         $method->setAccessible(true);
 
@@ -117,9 +108,9 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
             'mediaType' => 'image/' . $mimeType,
         ];
 
-        $this->assertSame($coverImage, $method->invoke($publisher, $tmpDir));
+        $this->assertSame($coverImage, $method->invoke($this->epub2Publisher, $tmpDir));
 
-        $this->app['filesystem']->remove($tmpDir);
+        $this->filesystem->remove($tmpDir);
         imagedestroy($image);
     }
 

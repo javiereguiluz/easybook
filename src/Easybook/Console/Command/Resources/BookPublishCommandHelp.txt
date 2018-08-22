@@ -28,6 +28,6 @@ Book configuration is defined in <info>config.yml</info> file, but you can set
 new options or override configured values with <info>--configuration</info>
 option:
 
-<info>$ ./book publish the-origin-of-species print --configuration='{ "book": { "title": "...", "author": "...", "new-option": "..." } }'</info>
+<info>vendor/bin/easybook publish the-origin-of-species print --configuration='{ "book": { "title": "...", "author": "...", "new-option": "..." } }'</info>
 
 The value of <info>--configuration</info> option must be a JSON formatted string.

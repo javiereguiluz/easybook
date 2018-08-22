@@ -35,19 +35,6 @@ final class Validator
         $this->symfonyStyle = $symfonyStyle;
     }
 
-    /**
-     * Validates that the given $value is not an empty string.
-     */
-    public static function validateNonEmptyString($name, $value)
-    {
-        if ($value === null || trim($value) === '') {
-            // it throws an exception for invalid values because it's used in console commands
-            throw new InvalidArgumentException("ERROR: The ${name} cannot be empty.");
-        }
-
-        return $value;
-    }
-
     public static function validateDirExistsAndWritable($dir)
     {
         if ($dir === null || trim($dir) === '') {
