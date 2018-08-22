@@ -50,56 +50,10 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
         $this->filesystem->remove($this->tmpDir);
     }
 
-    public function testInteractiveCommand(): void
-    {
-        $command = $this->container->get(BookCustomizeCommand::class);
-
-        // prepare the data that will be input interactively
-        // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
-        $dialog = new DialogHelper();
-        $dialog->setInputStream($this->getInputStream("\n\nthe-origin-of-species\n\n\nweb\n"));
-        $helper = new HelperSet([new FormatterHelper(), $dialog]);
-        $command->setHelperSet($helper);
-
-        $tester = new CommandTester($command);
-        $tester->execute([
-            'command' => $command->getName(),
-            '--dir' => $this->tmpDir,
-        ], [
-            'interactive' => true,
-        ]);
-
-        $app = $command->getApp();
-
-        $this->assertContains(
-            'Welcome to the easybook interactive book customizer',
-            $tester->getDisplay(),
-            'The interactive customizer welcome message is shown'
-        );
-
-        $this->assertContains(
-            'Please, type the slug of the book (e.g. the-origin-of-species)',
-            $tester->getDisplay(),
-            'The interactive generator asks for the title of the book'
-        );
-
-        $this->assertContains(
-            'ERROR: The slug can only contain letters, numbers and dashes (no spaces)',
-            $tester->getDisplay(),
-            'Interactive publisher validates wrong "slug" input'
-        );
-
-        $this->assertContains(
-            'OK  You can now customize the book design with the following stylesheet:',
-            $tester->getDisplay(),
-            'The custom CSS is successfully generated'
-        );
-    }
-
     /**
-     * @dataProvider getNonInteractiveCommandData
+     * @dataProvider getCommandData
      */
-    public function testNonInteractiveCommand($edition): void
+    public function testCommand($edition): void
     {
         $tester = $this->customizeBook($edition);
 
@@ -123,7 +77,7 @@ final class BookCustomizeCommandTest extends AbstractContainerAwareTestCase
         );
     }
 
-    public function getNonInteractiveCommandData()
+    public function getCommandData()
     {
         return [['web'], ['website'], ['print'], ['ebook']];
     }

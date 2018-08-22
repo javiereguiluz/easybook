@@ -39,59 +39,7 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
 //        $this->filesystem->remove($this->tmpDir);
     //    }
 
-    public function testInteractiveCommand(): void
-    {
-        $command = $this->container->get(BookNewCommand::class);
-
-        // prepare the data that will be input interactively
-        // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
-//        $dialog = new DialogHelper();
-//        $this->questionHelper->setInputStream($this->getInputStream("\n\nThe Origin of Species\n"));
-
-//        $helper = new HelperSet([new FormatterHelper(), $dialog]);
-
-        //        $command->setHelperSet($helper);
-
-        $tester = new CommandTester($command);
-        $tester->execute([
-            'command' => $command->getName(),
-            '--dir' => $this->tmpDir,
-        ], [
-            'interactive' => true,
-        ]);
-
-        $this->assertContains(
-            'ERROR: The title cannot be empty.',
-            $tester->getDisplay(),
-            'The interactive generator validates wrong title input'
-        );
-
-        $this->assertContains(
-            'Welcome to the easybook interactive book generator',
-            $tester->getDisplay(),
-            'The interactive generator welcome message is shown'
-        );
-
-        $this->assertContains(
-            'Please, type the title of the book (e.g. The Origin of Species)',
-            $tester->getDisplay(),
-            'The interactive generator asks for the title of the book'
-        );
-
-        $this->assertContains(
-            'OK  You can start writing your book in the following directory',
-            $tester->getDisplay(),
-            'Interactive book generation is successfully completed'
-        );
-
-        $this->assertContains(
-            'the-origin-of-species',
-            $tester->getDisplay(),
-            'The book is generated in the proper directory'
-        );
-    }
-
-    public function testNonInteractiveCommand(): void
+    public function testCommand(): void
     {
         $tester = $this->createNewBook();
 

@@ -4,6 +4,7 @@ namespace Easybook\Console\Command;
 
 use Easybook\Configuration\Option;
 use Easybook\Events\EasybookEvents as Events;
+use Easybook\Util\Validator;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,11 +25,16 @@ final class BookPublishCommand extends Command
      * @var string
      */
     private $bookTitle;
+    /**
+     * @var Validator
+     */
+    private $validator;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher, string $bookTitle)
+    public function __construct(EventDispatcherInterface $eventDispatcher, string $bookTitle, Validator $validator)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->bookTitle = $bookTitle;
+        $this->validator = $validator;
     }
 
     protected function configure(): void
@@ -46,9 +52,9 @@ final class BookPublishCommand extends Command
         $dir = $input->getOption('dir') ?: $this->app['app.dir.doc'];
 
         // validate book dir and add some useful values to the app configuration
-        $bookDir = $this->app['validator']->validateBookDir($slug, $dir);
+        $bookDir = $this->validator->validateBookDir($slug, $dir);
 
-        $this->app['publishing.dir.book'] = $bookDir;
+         $this->app['publishing.dir.book'] = $bookDir;
         $this->app['publishing.dir.contents'] = $bookDir . '/Contents';
         $this->app['publishing.dir.resources'] = $bookDir . '/Resources';
         $this->app['publishing.dir.plugins'] = $bookDir . '/Resources/Plugins';

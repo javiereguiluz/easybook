@@ -40,68 +40,10 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 //        $this->filesystem->remove($this->tmpDir);
     //    }
 
-    public function testInteractiveCommand(): void
-    {
-        $command = $this->container->get(BookPublishCommand::class);
-
-        // prepare the data that will be input interactively
-        // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
-        $dialog = new DialogHelper();
-        $dialog->setInputStream($this->getInputStream("\n\nthe-origin-of-species\n\n\nweb\n"));
-        $helper = new HelperSet([new FormatterHelper(), $dialog]);
-        $command->setHelperSet($helper);
-
-        $tester = new CommandTester($command);
-        $tester->execute([
-            'command' => $command->getName(),
-            '--dir' => $this->tmpDir,
-        ], [
-            'interactive' => true,
-        ]);
-
-        $app = $command->getApp();
-
-        $this->assertContains(
-            'Welcome to the easybook interactive book publisher',
-            $tester->getDisplay(),
-            'The interactive publisher welcome message is shown'
-        );
-
-        $this->assertContains(
-            'Please, type the slug of the book (e.g. the-origin-of-species)',
-            $tester->getDisplay(),
-            'The interactive generator asks for the title of the book'
-        );
-
-        $this->assertContains(
-            'ERROR: The slug can only contain letters, numbers and dashes (no spaces)',
-            $tester->getDisplay(),
-            'Interactive publisher validates wrong "slug" input'
-        );
-
-        $this->assertContains(
-            'Publishing web edition of The Origin of Species book...',
-            $tester->getDisplay(),
-            'The book is being published'
-        );
-
-        $this->assertContains(
-            'OK  You can access the book in the following directory:',
-            $tester->getDisplay(),
-            'The book is successfully published'
-        );
-
-        $this->assertContains(
-            '/the-origin-of-species/Output/web',
-            $tester->getDisplay(),
-            'The book is published in the proper directory'
-        );
-    }
-
     /**
-     * @dataProvider getNonInteractiveCommandData
+     * @dataProvider getCommandData
      */
-    public function testNonInteractiveCommand($edition, $publishedBookFilePath): void
+    public function testCommand($edition, $publishedBookFilePath): void
     {
         $tester = $this->publishBook($edition);
 
@@ -117,7 +59,7 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
         );
     }
 
-    public function getNonInteractiveCommandData()
+    public function getCommandData()
     {
         return [
             //    edition    $publishedBookFilePath

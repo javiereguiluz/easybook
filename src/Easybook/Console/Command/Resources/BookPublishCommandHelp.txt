@@ -1,9 +1,5 @@
 The <info>publish</info> command publishes an edition of a book.
 
-If you don't include any parameter, the command will guide you through an
-interactive publisher. You can bypass the interactive publisher typing the
-slug of the book and the name of the edition after the <info>publish</info> command:
-
 <info>$ ./book publish the-origin-of-species print</info>
 
 By default, <comment>easybook</comment> looks for the book contents in its <info>doc/</info> directory.

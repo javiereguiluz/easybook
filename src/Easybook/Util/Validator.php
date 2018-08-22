@@ -73,7 +73,7 @@ final class Validator
         $attempts = 6;
         $bookDir = $baseDir . '/' . $slug;
 
-        if (! $this->input->isInteractive() && ! file_exists($bookDir)) {
+        if (! file_exists($bookDir)) {
             throw new RuntimeException(sprintf(
                 "The directory of the book cannot be found.\n"
                 . " Check that '%s' directory \n"
