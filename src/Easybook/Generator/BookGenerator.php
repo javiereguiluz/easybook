@@ -4,15 +4,27 @@ namespace Easybook\Generator;
 
 use Symfony\Component\Filesystem\Filesystem;
 
-final class BookGenerator extends Generator
+final class BookGenerator
 {
+    /**
+     * @var Filesystem
+     */
     private $filesystem;
 
+    /**
+     * @var string
+     */
     private $bookDirectory;
 
+    /**
+     * @var string
+     */
     private $skeletonDirectory;
 
-    private $configuration;
+    /**
+     * @var mixed[]
+     */
+    private $configuration = [];
 
     public function __construct(Filesystem $filesystem)
     {
@@ -20,24 +32,18 @@ final class BookGenerator extends Generator
     }
 
     /**
-     * Sets the configuration variables used to render the config.yml template.
+     * @param mixed[] $configuration
      */
     public function setConfiguration(array $configuration): void
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * Sets the skeletons directory.
-     */
     public function setSkeletonDirectory(string $skeletonDirectory): void
     {
         $this->skeletonDirectory = $skeletonDirectory;
     }
 
-    /**
-     * Sets the book directory.
-     */
     public function setBookDirectory(string $bookDirectory): void
     {
         // check if `$bookDir` directory is available
@@ -51,19 +57,13 @@ final class BookGenerator extends Generator
         $this->bookDirectory = $bookDirectory;
     }
 
-    /**
-     * Returns the book directory.
-     *
-     * @return string The book directory
-     */
     public function getBookDirectory(): string
     {
         return $this->bookDirectory;
     }
 
     /**
-     * Generates the hierarchy of files and directories needed
-     * to publish a book.
+     * Generates the hierarchy of files and directories needed to publish a book.
      */
     public function generate(): void
     {
@@ -74,11 +74,22 @@ final class BookGenerator extends Generator
             $this->filesystem->copy($this->skeletonDirectory . '/' . $file, $this->bookDirectory . '/' . $file);
         }
 
-        $this->renderFile(
-            $this->skeletonDirectory,
-            'config.yml.twig',
-            $this->bookDirectory . '/config.yml',
-            $this->configuration
-        );
+        $this->filesystem->dumpFile($this->bookDirectory . '/config.yml', $this->render($this->skeletonDirectory, 'config.yml.twig', $this->configuration));
+    }
+
+    /**
+     * @param mixed[] $parameters
+     */
+    private function render(string $skeletonDir, string $template, array $parameters): string
+    {
+        $loader = new Twig_Loader_Filesystem($skeletonDir);
+        $twig = new Twig_Environment($loader, [
+            'debug' => true,
+            'cache' => false,
+            'strict_variables' => true,
+            'autoescape' => false,
+        ]);
+
+        return $twig->render($template, $parameters);
     }
 }
