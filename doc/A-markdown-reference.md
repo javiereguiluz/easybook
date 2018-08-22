@@ -22,7 +22,7 @@ This project brings some nice extra features to the basic Markdown syntax.
 You can add custom `id` attributes to any header (both *setext* and *atx* style
 headers):
 
-~~~
+```
 (atx style headers)
 # Header 1 # {#header1}
 
@@ -33,14 +33,14 @@ headers):
 (setex style headers)
 Other First Level Header {#special-id}
 ========================
-~~~
+```
 
 Then, you can link internally to any book section:
 
-~~~
+```
 In the [first section](#header1) you can see the differences between
 [this section](#my-custom-header2-id) and [that section](#special-id).
-~~~
+```
 
 As a bonus, in PDF books the internal links display the linked book page.
 
@@ -48,12 +48,12 @@ As a bonus, in PDF books the internal links display the linked book page.
 
 You can add leading and trailing pipes to table rows:
 
-~~~
+```
 | First Header  | Second Header |
 | ------------- | ------------- |
 | Content Cell  | Content Cell  |
 | Content Cell  | Content Cell  |
-~~~
+```
 
 | First Header  | Second Header |
 | ------------- | ------------- |
@@ -65,13 +65,13 @@ where you want contents aligned. In the following example, the contents of the
 first column will be left-aligned and the contents of the second column will be
 right-aligned:
 
-~~~
+```
 | Item      | Value |
 | :-------- | -----:|
 | Computer  | $1600 |
 | Phone     |   $12 |
 | Pipe      |    $1 |
-~~~
+```
 
 Table contents can include any simple formatting as bold, italics, code, etc.
 
@@ -87,7 +87,7 @@ code blocks, etc.
 
 Code blocks can be automatically highlighted using the following syntax:
 
-~~~
+```
 [code language]
 ...
 
@@ -96,7 +96,7 @@ Code blocks can be automatically highlighted using the following syntax:
 
 [code xml]
 ...
-~~~
+```
 
 **easybook** recognizes automatically tens of programming languages thanks to
 the use of [GeSHi highlighting library](http://qbnz.com/highlighter/).
@@ -108,14 +108,14 @@ the use of [GeSHi highlighting library](http://qbnz.com/highlighter/).
 Books usually align/float images on the right/left of the contents, but Markdown
 doesn't include a mechanism to define image alignment:
 
-~~~
+```
 ![Alt text](url "Optional title text")
-~~~
+```
 
 **easybook** defines a simple and Markdown-compatible mechanism based on adding
 whitespaces on *Alt text*:
 
-~~~
+```
 // regular image not aligned
 ![Test image](figure1.png)
 
@@ -130,12 +130,12 @@ whitespaces on *Alt text*:
 // "alt text" has whitespaces both on the left and on the right
 // -> the image is centered
 ![ Test image ](figure1.png)
-~~~
+```
 
 If you enclose alt text with quotes, make sure that whitespaces are placed
 outside the quotes. The following images for example don't define any alignment:
 
-~~~
+```
 !["Test image"](figure1.png)
 
 ![" Test image"](figure1.png)
@@ -143,11 +143,11 @@ outside the quotes. The following images for example don't define any alignment:
 !["Test image "](figure1.png)
 
 ![" Test image "](figure1.png)
-~~~
+```
 
 Image alignment is also possible when using the alternative image syntax:
 
-~~~
+```
 ![Test image][1]
 
 ![ Test image][1]
@@ -157,7 +157,7 @@ Image alignment is also possible when using the alternative image syntax:
 ![ Test image ][1]
 
 [1]: figure1.png
-~~~
+```
 
 ### Decorative images ###
 
@@ -172,9 +172,9 @@ images (for example, a graphical separator for paragraphs or sections).
 
 The following syntax makes possible defining this type of decorative images:
  
-~~~
+```
 ![*](image1.png)
-~~~
+```
 
 That is: just defining '*' as the image title tells **easybook** that the image 
 is not to be treated as an illustration but a normal image (i.e. it will not 
@@ -183,7 +183,7 @@ embedded into the normal text flow instead of being assigned a block format).
 
 All other image options also work, so the following examples are still valid: 
 
-~~~
+```
 ![ *](image1.png)
 
 ![ * ](image1.png)
@@ -191,7 +191,7 @@ All other image options also work, so the following examples are still valid:
 ![ * ][1]
 
 [1]: image1.png
-~~~
+```
 
 ### Page breaks ###
 
@@ -200,10 +200,10 @@ All other image options also work, so the following examples are still valid:
 Books can force page breaks inside any content by using one of the following
 two special tags:
 
-~~~
+```
 <!-- BREAK -->
 {pagebreak}
-~~~
+```
 
 The first tag uses the LeanPub syntax and the second one uses the Marked syntax.
 Note that you must write the tags as shown above, without adding any extra
@@ -219,7 +219,7 @@ You can mix the two tags in the same content and you can place them anywhere
 **easybook** supports several kinds of admonitions. The syntax is based on
 LeanPub and Marked and it's very similar to blockquotes:
 
-~~~
+```
 > This is a regular bloquote
 > Nothing special here
 
@@ -253,4 +253,4 @@ Q> ...
 
 D> This is a discussion
 D> ...
-~~~
+```

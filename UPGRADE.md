@@ -18,6 +18,7 @@
     ```
 
 - use parameters in YAML instead of --dir and --title and --edition CLI options
+- `customize` command dropped, use `publish` having the same output
 
 
 ## Upgrade to easybook 5.0

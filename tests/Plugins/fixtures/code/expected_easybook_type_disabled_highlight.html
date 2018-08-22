@@ -101,7 +101,7 @@ end procedure</pre>
 <p>This code block uses the fenced code block style. Therefore, it shouldn't be
 parsed and it should be displayed as is:</p>
 
-<p>~~~ .twig
+<p>``` .twig
 {% for row in items|batch(3) %}
     <div class=row>
         {% for column in row %}
@@ -109,7 +109,7 @@ parsed and it should be displayed as is:</p>
         {% endfor %}
     </div>
 {% endfor %}
-~~~</p>
+```</p>
 
 <p>And the following code listing uses the GitHub-style code block, so it should
 also be output as is, without parsing or highlighting:</p>

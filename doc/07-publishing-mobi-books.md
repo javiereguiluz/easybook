@@ -12,7 +12,7 @@ for Windows, Mac OS X or Linux at [amzn.to/kindlegen][1].
 Once installed, execute the `kindlegen` command without any argument to display
 the help of the application and to check that everything went fine:
 
-~~~ .cli
+``` .cli
 $ kindlegen
 
 *************************************************************
@@ -41,7 +41,7 @@ Options:
    -gif: images are converted to GIF format (no JPEG in the book)
 
    -locale <locale option> : To display messages in selected language
-~~~
+```
 
 ### Configuration ###
 
@@ -50,7 +50,7 @@ the most common installation directories depending on the operating system. If
 `kindlegen` isn't found, **easybook** will ask you to type the absolute path
 where you installed it:
 
-~~~ .cli
+``` .cli
 $ ./book publish easybook-doc-en kindle
 
  Publishing 'kindle' edition of 'easybook documentation' book...
@@ -68,13 +68,13 @@ $ ./book publish easybook-doc-en kindle
  If you have installed it in a custom directory, please type its
  full absolute path:
  > _
-~~~
+```
 
 In order to avoid typing the `kindlegen` path every time you publish a book,
 you can leverage the **easybook** [global parameters](#global-parameters) to
 set the `kindlegen` path once for each book:
 
-~~~ .yaml
+```yaml
 easybook:
     parameters:
         kindlegen.path: '/path/to/utils/KindleGen/kindlegen'
@@ -82,12 +82,12 @@ easybook:
 book:
     title: '...'
     # ...
-~~~
+```
 
 In addition to the `kindlegen` path, you can also tweak the options of the
 `kindlegen` command with the `kindlegen.command_options` global parameter:
 
-~~~ .yaml
+```yaml
 easybook:
     parameters:
         kindlegen.path: '/path/to/utils/KindleGen/kindlegen'
@@ -96,7 +96,7 @@ easybook:
 book:
     title: '...'
     # ...
-~~~
+```
 
 ## Templates ##
 

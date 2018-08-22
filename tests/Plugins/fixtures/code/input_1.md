@@ -86,7 +86,7 @@ programming language:
 This code block uses the fenced code block style. Therefore, it shouldn't be
 parsed and it should be displayed as is:
 
-~~~ .twig
+``` .twig
 {% for row in items|batch(3) %}
     <div class=row>
         {% for column in row %}
@@ -94,7 +94,7 @@ parsed and it should be displayed as is:
         {% endfor %}
     </div>
 {% endfor %}
-~~~
+```
 
 And the following code listing uses the GitHub-style code block, so it should
 also be output as is, without parsing or highlighting:

@@ -85,7 +85,7 @@ languages (`php`, `java`, `c`, `javascript`, `ruby`, `python`,
 Syntax highlighting is disabled by default. Set the `highlight_code` option to 
 `true` in any edition you want to highlight:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     editions:
@@ -100,7 +100,7 @@ book:
          edition3:
             highlight_code: false
             # ...
-~~~
+```
 
 ### Code block types ###
 
@@ -113,11 +113,11 @@ tab indentation of code blocks. The difference is that **easybook** augments
 this format to allow you set the programming language of the code with a
 special tag in the first line of the code listing:
 
-~~~
+```
     [php]
     $lorem = 'ipsum';
     // ...
-~~~
+```
 
 When the first line of the code block is the name of a programming or 
 configuration language enclosed with brackets (`[` and `]`), this special tag 
@@ -128,11 +128,11 @@ If some code listing is language agnostic or you don't want to highlight it,
 don't include any language tag or if you prefer it, add the generic `[code]` 
 tag:
 
-~~~
+```
     [code]
     // This code won't be highlighted
     // ...
-~~~
+```
 
 The problem with this code block type is that all the code must be indented
 and therefore, there cannot be empty lines without leading tabs or
@@ -141,83 +141,83 @@ white spaces in empty lines.
 
 This code will be wrongly parsed:
 
-~~~
+```
     [php]
     $lorem = 'ipsum';
 (no spaces or tabs in this line)
     $another_lipsum = 'ipsum';
     // ...
-~~~
+```
 
 The same code, with tabs or white spaces in every line, works perfectly:
 
-~~~
+```
     [php]
     $lorem = 'ipsum';
     (4 white spaces in this line)
     $another_lipsum = 'ipsum';
     // ...
-~~~
+```
 
 The other two code block types work perfectly whatever the code you write, so
 you don't have to mess around with leading tabs or white spaces.
 
 **2)** `fenced`, this is the style defined by the [PHP Markdown library][2]:
 
-  * Define the start of the code block with at least three `~~~`
+  * Define the start of the code block with at least three `````
   * Optionally set the programming language name, prefixing it with a dot.
   * Include the code without any indentation.
-  * Define the end of the code block using the same number of `~~~` as the 
+  * Define the end of the code block using the same number of ````` as the 
     opening of the block.
 
 Examples:
 
-~~~
- ~~~ .php
+```
+ ``` .php
  $lorem = 'ipsum';
  // ...
- ~~~
-~~~
+ ```
+```
 
-~~~
- ~~~~~~~~~~~~~~~~~~~~~~ .php
+```
+ `````````````````````~ .php
  $lorem = 'ipsum';
  // ...
- ~~~~~~~~~~~~~~~~~~~~~~
-~~~
+ `````````````````````~
+```
 
-~~~
- ~~~
+```
+ ```
  // some generic code
  // without any programming language
  // ...
- ~~~
-~~~
+ ```
+```
 
 **3)** `github`, this is the style used by GitHub and it's very similar
-to the fenced style. Instead of three tildes (`~~~`), use three backticks:
+to the fenced style. Instead of three tildes (`````), use three backticks:
 
-~~~
+```
 ```php
 $lorem = 'ipsum';
 // ...
 ```
-~~~
+```
 
-~~~
+```
 ```
 // some generic code
 // without any programming language
 // ...
 ```
-~~~
+```
 
 You can use any code block type, but a given book can only use one type for all
 its code listings. The Markdown classic code block type is enabled by default.
 To enable one of the other two code block types, use the `code_block_type` 
 global parameter:
 
-~~~ .yaml
+```yaml
 easybook:
     parameters:
         parser.options:
@@ -228,7 +228,7 @@ easybook:
 book:
     title:  ...
     # ...
-~~~
+```
 
 ### Improve the syntax highlighting performance ###
 
@@ -243,7 +243,7 @@ small number of lines of code. However, for large books it can reduce more than
 Set the `highlight_cache` option to `true` in any edition you want to enable
 this cache:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     editions:
@@ -251,7 +251,7 @@ book:
             highlight_code:  true
             highlight_cache: true
             # ...
-~~~
+```
 
 [1]: http://qbnz.com/highlighter
 [2]: http://michelf.ca/projects/php-markdown/

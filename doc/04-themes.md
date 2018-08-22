@@ -18,7 +18,7 @@ appendices (with the `content` option). For that reason, **easybook** defines
 sensible default contents for some content types. If your book for example
 includes a `license` content type without any content:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -26,11 +26,11 @@ book:
         - { element: license }
         - { element: chapter, content: 'chapter1.md' }
         - ...
-~~~
+```
 
 **easybook** will use the following as the content for this element:
 
-~~~ .twig
+``` .twig
 &copy; Copyright {{ book.publication_date|default('now')|date('Y') }},
 {{ book.author }}
 
@@ -41,17 +41,17 @@ be reproduced or transmitted in any form or by any means, electronic or
 mechanical, including photocopying, recording, or by any information
 storage  and retrieval system without express written permission from the 
 author and/or publisher.
-~~~
+```
 
 The default `license` page displays a copyright notice corresponding to either
 the book publication date (if defined) or the current year. Similarly, the
 `title` content type defines the following default content:
 
-~~~ .twig
+``` .twig
 <h1>{{ book.title }}</h1>
 <h2>{{ book.author }}</h2>
 <h3>{{ book.edition }}</h3>
-~~~
+```
 
 The contents defined by **easybook** depend on both the edition being published
 and the content type. You can access these default contents at the `Contents/`
@@ -62,7 +62,7 @@ directory of the theme.
 If you don't want to use **easybook** default contents for some element, simply
 add the `content` option indicating the file that defines its contents:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -70,7 +70,7 @@ book:
         - { element: license, content: creative-commons.md }
         - { element: title,   content: my-own-title-page.md }
         - ...
-~~~
+```
 
 ## Templates ##
 
@@ -83,7 +83,7 @@ the `Templates/` directory of the theme.
 
 This is for example the template used to decorate each chapter of a PDF book:
 
-~~~ .twig
+``` .twig
 <div class="item chapter">
     <h1 id="{{ item.slug }}">
         <span>{{ item.label }}</span> {{ item.title }}
@@ -91,7 +91,7 @@ This is for example the template used to decorate each chapter of a PDF book:
 
     {{ item.content }}
 </div>
-~~~
+```
 
 The data of the book item being decorated is accessible through a special
 variable called `item`, which stores the following properties:
@@ -227,26 +227,9 @@ within any of these directories:
 
   1. `<book>/Resources/Templates/<edition-name>/style.css`, if you want to
      apply the styles just to one specific edition.
-  2. `<book>/Resources/Templates/<edtion-type>/style.css`, if you want to apply
-     the same styles to all the editions of the same type (`epub`, `mobi`,
-     `html`, `html_chunked` or `pdf`).
-  3. `<book>/Resources/Templates/style.css`, if you want to apply the same
-     styles to all the editions of the book.
-
-Instead of creating this CSS file by hand, **easybook** includes a command called `customize` that generates the needed CSS for each edition. The first
-argument of the command is the book directory and the second argument is the
-name of the edition to be customized:
-
-~~~ .cli
-$ ./book customize my-book ebook
-
-OK: You can now customize the book design with the following stylesheet:
-<easybook-dir>/doc/my-book/Resources/Templates/ebook/style.css
-~~~
-
-The CSS file generated with the `customize` command is different for every 
-edition format (`html`, `pdf`, `epub`, `mobi`) and it includes some comments 
-to ease the customization of the book design.
+  2. `<book>/Resources/Templates/<edtion-type>/style.css`, if you want to apply the same styles to all the editions of the same type (`epub`, `mobi`, `html`, `html_chunked` or `pdf`). 
+  
+  3. `<book>/Resources/Templates/style.css`, if you want to apply the same styles to all the editions of the book.
 
 ## Fonts ##
 
@@ -263,7 +246,7 @@ books look professional. You can see the fonts and their license in the
 **easybook** requires each content to have its own **title**. Define the title 
 of each item with the `title` configuration option:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -274,7 +257,7 @@ book:
         - { element: part, title: 'Advanced Concepts' }
         - { element: chapter, number: 3, content: chapter3.md }
         - ...
-~~~
+```
 
 Chapters and appendices don't have to explicitly set their title in the
 `config.yml` file. The reason is that **easybook** looks for the first `<h1>`
@@ -286,7 +269,7 @@ the book is written. The following are for example the default titles applied
 to English books (as defined in the `app/Resources/Translations/titles.en.yml`
 file):
 
-~~~ .yaml
+```yaml
 title:
     acknowledgement: 'Acknowledgements'
     afterword:       'Afterword'
@@ -306,7 +289,7 @@ title:
     prologue:        'Prologue'
     title:           'Title'
     toc:             'Table of contents'
-~~~
+```
 
 Moreover, the book can add **labels** (`Chapter XX`, `Appendix XX`, etc.) to 
 the section titles using the `labels` option. As explained before, this option 
@@ -321,12 +304,12 @@ Unlike the titles, labels can contain variable parts, such as the appendix or
 chapter number. Therefore, **easybook** uses Twig templates to define each 
 label:
 
-~~~ .yaml
+```yaml
 label:
     figure: 'Figure {{ element.number }}.{{ item.number }}'
     part:   'Part {{ item.number }}'
     table:  'Table {{ element.number }}.{{ item.number }}'
-~~~
+```
 
 The `figure` and `table` labels can use the same variables as the `figure.twig`
 and `table.twig` templates explained previously in the
@@ -339,7 +322,7 @@ one of the six heading levels (`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` and
 `<h6>`). In the following example, appendices only include a label in their 
 titles, thus leaving empty the last five levels:
 
-~~~ .yaml
+```yaml
 label:
     appendix:
         - 'Appendix {{ item.number }}'
@@ -348,7 +331,7 @@ label:
         - ''
         - ''
         - ''
-~~~
+```
 
 Labels can access to all configuration options defined by the item in the
 `config.yml` file. The label of a chapter can then use `{{ item.number }}` to
@@ -361,18 +344,18 @@ get the label, being `1` the level of `<h1>` heading and `6` the level of
 heading levels. For that reason, to show second-level headings as `1.1`, `1.2` 
 ... `7.1`, `7.2` you can use the following expression:
 
-~~~ .yaml
+```yaml
 label:
     chapter:
         - 'Chapter {{ item.number }}'
         - '{{ item.counters[0] }}.{{ item.counters [1] }}'
         - ...
-~~~
+```
 
 Extending the previous example, you can use the following templates to format
 all the heading levels as `1.1`, `1.1.1`, `1.1.1.1`, etc.:
 
-~~~ .yaml
+```yaml
 label:
     chapter:
         - 'Chapter {{ item.number }} '
@@ -381,7 +364,7 @@ label:
         - '{{ item.counters[0:4]|join(".") }}'  # 1.1.1.1
         - '{{ item.counters[0:5]|join(".") }}'  # 1.1.1.1.1
         - '{{ item.counters[0:6]|join(".") }}'  # 1.1.1.1.1.1
-~~~
+```
 
 This last example clearly shows what you can achieve by combining the
 flexibility of **easybook** and the power of Twig.
@@ -410,10 +393,10 @@ of the images in any book edition, create a new
 `<book>/Resources/Translations/labels.en.yml` file and add just the following 
 content:
 
-~~~ .yaml
+```yaml
 label:
     figure: 'Illustration {{ item.number }}'
-~~~
+```
 
 If you want to change the titles instead of the labels, follow the same steps
 but create a file called `titles.en.yml` instead of `labels.en.yml`. If your 

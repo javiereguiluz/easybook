@@ -1,6 +1,6 @@
 This code block should be properly parsed and highlighted:
 
-~~~ .php
+``` .php
 class Finder implements \IteratorAggregate, \Countable
 {
     /**
@@ -18,13 +18,13 @@ class Finder implements \IteratorAggregate, \Countable
     }
     // ...
 }
-~~~
+```
 
 This is an expanded version of the previous code block and it should be also
 properly parsed and highlighted, because fenced code blocks don't suffer the
 shortcomings of the default code block type:
 
-~~~ .php
+``` .php
 <?php
 
 /*
@@ -63,12 +63,12 @@ class Finder implements \IteratorAggregate, \Countable
 
     // ...
 }
-~~~
+```
 
 This is a code block with a generic code listing because it specifies no particular
 programming language:
 
-~~~
+```
 // Bubble sort pseudocode implementation
 // see http://en.wikipedia.org/wiki/Bubble_sort#Pseudocode_implementation
 procedure bubbleSort( A : list of sortable items )
@@ -84,7 +84,7 @@ procedure bubbleSort( A : list of sortable items )
      end for
    until not swapped
 end procedure
-~~~
+```
 
 This code block uses the default block style. Therefore, it shouldn't be
 parsed and it should be displayed as is:
@@ -111,11 +111,11 @@ also be output as is, without parsing or highlighting:
 {% endfor %}
 ```
 
-The last code is a bit special, because it contains the special `~~~` tag
+The last code is a bit special, because it contains the special ````` tag
 that, in this case, should not be interpreted, but displayed:
 
-~~~
-    ~~~ .php
+```
+    ``` .php
     public function start($callback = null)
     {
         if (null === $this->getCommandLine()) {
@@ -126,5 +126,5 @@ that, in this case, should not be interpreted, but displayed:
         }
         parent::start($callback);
     }
-    ~~~
-~~~
+    ```
+```

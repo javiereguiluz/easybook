@@ -13,7 +13,7 @@ demo version of `PrinceXML` for Windows, Mac OS X or Linux at
 Once installed, execute the `prince` command without any argument to display
 the help of the application and to check that everything went fine:
 
-~~~ .cli
+``` .cli
 $ prince
 Usage:
   prince [OPTIONS] file.xml              Convert file.xml to file.pdf
@@ -21,7 +21,7 @@ Usage:
   prince [OPTIONS] FILES... -o out.pdf   Combine multiple files to out.pdf
 
 Try 'prince --help' for more information.
-~~~
+```
 
 ### Configuration ###
 
@@ -30,7 +30,7 @@ the most common installation directories depending on the operating system. If
 `PrinceXML` isn't found, **easybook** will ask you to type the absolute path
 where you installed it:
 
-~~~ .cli
+``` .cli
 $ ./book publish easybook-doc-en print
 
  Publishing 'print' edition of 'easybook documentation' book...
@@ -48,13 +48,13 @@ $ ./book publish easybook-doc-en print
  If you have installed in a custom directory, please type its full
  absolute path:
  > _
-~~~
+```
 
 In order to avoid typing the `PrinceXML` path every time you publish a book,
 you can leverage the **easybook** [global parameters](#global-parameters) to
 set the `PrinceXML` path once for each book:
 
-~~~ .yaml
+```yaml
 easybook:
     parameters:
         prince.path: '/path/to/utils/PrinceXML/prince'
@@ -62,7 +62,7 @@ easybook:
 book:
     title:  '...'
     # ...
-~~~
+```
 
 ## Templates ##
 

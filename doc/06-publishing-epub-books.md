@@ -64,7 +64,7 @@ instead of the fixed-width font of the non-highlighted code:
 Considering the actual support for syntax highlighting in e-book readers, it's
 strongly recommended to disable the code highlighting for epub editions:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     editions:
@@ -72,4 +72,4 @@ book:
             format:         epub
             highlight_code: false
             # ...
-~~~
+```

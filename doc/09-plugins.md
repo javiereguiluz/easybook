@@ -28,7 +28,7 @@ timestamp of each moment.
 If the plugin is called `Timer`, create a new `TimerPlugin` class in the
 `<book>/Resources/Plugins/TimerPlugin.php` file and add the following content:
 
-~~~ .php
+``` .php
 // <book>/Resources/Plugins/TimerPlugin.php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -39,7 +39,7 @@ class TimerPlugin implements EventSubscriberInterface
         return array();
     }
 }
-~~~
+```
 
 Now, use the `getSubscribedEvents()` method to define the specific events that
 you need to *hook* into. In the next section, you'll find the
@@ -47,7 +47,7 @@ you need to *hook* into. In the next section, you'll find the
 that the event notified when the book publication begins is called
 `Events::PRE_PUBLISH` and the other event is called `Events::POST_PUBLISH`:
 
-~~~ .php
+``` .php
 // <book>/Resources/Plugins/TimerPlugin.php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
@@ -73,7 +73,7 @@ class TimerPlugin implements EventSubscriberInterface
         // ...
     }
 }
-~~~
+```
 
 First, the `getSubscribedEvents()` method returns an array of events that you 
 want to subscribe to and the name of the methods that will be executed when 
@@ -93,7 +93,7 @@ N> `ParseEvent` class.
 Finally, to register the begin and the end of the book publication, you can 
 simply store the timestamp of each moment in some application properties:
 
-~~~ .php
+``` .php
 // <book>/Resources/Plugins/TimerPlugin.php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
@@ -119,7 +119,7 @@ class TimerPlugin implements EventSubscriberInterface
         $event->app->set('app.timer.finish', microtime(true));
     }
 }
-~~~
+```
 
 ## Events defined by easybook ## {#easybook-events}
 
@@ -127,7 +127,7 @@ In order to keep things organized and to avoid the problems introduced by the
 [magic strings](http://en.wikipedia.org/wiki/Magic_string), **easybook** 
 follows the best practice of defining the event names in a special class:
 
-~~~ .php
+``` .php
 namespace Easybook\Events;
 
 final class EasybookEvents
@@ -141,7 +141,7 @@ final class EasybookEvents
     const PRE_DECORATE  = 'item.decorate.start';
     const POST_DECORATE = 'item.decorate.finish';
 }
-~~~
+```
 
 The following table explains when is each event notified and the kind of event object injected to the subscriber methods:
 
@@ -201,7 +201,7 @@ operations into several methods. When subscribing to the event, instead of
 passing a simple string with the method name, pass an array with all the 
 method names:
 
-~~~ .php
+``` .php
 class MyPlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
@@ -215,7 +215,7 @@ class MyPlugin implements EventSubscriberInterface
             )
         );
     }
-~~~
+```
 
 ### Event priorities ###
 
@@ -232,7 +232,7 @@ priority of each subscribed method. When subscribing to the event, instead of
 passing a simple string with the method name, pass an array with the method 
 name and its priority:
 
-~~~ .php
+``` .php
 class MyPlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
@@ -243,13 +243,13 @@ class MyPlugin implements EventSubscriberInterface
         );
     }
 }
-~~~
+```
 
 The priority of each method is defined as an integer (positive or negative). 
 The default priority is `0` and higher values mean more priority. You can also
 set priority when subscribing several methods to the same event:
 
-~~~ .php
+``` .php
 class MyPlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
@@ -264,7 +264,7 @@ class MyPlugin implements EventSubscriberInterface
         );
     }
 }
-~~~
+```
 
 ### Restricting the plugin execution ###
 
@@ -273,7 +273,7 @@ edition or for a specific edition format (e.g. only for PDF books). The easiest
 way to restrict the execution of the plugin is to get the edition being 
 published and check its name or format:
 
-~~~ .php
+``` .php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
@@ -299,13 +299,13 @@ class MyPlugin implements EventSubscriberInterface
         }
     }
 }
-~~~
+```
 
 You can also stop the propagation of the event to prevent other plugins' 
 methods from executing. To do so, invoke the `stopPropagation()` method of the 
 event object:
 
-~~~ .php
+``` .php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
@@ -328,7 +328,7 @@ class MyPlugin implements EventSubscriberInterface
         $event->stopPropagation();
     }
 }
-~~~
+```
 
 ## Built-in plugins ##
 

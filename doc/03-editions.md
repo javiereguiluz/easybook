@@ -8,7 +8,7 @@ Editions are defined under the `editions` option in the `config.yml` file. By
 default, the books created with the `new` command define five editions named
 `ebook`, `kindle`, `print`, `web` and `website`:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     editions:
@@ -31,7 +31,7 @@ book:
         website:
             extends: web
             format:  html_chunked
-~~~
+```
 
 ## Edition formats ##
 
@@ -69,9 +69,7 @@ edition format and others are specific to each format.
     generated regularly.
   * `include_styles`, if `true` **easybook** default CSS styles are applied to
     the published book. If you want to fully customize the design of your 
-    book, don't apply these styles. However, most of the time it's better to
-    apply thee default styles and tweak the design with the `customize` 
-    command.
+    book, don't apply these styles.
   * `labels`, sets the content types for which **easybook** will add labels
     to their section headings. By default labels are only added to headings of
     chapters and appendices. In addition to the regular content types, you can
@@ -111,7 +109,7 @@ define a custom plugin or a script.
 
 Each option admit an array of commands that are executed sequentially:
 
-~~~ .yaml
+```yaml
 book:
     title: '...'
     # ...
@@ -132,12 +130,12 @@ book:
             after_publish:
                 - "/home/user/scripts/notify_book_publish.sh"
                 - "/home/user/scripts/update_google_sitemap_xml.sh"
-~~~
+```
 
 If you only need to execute one command, you can replace the array for
 a simple string:
 
-~~~ .yaml
+```yaml
 book:
     # ...
 
@@ -147,12 +145,12 @@ book:
             # ...
             before_publish: "cd ... && git pull"
             after_publish:  "/home/user/scripts/notify_book_publish.sh"
-~~~
+```
 
 As any other **easybook** command, all of these scripts are rendered as Twig
 strings, so they can easily access to any application property:
 
-~~~ .yaml
+```yaml
 book:
     # ...
 
@@ -162,7 +160,7 @@ book:
             # ...
             before_publish: "git clone git://github.com/{{ app.get('publishing.book.slug') }}/book"
             after_publish:  "cp ... /home/{{ book.author }}/books/{{ 'now'|date('YmdHis') }}_book.pdf"
-~~~
+```
 
 ## Extending editions ##
 
@@ -178,7 +176,7 @@ have very small margins to reduce its length, the normal version (`print`) is
 one-sided and has normal margins. The version prepared for lulu.com website
 (`lulu.com`) is similar to the normal version, except is double-sided:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     editions:
@@ -204,7 +202,7 @@ book:
         lulu.com:
             extends:      print
             two_sided:    true
-~~~
+```
 
 First, define a new `pdf` format edition called `print` and set the page size, 
 the margins and disable the two-sided printing. Then, instead of creating a new
@@ -226,7 +224,7 @@ extend from it.
 If for example your `before_publish` and `after_publish` scripts are the
 same for every edition, group them in a *fake* edition:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     editions:
@@ -245,6 +243,6 @@ book:
          edition3:
             extends: common
             # ...
-~~~
+```
 
 [1]: http://about.travis-ci.org/docs/user/build-configuration/#before_script%2C-after_script

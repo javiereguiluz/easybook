@@ -9,7 +9,7 @@ All the book configuration is centralized in a single file called `config.yml`
 at the root directory of the book. Usually this configuration file is divided
 into three parts:
 
-~~~ .yaml
+```yaml
 book:
     # FIRST part: basic book information
     title:            "..."
@@ -31,19 +31,19 @@ book:
         edition2:
             # ...
         # ...
-~~~
+```
 
 The first part of this file sets the basic book information (enclose the value
 of each option with single or double quotes):
 
-~~~ .yaml
+```yaml
 book:
     title:            "The Origin of Species"
     author:           "Charles Darwin"
     edition:          "First edition"
     language:         en
     publication_date: "1859-11-24"
-~~~
+```
 
   * `title`, sets the title of the book. By default **easybook** uses the 
     title that you typed when creating the book with the `new` command, but 
@@ -73,7 +73,7 @@ of each edition of the book.
 Books list their contents with the `contents` option in the `config.yml` file. 
 After creating a new book with the `new` command, its default contents are:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -81,7 +81,7 @@ book:
         - { element: toc   }
         - { element: chapter, number: 1, content: chapter1.md }
         - { element: chapter, number: 2, content: chapter2.md }
-~~~
+```
 
 The most important option of each content is `element`, which defines its
 content type. **easybook** currently supports 21 content types (the following
@@ -140,7 +140,7 @@ books, but if you need it, you can also define your own
 
 Some book items don't require any other option besides `element`:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -151,7 +151,7 @@ book:
         - { element: chapter, number: 1, content: chapter1.md }
         - { element: chapter, number: 2, content: chapter2.md }
         - ...
-~~~
+```
 
 In any case, each book item can define the following three options:
 
@@ -181,7 +181,7 @@ chapters. You can add as many chapters as you want and each one can be as
 large or as short as you need. All you have to do is to list the book
 chapters under the `contents` option of the `config.yml` file:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -189,7 +189,7 @@ book:
         - { element: toc   }
         - { element: chapter, number: 1, content: chapter1.md }
         - { element: chapter, number: 2, content: chapter2.md }
-~~~
+```
 
 Each line under the `contents` option defines a content of the book. Add your 
 book chapters as `chapter` elements and set their number (with the `number` 
@@ -201,7 +201,7 @@ flexibility, as it never forces you to work in a certain way. Do you want to
 number your chapters in an *imaginative* way? People will think you're crazy,
 but **easybook** allows you to do it:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -209,11 +209,11 @@ book:
         - { element: toc   }
         - { element: chapter, number: 100, content: chapter1.md }
         - { element: chapter, number: 56,  content: chapter2.md }
-~~~
+```
 
 Do you need letters instead of numbers? This is most appropriate for appendices instead of chapters, but **easybook** won't stop you from doing it:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -221,12 +221,12 @@ book:
         - { element: toc   }
         - { element: chapter, number: A, content: chapter1.md }
         - { element: chapter, number: B, content: chapter2.md }
-~~~
+```
 
 A recommended best practice is to use long and semantic names for book content 
 files:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -236,7 +236,7 @@ book:
             content: 01-publishing-your-first-book.md }
         - { element: chapter, number: 2,
             content: 02-book-contents-and-configuration.md }
-~~~
+```
 
 The most important thing about the `contents` option is the order in which
 you list the book items. The published book will be always composed of those
@@ -245,7 +245,7 @@ a book with the cover between the two chapters and the table of contents at
 the very end (it's completely crazy, but **easybook** allows you to do *almost*
 anything):
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -255,14 +255,14 @@ book:
         - { element: chapter, number: 2,
             content: 02-book-contents-and-configuration.md }
         - { element: toc   }
-~~~
+```
 
 By default, all content files are stored in the `Contents/` directory.
 However, if your book is complex, you can divide the contents into several
 subdirectories. Then, include the subdirectory in the `content` file path
 (don't forget to enclose it with quotes if the file path has white spaces):
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -276,12 +276,12 @@ book:
             content: advanced/chapter1.md }
         - { element: appendix, number: A,
             content: appendices/appendixA.md }
-~~~
+```
 
 The above configuration means that your book contents are distributed this
 way:
 
-~~~
+```
 <book_dir>/
     ...
     Contents/
@@ -292,7 +292,7 @@ way:
             chapter1.md
         appendices/
             appendixA.md
-~~~
+```
 
 ### Different directories per book ###
 
@@ -301,13 +301,13 @@ Unless stated otherwise, the books are created in the `doc/` directory of the
 other directory, add the `--dir` option when creating and/or publishig the 
 book:
 
-~~~ .cli
+``` .cli
 $ ./book new --dir="/Users/javier/books" "My First Book"
 // the book is created in "/Users/javier/books/my-first-book"
 
 $ ./book publish --dir="/Users/javier/books" my-first-book print
 // the book is published in
 // "/Users/javier/books/my-first-book/Output/print/book.pdf"
-~~~
+```
 
 [1]: http://en.wikipedia.org/wiki/Book_design

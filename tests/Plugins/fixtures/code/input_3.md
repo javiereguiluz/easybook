@@ -101,7 +101,7 @@ parsed and it should be displayed as is:
 And the following code listing uses the fenced-style code block, so it should
 also be output as is, without parsing or highlighting:
 
-~~~ .twig
+``` .twig
 {% for row in items|batch(3) %}
     <div class=row>
         {% for column in row %}
@@ -109,7 +109,7 @@ also be output as is, without parsing or highlighting:
         {% endfor %}
     </div>
 {% endfor %}
-~~~
+```
 
 The last code is a bit special, because it contains the special code block tag
 that, in this case, should not be interpreted, but displayed:

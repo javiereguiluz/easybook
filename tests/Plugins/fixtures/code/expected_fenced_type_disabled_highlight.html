@@ -111,11 +111,11 @@ also be output as is, without parsing or highlighting:</p>
     &lt;/div&gt;
 {% endfor %}</code></p>
 
-<p>The last code is a bit special, because it contains the special <code>~~~</code> tag
+<p>The last code is a bit special, because it contains the special <code>```</code> tag
 that, in this case, should not be interpreted, but displayed:</p>
 
 <div class="code code">
-<pre>    ~~~ .php
+<pre>    ``` .php
     public function start($callback = null)
     {
         if (null === $this-&gt;getCommandLine()) {
@@ -126,5 +126,5 @@ that, in this case, should not be interpreted, but displayed:</p>
         }
         parent::start($callback);
     }
-    ~~~</pre>
+    ```</pre>
 </div>

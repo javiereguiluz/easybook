@@ -25,29 +25,29 @@ installed on your computer. This is the only technical requisite to install
 and use **easybook**. You can check your installed PHP version executing the 
 following command on the console:
 
-~~~ .cli
+``` .cli
 $ php -v
-~~~
+```
 
 The recommended method to install **easybook** is to use [Composer][2]:
 
-~~~ .cli
+``` .cli
 $ php composer.phar create-project easybook/easybook <installation-dir>
-~~~
+```
 
 Replace the `<installation-dir>` with the path where you want **easybook**
 to be installed and you are done. If Composer isn't installed on your computer,
 you can install it executing the following command:
 
-~~~ .cli
+``` .cli
 $ curl -s http://getcomposer.org/installer | php
-~~~
+```
 
 Once installed, check that everything is correct by executing the `./book`
 script inside the **easybook** installation directory. If you see the list of
 available commands, everything went fine:
 
-~~~ .cli
+``` .cli
 $ cd <easybook-installation-dir>
 $ ./book
 
@@ -62,13 +62,12 @@ technical documentation, books, manuals and websites.
 
 Available commands:
   benchmark   Benchmarks the performance of book publishing
-  customize   Eases the customization of the book design
   help        Displays help for a command
   list        Lists commands
   new         Creates a new empty book
   publish     Publishes an edition of a book
   version     Shows installed easybook version
-~~~
+```
 
 N> If the `./book` script doesn't work, try `php book` or check the execution
 N> permissions of the `book` script.
@@ -77,7 +76,7 @@ The `./book` script is the unique *entry point* for every **easybook**
 command. If you need to know for example the installed version, just run the
 `version` command through the `book` script:
 
-~~~ .cli
+``` .cli
 $ ./book version
 
                     |              |    
@@ -87,7 +86,7 @@ $ ./book version
                `---'
 
 easybook installed version: 5.0
-~~~
+```
 
 ### Alternative installation methods ###
 
@@ -96,14 +95,14 @@ file, uncompress it somewhere and you are done.
 
 If you are an advanced user that want to *hack* or modify **easybook**, clone its repository with Git and install its dependencies with Composer:
 
-~~~ .cli
+``` .cli
 $ mkdir easybook
 $ git clone http://github.com/javiereguiluz/easybook.git easybook
 
 // download vendors and dependencies
 $ cd easybook
 $ php composer.phar install
-~~~
+```
 
 ## Publishing the first book ##
 
@@ -116,17 +115,17 @@ it's a good resource for learning how to create advanced books with
 In order to transform the original Markdown contents of the documentation into
 a real book, execute the following command:
 
-~~~ .cli
+``` .cli
 $ cd <installation-dir>
 $ ./book publish easybook-doc-en web
-~~~
+```
 
 The first argument of the `publish` command is the name of the directory where
 the book contents are stored (`easybook-doc-en`) and the second argument is the
 name of the `edition` to be published. After executing this command, you 
 should see the following output:
 
-~~~ .cli
+``` .cli
 $ ./book publish easybook-doc-en web
 
                      |              |
@@ -141,7 +140,7 @@ $ ./book publish easybook-doc-en web
  <installation-dir>/doc/easybook-doc-en/Output/web
 
  The publishing process took 0.5 seconds
-~~~
+```
 
 The `publish` command always displays the edition (`web`) and the title
 (`easybook documentation`) of the book being published. Editions are one of the
@@ -163,9 +162,9 @@ you'll see the full **easybook** documentation published as a single HTML page.
 Books published as single HTML pages aren't very useful, so execute now the
 following command to publish the book as a website:
 
-~~~ .cli
+``` .cli
 $ ./book publish easybook-doc-en website
-~~~
+```
 
 If you browse to the `<installation-dir>/doc/easybook-doc-en/Output/website` 
 directory, you'll find a directory called `book/` with a lot of HTML files 
@@ -174,9 +173,9 @@ instead of `web`) the same book is published in a totally different way.
 
 Execute once again the `publish` command but using the `ebook` edition:
 
-~~~ .cli
+``` .cli
 $ ./book publish easybook-doc-en ebook
-~~~
+```
 
 As you surely have guessed, the book is now published as a `book.epub` file
 inside the `<installation-dir>/doc/easybook-doc-en/Output/ebook` directory. Now
@@ -187,13 +186,13 @@ as an e-book.
 
 Similarly, you can publish your book as `PDF` files.
 
-~~~ .cli
+``` .cli
 // publishes the book as a PDF file
 $ ./book publish easybook-doc-en print
 
 // publishes the book as a Kindle-compatible MOBI e-book
 $ ./book publish easybook-doc-en kindle
-~~~
+```
 
 ## Creating a new book ## {#creating-a-new-book}
 
@@ -202,16 +201,16 @@ requires that your books follow a certain structure of files and directories.
 To avoid creating this structure by hand, books are bootstrapped with the `new`
 command:
 
-~~~ .cli
+``` .cli
 $ ./book new "My First Book"
-~~~
+```
 
 The only argument required by the `new` command is the title of the book 
 enclosed with quotes. After executing the previous command, **easybook** will 
 create a new directory called `my-first-book` inside the **easybook** `doc/` 
 directory, and with the following file and directory structure:
 
-~~~
+```
 <easybook>/
     doc/
         my-first-book/
@@ -221,7 +220,7 @@ directory, and with the following file and directory structure:
                 chapter2.md
                 images/
             Output/
-~~~
+```
 
 These are the files and directories created by **easybook**:
 
@@ -254,7 +253,7 @@ appendices. The sample book created with the `new` command only includes two
 chapters. Therefore, whenever you add a new chapter to the book, don't forget 
 to add it to the `config.yml` file too:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     contents:
@@ -266,7 +265,7 @@ book:
         - { element: chapter, number: 4, content: chapter4.md }
         - { element: chapter, number: 5, content: chapter5.md }
         - ...
-~~~
+```
 
 The next chapter explains in detail all the configuration options of this file,
 and the 21 different [content types](#content-types) that **easybook** books
@@ -276,13 +275,13 @@ As the book publication process is extremely fast (less than 2 seconds for a
 400-page book on an average computer), you can publish every edition of the
 book periodically to check your progress:
 
-~~~ .cli
+``` .cli
 $ ./book publish my-first-book web
 $ ./book publish my-first-book website
 $ ./book publish my-first-book ebook
 $ ./book publish my-first-book kindle
 $ ./book publish my-first-book print
-~~~
+```
 
 [1]: http://opensource.org/licenses/MIT
 [2]: http://getcomposer.org/

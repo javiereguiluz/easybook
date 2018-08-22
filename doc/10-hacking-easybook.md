@@ -7,18 +7,18 @@ you can define all the new settings that you may need.
 
 Do you want to show the price of the book on the cover? Add a new option called `price` under the `book` option of `config.yml` file:
 
-~~~ .yaml
+```yaml
 book:
     # ...
     price: 10
-~~~
+```
 
 Now you can use this option in any template with the following expression: 
 `{{ book.price }}`. 
 
 Do you want to use different CSS frameworks to generate the book website? Add a new option called `framework` in some editions:
 
-~~~ .yaml
+```yaml
 editions:
     my_website1:
         format:    html_chunked
@@ -28,33 +28,33 @@ editions:
     my_website2:
         extends:   my_website1
         framework: foundation_4
-~~~
+```
 
 This new option is now available in any template through the following expression: `{{ edition.framework }}`.
 
 You can also add new options to the contents of the book.  Do you want to indicate the estimated reading time in each chapter? Add the following `time` 
 option for `chapter` elements:
 
-~~~ .yaml
+```yaml
 contents:
     - { element: cover }
     - ...
     - { element: chapter, number: 1, ..., time: 20 }
     - { element: chapter, number: 2, ..., time: 12 }
     - ...
-~~~
+```
 
 And now you can add `{{ item.config.time }}` in `chapter.twig` template to show the estimated reading time for each chapter.
 
 Book configuration options can also use Twig expressions for their values (even for dynamic options set by `--configuration` option explained in the next section):
 
-~~~ .yaml
+```yaml
 book:
     title:            "{{ book.author }} diary"
     author:           "..."
     publication_date: "{{ '+2days'|date('m/d/Y') }}"
     # ...
-~~~
+```
 
 ## Dynamic configuration options ##
 
@@ -62,33 +62,33 @@ Sometimes, configuration option values can't be defined or are variables themsel
 
 Add the `--configuration` option to `publish` command and pass to it a JSON formatted string with the configuration options:
 
-~~~ .cli
+``` .cli
 $ ./book publish the-origin-of-species web
          --configuration='{ "book": { "title": "My new title" } }'
-~~~
+```
 
 Using dynamic options you can for example define a new `buyer` option that stores the name of the person that bought the book. Then you can prevent or
 minimize digital piracy displaying the buyer name inside the book (use `{{ book.buyer }}` Twig expression in any book template):
 
-~~~ .cli
+``` .cli
 $ ./book publish the-origin-of-species print
          --configuration='{ "book": { "buyer": "John Smith" } }'
-~~~
+```
 
 Likewise, any edition option can be set dynamically:
 
-~~~ .cli
+``` .cli
 $ ./book publish the-origin-of-species web --configuration='{ "book": { "editions": { "web": { "highlight_code": true } } } }'
-~~~
+```
 
 When passing a lot of configuration options, you must be very careful with JSON braces and quotes. If you run the command automatically, it is easier to create
 a PHP array with all the options and then convert it to JSON with the `json_encode()` function.
 
 Dynamic options are so advanced that they even allow you to define on-the-fly editions:
 
-~~~ .cli
+``` .cli
 $ ./book publish the-origin-of-species edition1 --configuration='{ "book": { "editions": { "edition1": { ... } } } }'
-~~~
+```
 
 When publishing a book, **easybook** uses the following priority hierarchy to combine configuration options (the higher, the more priority):
 
@@ -102,7 +102,7 @@ Configuration options related to editions also take into account the possible ed
 
 In addition to its own configuration options, a book can also modify global **easybook** parameters. To do so, add an `easybook` configuration section inside your `config.yml` file (it's recommended to create it at the top of the file to spot it easily):
 
-~~~ .yaml
+```yaml
 parameters:
     kindlegen.command_options: '-c0 -gif verbose'
     kindlegen.path:            '/path/to/utils/KindleGen/kindlegen'
@@ -110,7 +110,7 @@ parameters:
 book:
     title: '...'
     # ...
-~~~
+```
 
 Define the **easybook** global options under the `parameters` key of `easybook` section. In the previous example, the book sets the `kindlegen.command_options`
 option to tweak the command used to generate Kindle-compatible MOBI files. In addition, to avoid repeating it each time the book is generated, the book also 
@@ -119,19 +119,19 @@ sets the path to the `kindlegen` library thanks to the `kindlegen.path`.
 You can replace any of the parameters defined or used in the `Application.php` class located at `src/Easybook/DependencyInjection/`. Therefore, use the
 following configuration to modify the directory where the book is generated: 
 
-~~~ .yaml
+```yaml
 parameters:
     publishing.dir.output:  '/my/path/for/books/my-book'
 
 book:
     title: '...'
     # ...
-~~~
+```
 
 The separator used by the slugger is another option that is usually modified. By default **easybook** uses the dash (`-`) for the slugs (this affects the
 book page names and the URL for the books published as websites). If you prefer the underscore (`_`) you can now easily configure it in your book:
 
-~~~ .yaml
+```yaml
 parameters:
     slugger.options:
         separator:   '_'
@@ -139,7 +139,7 @@ parameters:
 book:
     title: '...'
     # ...
-~~~
+```
 
 ## Defining new content types ## {#new-content-types}
 
@@ -149,7 +149,7 @@ a page with a humorous cartoon between some chapters. Let's call this new conten
 If pages of type `cartoon` include few contents (a picture and its caption for example), it's better to define these contents directly in the  `config.yml` 
 file:
 
-~~~ .yaml
+```yaml
 contents:
     - { element: cover }
     - ...
@@ -157,20 +157,20 @@ contents:
     - { element: cartoon, image: cartoon1.png, caption: '...' }
     - { element: chapter, number: 2, ... }
     - ...
-~~~
+```
 
 Then, create a custom `cartoon.twig` template in the `Resources/Templates/` directory of your book:
 
-~~~ .twig
+``` .twig
 <div class="page:cartoon">
     <img src="{{ item.config.image }}" />
     <p>{{ item.config.caption }}</p>
 </div>
-~~~
+```
 
 In contrast, if pages of type `cartoon` include a lot of contents, it's better to create a content file for each of these elements:
 
-~~~ .yaml
+```yaml
 contents:
     - { element: cover }
     - ...
@@ -178,26 +178,26 @@ contents:
     - { element: cartoon, content: cartoon1.md }
     - { element: chapter, number: 2, ... }
     - ...
-~~~
+```
 
 Then, display this content with the following simplified `cartoon.twig` template:
 
-~~~ .twig
+``` .twig
 <div class="page:cartoon">
     {{ item.content }}
 </div>
-~~~
+```
 
 Finally, you can also combine these two methods creating a file with the contents and adding several configuration options in `config.yml`. The 
 template can easily use both sources of information:
 
-~~~ .twig
+``` .twig
 <div class="page:cartoon">
     <img src="{{ item.config.image }}" />
 
     {{ item.content }}
 </div>
-~~~
+```
 
 That's it! You can now use the new `cartoon` content type in your book and you can create new content types following the same steps explained above.
 
@@ -215,7 +215,7 @@ The most interesting command of **easybook** is `publish`, which publishes an sp
 depends on the type of edition that is published (`epub`, `pdf`, `html` or `html_chunked`). The details of each *publisher* vary, but the basic
 workflow is always the same:
 
-~~~ .php
+``` .php
 public function publishBook()
 {
     $this->loadContents();
@@ -223,7 +223,7 @@ public function publishBook()
     $this->decorateContents();
     $this->assembleBook();
 }
-~~~
+```
 
 First, the contents of the book defined in the `contents` option of the
 `config.yml` file are loaded (`loadContents()`) . Then, each content is parsed (`parseContents()`) to convert it from its original format to the 
