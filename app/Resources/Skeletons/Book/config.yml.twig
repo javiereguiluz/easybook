@@ -1,65 +1,64 @@
-book:
-    title:            "{{ title|replace({'"': '\\"'}) }}"
-    author:           "Change this: Author Name"
-    edition:          "First edition"
-    language:         en
-    publication_date: ~
+parameters:
+    book:
+        title:            "{{ title|replace({'"': '\\"'}) }}"
+        author:           "Change this: Author Name"
+        edition:          "First edition"
+        language:         en
+        publication_date: ~
 
-    generator: { name: {{ generator.name }}, version: {{ generator.version }} }
+        contents:
+            # available content types: acknowledgement, afterword, appendix, author,
+            # chapter, conclusion, cover, dedication, edition, epilogue, foreword,
+            # glossary, introduction, license, lof (list of figures), lot (list of
+            # tables), part, preface, prologue, title, toc (table of contents)
+            - { element: cover }
+            - { element: toc   }
+            - { element: chapter, number: 1, content: chapter1.md }
+            - { element: chapter, number: 2, content: chapter2.md }
 
-    contents:
-        # available content types: acknowledgement, afterword, appendix, author,
-        # chapter, conclusion, cover, dedication, edition, epilogue, foreword,
-        # glossary, introduction, license, lof (list of figures), lot (list of
-        # tables), part, preface, prologue, title, toc (table of contents)
-        - { element: cover }
-        - { element: toc   }
-        - { element: chapter, number: 1, content: chapter1.md }
-        - { element: chapter, number: 2, content: chapter2.md }
+        editions:
+            ebook:
+                format:         epub
+                highlight_code: false
+                include_styles: true
+                labels:         ['appendix', 'chapter']  # labels also available for: "figure", "table"
+                theme:          clean
+                toc:
+                    deep:       1
+                    elements:   ["appendix", "chapter", "part"]
 
-    editions:
-        ebook:
-            format:         epub
-            highlight_code: false
-            include_styles: true
-            labels:         ['appendix', 'chapter']  # labels also available for: "figure", "table"
-            theme:          clean
-            toc:
-                deep:       1
-                elements:   ["appendix", "chapter", "part"]
+            kindle:
+                extends:        ebook
+                format:         mobi
 
-        kindle:
-            extends:        ebook
-            format:         mobi
+            print:
+                format:         pdf
+                highlight_code: true
+                include_styles: true
+                isbn:           ~
+                labels:         ["appendix", "chapter"]  # labels also available for: "figure", "table"
+                margin:
+                    top:        25mm
+                    bottom:     25mm
+                    inner:      30mm
+                    outer:      20mm
+                page_size:      A4
+                theme:          clean
+                toc:
+                    deep:       2
+                    elements:   ["appendix", "chapter", "part"]
+                two_sided:      true
 
-        print:
-            format:         pdf
-            highlight_code: true
-            include_styles: true
-            isbn:           ~
-            labels:         ["appendix", "chapter"]  # labels also available for: "figure", "table"
-            margin:
-                top:        25mm
-                bottom:     25mm
-                inner:      30mm
-                outer:      20mm
-            page_size:      A4
-            theme:          clean
-            toc:
-                deep:       2
-                elements:   ["appendix", "chapter", "part"]
-            two_sided:      true
+            web:
+                format:         html
+                highlight_code: true
+                include_styles: true
+                labels:         ["appendix", "chapter"]  # labels also available for: "figure", "table"
+                theme:          clean
+                toc:
+                    deep:       2
+                    elements:   ["appendix", "chapter"]
 
-        web:
-            format:         html
-            highlight_code: true
-            include_styles: true
-            labels:         ["appendix", "chapter"]  # labels also available for: "figure", "table"
-            theme:          clean
-            toc:
-                deep:       2
-                elements:   ["appendix", "chapter"]
-
-        website:
-            extends:        web
-            format:         html_chunked
+            website:
+                extends:        web
+                format:         html_chunked

@@ -31,10 +31,11 @@ final class BookGenerator
      */
     private $renderer;
 
-    public function __construct(Filesystem $filesystem, Renderer $renderer)
+    public function __construct(Filesystem $filesystem, Renderer $renderer, string $bookDirectory)
     {
         $this->filesystem = $filesystem;
         $this->renderer = $renderer;
+        $this->bookDirectory = $bookDirectory;
     }
 
     /**

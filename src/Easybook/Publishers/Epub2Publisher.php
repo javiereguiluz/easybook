@@ -162,8 +162,7 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private function prepareBookTemporaryDirectory(): string
     {
-        $bookDir = $this->app['app.dir.cache'] . '/'
-                   . uniqid($this->app['publishing.book.slug']);
+        $bookDir = $this->app['app.dir.cache'] . '/' . uniqid($this->app['publishing.book.slug']);
 
         $this->filesystem->mkdir([
             $bookDir,

@@ -76,11 +76,13 @@ final class BookNewCommand extends Command
         $this->eventDispatcher->dispatch(Events::PRE_NEW, new Event());
 
         $this->bookGenerator->setSkeletonDirectory($this->app['app.dir.skeletons'] . '/Book');
+
         $this->bookGenerator->setBookDirectory($dir . '/' . $bookSlug);
+
         $this->bookGenerator->setConfiguration([
             'generator' => [
                 'name' => $this->getName(),
-                'version' => $this->app->getVersion(),
+                'version' => $this-> app->getVersion(),
             ],
             'title' => $this->bookTitle,
         ]);

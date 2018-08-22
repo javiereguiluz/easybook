@@ -219,7 +219,7 @@ The data of the content being decorated are accessible through a special variabl
 
 In addition to these item properties, all the **easybook** templates have access to three global variables:
   
-  * `book`, provides direct access to the configuration options defined under `book` in `config.yml` file. You can access for example the book author in any template using `{{ book.author }}` and the current **easybook** version using `{{ book.generator.version }}`.
+  * `book`, provides direct access to the configuration options defined under `book` in `config.yml` file. You can access for example the book author in any template using `{{ book.author }}` and the current **easybook**.
   * `edition`, provides direct access to the configuration options of the edition curently being published.
   * `app`, provides direct access to all configuration options and services of **easybook** (defined in the `src/DependencyInjection/Application.php` file).
 

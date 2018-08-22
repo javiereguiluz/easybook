@@ -6,7 +6,7 @@
         <dc:language>{{ book.language }}</dc:language>
         <dc:identifier id="BookId" opf:scheme="{{ app.get('publishing.edition.id').scheme }}">{{ app.get('publishing.edition.id').value }}</dc:identifier>
         <dc:creator opf:role="aut">{{ book.author }}</dc:creator>
-        <dc:publisher>{{ book.generator.name }} {{ book.generator.version }}</dc:publisher>
+        <dc:publisher>easybook</dc:publisher>
         <dc:date opf:event="publication">{{ book.publication_date|date('Y') }}</dc:date>
         <dc:date opf:event="creation">{{ book.publication_date|date('Y-m-d') }}</dc:date>
         <meta name="cover" content="cover" />

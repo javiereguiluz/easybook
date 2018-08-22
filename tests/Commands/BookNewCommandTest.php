@@ -19,26 +19,6 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
 
     protected $console;
 
-    /**
-     * @var QuestionHelper
-     */
-    private $questionHelper;
-
-    protected function setUp(): void
-    {
-        $this->questionHelper = $this->container->get(QuestionHelper::class);
-    }
-    // setup temp dir for generated files
-//        $this->tmpDir = $app['app.dir.cache'].'/'.uniqid('phpunit_', true);
-//        $this->filesystem = new Filesystem();
-//        $this->filesystem->mkdir($this->tmpDir);
-//    }
-
-//    public function tearDown()
-//    {
-//        $this->filesystem->remove($this->tmpDir);
-    //    }
-
     public function testCommand(): void
     {
         $tester = $this->createNewBook();

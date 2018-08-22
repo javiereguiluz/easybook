@@ -10,10 +10,7 @@ services:
 
     Symfony\Component\Console\Helper\QuestionHelper:
 
-    Symfony\Component\Console\Application:
-        arguments:
-            $name: 'easybook'
-            $version: '%version%'
+    Easybook\Console\Application: ~
 
     Easybook\:
         resource: '..'

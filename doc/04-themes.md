@@ -139,8 +139,7 @@ three global variables:
   
   * `book`, provides direct access to the configuration options defined under
     `book` in `config.yml` file. You can access for example the book author in 
-    any template using `{{ book.author }}` and the current **easybook** 
-    version using `{{ book.generator.version }}`.
+    any template using `{{ book.author }}`.
   * `edition`, provides direct access to the configuration options of the 
     edition currently being published.
   * `app`, provides direct access to all the configuration options and 

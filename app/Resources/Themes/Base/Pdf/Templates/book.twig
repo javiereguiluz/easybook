@@ -7,7 +7,7 @@
     <title>{{ book.title }}</title>
     <meta name="author" content="{{ book.author }}" />
     <meta name="date" content="{{ book.publication_date|default('now')|date(app.getLabel('date_format')) }}"/>
-    <meta name="generator" content="{{ book.generator.name }} {{ book.generator.version }}"/>
+    <meta name="generator" content="easybook"/>
 </head>
 
 <body>
