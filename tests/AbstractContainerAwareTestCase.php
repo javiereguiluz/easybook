@@ -4,13 +4,12 @@ namespace Easybook\Tests;
 
 use Easybook\DependencyInjection\ContainerFactory;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\Container;
 
 abstract class AbstractContainerAwareTestCase extends TestCase
 {
     /**
-     * @var ContainerInterface|Container
+     * @var Container
      */
     protected $container;
 

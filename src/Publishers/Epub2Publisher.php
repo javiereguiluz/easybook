@@ -3,13 +3,10 @@
 namespace Easybook\Publishers;
 
 use Symfony\Component\EventDispatcher\Event as SymfonyEvent;
-use Composer\Script\Event;
-use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Util\Toolkit;
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Process\Process;
 use Twig_Error_Loader;
 
 /**
@@ -18,13 +15,19 @@ use Twig_Error_Loader;
  */
 final class Epub2Publisher extends AbstractPublisher
 {
-    // 'toc' content type usually makes no sense in epub books (see below)
-    // 'cover' is a very special content for epub books
-    protected $excludedElements = ['cover', 'lot', 'lof', 'toc'];
+    /**
+     * - 'toc' content type usually makes no sense in epub books (see below)
+     * - 'cover' is a very special content for epub books
+     *
+     * @var string[]
+     */
+    private $excludedElements = ['cover', 'lot', 'lof', 'toc'];
+
     /**
      * @var Toolkit
      */
     private $toolkit;
+
     /**
      * @var Finder
      */
@@ -350,77 +353,11 @@ final class Epub2Publisher extends AbstractPublisher
      * a valid ePub file must have "an uncompressed Mimetype entry at the first
      * element of the compressed archive".
      *
-     * Unfortunately, the PHP Zip extension doesn't allow to set the compression
-     * level for ZIP files. See: https://bugs.php.net/bug.php?id=41243
-     * This means that it's impossible to create a valid ePub file using the
-     * PHP Zip extension.
-     *
-     * This method tries to use the OS 'zip' command first and if it's not
-     * available, it fallbacks to the Zip extension, which will inevitably
-     * generate an invalid ePub file.
-     *
-     * @param  string $directory  Book contents directory
-     * @param  string $zip_file   The path of the generated ZIP file
+     * See: https://github.com/php/php-src/commit/3a55ea02
      */
     private function zipBookContents($directory, $zip_file)
     {
-        // check if the operating system supports the 'zip' command
-        $process = new Process('zip');
-        $process->run();
-
-        if ($process->isSuccessful()) {
-            return $this->zipBookContentsNatively($directory, $zip_file);
-        }
-
-        // fallback to the 'zip' PHP extension if the 'zip' command is not available
-        return $this->zipBookContentsWithPhpExtension($directory, $zip_file);
-    }
-
-    /**
-     * It generates the compressed file required for the ePub book.
-     * To compress the contents, it uses the 'zip' command of the
-     * Operating System to execute the following:.
-     *
-     *   $ cd /path/to/ebook/contents
-     *   $ zip -X0 book.zip mimetype
-     *   $ zip -rX9 book.zip * -x mimetype
-     *
-     * @param string $directory Book contents directory
-     * @param string $zip_file  The path of the generated ZIP file
-     */
-    private function zipBookContentsNatively(string $directory, string $zip_file): void
-    {
-        $command = sprintf(
-            'cd %s && zip -X0 %s mimetype && zip -rX9 %s * -x mimetype',
-            $directory,
-            $zip_file,
-            $zip_file
-        );
-
-        $process = new Process($command);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            throw new RuntimeException(
-                "[ERROR] 'zip' command execution wasn't successful.\n\n"
-                . "Executed command:\n"
-                . " ${command}\n\n"
-                . "Result:\n"
-                . $process->getErrorOutput()
-            );
-        }
-    }
-
-    /**
-     * It generates the compressed file required for the ePub book.
-     * To compress the contents, it uses the 'Zip' PHP extension.
-     *
-     * @param string $directory Book contents directory
-     * @param string $zip_file  The path of the generated ZIP file
-     */
-    private function zipBookContentsWithPhpExtension(string $directory, string $zip_file): void
-    {
-        Toolkit::zip($directory, $zip_file);
+        $this->toolkit->zip($directory, $zip_file);
     }
 
     /**
@@ -443,7 +380,10 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private function fixInternalLinks(string $chunksDir): void
     {
-        $generatedChunks = $this->app['finder']->files()->name('*.html')->in($chunksDir);
+        $generatedChunks = $this->finder->files()
+            ->name('*.html')
+            ->in($chunksDir)
+            ->getIterator();
 
         // maps the original internal links (e.g. #new-content-types)
         // with the correct absolute URL needed for a website
@@ -496,7 +436,7 @@ final class Epub2Publisher extends AbstractPublisher
                 $htmlContent
             );
 
-            file_put_contents($chunk->getPathname(), $htmlContent);
+            $this->filesystem->dumpFile($chunk->getPathname(), $htmlContent);
         }
     }
 }

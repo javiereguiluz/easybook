@@ -76,7 +76,13 @@ final class Toolkit
                         $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
                     }
                 } elseif (is_file($file)) {
+                    $filename = str_replace($source . '/', '', $file);
                     $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+
+                    $zip->setCompressionName($filename, ZipArchive::CM_STORE);
+                    // due too \Easybook\Publishers\Epub2Publisher::zipBookContents()
+                    // see https://github.com/php/php-src/commit/3a55ea02
+                    // $zip->setCompressionIndex(2, ZipArchive::CM_STORE);
                 }
             }
         } elseif (is_file($source)) {
@@ -89,7 +95,6 @@ final class Toolkit
     public function unzip(string $file, string $destination): bool
     {
         $zip = new ZipArchive();
-
         $file = str_replace('\\', '/', realpath($file));
 
         if (! $zip->open($file)) {
