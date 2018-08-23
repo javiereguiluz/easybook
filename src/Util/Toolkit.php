@@ -4,11 +4,12 @@ namespace Easybook\Util;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Symplify\PackageBuilder\Yaml\ParametersMerger;
 use ZipArchive;
 
 final class Toolkit
 {
-    /*
+    /**
      * Merges any number of arrays. The values of the right arrays
      * replace the values of the left arrays. This is very different
      * from PHP built-in array_merge_recursive().
@@ -21,14 +22,14 @@ final class Toolkit
      *
      * @return mixed[]
      */
-    public static function array_deep_merge_and_replace(...$arrays): array
+    public function arrayDeepMergeAndReplace(...$arrays): array
     {
         $merged = [];
 
         foreach ($arrays as $array) {
             foreach ($array as $key => $value) {
                 if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                    $merged[$key] = self::array_deep_merge_and_replace($merged[$key], $value);
+                    $merged[$key] = self::arrayDeepMergeAndReplace($merged[$key], $value);
                 } else {
                     $merged[$key] = $value;
                 }
@@ -38,14 +39,7 @@ final class Toolkit
         return $merged;
     }
 
-    /*
-     * It zips files and/or directories recursively using ZIP extension.
-     * Code copied from http://stackoverflow.com/a/1334949
-     *
-     * @param  string $source      The file/directory path to compress
-     * @param  string $destination The path of the generated ZIP file
-     */
-    /*
+    /**
      * Zips recursively a complete directory with one call (using PHP ZIP extension):
      *     zip('/path/to/any/dir', 'compressed.zip');
      *
@@ -54,9 +48,9 @@ final class Toolkit
      * @param  string $source       The directory with the files to compress
      * @param  string $destination  The path of the generated ZIP file
      */
-    public static function zip($source, $destination)
+    public function zip(string $source, string $destination)
     {
-        if (! extension_loaded('zip') || ! file_exists($source)) {
+        if (! file_exists($source)) {
             return false;
         }
 
@@ -92,14 +86,7 @@ final class Toolkit
         return $zip->close();
     }
 
-    /*
-     * Unzips a ZIP file
-     *
-     * @param  string $file
-     * @param  string $destination directory to unzip into
-     * @return boolean success
-     */
-    public static function unzip($file, $destination)
+    public function unzip(string $file, string $destination): bool
     {
         $zip = new ZipArchive();
 
@@ -114,26 +101,6 @@ final class Toolkit
         }
 
         return $zip->close();
-    }
-
-    /*
-     * Generates valid RFC 4211 compliant Universally Unique IDentifiers (UUID) version 4
-     *
-     * code copied from http://www.php.net/manual/en/function.uniqid.php#94959
-     */
-    public static function uuid()
-    {
-        return sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            random_int(0, 0xffff),
-            random_int(0, 0xffff),
-            random_int(0, 0xffff),
-            random_int(0, 0x0fff) | 0x4000,
-            random_int(0, 0x3fff) | 0x8000,
-            random_int(0, 0xffff),
-            random_int(0, 0xffff),
-            random_int(0, 0xffff)
-        );
     }
 
     /**

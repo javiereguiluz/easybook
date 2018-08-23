@@ -6,6 +6,7 @@ use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
 use Easybook\Templating\Renderer;
+use Easybook\Util\Slugger;
 use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\Event;
@@ -42,6 +43,11 @@ abstract class AbstractPublisher implements PublisherInterface
     private $publishingDirOutput;
 
     /**
+     * @var Slugger
+     */
+    private $slugger;
+
+    /**
      * @required
      */
     public function setRequiredDependencies(
@@ -49,6 +55,7 @@ abstract class AbstractPublisher implements PublisherInterface
         Filesystem $filesystem,
         SymfonyStyle $symfonyStyle,
         Renderer $renderer,
+        Slugger $slugger,
         string $publishingDirOutput
     )
     {
@@ -56,6 +63,7 @@ abstract class AbstractPublisher implements PublisherInterface
         $this->filesystem = $filesystem;
         $this->symfonyStyle = $symfonyStyle;
         $this->renderer = $renderer;
+        $this->slugger = $slugger;
         $this->publishingDirOutput = $publishingDirOutput;
     }
 
@@ -96,7 +104,7 @@ abstract class AbstractPublisher implements PublisherInterface
             // to delete all previous slugs, but if chunk_level = 2, we should only
             // remove the generated slugs for each section
             if ($this->app->edition('format') === 'html_chunked') {
-                $this->app['slugger.generated_slugs'] = [];
+                $this->slugger->resetGeneratedSlugs();
             }
 
             $item['content'] = $this->app['parser']->transform($item['original']);

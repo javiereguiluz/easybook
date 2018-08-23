@@ -7,31 +7,22 @@ use Easybook\Util\Toolkit;
 
 final class ToolkitTest extends AbstractContainerAwareTestCase
 {
-    public function testUuidMethodGeneratesValidRfc4211Ids(): void
-    {
-        $uuid = Toolkit::uuid();
-        $this->assertRegExp('/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/', $uuid);
-    }
+    /**
+     * @var Toolkit
+     */
+    private $toolkit;
 
-    public function testUuidMethodGeneratesRandomIds(): void
+    protected function setUp()
     {
-        $uuids = [];
-        while (count($uuids) < 1000) {
-            $uuids[] = Toolkit::uuid();
-        }
-
-        $this->assertSame(count($uuids), count(array_unique($uuids)));
+        $this->toolkit = $this->container->get(Toolkit::class);
     }
 
     /**
-     * @dataProvider getArrayDeepMergeAndReplaceData
+     * @dataProvider getArrayDeepMergeAndReplaceData()
      */
-    public function testArrayDeepMergeAndReplace($arguments, $expectedArray): void
+    public function testArrayDeepMergeAndReplace(array $arguments, array $expectedArray): void
     {
-        $this->assertSame(
-            $expectedArray,
-            call_user_func_array('Easybook\Util\Toolkit::array_deep_merge_and_replace', $arguments)
-        );
+        $this->assertSame($expectedArray, $this->toolkit->arrayDeepMergeAndReplace(...$arguments));
     }
 
     /**

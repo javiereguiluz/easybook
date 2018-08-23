@@ -25,9 +25,15 @@ final class PublisherTest extends AbstractContainerAwareTestCase
      */
     private $finder;
 
+    /**
+     * @var Toolkit
+     */
+    private $toolkit;
+
     protected function setUp(): void
     {
         $this->finder = $this->container->get(Finder::class);
+        $this->toolkit = $this->container->get(Toolkit::class);
     }
 
     public function testBookPublish(): void
@@ -36,7 +42,8 @@ final class PublisherTest extends AbstractContainerAwareTestCase
         $books = $this->finder->directories()
             ->name('book*')
             ->depth(0)
-            ->in(__DIR__ . '/fixtures');
+            ->in(__DIR__ . '/fixtures')
+            ->getIterator();
 
         foreach ($books as $book) {
             $this->markTestSkipped(
@@ -44,11 +51,6 @@ final class PublisherTest extends AbstractContainerAwareTestCase
             );
 
             $slug = $book->getFileName();
-            if ($slug === 'book5' && (version_compare(PHP_VERSION, '5.4.0', '<') || ! extension_loaded('intl'))) {
-                $this->markTestSkipped(
-                    'This test requires PHP 5.4.0+ with the intl extension enabled (the book contains a lot of non-latin characters that need the native PHP transliterator)'
-                );
-            }
 
             // mirror test book contents in temp dir
             $this->filesystem->mirror(__DIR__ . '/fixtures/' . $slug . '/input', $this->tmpDir . '/' . $slug);
@@ -73,7 +75,8 @@ final class PublisherTest extends AbstractContainerAwareTestCase
                 // assert that generated files are exactly the same as expected
                 $generatedFiles = $this->finder->files()
                     ->notName('.gitignore')
-                    ->in($this->tmpDir . '/' . $slug . '/Output/' . $editionName);
+                    ->in($this->tmpDir . '/' . $slug . '/Output/' . $editionName)
+                    ->getIterator();
 
                 foreach ($generatedFiles as $file) {
                     if ($file->getExtension() === 'epub') {
@@ -82,14 +85,15 @@ final class PublisherTest extends AbstractContainerAwareTestCase
                         $generated = $workDir . '/generated';
                         $expected = $workDir . '/expected';
 
-                        Toolkit::unzip($file->getRealPath(), $generated);
-                        Toolkit::unzip(__DIR__ . '/fixtures/' . $slug . '/expected/' .
+                        $this->toolkit->unzip($file->getRealPath(), $generated);
+                        $this->toolkit->unzip(__DIR__ . '/fixtures/' . $slug . '/expected/' .
                                     $editionName . '/' . $file->getRelativePathname(), $expected);
 
                         // assert that generated files are exactly the same as expected
                         $genFiles = $this->finder->files()
                             ->notName('.gitignore')
-                            ->in($generated);
+                            ->in($generated)
+                            ->getIterator();
 
                         foreach ($genFiles as $genFile) {
                             $this->assertFileEquals(
@@ -119,10 +123,6 @@ final class PublisherTest extends AbstractContainerAwareTestCase
                     __DIR__ . '/fixtures/' . $slug . '/expected/' . $editionName,
                     $this->tmpDir . '/' . $slug . '/Output/' . $editionName
                 );
-
-                // reset app state before the next publishing
-//                $this->app = new Application();
-//                $console = new ConsoleApplication($this->app);
             }
         }
     }
@@ -134,7 +134,8 @@ final class PublisherTest extends AbstractContainerAwareTestCase
     {
         $expectedFiles = $this->finder->files()
             ->notName('.gitignore')
-            ->in($dirExpected);
+            ->in($dirExpected)
+            ->getIterator();
 
         foreach ($expectedFiles as $file) {
             $this->assertFileExists(

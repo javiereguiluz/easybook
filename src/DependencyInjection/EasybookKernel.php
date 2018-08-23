@@ -27,7 +27,7 @@ final class EasybookKernel extends Kernel
 //            }
 //
 //            // for ISBN-less books, generate a unique RFC 4211 UUID v4 ID
-//            return ['scheme' => 'URN', 'value' => Toolkit::uuid()];
+//            return ['scheme' => 'URN', 'value' => Uuid::uuid4()];
 //        };
 //
 //        // -- labels ---------------------------------------------------------

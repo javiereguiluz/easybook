@@ -133,20 +133,17 @@ new `easybook` section in your `config.yml` book and define the new value of
 each parameter under the `parameters` key:
 
 ```yaml
-easybook:
-    parameters:
-        kindlegen.command_options: '-c0 -gif verbose'
-        kindlegen.path:            '/path/to/utils/KindleGen/kindlegen'
-        publishing.dir.output:     '/my/path/for/books/my-book'
-        slugger.options:
-            separator:             '_'
+parameters:
+    kindlegen.command_options: '-c0 -gif verbose'
+    kindlegen.path:            '/path/to/utils/KindleGen/kindlegen'
+    publishing.dir.output:     '/my/path/for/books/my-book'
+    slugger_separator:             '_'
 
-book:
-    title:            easybook documentation
-    author:           Javier Eguiluz
-    edition:          First edition
-    language:         en
-    publication_date: ~
+    book_title:            easybook documentation
+    book_author:           Javier Eguiluz
+    book_edition:          First edition
+    book_language:         en
+    book_publication_date: ~
     # ...
 ```
 

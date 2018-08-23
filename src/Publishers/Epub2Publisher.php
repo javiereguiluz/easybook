@@ -8,6 +8,7 @@ use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Util\Toolkit;
 use RuntimeException;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 use Twig_Error_Loader;
 
@@ -20,6 +21,20 @@ final class Epub2Publisher extends AbstractPublisher
     // 'toc' content type usually makes no sense in epub books (see below)
     // 'cover' is a very special content for epub books
     protected $excludedElements = ['cover', 'lot', 'lof', 'toc'];
+    /**
+     * @var Toolkit
+     */
+    private $toolkit;
+    /**
+     * @var Finder
+     */
+    private $finder;
+
+    public function __construct(Toolkit $toolkit, Finder $finder)
+    {
+        $this->toolkit = $toolkit;
+        $this->finder = $finder;
+    }
 
     public function loadContents(): void
     {
@@ -162,7 +177,9 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private function prepareBookTemporaryDirectory(): string
     {
-        $bookDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid($this->app['publishing.book.slug']);
+        $bookDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid(
+            $this->app['publishing.book.slug']
+        );
 
         $this->filesystem->mkdir([
             $bookDir,
@@ -203,7 +220,9 @@ final class Epub2Publisher extends AbstractPublisher
         $imagesData = [];
 
         if (file_exists($imagesDir)) {
-            $images = $this->app['finder']->files()->in($imagesDir);
+            $images = $this->finder->files()
+                ->in($imagesDir)
+                ->getIterator();
 
             $i = 1;
             foreach ($images as $image) {
@@ -275,7 +294,10 @@ final class Epub2Publisher extends AbstractPublisher
         $fontsData = [];
 
         if (file_exists($fontsDir)) {
-            $fonts = $this->app['finder']->files()->name('*.ttf')->in($fontsDir);
+            $fonts = $this->finder->files()
+                ->name('*.ttf')
+                ->in($fontsDir)
+                ->getIterator();
 
             $i = 1;
             foreach ($fonts as $font) {
@@ -351,16 +373,7 @@ final class Epub2Publisher extends AbstractPublisher
         }
 
         // fallback to the 'zip' PHP extension if the 'zip' command is not available
-        if (extension_loaded('zip')) {
-            return $this->zipBookContentsWithPhpExtension($directory, $zip_file);
-        }
-
-        throw new RuntimeException(
-            "[ERROR] The ePub file couldn't be published because your \n"
-            . " Operating System doesn't support the 'zip' command and your \n"
-            . " PHP installation hasn't enabled the 'Zip' extension. \n\n"
-            . " Please, enable the 'zip' extension and publish the book again."
-        );
+        return $this->zipBookContentsWithPhpExtension($directory, $zip_file);
     }
 
     /**

@@ -14,10 +14,20 @@ final class Slugger
      * @var SluggerInterface
      */
     private $slugger;
+    /**
+     * @var string
+     */
+    private $sluggerSeparator;
+    /**
+     * @var string
+     */
+    private $sluggerPrefix;
 
-    public function __construct(SluggerInterface $slugger)
+    public function __construct(SluggerInterface $slugger, string $sluggerSeparator, string $sluggerPrefix)
     {
         $this->slugger = $slugger;
+        $this->sluggerSeparator = $sluggerSeparator;
+        $this->sluggerPrefix = $sluggerPrefix;
     }
 
     public function slugify(string $string, string $separator = null, string $prefix = null): string
@@ -45,20 +55,24 @@ final class Slugger
      */
     public function slugifyUniquely($string, $separator = null, $prefix = null)
     {
-        $defaultOptions = $this['slugger.options'];
-
-        $separator = $separator ?: $defaultOptions['separator'];
-        $prefix = $prefix ?: $defaultOptions['prefix'];
+        $separator = $separator ?: $this->sluggerSeparator;
+        $prefix = $prefix ?: $this->sluggerPrefix;
 
         $slug = $this->slugify($string, $separator, $prefix);
 
         // ensure the uniqueness of the slug
-        $occurrences = array_count_values($this['slugger.generated_slugs']);
+        $occurrences = array_count_values($this->generatedSlugs);
+
         $count = isset($occurrences[$slug]) ? $occurrences[$slug] : 0;
         if ($count > 1) {
-            $slug = $slug.$separator.$count;
+            $slug = $slug . $separator . $count;
         }
 
         return $slug;
+    }
+
+    public function resetGeneratedSlugs(): void
+    {
+        $this->generatedSlugs = [];
     }
 }

@@ -4,6 +4,7 @@ namespace Easybook\Tests\Parsers;
 
 use Easybook\Parsers\MarkdownParser;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use Easybook\Util\Slugger;
 use Symfony\Component\Finder\Finder;
 
 final class MarkdownParserTest extends AbstractContainerAwareTestCase
@@ -23,11 +24,17 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
      */
     private $finder;
 
+    /**
+     * @var Slugger
+     */
+    private $slugger;
+
     protected function setUp(): void
     {
         $this->fixturesDir = __DIR__ . '/fixtures';
         $this->markdownParser = $this->container->get(MarkdownParser::class);
         $this->finder = $this->container->get(Finder::class);
+        $this->slugger = $this->container->get(Slugger::class);
     }
 
     public function testOriginalMarkdown(): void
@@ -103,7 +110,7 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
 
             $this->assertSame($expected, $parsed, $message . ' ' . $doc->getRelativePathname());
 
-            $this->app['slugger.generated_slugs'] = [];
+            $this->slugger->resetGeneratedSlugs();
         }
     }
 }
