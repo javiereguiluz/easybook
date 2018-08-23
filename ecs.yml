@@ -33,4 +33,4 @@ parameters:
 
     skip:
         Symplify\CodingStandard\Sniffs\CleanCode\ForbiddenStaticFunctionSniff:
-            -  'src/Plugins/*Subscriber.php'
+            -  '*EventSubscriber.php'

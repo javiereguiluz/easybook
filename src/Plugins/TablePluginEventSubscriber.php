@@ -19,10 +19,21 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
      * @var Renderer
      */
     private $renderer;
+
     /**
      * @var Slugger
      */
     private $slugger;
+
+    /**
+     * @var string[]
+     */
+    private $listOfTables = [];
+
+    /**
+     * @var int
+     */
+    private $counter = 0;
 
     public function __construct(Renderer $renderer, Slugger $slugger)
     {
@@ -45,13 +56,14 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
 
         $addTableLabels = in_array('table', $parseEvent->app->edition('labels') ?: [], true);
         $parentItemNumber = $item['config']['number'];
-        $listOfTables = [];
-        $counter = 0;
+
+        $this->listOfTables = [];
+        $this->counter = 0;
 
         $item['content'] = Strings::replace(
             $item['content'],
             "#(?<content><table.*\n<\/table>)#Ums",
-            function ($matches) use ($parseEvent, $addTableLabels, $parentItemNumber, &$listOfTables, &$counter) {
+            function ($matches) use ($parseEvent, $addTableLabels, $parentItemNumber) {
                 // prepare table parameters for template and label
                 $counter++;
                 $parameters = [
@@ -74,15 +86,15 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
                 }
 
                 // add table details to the list-of-tables
-                $listOfTables[] = $parameters;
+                $this->listOfTables[] = $parameters;
 
                 return $this->renderer->render('table.twig', $parameters);
             }
 
         );
 
-        if (count($listOfTables) > 0) {
-            $parseEvent->app->append('publishing.list.tables', $listOfTables);
+        if (count($this->listOfTables) > 0) {
+            $parseEvent->app->append('publishing.list.tables', $this->listOfTables);
         }
 
         $parseEvent->setItem($item);

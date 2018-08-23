@@ -24,10 +24,8 @@ final class MarkdownParser implements ParserInterface
      * Transforms the original Markdown content into the desired output format.
      *
      * @param string $content      The original content to be parsed
-     * @param string $outputFormat The desired output format (it only supports 'html' for now)
      *
      * @throws \Exception
-     *
      * @return string The parsed content
      */
     public function transform(string $content): string

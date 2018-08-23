@@ -5,6 +5,7 @@ namespace Easybook\Plugins;
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ParseEvent;
 use Easybook\Templating\Renderer;
+use Easybook\Util\Slugger;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -19,9 +20,25 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
      */
     private $renderer;
 
-    public function __construct(Renderer $renderer)
+    /**
+     * @var string[]
+     */
+    private $listOfImages = [];
+
+    /**
+     * @var int
+     */
+    private $counter = 0;
+
+    /**
+     * @var Slugger
+     */
+    private $slugger;
+
+    public function __construct(Renderer $renderer, Slugger $slugger)
     {
         $this->renderer = $renderer;
+        $this->slugger = $slugger;
     }
 
     public static function getSubscribedEvents(): Iterator
@@ -65,8 +82,10 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
 
         $addImageLabels = in_array('figure', $parseEvent->app->edition('labels') ?: [], true);
         $parentItemNumber = $item['config']['number'];
-        $listOfImages = [];
-        $counter = 0;
+
+        $this->listOfImages = [];
+
+        $this->counter = 0;
 
         $item['content'] = preg_replace_callback(
             // the regexp matches:
@@ -76,7 +95,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
             //        <img (...optional...) alt="..." (...optional...) />
             //      </div>
             '/(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>[^"]*)".*\/>)(<\/div>)?(<\/p>)?/',
-            function ($matches) use ($parseEvent, $addImageLabels, $parentItemNumber, &$listOfImages, &$counter) {
+            function ($matches) use ($parseEvent, $addImageLabels, $parentItemNumber) {
                 // prepare figure parameters for the template and the label
                 $parameters = [
                     'item' => [
@@ -95,10 +114,10 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
                 // '*' in title means this is a decorative image instead of
                 // a book figure or illustration
                 if ($matches['title'] !== '*') {
-                    $counter++;
-                    $parameters['item']['number'] = $counter;
-                    $parameters['item']['slug'] = $parseEvent->app->slugify(
-                        'Figure ' . $parentItemNumber . '-' . $counter
+                    $this->counter++;
+                    $parameters['item']['number'] = $this->counter;
+                    $parameters['item']['slug'] = $this->slugger->slugify(
+                        'Figure ' . $parentItemNumber . '-' . $this->counter
                     );
 
                     // the publishing edition wants to label figures/images
@@ -108,7 +127,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
                     }
 
                     // add image details to the list-of-images
-                    $listOfImages[] = $parameters;
+                    $this->listOfImages[] = $parameters;
                 }
 
                 return $this->renderer->render('figure.twig', $parameters);
@@ -116,8 +135,8 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
             $item['content']
         );
 
-        if (count($listOfImages) > 0) {
-            $parseEvent->app->append('publishing.list.images', $listOfImages);
+        if (count($this->listOfImages) > 0) {
+            $parseEvent->app->append('publishing.list.images', $this->listOfImages);
         }
 
         $parseEvent->setItem($item);
