@@ -23,14 +23,14 @@ final class TwigCssExtension extends Twig_Extension
      * Returns a color which is $percent lighter than $color
      *
      * @param string $color   The original color in hexadecimal format (eg. '#FFF', '#CC0000')
-     * @param string $percent The percentage of "lightness" added to the original color
+     * @param string|float $percent The percentage of "lightness" added to the original color
      *                        (eg. '10%', '50%', '66.66%'')
      *
      * @returns string The lightened color
      */
-    public function lighten($color, $percent)
+    public function lighten(string $color, $percent)
     {
-        $percent = str_replace('%', '', $percent) / 100;
+        $percent = $this->normalizePercents($percent);
 
         $rgb = $this->hex2rgb($color);
         $hsl = $this->rgb2hsl($rgb);
@@ -53,8 +53,10 @@ final class TwigCssExtension extends Twig_Extension
      *
      * @returns string The darkened color
      */
-    public function darken($color, $percent)
+    public function darken(string $color, string $percent)
     {
+        $percent = $this->normalizePercents($percent);
+
         return $this->lighten($color, -$percent);
     }
 
@@ -256,5 +258,18 @@ final class TwigCssExtension extends Twig_Extension
         };
 
         return [$hue($h + 0.33333) * 255, $hue($h) * 255, $hue($h - 0.33333) * 255];
+    }
+
+    /**
+     * @param mixed $percent
+     * @return float
+     */
+    private function normalizePercents($percent): float
+    {
+        if (is_float($percent)) {
+            return $percent;
+        }
+
+        return $percent = str_replace('%', '', $percent) / 100;
     }
 }
