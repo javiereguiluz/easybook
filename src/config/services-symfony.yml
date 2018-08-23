@@ -1,0 +1,20 @@
+services:
+    _defaults:
+        public: true
+        autowire: true
+
+    Symfony\Component\EventDispatcher\EventDispatcher: ~
+
+    Symfony\Component\Finder\Finder: ~
+    Symfony\Component\Filesystem\Filesystem: ~
+
+    # Console
+    Symfony\Component\Console\Style\SymfonyStyle:
+    Symfony\Component\Console\Input\ArgvInput: ~
+    Symfony\Component\Console\Input\InputInterface:
+        alias: Symfony\Component\Console\Input\ArgvInput
+    Symfony\Component\Console\Output\ConsoleOutput: ~
+    Symfony\Component\Console\Output\OutputInterface:
+        alias: Symfony\Component\Console\Output\ConsoleOutput
+
+    Symplify\PackageBuilder\Parameter\ParameterProvider: ~

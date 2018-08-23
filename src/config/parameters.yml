@@ -2,8 +2,6 @@ imports:
     - { resource: 'parameters/*.yml' }
 
 parameters:
-    app.charset: 'UTF-8'
-
     # to be configured by the user
     book_slug: ''
 
