@@ -70,7 +70,7 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
                 'number' => 2,
                 'content' => 'chapter2.md',
             ],
-        ]]], $bookConfig, false,'The book contents configuration is properly generated.');
+        ]]], $bookConfig, false, 'The book contents configuration is properly generated.');
 
         $this->assertSame(
             ['ebook', 'kindle', 'print', 'web', 'website'],

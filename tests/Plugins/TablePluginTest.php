@@ -38,7 +38,6 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
         bool $addLabels,
         array $expectedLabels
     ): void {
-
         $item = [
             'config' => ['number' => $itemNumber],
             'content' => file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath),

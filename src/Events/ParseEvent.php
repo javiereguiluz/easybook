@@ -16,14 +16,20 @@ final class ParseEvent extends Event
      */
     private $item = [];
 
+    /**
+     * @var null|string
+     */
+    private $editionFormat;
+
     // @todo should be object to prevent set/get games just to keep reference
 
     /**
      * @param mixed[] $item
      */
-    public function __construct(array $item)
+    public function __construct(array $item, ?string $editionFormat = null)
     {
         $this->item = $item;
+        $this->editionFormat = $editionFormat;
     }
 
     /**
@@ -48,5 +54,10 @@ final class ParseEvent extends Event
     public function getItem(): array
     {
         return $this->item;
+    }
+
+    public function getEditionFormat(): ?string
+    {
+        return $this->editionFormat;
     }
 }
