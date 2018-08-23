@@ -2,73 +2,85 @@
 
 namespace Easybook\Tests\Plugins;
 
+use Iterator;
+use Easybook\Configuration\CurrentItemProvider;
 use Easybook\DependencyInjection\Application;
 use Easybook\Events\ParseEvent;
 use Easybook\Plugins\TablePlugin;
+use Easybook\Plugins\TablePluginEventSubscriber;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use Easybook\Tests\AbstractCustomConfigContainerAwareTestCase;
+use Symfony\Component\EventDispatcher\Event;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
-final class TablePluginTest extends AbstractContainerAwareTestCase
+final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
 {
     /**
-     * @dataProvider getTestTablePluginData
+     * @var CurrentItemProvider
      */
-    public function testTablePlugin($inputFilePath, $expectedFilePath, $itemNumber, $addLabels, $expectedLabels): void
+    private $currentItemProvider;
+
+    /**
+     * @var TablePluginEventSubscriber
+     */
+    private $tablePluginEventSubscriber;
+
+    /**
+     * @var ParameterProvider
+     */
+    private $parameterProvider;
+
+    protected function setUp(): void
     {
-        $fixturesDir = __DIR__ . '/fixtures/tables/';
-        $app = new Application();
+        $this->currentItemProvider = $this->container->get(CurrentItemProvider::class);
+        $this->tablePluginEventSubscriber = $this->container->get(TablePluginEventSubscriber::class);
+        $this->parameterProvider = $this->container->get(ParameterProvider::class);
+    }
 
-        $app['publishing.book.slug'] = 'test_book';
-        $app['publishing.edition'] = 'test_edition';
-        $app['publishing.book.config'] = [
-            'book' => [
-                'slug' => 'test_book',
-                'language' => 'en',
-                'editions' => [
-                    'test_edition' => [
-                        'format' => 'html',
-                        'labels' => $addLabels ? ['table'] : [],
-                        'theme' => 'clean',
-                    ],
-                ],
-            ],
-        ];
-
-        $event = new ParseEvent($app);
-        $plugin = new TablePlugin();
-
-        $event->setItem([
+    /**
+     * @dataProvider getTestTablePluginData()
+     */
+    public function testTablePlugin(
+        string $inputFilePath,
+        string $expectedFilePath,
+        int $itemNumber,
+        bool $addLabels,
+        array $expectedLabels
+    ): void
+    {
+        $this->currentItemProvider->setItem([
             'config' => ['number' => $itemNumber],
-            'content' => file_get_contents($fixturesDir . '/' . $inputFilePath),
+            'content' => file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath),
         ]);
 
-        $plugin->decorateAndLabelTables($event);
-        $item = $event->getItem();
+        $this->tablePluginEventSubscriber->decorateAndLabelTables(new ParseEvent());
 
-        $this->assertSame(file_get_contents($fixturesDir . '/' . $expectedFilePath), $item['content']);
+        $item = $this->currentItemProvider->getItem();
 
-        if (count($app['publishing.list.tables']) > 0) {
-            foreach ($app['publishing.list.tables'] as $i => $table) {
-                $this->assertRegexp('/<table.*<\/table>/s', $table[$i]['item']['content']);
+        $this->assertSame(file_get_contents(__DIR__ . '/fixtures/tables/' . $expectedFilePath), $item['content']);
 
-                if ($addLabels) {
-                    $this->assertSame($expectedLabels[$i], $table[$i]['item']['label']);
-                }
+        $publishingListTables = $this->parameterProvider->provideParameter('publishing.list.tables');
+
+        foreach ($publishingListTables as $i => $table) {
+            $this->assertRegexp('/<table.*<\/table>/s', $table[$i]['item']['content']);
+
+            if ($addLabels) {
+                $this->assertSame($expectedLabels[$i], $table[$i]['item']['label']);
             }
         }
     }
 
-    public function getTestTablePluginData()
+    public function getTestTablePluginData(): Iterator
     {
-        return [
-            ['input_1.html', 'expected_1_1.html', 1, true, ['Table 1.1', 'Table 1.2']],
+        yield ['input_1.html', 'expected_1_1.html', 1, true, ['Table 1.1', 'Table 1.2']];
+        yield ['input_1.html', 'expected_1_2.html', 2, true, ['Table 2.1', 'Table 2.2']];
+        yield ['input_1.html', 'expected_1_1.html', 1, false, []];
+        yield ['input_2.html', 'expected_2.html', 1, false, []];
+        yield ['input_3.html', 'expected_3.html', 'A', true, ['Table A.1']];
+    }
 
-            ['input_1.html', 'expected_1_2.html', 2, true, ['Table 2.1', 'Table 2.2']],
-
-            ['input_1.html', 'expected_1_1.html', 1, false, []],
-
-            ['input_2.html', 'expected_2.html', 1, false, []],
-
-            ['input_3.html', 'expected_3.html', 'A', true, ['Table A.1']],
-        ];
+    protected function provideConfig(): string
+    {
+        return __DIR__ . '/custom-config.yml';
     }
 }

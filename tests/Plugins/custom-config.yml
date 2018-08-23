@@ -1,0 +1,12 @@
+parameters:
+    publishing.book.slug: 'test_book'
+    publishing.edition: 'test_edition'
+    book_slug: 'test_book'
+    language: 'en'
+    editions:
+        test_edition:
+             format: 'html'
+             # labels: $addLabels ? ['table'] : [],
+             theme: 'clean'
+
+    publishing.list.tables: []

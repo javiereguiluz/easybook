@@ -6,6 +6,7 @@ use Easybook\Publishers\Epub2Publisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use ReflectionMethod;
 use Symfony\Component\Filesystem\Filesystem;
+use Symplify\PackageBuilder\Reflection\PrivatesCaller;
 
 final class Epub2PublisherTest extends AbstractContainerAwareTestCase
 {
@@ -19,12 +20,17 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
      */
     private $filesystem;
 
-    private $app;
+    /**
+     * @var PrivatesCaller
+     */
+    private $privatesCaller;
 
     protected function setUp(): void
     {
         $this->epub2Publisher = $this->container->get(Epub2Publisher::class);
         $this->filesystem = $this->container->get(Filesystem::class);
+
+        $this->privatesCaller = (new PrivatesCaller());
     }
 
     public function testPrepareBookTemporaryDirectory(): void
@@ -40,9 +46,7 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
 
         $this->app['publishing.book.slug'] = uniqid('phpunit_');
 
-        $method = new ReflectionMethod(Epub2Publisher::class, 'prepareBookTemporaryDirectory');
-        $method->setAccessible(true);
-        $bookDir = $method->invoke($this->epub2Publisher);
+        $bookDir = $this->privatesCaller->callPrivateMethod($this->epub2Publisher, 'prepareBookTemporaryDirectory');
 
         foreach ($directoriesRequiredForEpubBooks as $expectedDirectory) {
             $this->assertFileExists($bookDir . '/' . $expectedDirectory);
@@ -59,10 +63,12 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
             ->method('getCustomCoverImage')
             ->will($this->returnValue(null));
 
-        $method = new ReflectionMethod(Epub2Publisher::class, 'prepareBookCoverImage');
-        $method->setAccessible(true);
+        $bookTemporaryDir = $this->privatesCaller->callPrivateMethod(
+            $this->epub2Publisher,
+            'prepareBookTemporaryDirectory'
+        );
 
-        $this->assertSame(null, $method->invoke($this->epub2Publisher, ''));
+        $this->assertNull($bookTemporaryDir);
     }
 
     /**

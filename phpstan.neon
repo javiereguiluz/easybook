@@ -1,5 +1,14 @@
 parameters:
+    autoload_files:
+        - 'tests/Publishers/fixtures/book4/input/Resources/Plugins/ParserPluginEventSubscriber.php'
+
     ignoreErrors:
         - '#Parameter (.*?) of function (.*?) expects resource, resource\|false given#'
+
+        # phsptan-symfony doesn't work due to missing .xml file
         # get() call on container
         - '#Property (.*?)Test::(.*?) does not accept object#'
+        - '#Call to an undefined method object(.*?)#'
+
+        # SplFileInfo() false positives
+        - '#Parameter \#1 $file (.*?) expects string, string|false given#'

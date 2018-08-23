@@ -103,7 +103,7 @@ final class RendererTest extends AbstractContainerAwareTestCase
             'Template for "Custom Test Book Title" (by easybook tests)'
         );
 
-        $this->renderer->render(
+        $this->renderer->renderToFile(
             $templateFileName,
             ['author' => 'easybook tests'],
             $this->templateDir . '/' . $targetFileName
