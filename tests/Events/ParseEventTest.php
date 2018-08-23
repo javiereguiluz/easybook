@@ -2,20 +2,26 @@
 
 namespace Easybook\Tests\Publishers;
 
-use Easybook\DependencyInjection\Application;
-use Easybook\Events\ParseEvent;
-use Easybook\Tests\TestCase;
+use Iterator;
+use Easybook\Configuration\CurrentItemProvider;
+use Easybook\Tests\AbstractContainerAwareTestCase;
 
-final class ParseEventTest extends TestCase
+final class ParseEventTest extends AbstractContainerAwareTestCase
 {
-    public $app;
+    /**
+     * @var mixed[]
+     */
+    private $item = [];
 
-    public $event;
-
-    public $item;
+    /**
+     * @var CurrentItemProvider
+     */
+    private $currentItemProvider;
 
     protected function setUp(): void
     {
+        $this->currentItemProvider = $this->container->get(CurrentItemProvider::class);
+
         $this->item = $item = [
             'key1' => 'value1',
             'key2' => 'value2',
@@ -25,43 +31,39 @@ final class ParseEventTest extends TestCase
             'compound_key_3' => 'value3',
         ];
 
-        $this->app = new Application();
-        $this->app['publishing.active_item'] = $item;
-
-        $this->event = new ParseEvent($this->app);
+        $this->currentItemProvider->setItem($item);
     }
 
     public function testGetItem(): void
     {
-        $this->assertSame($this->item, $this->event->getItem());
+        $this->assertSame($this->item, $this->currentItemProvider->getItem());
     }
 
     public function testSetItem(): void
     {
         $newItem = array_reverse($this->item);
-        $this->event->setItem($newItem);
 
-        $this->assertSame($this->item, $this->event->getItem());
+        $this->currentItemProvider->setItem($newItem);
+
+        $this->assertSame($newItem, $this->currentItemProvider->getItem());
     }
 
     /**
-     * @dataProvider getTestGetMethodData
+     * @dataProvider getTestGetMethodData()
      */
     public function testGetMethod($key, $expectedValue): void
     {
-        $this->assertSame($expectedValue, $this->event->getItemProperty($key));
+        $this->assertSame($expectedValue, $this->currentItemProvider->getItemProperty($key));
     }
 
-    public function getTestGetMethodData()
+    public function getTestGetMethodData(): Iterator
     {
-        return [
-            ['key1', 'value1'],
-            ['key2', 'value2'],
-            ['key3', 'value3'],
-            ['compound_key_1', 'value1'],
-            ['compound_key_2', 'value2'],
-            ['compound_key_3', 'value3'],
-        ];
+        yield ['key1', 'value1'];
+        yield ['key2', 'value2'];
+        yield ['key3', 'value3'];
+        yield ['compound_key_1', 'value1'];
+        yield ['compound_key_2', 'value2'];
+        yield ['compound_key_3', 'value3'];
     }
 
     /**
@@ -69,9 +71,9 @@ final class ParseEventTest extends TestCase
      */
     public function testSetMethod($key, $expectedValue): void
     {
-        $this->event->setItemProperty($key, $expectedValue);
+        $this->currentItemProvider->setItemProperty($key, $expectedValue);
 
-        $this->assertSame($expectedValue, $this->event->getItemProperty($key));
+        $this->assertSame($expectedValue, $this->currentItemProvider->getItemProperty($key));
     }
 
     public function getTestSetMethodData()

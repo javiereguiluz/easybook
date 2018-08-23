@@ -21,7 +21,6 @@ final class PublisherTest extends AbstractContainerAwareTestCase
 
     protected function setUp(): void
     {
-        $this->finder = $this->container->get(Finder::class);
         $this->toolkit = $this->container->get(Toolkit::class);
     }
 

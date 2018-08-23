@@ -24,4 +24,20 @@ final class CurrentItemProvider
     {
         return $this->item;
     }
+
+    /**
+     * @param mixed $value
+     */
+    public function setItemProperty(string $name, $value): void
+    {
+        $this->item[$name] = $value;
+    }
+
+    /**
+     * @return null|mixed
+     */
+    public function getItemProperty(string $name)
+    {
+        return $this->item[$name] ?? null;
+    }
 }
