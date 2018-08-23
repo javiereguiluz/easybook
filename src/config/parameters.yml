@@ -16,10 +16,6 @@ parameters:
     skeleton_book_directory: '%kernel.project_dir%/app/Resources/Skeletons/Book'
     app.dir.themes: '%kernel.project_dir%/app/Resources/Themes'
 
-    # timer
-    app.timer.start: 0.0
-    app.timer.finish: 0.0
-
     # publishing process variables
     # holds the app theme dir for the current edition
     book_dir: '...'
@@ -66,6 +62,3 @@ parameters:
     # -western: force Windows-1252 charset
     # -gif: transform book images to GIF
     kindlegen.command_options: '-c1'
-
-    slugger_separator: '-' # used between words and instead of illegal characters
-    slugger_prefix: '' # prefix to be appended at the beginning of the slug

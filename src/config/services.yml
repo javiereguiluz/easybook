@@ -17,6 +17,7 @@ services:
 
     Easybook\:
         resource: '..'
+        exclude: '../{Events}'
 
     # from providers
     GeSHi:
@@ -26,10 +27,6 @@ services:
             - ['enable_classes', ['%app.charset%']]
             - ['enable_line_numbers', ['!php/const GESHI_NO_LINE_NUMBERS']]
             - ['enable_keyword_links', [false]]
-
-    EasySlugger\Utf8Slugger:
-        arguments:
-            $separator: '%slugger_separator%'
 
     Twig\Environment:
         arguments:

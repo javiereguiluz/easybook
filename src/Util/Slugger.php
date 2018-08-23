@@ -2,7 +2,7 @@
 
 namespace Easybook\Util;
 
-use EasySlugger\SluggerInterface;
+use Nette\Utils\Strings;
 
 final class Slugger
 {
@@ -11,34 +11,9 @@ final class Slugger
      */
     private $generatedSlugs = [];
 
-    /**
-     * @var SluggerInterface
-     */
-    private $slugger;
-
-    /**
-     * @var string
-     */
-    private $sluggerSeparator;
-
-    /**
-     * @var string
-     */
-    private $sluggerPrefix;
-
-    public function __construct(SluggerInterface $slugger, string $sluggerSeparator, string $sluggerPrefix)
+    public function slugify(string $string): string
     {
-        $this->slugger = $slugger;
-        $this->sluggerSeparator = $sluggerSeparator;
-        $this->sluggerPrefix = $sluggerPrefix;
-    }
-
-    public function slugify(string $string, string $separator = null, string $prefix = null): string
-    {
-        $slug = $this->slugger->slugify($string, $separator);
-        if ($prefix) {
-            $slug = $prefix . $slug;
-        }
+        $slug = Strings::webalize($string);
 
         $this->generatedSlugs[] = $slug;
 
@@ -49,26 +24,17 @@ final class Slugger
      * Transforms the original string into a web-safe slug. It also ensures that
      * the generated slug is unique for the entire book (to do so, it stores
      * every slug generated since the beginning of the script execution).
-     *
-     * @param string $string    The string to slug
-     * @param string $separator Used between words and to replace illegal characters
-     * @param string $prefix    Prefix to be appended at the beginning of the slug
-     *
-     * @return string The generated slug
      */
-    public function slugifyUniquely($string, $separator = null, $prefix = null)
+    public function slugifyUniquely($string)
     {
-        $separator = $separator ?: $this->sluggerSeparator;
-        $prefix = $prefix ?: $this->sluggerPrefix;
-
-        $slug = $this->slugify($string, $separator, $prefix);
+        $slug = Strings::webalize($string);
 
         // ensure the uniqueness of the slug
         $occurrences = array_count_values($this->generatedSlugs);
 
         $count = isset($occurrences[$slug]) ? $occurrences[$slug] : 0;
         if ($count > 1) {
-            $slug = $slug . $separator . $count;
+            $slug = $slug . '-' . $count;
         }
 
         return $slug;

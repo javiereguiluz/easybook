@@ -133,8 +133,6 @@ book page names and the URL for the books published as websites). If you prefer 
 
 ```yaml
 parameters:
-    slugger_separator: '_'
-
     book_title: '...'
     # ...
 ```

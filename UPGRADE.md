@@ -137,7 +137,6 @@ parameters:
     kindlegen.command_options: '-c0 -gif verbose'
     kindlegen.path:            '/path/to/utils/KindleGen/kindlegen'
     publishing.dir.output:     '/my/path/for/books/my-book'
-    slugger_separator:             '_'
 
     book_title:            easybook documentation
     book_author:           Javier Eguiluz
