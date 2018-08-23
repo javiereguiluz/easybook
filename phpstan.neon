@@ -1,3 +1,5 @@
 parameters:
     ignoreErrors:
         - '#Parameter (.*?) of function (.*?) expects resource, resource\|false given#'
+        # get() call on container
+        - '#Property (.*?)Test::(.*?) does not accept object#'

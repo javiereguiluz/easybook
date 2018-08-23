@@ -6,14 +6,10 @@ use Easybook\Parsers\MarkdownParser;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Easybook\Util\Slugger;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 final class MarkdownParserTest extends AbstractContainerAwareTestCase
 {
-    /**
-     * @var string
-     */
-    private $fixturesDir;
-
     /**
      * @var MarkdownParser
      */
@@ -31,7 +27,6 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
 
     protected function setUp(): void
     {
-        $this->fixturesDir = __DIR__ . '/fixtures';
         $this->markdownParser = $this->container->get(MarkdownParser::class);
         $this->finder = $this->container->get(Finder::class);
         $this->slugger = $this->container->get(Slugger::class);
@@ -39,31 +34,31 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
 
     public function testPHPMarkdown(): void
     {
-        // get...
         $docs = $this->finder->files()
             ->name('*.md')
             ->notName('Backslash escapes.md')
             ->depth(0)
-            ->in($this->fixturesDir . '/input/markdown-php');
+            ->in(__DIR__ . '/fixtures/input/markdown-php')
+            ->getIterator();
 
         $this->parseAndTestDocs($docs, '[Markdown] PHP Syntax:');
     }
 
     public function testPHPExtraMarkdown(): void
     {
-        // get...
         $docs = $this->finder->files()
             ->name('*.md')
             ->depth(0)
-            ->in($this->fixturesDir . '/input/markdown-php-extra');
+            ->in(__DIR__ . '/fixtures/input/markdown-php-extra')
+            ->getIterator();
 
         $this->parseAndTestDocs($docs, '[Markdown] PHP Extra Syntax:');
     }
 
     /**
-     * @param \SplFileInfo[] $docs
+     * @param SplFileInfo[] $docs
      */
-    private function parseAndTestDocs(array $docs, string $message = ''): void
+    private function parseAndTestDocs(iterable $docs, string $message): void
     {
         foreach ($docs as $doc) {
             $inputFilepath = $doc->getPathName();
