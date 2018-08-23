@@ -7,23 +7,12 @@ use Easybook\Tests\AbstractContainerAwareTestCase;
 use Easybook\Util\Toolkit;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 
 final class PublisherTest extends AbstractContainerAwareTestCase
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
     private $tmpDir;
-
-    /**
-     * @var Finder
-     */
-    private $finder;
 
     /**
      * @var Toolkit

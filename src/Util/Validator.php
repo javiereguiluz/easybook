@@ -24,22 +24,11 @@ final class Validator
      * @var SymfonyStyle
      */
     private $symfonyStyle;
-    /**
-     * @var string
-     */
-    private $bookDir;
 
-    public function __construct(
-        InputInterface $input,
-        OutputInterface $output,
-        SymfonyStyle $symfonyStyle,
-        string $bookDir
-    )
-    {
+    public function __construct(InputInterface $input, OutputInterface $output, SymfonyStyle $symfonyStyle) {
         $this->input = $input;
         $this->output = $output;
         $this->symfonyStyle = $symfonyStyle;
-        $this->bookDir = $bookDir;
     }
 
     public function validateDirExistsAndWritable($dir)

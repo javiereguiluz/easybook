@@ -2,18 +2,15 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
 use Easybook\Templating\Renderer;
 use Easybook\Util\Slugger;
 use RuntimeException;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig_Error_Loader;
-use Twig_Error_Syntax;
 
 abstract class AbstractPublisher implements PublisherInterface
 {
@@ -26,11 +23,6 @@ abstract class AbstractPublisher implements PublisherInterface
      * @var Filesystem
      */
     protected $filesystem;
-
-    /**
-     * @var SymfonyStyle
-     */
-    private $symfonyStyle;
 
     /**
      * @var Renderer
@@ -53,7 +45,6 @@ abstract class AbstractPublisher implements PublisherInterface
     public function setRequiredDependencies(
         EventDispatcherInterface $eventDispatcher,
         Filesystem $filesystem,
-        SymfonyStyle $symfonyStyle,
         Renderer $renderer,
         Slugger $slugger,
         string $publishingDirOutput
@@ -61,7 +52,6 @@ abstract class AbstractPublisher implements PublisherInterface
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->filesystem = $filesystem;
-        $this->symfonyStyle = $symfonyStyle;
         $this->renderer = $renderer;
         $this->slugger = $slugger;
         $this->publishingDirOutput = $publishingDirOutput;

@@ -11,6 +11,8 @@ services:
         extraAllowedClasses:
             - 'ZipArchive'
 
+    SlevomatCodingStandard\Sniffs\Classes\UnusedPrivateElementsSniff: ~
+
 #    Symplify\CodingStandard\Sniffs\CleanCode\CognitiveComplexitySniff:
 #        maxCognitiveComplexity: 50
 #

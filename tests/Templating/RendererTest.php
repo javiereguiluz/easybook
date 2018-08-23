@@ -4,16 +4,9 @@ namespace Easybook\Tests\Templating;
 
 use Easybook\Templating\Renderer;
 use Easybook\Tests\AbstractContainerAwareTestCase;
-use Symfony\Component\Filesystem\Filesystem;
-use Twig_Loader_Filesystem;
 
 final class RendererTest extends AbstractContainerAwareTestCase
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
     /**
      * @var string
      */
@@ -26,18 +19,14 @@ final class RendererTest extends AbstractContainerAwareTestCase
 
     protected function setUp(): void
     {
-        $this->filesystem = $this->container->get(Filesystem::class);
         $this->renderer = $this->container->get(Renderer::class);
 
-        // setup temp dir for generated files
-        $this->templateDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid('phpunit_', true);
-        $this->filesystem->mkdir($this->templateDir);
+        // @todo use absolute paths to prevent any these hackings
+        // $this->app['twig.loader'] = new Twig_Loader_Filesystem($this->templateDir);
 
-        $this->app['twig.loader'] = new Twig_Loader_Filesystem($this->templateDir);
-
-        $this->app['publishing.book.config'] = ['book' => [
-            'title' => 'Custom Test Book Title',
-        ]];
+        $this->parameterProvider->changeParameter('publishing.book.config', [
+            'book_title' => 'Custom Test Book Title',
+        ]);
     }
 
     protected function tearDown(): void

@@ -3,6 +3,7 @@
 namespace Easybook\Tests\Plugins;
 
 use Easybook\Events\ParseEvent;
+use Easybook\Parsers\MarkdownParser;
 use Easybook\Plugins\CodePluginEventSubscriber;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Twig\Parser;
@@ -10,14 +11,14 @@ use Twig\Parser;
 final class CodePluginTest extends AbstractContainerAwareTestCase
 {
     /**
-     * @var Parser
+     * @var MarkdownParser
      */
-    private $parser;
+    private $markdownParser;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->parser = $this->container->get(Parser::class);
+        $this->markdownParser = $this->container->get(MarkdownParser::class);
     }
 
     /**
@@ -51,7 +52,7 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
         $item = $event->getItem();
 
         // parse the item original content
-        $item['content'] = $app['parser']->transform($item['original']);
+        $item['content'] = $this->markdownParser->transform($item['original']);
 
         // execute post-parse method of the plugin
         $event->setItem($item);

@@ -17,15 +17,9 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
      */
     private $pdfPublisher;
 
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
     protected function setUp(): void
     {
         $this->pdfPublisher = $this->container->get(PdfPublisher::class);
-        $this->filesystem = $this->container->get(Filesystem::class);
     }
 
     /**

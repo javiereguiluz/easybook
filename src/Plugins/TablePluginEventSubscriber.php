@@ -65,14 +65,14 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
             "#(?<content><table.*\n<\/table>)#Ums",
             function ($matches) use ($parseEvent, $addTableLabels, $parentItemNumber) {
                 // prepare table parameters for template and label
-                $counter++;
+                $this->counter++;
                 $parameters = [
                     'item' => [
                         'caption' => '',
                         'content' => $matches['content'],
                         'label' => '',
-                        'number' => $counter,
-                        'slug' => $this->slugger->slugify('Table ' . $parentItemNumber . '-' . $counter),
+                        'number' => $this->counter,
+                        'slug' => $this->slugger->slugify('Table ' . $parentItemNumber . '-' . $this->counter),
                     ],
                     'element' => [
                         'number' => $parentItemNumber,

@@ -16,11 +16,6 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
     private $epub2Publisher;
 
     /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
      * @var PrivatesCaller
      */
     private $privatesCaller;
@@ -28,7 +23,6 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
     protected function setUp(): void
     {
         $this->epub2Publisher = $this->container->get(Epub2Publisher::class);
-        $this->filesystem = $this->container->get(Filesystem::class);
 
         $this->privatesCaller = (new PrivatesCaller());
     }

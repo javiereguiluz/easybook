@@ -39,6 +39,8 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
 
     /**
      * @dataProvider getTestTablePluginData()
+     *
+     * @param mixed[] $expectedLabels
      */
     public function testTablePlugin(
         string $inputFilePath,
@@ -60,7 +62,6 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
         $this->assertSame(file_get_contents(__DIR__ . '/fixtures/tables/' . $expectedFilePath), $item['content']);
 
         $publishingListTables = $this->parameterProvider->provideParameter('publishing.list.tables');
-
         foreach ($publishingListTables as $i => $table) {
             $this->assertRegexp('/<table.*<\/table>/s', $table[$i]['item']['content']);
 
