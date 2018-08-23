@@ -69,4 +69,10 @@ final class BookGenerator
             $this->bookDirectory . '/config.yml'
         );
     }
+
+    public function generateToDirectory(string $directory): void
+    {
+        $this->bookDirectory = $directory;
+        $this->generate();
+    }
 }

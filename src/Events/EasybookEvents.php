@@ -10,16 +10,6 @@ final class EasybookEvents
     /**
      * @var string
      */
-    public const PRE_NEW = 'book.new.start';
-
-    /**
-     * @var string
-     */
-    public const POST_NEW = 'book.new.finish';
-
-    /**
-     * @var string
-     */
     public const PRE_PUBLISH = 'book.publish.start';
 
     /**

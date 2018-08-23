@@ -16,7 +16,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
     {
         $txt = str_replace('**easybook**', '*eAsYbOoK*', $parseEvent->getItemProperty('original'));
 
-        $parseEvent->setItemProperty('original', $txt);
+        $parseEvent->changeItemProperty('original', $txt);
     }
 
     public function onItemPostParse(ParseEvent $parseEvent): void
@@ -27,6 +27,6 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             $parseEvent->getItemProperty('content')
         );
 
-        $parseEvent->setItemProperty('content', $html);
+        $parseEvent->changeItemProperty('content', $html);
     }
 }

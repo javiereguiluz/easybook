@@ -27,6 +27,7 @@ final class PublisherProvider
     }
 
     public function provideByFormat(string $format): PublisherInterface
+
     {
         foreach ($this->publishers as $publisher) {
             if (strtolower($publisher->getFormat()) === strtolower($format)) {
@@ -40,8 +41,9 @@ final class PublisherProvider
 
         throw new FormatPublisherNotSupportedException(sprintf(
             'Unknown "%s" format for "%s" edition. Try one of "%s".',
-            implode('", "', $supportedFormats),
-            $this->bookEdition
+            $format,
+            $this->bookEdition,
+            implode('", "', $supportedFormats)
         ));
     }
 

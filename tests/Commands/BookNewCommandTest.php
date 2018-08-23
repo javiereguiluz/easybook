@@ -2,14 +2,13 @@
 
 namespace Easybook\Tests\Commands;
 
+use Easybook\Console\Command\BookNewCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Yaml\Yaml;
 
 final class BookNewCommandTest extends AbstractContainerAwareTestCase
 {
-    protected $filesystem;
-
     protected $tmpDir;
 
     protected $console;
@@ -56,7 +55,7 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
             'edition' => 'First edition',
             'language' => 'en',
             'publication_date' => null,
-        ]], $bookConfig, 'The basic book configuration is properly generated.');
+        ]], $bookConfig, false, 'The basic book configuration is properly generated.');
 
         $this->assertArraySubset(['book' => ['contents' => [
             ['element' => 'cover'],
@@ -71,7 +70,7 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
                 'number' => 2,
                 'content' => 'chapter2.md',
             ],
-        ]]], $bookConfig, 'The book contents configuration is properly generated.');
+        ]]], $bookConfig, false,'The book contents configuration is properly generated.');
 
         $this->assertSame(
             ['ebook', 'kindle', 'print', 'web', 'website'],
@@ -103,11 +102,12 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
      */
     public function testNonexistentDir(): void
     {
-        $command = $this->console->find('new');
+        /** @var BookNewCommand $command */
+        $command = $this->container->get(BookNewCommand::class);
+
         $tester = new CommandTester($command);
         $tester->execute([
             'command' => $command->getName(),
-            'title' => 'The Origin of Species',
             '--dir' => './' . uniqid('non_existent_dir'),
         ]);
     }

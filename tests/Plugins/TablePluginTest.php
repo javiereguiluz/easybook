@@ -2,7 +2,6 @@
 
 namespace Easybook\Tests\Plugins;
 
-use Easybook\Configuration\CurrentItemProvider;
 use Easybook\Events\ParseEvent;
 use Easybook\Plugins\TablePluginEventSubscriber;
 use Easybook\Tests\AbstractCustomConfigContainerAwareTestCase;
@@ -11,11 +10,6 @@ use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
 {
-    /**
-     * @var CurrentItemProvider
-     */
-    private $currentItemProvider;
-
     /**
      * @var TablePluginEventSubscriber
      */
@@ -28,7 +22,6 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
 
     protected function setUp(): void
     {
-        $this->currentItemProvider = $this->container->get(CurrentItemProvider::class);
         $this->tablePluginEventSubscriber = $this->container->get(TablePluginEventSubscriber::class);
         $this->parameterProvider = $this->container->get(ParameterProvider::class);
     }
@@ -45,14 +38,16 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
         bool $addLabels,
         array $expectedLabels
     ): void {
-        $this->currentItemProvider->setItem([
+
+        $item = [
             'config' => ['number' => $itemNumber],
             'content' => file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath),
-        ]);
+        ];
 
-        $this->tablePluginEventSubscriber->decorateAndLabelTables(new ParseEvent());
+        $parseEvent = new ParseEvent($item);
+        $this->tablePluginEventSubscriber->decorateAndLabelTables($parseEvent);
 
-        $item = $this->currentItemProvider->getItem();
+        $item = $parseEvent->getItem();
 
         $this->assertSame(file_get_contents(__DIR__ . '/fixtures/tables/' . $expectedFilePath), $item['content']);
 

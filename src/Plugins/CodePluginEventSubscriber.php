@@ -125,6 +125,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
     private function parseGithubTypeCodeBlocks(ParseEvent $parseEvent): void
     {
         $item = $parseEvent->getItem();
+
         // regexp adapted from PHP-Markdown
         $item['original'] = preg_replace_callback(
             '{
@@ -150,7 +151,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
                 # Closing marker.
                 \1 [ ]* \n
             }Uxm',
-            function ($matches) use ($self, $parseEvent) {
+            function ($matches) use ($parseEvent) {
                 $language = $matches[2];
 
                 // codeblocks always end with an empty new line (due to the regexp used)
@@ -163,7 +164,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
                     $language = 'code';
                 }
 
-                $code = $self->highlightAndDecorateCode($code, $language);
+                $code = $this->highlightAndDecorateCode($code, $language);
 
                 return PHP_EOL . PHP_EOL . $code;
             },

@@ -2,36 +2,51 @@
 
 namespace Easybook\Events;
 
+use Symfony\Component\EventDispatcher\Event;
+
 /**
  * The object passed to the events related to the parsing of contents.
  * It provides access for the application object, the specific item
  * being published and to any of the item's properties.
  */
-final class ParseEvent extends AbstractEvent
+final class ParseEvent extends Event
 {
     /**
-     * Getter for any of the properties of the item being published.
-     *
-     * @param string $key The name of the requested item property
-     *
+     * @var mixed[]
+     */
+    private $item = [];
+
+    // @todo should be object to prevent set/get games just to keep reference
+
+    /**
+     * @param mixed[] $item
+     */
+    public function __construct(array $item)
+    {
+        $this->item = $item;
+    }
+
+    /**
      * @return mixed The value of the requested property
      */
     public function getItemProperty(string $key)
     {
-        return $this->app['publishing.active_item'][$key];
+        return $this->item[$key];
     }
 
     /**
-     * Setter for any of the properties of the item being published.
-     *
-     * @param string $key   The name of the property to modify
-     * @param mixed  $value The new value of the property
+     * @param mixed $value
      */
-    public function setItemProperty(string $key, $value): void
+    public function changeItemProperty(string $key, $value): void
     {
-        $item = $this->app['publishing.active_item'];
-        $item[$key] = $value;
+        $this->item[$key] = $value;
+    }
 
-        $this->app['publishing.active_item'] = $item;
+    /**
+     * @return mixed[]
+     */
+    public function getItem(): array
+    {
+        return $this->item;
     }
 }

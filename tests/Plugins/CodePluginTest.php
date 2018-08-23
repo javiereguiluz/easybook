@@ -2,7 +2,6 @@
 
 namespace Easybook\Tests\Plugins;
 
-use Easybook\Configuration\CurrentItemProvider;
 use Easybook\Events\ParseEvent;
 use Easybook\Parsers\MarkdownParser;
 use Easybook\Plugins\CodePluginEventSubscriber;
@@ -20,16 +19,10 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
      */
     private $codePluginEventSubscriber;
 
-    /**
-     * @var CurrentItemProvider
-     */
-    private $currentItemProvider;
-
     protected function setUp(): void
     {
         $this->markdownParser = $this->container->get(MarkdownParser::class);
         $this->codePluginEventSubscriber = $this->container->get(CodePluginEventSubscriber::class);
-        $this->currentItemProvider = $this->container->get(CurrentItemProvider::class);
     }
 
     /**
@@ -44,29 +37,29 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
         string $expectedFilePath,
         bool $enableCodeHightlight
     ): void {
-        $fixturesDir = __DIR__ . '/fixtures/code/';
-
         $app = $this->getApp($enableCodeHightlight);
 
-        $this->currentItemProvider->setItem([
+        $item = [
             'config' => ['format' => 'md'],
-            'original' => file_get_contents($fixturesDir . '/' . $inputFilePath),
+            'original' => file_get_contents(__DIR__ . '/fixtures/code/' . $inputFilePath),
             'content' => '',
-        ]);
+        ];
 
         // execute pre-parse method of the plugin
-        $this->codePluginEventSubscriber->parseCodeBlocks(new ParseEvent());
-        $item = $event->getItem();
+        $parseEvent = new ParseEvent($item);
+        $this->codePluginEventSubscriber->parseCodeBlocks(new ParseEvent($item));
 
         // parse the item original content
-        $item['content'] = $this->markdownParser->transform($item['original']);
+        $parseEvent->changeItemProperty(
+            'contant',
+            $this->markdownParser->transform($parseEvent->getItemProperty('content'))
+        );
 
         // execute post-parse method of the plugin
-        $event->setItem($item);
-        $plugin->fixParsedCodeBlocks($event);
-        $item = $event->getItem();
+        $this->codePluginEventSubscriber->fixParsedCodeBlocks($parseEvent);
+        $item = $parseEvent->getItem();
 
-        $this->assertSame(file_get_contents($fixturesDir . '/' . $expectedFilePath), $item['content']);
+        $this->assertSame(file_get_contents(__DIR__ . '/fixtures/code/' . $expectedFilePath), $item['content']);
     }
 
     public function getCodeBlockConfiguration()
