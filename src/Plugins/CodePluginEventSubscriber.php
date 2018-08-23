@@ -18,6 +18,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      * @var CodeHighlighter
      */
     private $codeHighlighter;
+
     /**
      * @var Renderer
      */

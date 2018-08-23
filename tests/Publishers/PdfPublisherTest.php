@@ -6,7 +6,6 @@ use Easybook\Publishers\PdfPublisher;
 use Easybook\Templating\Renderer;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Iterator;
-use Symfony\Component\Filesystem\Filesystem;
 use ZendPdf\Font;
 use ZendPdf\Page;
 use ZendPdf\PdfDocument;

@@ -8,7 +8,6 @@ use Easybook\Publishers\PublisherProvider;
 use Easybook\Util\Validator;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,22 +23,27 @@ final class BookPublishCommand extends Command
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
+
     /**
      * @var string
      */
     private $bookTitle;
+
     /**
      * @var Validator
      */
     private $validator;
+
     /**
      * @var PublisherProvider
      */
     private $publisherProvider;
+
     /**
      * @var SymfonyStyle
      */
     private $symfonyStyle;
+
     /**
      * @var ParameterProvider
      */
@@ -112,7 +116,6 @@ final class BookPublishCommand extends Command
 
         // execute the 'after_publish' scripts
 
-
 //        $this->runScripts($this->app->edition('after_publish'));
         $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'));
 
@@ -149,7 +152,7 @@ final class BookPublishCommand extends Command
             $this->symfonyStyle->success($process->getOutput());
         } else {
             throw new RuntimeException(sprintf(
-                "While executing scripts: %s an error happened: %s",
+                'While executing scripts: %s an error happened: %s',
                 $scripts . PHP_EOL . PHP_EOL,
                 $process->getErrorOutput() . PHP_EOL
             ));

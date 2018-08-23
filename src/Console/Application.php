@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 final class Application extends SymfonyApplication
 {
-
     public function __construct()
     {
         parent::__construct('easybook', $this->getPrettyVersion());

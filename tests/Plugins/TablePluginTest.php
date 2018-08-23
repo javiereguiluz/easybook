@@ -2,15 +2,11 @@
 
 namespace Easybook\Tests\Plugins;
 
-use Iterator;
 use Easybook\Configuration\CurrentItemProvider;
-use Easybook\DependencyInjection\Application;
 use Easybook\Events\ParseEvent;
-use Easybook\Plugins\TablePlugin;
 use Easybook\Plugins\TablePluginEventSubscriber;
-use Easybook\Tests\AbstractContainerAwareTestCase;
 use Easybook\Tests\AbstractCustomConfigContainerAwareTestCase;
-use Symfony\Component\EventDispatcher\Event;
+use Iterator;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase

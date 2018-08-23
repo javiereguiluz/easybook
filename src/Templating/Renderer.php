@@ -24,7 +24,6 @@ final class Renderer
         $this->twigEnvironment = $twigEnvironment;
     }
 
-
     /**
      * @param mixed[] $variables
      */

@@ -21,6 +21,7 @@ final class BookGenerator
      * @var Renderer
      */
     private $renderer;
+
     /**
      * @var string
      */
@@ -59,7 +60,7 @@ final class BookGenerator
         // why is this hardcoded? Finder?
         foreach (['chapter1.md', 'chapter2.md'] as $file) {
             $file = 'Contents/' . $file;
-            $this->filesystem->copy($this->skeletonBookDirectory. '/' . $file, $this->bookDirectory . '/' . $file);
+            $this->filesystem->copy($this->skeletonBookDirectory . '/' . $file, $this->bookDirectory . '/' . $file);
         }
 
         $this->renderer->renderToFile(

@@ -2,9 +2,9 @@
 
 namespace Easybook\Tests\Configuration;
 
-use Iterator;
 use Easybook\Configuration\CurrentItemProvider;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use Iterator;
 
 final class CurrentItemProviderTest extends AbstractContainerAwareTestCase
 {

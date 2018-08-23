@@ -2,12 +2,12 @@
 
 namespace Easybook\Tests\DependencyInjection;
 
-use Iterator;
 use Easybook\Publishers\Epub2Publisher;
 use Easybook\Publishers\HtmlChunkedPublisher;
 use Easybook\Publishers\HtmlPublisher;
 use Easybook\Publishers\PdfPublisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use Iterator;
 use Symfony\Component\Yaml\Yaml;
 
 final class ApplicationTest extends AbstractContainerAwareTestCase

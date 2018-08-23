@@ -18,6 +18,7 @@ final class Option
      * @var string
      */
     public const DIR = 'dir';
+
     /**
      * @var string
      */

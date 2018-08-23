@@ -2,7 +2,6 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\Events\AbstractEvent;
 use Easybook\Events\EasybookEvents as Events;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\Event;
@@ -101,7 +100,8 @@ final class HtmlChunkedPublisher extends AbstractPublisher
         );
 
         // copy book images
-        if (file_exists($imagesDir = $this->app['publishing.dir.contents'] . '/images')) {
+        $imagesDir = $this->app['publishing.dir.contents'] . '/images';
+        if (file_exists($imagesDir)) {
             $this->filesystem->mirror($imagesDir, $this->app['publishing.dir.output'] . '/images');
         }
     }

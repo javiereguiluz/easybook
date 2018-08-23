@@ -2,11 +2,11 @@
 
 namespace Easybook\Tests\Plugins;
 
+use Easybook\Configuration\CurrentItemProvider;
 use Easybook\Events\ParseEvent;
 use Easybook\Parsers\MarkdownParser;
 use Easybook\Plugins\CodePluginEventSubscriber;
 use Easybook\Tests\AbstractContainerAwareTestCase;
-use Twig\Parser;
 
 final class CodePluginTest extends AbstractContainerAwareTestCase
 {
@@ -15,40 +15,47 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
      */
     private $markdownParser;
 
+    /**
+     * @var CodePluginEventSubscriber
+     */
+    private $codePluginEventSubscriber;
+
+    /**
+     * @var CurrentItemProvider
+     */
+    private $currentItemProvider;
+
     protected function setUp(): void
     {
         $this->markdownParser = $this->container->get(MarkdownParser::class);
         $this->codePluginEventSubscriber = $this->container->get(CodePluginEventSubscriber::class);
+        $this->currentItemProvider = $this->container->get(CurrentItemProvider::class);
     }
 
     /**
-     * @dataProvider getCodeBlockConfiguration
+     * @dataProvider getCodeBlockConfiguration()
      *
      * @param string $inputFilePath        The contents to be parsed
      * @param string $expectedFilePath     The expected result of parsing the contents
-     * @param string $codeBlockType        The type of code block used in the content
      * @param bool   $enableCodeHightlight Whether or not code listings should be highlighted
      */
     public function testCodeBlocksTypes(
         string $inputFilePath,
         string $expectedFilePath,
-        string $codeBlockType,
         bool $enableCodeHightlight
     ): void {
         $fixturesDir = __DIR__ . '/fixtures/code/';
 
-        $app = $this->getApp($codeBlockType, $enableCodeHightlight);
-        $plugin = new CodePluginEventSubscriber();
-        $event = new ParseEvent($app);
+        $app = $this->getApp($enableCodeHightlight);
 
-        $event->setItem([
+        $this->currentItemProvider->setItem([
             'config' => ['format' => 'md'],
             'original' => file_get_contents($fixturesDir . '/' . $inputFilePath),
             'content' => '',
         ]);
 
         // execute pre-parse method of the plugin
-        $plugin->parseCodeBlocks($event);
+        $this->codePluginEventSubscriber->parseCodeBlocks(new ParseEvent());
         $item = $event->getItem();
 
         // parse the item original content
@@ -65,20 +72,20 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
     public function getCodeBlockConfiguration()
     {
         return [
-            ['input_1.md', 'expected_easybook_type_disabled_highlight.html', 'easybook', false],
-            ['input_1.md', 'expected_easybook_type_enabled_highlight.html', 'easybook', true],
+            ['input_1.md', 'expected_easybook_type_disabled_highlight.html', false],
+            ['input_1.md', 'expected_easybook_type_enabled_highlight.html', true],
 
-            ['input_2.md', 'expected_fenced_type_disabled_highlight.html', 'fenced', false],
-            ['input_2.md', 'expected_fenced_type_enabled_highlight.html', 'fenced', true],
+            ['input_2.md', 'expected_fenced_type_disabled_highlight.html', false],
+            ['input_2.md', 'expected_fenced_type_enabled_highlight.html', true],
 
-            ['input_3.md', 'expected_github_type_disabled_highlight.html', 'github', false],
-            ['input_3.md', 'expected_github_type_enabled_highlight.html', 'github', true],
+            ['input_3.md', 'expected_github_type_disabled_highlight.html', false],
+            ['input_3.md', 'expected_github_type_enabled_highlight.html', true],
         ];
     }
 
-    private function getApp($codeBlockType, $enableCodeHightlight)
+    private function getApp($enableCodeHightlight)
     {
-        $app = new Application();
+//        $app = new Application();
 
         $app['publishing.book.slug'] = 'test_book';
         $app['publishing.edition'] = 'test_edition';
@@ -89,19 +96,12 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
                 'editions' => [
                     'test_edition' => [
                         'format' => 'html',
-                        'highlight_cache' => false,
                         'highlight_code' => $enableCodeHightlight,
                         'theme' => 'clean',
                     ],
                 ],
             ],
         ];
-
-        // don't try to optimize the following code or you'll end up
-        // with this error: 'Indirect modification of overloaded element'
-        $parserOptions = $app['parser.options'];
-        $parserOptions['code_block_type'] = $codeBlockType;
-        $app['parser.options'] = $parserOptions;
 
         return $app;
     }

@@ -10,14 +10,17 @@ final class Slugger
      * @var string[]
      */
     private $generatedSlugs = [];
+
     /**
      * @var SluggerInterface
      */
     private $slugger;
+
     /**
      * @var string
      */
     private $sluggerSeparator;
+
     /**
      * @var string
      */

@@ -2,13 +2,8 @@
 
 namespace Easybook\Tests\Commands;
 
-use Easybook\Console\Command\BookNewCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
-use Symfony\Component\Console\Helper\FormatterHelper;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 final class BookNewCommandTest extends AbstractContainerAwareTestCase

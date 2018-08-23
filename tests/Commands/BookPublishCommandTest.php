@@ -2,15 +2,12 @@
 
 namespace Easybook\Tests\Commands;
 
-use Iterator;
 use Easybook\Console\Command\BookNewCommand;
 use Easybook\Console\Command\BookPublishCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use Iterator;
 use RuntimeException;
-use Symfony\Component\Console\Helper\FormatterHelper;
-use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Filesystem\Filesystem;
 
 final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 {

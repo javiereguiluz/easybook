@@ -166,6 +166,8 @@ abstract class AbstractPublisher implements PublisherInterface
         }
     }
 
+    abstract protected function assembleBook();
+
     private function prepareOutputDir(): void
     {
         $this->filesystem->mkdir($this->publishingDirOutput);
@@ -272,6 +274,4 @@ abstract class AbstractPublisher implements PublisherInterface
 
         return $item;
     }
-
-    abstract protected function assembleBook();
 }

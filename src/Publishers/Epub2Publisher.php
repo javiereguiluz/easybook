@@ -2,10 +2,10 @@
 
 namespace Easybook\Publishers;
 
-use Symfony\Component\EventDispatcher\Event as SymfonyEvent;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Util\Toolkit;
 use RuntimeException;
+use Symfony\Component\EventDispatcher\Event as SymfonyEvent;
 use Symfony\Component\Finder\Finder;
 use Twig_Error_Loader;
 
@@ -254,7 +254,8 @@ final class Epub2Publisher extends AbstractPublisher
     {
         $cover = null;
 
-        if (null !== $image = $this->app->getCustomCoverImage()) {
+        $image = $this->app->getCustomCoverImage();
+        if ($image !== null) {
             [$width, $height, $type] = getimagesize($image);
 
             $cover = [
