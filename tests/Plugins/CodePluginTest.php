@@ -17,8 +17,8 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
         $this->markdownParser = $this->container->get(MarkdownParser::class);
+        $this->codePluginEventSubscriber = $this->container->get(CodePluginEventSubscriber::class);
     }
 
     /**

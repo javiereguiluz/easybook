@@ -3,6 +3,7 @@
 namespace Easybook\Tests\Publishers;
 
 use Easybook\Publishers\PdfPublisher;
+use Easybook\Templating\Renderer;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Iterator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -17,9 +18,15 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
      */
     private $pdfPublisher;
 
+    /**
+     * @var Renderer
+     */
+    private $renderer;
+
     protected function setUp(): void
     {
         $this->pdfPublisher = $this->container->get(PdfPublisher::class);
+        $this->renderer = $this->container->get(Renderer::class);
     }
 
     /**
@@ -43,14 +50,15 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
         }
 
         $selectedCoverPath = $this->pdfPublisher->getCustomCover();
-        $selectedCover = str_replace($app['publishing.dir.templates'] . '/', '', $selectedCoverPath);
-
-        $this->assertSame($coverThatShouldBeUsed, $selectedCover);
+        if ($selectedCoverPath) {
+            $selectedCover = str_replace($app['publishing.dir.templates'] . '/', '', $selectedCoverPath);
+            $this->assertSame($coverThatShouldBeUsed, $selectedCover);
+        }
 
         $this->filesystem->remove($app['publishing.dir.templates']);
     }
 
-    public function provideCoverSampleData()
+    public function provideCoverSampleData(): array
     {
         return [
             [['print/cover.pdf', 'pdf/cover.pdf', 'cover.pdf'], 'print/cover.pdf'],
@@ -69,7 +77,7 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
         $app['publishing.book.config'] = $this->getBookConfig(false);
         $app['publishing.edition'] = 'print';
 
-        $bookCss = $app->render('@theme/style.css.twig');
+        $bookCss = $this->renderer->render('@theme/style.css.twig');
 
         $this->assertNotContains(
             ".item {\n    page-break-before: right;",
@@ -83,7 +91,7 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
         $app['publishing.book.config'] = $this->getBookConfig(true);
         $app['publishing.edition'] = 'print';
 
-        $bookCss = $app->render('@theme/style.css.twig');
+        $bookCss = $this->renderer->render('@theme/style.css.twig');
 
         $this->assertContains(
             ".item {\n    page-break-before: right;",

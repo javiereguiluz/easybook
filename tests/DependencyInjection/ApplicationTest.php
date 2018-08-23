@@ -105,8 +105,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
 
     public function testEditionMethodShortcut(): void
     {
-        $app = new Application();
-
         $app['publishing.edition'] = 'my_edition';
 
         $app['publishing.book.config'] = [
@@ -172,7 +170,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
      */
     public function testUnsupportedPublisher(): void
     {
-        $app = new Application();
         $app['publishing.edition'] = 'my_edition';
 
         $app['publishing.book.config'] = [
@@ -194,7 +191,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
      */
     public function testUnsupportedContentFormat(): void
     {
-        $app = new Application();
         $app['publishing.active_item'] = [
             'config' => [
                 'format' => 'this_format_does_not_exist',
@@ -207,16 +203,13 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
 
     public function testGetTitleMethodForDefaultTitles(): void
     {
-        $app = new Application();
-
-        $files = $app['finder']->files()->name('titles.*.yml')
+    $files = $app['finder']->files()->name('titles.*.yml')
             ->in($app['app.dir.translations']);
 
         foreach ($files as $file) {
             $locale = substr($file->getRelativePathname(), -6, 2);
 
             // reset the application for each language because titles are cached
-            $app = new Application();
             $app['publishing.edition'] = 'edition1';
             $app['publishing.book.config'] = ['book' => [
                 'language' => $locale,
@@ -234,8 +227,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
 
     public function testGetLabelMethodForDefaultLabels(): void
     {
-        $app = new Application();
-
         $files = $app['finder']->files()->name('labels.*.yml')
             ->in($app['app.dir.translations']);
 
@@ -254,7 +245,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
             $locale = substr($file->getRelativePathname(), -6, 2);
 
             // reset the application for each language because labels are cached
-            $app = new Application();
             $app['publishing.edition'] = 'edition1';
             $app['publishing.book.config'] = ['book' => [
                 'language' => $locale,
@@ -285,7 +275,6 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
     public function testGetPublishingEditionId(): void
     {
         // get the ID of a ISBN-less book
-        $app = new Application();
         $app['publishing.edition'] = 'edition1';
         $app['publishing.book.config'] = ['book' => [
             'editions' => [
@@ -310,38 +299,5 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
 
         $this->assertSame('isbn', $publishingId['scheme']);
         $this->assertSame('9782918390060', $publishingId['value']);
-    }
-
-    /**
-     * @dataProvider getValuesForGetAndSetMethods
-     */
-    public function testGetMethod($key, $expectedValue): void
-    {
-        $app[$key] = $expectedValue;
-
-        $this->assertSame($expectedValue, $app->get($key));
-    }
-
-    /**
-     * @dataProvider getValuesForGetAndSetMethods
-     */
-    public function testSetMethod($key, $expectedValue): void
-    {
-        $app = new Application();
-
-        $app->set($key, $expectedValue);
-        $this->assertSame($expectedValue, $app[$key]);
-    }
-
-    public function getValuesForGetAndSetMethods()
-    {
-        return [
-            ['key1', null],
-            ['key2', true],
-            ['key3', 'string'],
-            ['key4', 3],
-            ['key5', 3.141592],
-            ['key6', [1, 2, 3]],
-        ];
     }
 }
