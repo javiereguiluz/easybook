@@ -1,6 +1,4 @@
 parameters:
-    parser.options:
-        markdown_syntax: "php-markdown-extra"
     kindlegen.path:      "/this/path/does/not/exist/kindlegen"
     slugger._separator:       "_"
 

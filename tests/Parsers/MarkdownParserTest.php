@@ -37,23 +37,8 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
         $this->slugger = $this->container->get(Slugger::class);
     }
 
-    public function testOriginalMarkdown(): void
-    {
-        $this->app['parser.options'] = ['markdown_syntax' => 'original'];
-
-        // get...
-        $docs = $this->finder->files()
-            ->name('*.md')
-            ->depth(0)
-            ->in($this->fixturesDir . '/input/markdown-original');
-
-        $this->parseAndTestDocs($docs, '[Markdown] Original Syntax:');
-    }
-
     public function testPHPMarkdown(): void
     {
-        $this->app['parser.options'] = ['markdown_syntax' => 'php-markdown-extra'];
-
         // get...
         $docs = $this->finder->files()
             ->name('*.md')
@@ -66,8 +51,6 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
 
     public function testPHPExtraMarkdown(): void
     {
-        $this->app['parser.options'] = ['markdown_syntax' => 'php-markdown-extra'];
-
         // get...
         $docs = $this->finder->files()
             ->name('*.md')
@@ -75,21 +58,6 @@ final class MarkdownParserTest extends AbstractContainerAwareTestCase
             ->in($this->fixturesDir . '/input/markdown-php-extra');
 
         $this->parseAndTestDocs($docs, '[Markdown] PHP Extra Syntax:');
-    }
-
-    public function testEasybookMarkdown(): void
-    {
-        $this->app['parser.options'] = [
-            'markdown_syntax' => 'easybook',
-            'code_block_type' => 'easybook',
-        ];
-
-        $docs = $this->finder->files()
-            ->name('*.md')
-            ->depth(0)
-            ->in($this->fixturesDir . '/input/markdown-easybook');
-
-        $this->parseAndTestDocs($docs, '[Markdown] easybook Syntax:');
     }
 
     /**

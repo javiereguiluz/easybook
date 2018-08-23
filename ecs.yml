@@ -6,7 +6,11 @@ imports:
 #    - { resource: 'vendor/symplify/easy-coding-standard/config/common.yml' }
 #    - { resource: 'vendor/symplify/easy-coding-standard/config/psr12.yml' }
 
-#services:
+services:
+    Symplify\CodingStandard\Sniffs\DependencyInjection\NoClassInstantiationSniff:
+        extraAllowedClasses:
+            - 'ZipArchive'
+
 #    Symplify\CodingStandard\Sniffs\CleanCode\CognitiveComplexitySniff:
 #        maxCognitiveComplexity: 50
 #

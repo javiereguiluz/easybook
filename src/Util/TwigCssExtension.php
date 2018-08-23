@@ -262,7 +262,6 @@ final class TwigCssExtension extends Twig_Extension
 
     /**
      * @param mixed $percent
-     * @return float
      */
     private function normalizePercents($percent): float
     {

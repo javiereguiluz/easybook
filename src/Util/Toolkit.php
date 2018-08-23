@@ -4,7 +4,6 @@ namespace Easybook\Util;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Symplify\PackageBuilder\Yaml\ParametersMerger;
 use ZipArchive;
 
 final class Toolkit
@@ -108,23 +107,12 @@ final class Toolkit
         return $zip->close();
     }
 
-    /**
-     * Camelizes a string: 'updated_at' -> 'updatedAt'.
-     *
-     * @param string $string     A string to camelize
-     * @param bool   $upperFirst If true, the first letter is also uppercased
-     *                           'updated_at' -> 'UpdatedAt'
-     *
-     * @return string The camelized string
-     *
-     * code adapted from Symfony\Component\DependencyInjection\Container.php
-     */
-    public static function camelize(string $string, bool $upperFirst = false): string
+    public function camelize(string $string): string
     {
-        return preg_replace_callback('/(^|_|\.)+(.)/', function ($match) use ($upperFirst) {
+        return preg_replace_callback('#(^|_|\.)+(.)#', function ($match) {
             $camelized = ($match[1] === '.' ? '_' : '') . strtoupper($match[2]);
 
-            return $upperFirst ? ucfirst($camelized) : $camelized;
+            return ucfirst($camelized);
         }, $string);
     }
 }

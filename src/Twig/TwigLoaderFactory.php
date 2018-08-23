@@ -7,10 +7,20 @@ use Twig_Loader_Filesystem;
 
 final class TwigLoaderFactory
 {
+    /**
+     * @var Toolkit
+     */
+    private $toolkit;
+
+    public function __construct(Toolkit $toolkit)
+    {
+        $this->toolkit = $toolkit;
+    }
+
     public function create(): Twig_Loader_Filesystem
     {
         $theme = ucfirst($app->edition('theme'));
-        $format = Toolkit::camelize($app->edition('format'), true);
+        $format = $this->toolkit->camelize($app->edition('format'));
 
         $loader = new Twig_Loader_Filesystem($app['app.dir.themes']);
 

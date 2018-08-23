@@ -67,10 +67,5 @@ parameters:
     # -gif: transform book images to GIF
     kindlegen.command_options: '-c1'
 
-    # parse
-    parser.options:
-        # available syntaxes: 'original', 'php-markdown-extra', 'easybook'
-        markdown_syntax: 'easybook'
-
     slugger_separator: '-' # used between words and instead of illegal characters
     slugger_prefix: '' # prefix to be appended at the beginning of the slug

@@ -3,8 +3,6 @@ parameters:
     other_option:     "value_2"
     nested_option:
         last:         ["value_3", "value_4"]
-    parser.options:
-        markdown_syntax: "php-markdown-extra"
     kindlegen.path:      "/this/path/does/not/exist/kindlegen"
     slugger_separator:       "_"
 
