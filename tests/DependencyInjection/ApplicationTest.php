@@ -2,6 +2,7 @@
 
 namespace Easybook\Tests\DependencyInjection;
 
+use Iterator;
 use Easybook\Publishers\Epub2Publisher;
 use Easybook\Publishers\HtmlChunkedPublisher;
 use Easybook\Publishers\HtmlPublisher;
@@ -11,129 +12,6 @@ use Symfony\Component\Yaml\Yaml;
 
 final class ApplicationTest extends AbstractContainerAwareTestCase
 {
-    public function testSlugify(): void
-    {
-        // don't use a dataProvider because it interferes with the slug generation
-        $slugs = [
-            ['Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet'],
-            ['Lorem ipsum !! dolor sit amet', 'lorem-ipsum-dolor-sit-amet'],
-            ['Lorem ipsum + dolor * sit amet', 'lorem-ipsum-dolor-sit-amet'],
-            ['Ut enim ad minim veniam', 'ut-enim-ad-minim-veniam'],
-            ['Ut enim ad / minim || veniam', 'ut-enim-ad-minim-veniam'],
-            ['Ut enim _ad minim_ veniam', 'ut-enim-ad-minim-veniam'],
-            ['Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet'],
-            ['Lorem ipsum dolor ++ sit amet', 'lorem-ipsum-dolor-sit-amet'],
-            ['Ut * enim * ad * minim * veniam', 'ut-enim-ad-minim-veniam'],
-            ['Ut enim ad minim veniam', 'ut-enim-ad-minim-veniam'],
-        ];
-
-        foreach ($slugs as $slug) {
-            $string = $slug[0];
-            $expectedSlug = $slug[1];
-
-            $this->assertSame($expectedSlug, $app->slugify($string));
-        }
-    }
-
-    public function testSlugifyUniquely(): void
-    {
-        // don't use a dataProvider because it interferes with the slug generation
-        $uniqueSlugs = [
-            ['Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet'],
-            ['Lorem ipsum !! dolor sit amet', 'lorem-ipsum-dolor-sit-amet-2'],
-            ['Lorem ipsum + dolor * sit amet', 'lorem-ipsum-dolor-sit-amet-3'],
-            ['Ut enim ad minim veniam', 'ut-enim-ad-minim-veniam'],
-            ['Ut enim ad / minim || veniam', 'ut-enim-ad-minim-veniam-2'],
-            ['Ut enim _ad minim_ veniam', 'ut-enim-ad-minim-veniam-3'],
-            ['Lorem ipsum dolor sit amet', 'lorem-ipsum-dolor-sit-amet-4'],
-            ['Lorem ipsum dolor ++ sit amet', 'lorem-ipsum-dolor-sit-amet-5'],
-            ['Ut * enim * ad * minim * veniam', 'ut-enim-ad-minim-veniam-4'],
-            ['Ut enim ad minim veniam', 'ut-enim-ad-minim-veniam-5'],
-        ];
-
-        foreach ($uniqueSlugs as $slug) {
-            $string = $slug[0];
-            $expectedSlug = $slug[1];
-
-            $this->assertSame($expectedSlug, $app->slugifyUniquely($string));
-        }
-    }
-
-    /**
-     * @dataProvider provideHighlightFixtures
-     */
-    public function testHighlight($originalFilePath, $highlightedFilePath): void
-    {
-        // mock the $app object to disable the highlight cache
-        $app = $this->getMock('Easybook\DependencyInjection\Application', ['edition']);
-        $app->expects($this->any())
-            ->method('edition')
-            ->will($this->returnValue(null));
-
-        $languageToHighlight = substr(basename($originalFilePath), 0, -4);
-
-        $this->assertSame(
-            file_get_contents($highlightedFilePath),
-            $app->highlight(file_get_contents($originalFilePath), $languageToHighlight),
-            'Code snippet is highlighted correctly.'
-        );
-    }
-
-    public function provideHighlightFixtures()
-    {
-        $fixturesDir = __DIR__ . '/fixtures/highlight';
-
-        return array_map(null, glob($fixturesDir . '/input/*.txt'), glob($fixturesDir . '/output/*.txt'));
-    }
-
-    public function testBookMethodShortcut(): void
-    {
-        $app = new Application();
-        $app['publishing.book.config'] = [
-            'book' => [
-                'title' => 'The title of the book',
-            ],
-        ];
-
-        $this->assertSame('The title of the book', $app->book('title'));
-
-        $newBookTitle = 'The book title set via the method shortcut';
-        $app->book('title', $newBookTitle);
-
-        $this->assertSame($newBookTitle, $app->book('title'));
-    }
-
-    public function testEditionMethodShortcut(): void
-    {
-        $app['publishing.edition'] = 'my_edition';
-
-        $app['publishing.book.config'] = [
-            'book' => [
-                'editions' => [
-                    'my_edition' => [
-                        'format' => 'pdf',
-                    ],
-                ],
-            ],
-        ];
-
-        $this->assertSame('pdf', $app->edition('format'));
-
-        $app->edition('format', 'epub');
-        $this->assertSame('epub', $app->edition('format'));
-    }
-
-    /**
-     * @expectedException PHPUnit_Framework_Error_Deprecated
-     * @expectedExceptionMessage The "publishing.id" option is deprecated
-     */
-    public function testDeprecatedPublishingIdProperty(): void
-    {
-        $app['publishing.edition.id'] = 'custom_edition_id';
-
-        $id = $app['publishing.id'];
-    }
-
     /**
      * @dataProvider getPublishers
      */
@@ -154,14 +32,12 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         $this->assertInstanceOf($publisherClassName, $app['publisher']);
     }
 
-    public function getPublishers()
+    public function getPublishers(): Iterator
     {
-        return [
-            ['epub', Epub2Publisher::class],
-            ['pdf', PdfPublisher::class],
-            ['html', HtmlPublisher::class],
-            ['html_chunked', HtmlChunkedPublisher::class],
-        ];
+        yield ['epub', Epub2Publisher::class];
+        yield ['pdf', PdfPublisher::class];
+        yield ['html', HtmlPublisher::class];
+        yield ['html_chunked', HtmlChunkedPublisher::class];
     }
 
     /**
@@ -185,26 +61,12 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
         $publisher = $app['publisher'];
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage (easybook only supports Markdown)
-     */
-    public function testUnsupportedContentFormat(): void
-    {
-        $app['publishing.active_item'] = [
-            'config' => [
-                'format' => 'this_format_does_not_exist',
-                'content' => 'test_chapter',
-            ],
-        ];
-
-        $parser = $app['parser'];
-    }
-
     public function testGetTitleMethodForDefaultTitles(): void
     {
-    $files = $app['finder']->files()->name('titles.*.yml')
-            ->in($app['app.dir.translations']);
+        $files = $this->finder->files()
+            ->name('titles.*.yml')
+            ->in($app['app.dir.translations'])
+            ->getIterator();
 
         foreach ($files as $file) {
             $locale = substr($file->getRelativePathname(), -6, 2);
@@ -227,8 +89,10 @@ final class ApplicationTest extends AbstractContainerAwareTestCase
 
     public function testGetLabelMethodForDefaultLabels(): void
     {
-        $files = $app['finder']->files()->name('labels.*.yml')
-            ->in($app['app.dir.translations']);
+        $files = $this->finder->files()
+            ->name('labels.*.yml')
+            ->in($app['app.dir.translations'])
+            ->getIterator();
 
         $labelVariables = [
             'item' => [

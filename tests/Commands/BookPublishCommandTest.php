@@ -2,6 +2,7 @@
 
 namespace Easybook\Tests\Commands;
 
+use Iterator;
 use Easybook\Console\Command\BookNewCommand;
 use Easybook\Console\Command\BookPublishCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
@@ -13,34 +14,34 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 {
-//    /**
-//     * @var string
-//     */
-    //    private $tmpDir;
+    /**
+     * @var BookNewCommand
+     */
+    private $bookNewCommand;
+
+    /**
+     * @var BookPublishCommand
+     */
+    private $bookPublishCommand;
 
     protected function setUp(): void
     {
         // generate a sample book before testing its publication
 
-        /** @var BookNewCommand $bookNewCommand */
-        $bookNewCommand = $this->container->get(BookNewCommand::class);
-        $tester = new CommandTester($bookNewCommand);
+        $this->bookNewCommand = $this->container->get(BookNewCommand::class);
+        $tester = new CommandTester($this->bookNewCommand);
         $tester->execute([
-            'command' => $bookNewCommand->getName(),
-            'title' => 'The Origin of Species',
+            'command' => $this->bookNewCommand->getName(),
             //            '--dir' => $this->tmpDir,
         ]);
+
+        $this->bookPublishCommand = $this->container->get(BookPublishCommand::class);
     }
 
-//    public function tearDown()
-//    {
-//        $this->filesystem->remove($this->tmpDir);
-    //    }
-
     /**
-     * @dataProvider getCommandData
+     * @dataProvider getCommandData()
      */
-    public function testCommand($edition, $publishedBookFilePath): void
+    public function testCommand(string $edition, string $publishedBookFilePath): void
     {
         $tester = $this->publishBook($edition);
 
@@ -56,14 +57,12 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
         );
     }
 
-    public function getCommandData()
+    public function getCommandData(): Iterator
     {
-        return [
-            //    edition    $publishedBookFilePath
-            ['web', 'web/book.html'],
-            ['website', 'website/book/index.html'],
-            ['ebook', 'ebook/book.epub'],
-        ];
+        // edition, $publishedBookFilePath
+        yield ['web', 'web/book.html'];
+        yield ['website', 'website/book/index.html'];
+        yield ['ebook', 'ebook/book.epub'];
     }
 
     /**
@@ -86,9 +85,7 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 
     public function testBeforeAndAfterPublishScripts(): void
     {
-        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
-            $this->markTestSkipped('This test executes commands not available for Windows systems.');
-        }
+        // @todo createWithConfig() test
 
         $bookConfigurationViaCommand = [
             'book' => [
@@ -112,18 +109,12 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
             ],
         ];
 
-        $command = $this->container->get(BookPublishCommand::class);
-        $tester = new CommandTester($command);
+        $tester = new CommandTester($this->bookPublishCommand);
 
         $tester->execute([
-            'command' => $command->getName(),
-            'slug' => 'the-origin-of-species',
+            'command' => $this->bookPublishCommand->getName(),
             'edition' => 'web',
             '--dir' => $this->tmpDir,
-            '--no-interaction' => true,
-            '--configuration' => json_encode($bookConfigurationViaCommand),
-        ], [
-            'interactive' => false,
         ]);
 
         $bookDir = $this->tmpDir . '/the-origin-of-species';
@@ -141,6 +132,8 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 
     public function testFailingBeforePublishScript(): void
     {
+        // @todo createWithConfig() test
+
         $bookConfigurationViaCommand = [
             'book' => [
                 'editions' => [
@@ -151,48 +144,28 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
             ],
         ];
 
-        $command = $this->container->get(BookPublishCommand::class);
-        $tester = new CommandTester($command);
+        $tester = new CommandTester($this->bookPublishCommand);
 
-        try {
-            $tester->execute([
-                'command' => $command->getName(),
-                'slug' => 'the-origin-of-species',
-                'edition' => 'web',
-                '--dir' => $this->tmpDir,
-                '--no-interaction' => true,
-                '--configuration' => json_encode($bookConfigurationViaCommand),
-            ], [
-                'interactive' => false,
-            ]);
-        } catch (RuntimeException $e) {
-            $this->assertInstanceOf(RuntimeException::class, $e);
-            $this->assertContains('There was an error executing the following script', $e->getMessage());
-        }
+        // $this->setExpected(...)
+//        $this->assertInstanceOf(RuntimeException::class, $e);
+//        $this->assertContains('There was an error executing the following script', $e->getMessage());
+
+        $tester->execute([
+            'command' => $this->bookPublishCommand->getName(),
+            'edition' => 'web',
+            '--dir' => $this->tmpDir,
+        ]);
     }
 
-    // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
-    protected function getInputStream($input)
-    {
-        $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, $input . str_repeat("\n", 10));
-        rewind($stream);
-
-        return $stream;
-    }
-
-    private function publishBook($edition = 'web', $slug = 'the-origin-of-species'): CommandTester
+    private function publishBook(string $edition = 'web'): CommandTester
     {
         $command = $this->container->get(BookPublishCommand::class);
         $tester = new CommandTester($command);
 
         $tester->execute([
             'command' => $command->getName(),
-            'slug' => $slug,
             'edition' => $edition,
             '--dir' => $this->tmpDir,
-        ], [
-            'interactive' => false,
         ]);
 
         return $tester;

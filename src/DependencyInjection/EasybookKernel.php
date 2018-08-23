@@ -274,61 +274,6 @@ final class EasybookKernel extends Kernel
 //        }
 //    }
 
-//    /**
-//     * Shortcut to get/set book configuration options:.
-//     *
-//     *   // returns 'author' option value
-//     *   $app->book('author');
-//     *
-//     *   // sets 'New author' as the value of 'author' option
-//     *   $app->book('author', 'New author');
-//     *
-//     * @param string $key      The configuration option key
-//     * @param mixed  $newValue The new value of the configuration option
-//     *
-//     * @return mixed It only returns a value when the second argument is null
-//     */
-//    public function book($key, $newValue = null)
-//    {
-//        $bookConfig = $this['publishing.book.config'];
-//
-//        if (null === $newValue) {
-//            return isset($bookConfig['book'][$key]) ? $bookConfig['book'][$key] : null;
-//        } else {
-//            $bookConfig['book'][$key] = $newValue;
-//            $this['publishing.book.config'] = $bookConfig;
-//        }
-//    }
-//
-//    /**
-//     * Shortcut to get/set edition configuration options:.
-//     *
-//     *   // returns 'page_size' option value
-//     *   $app->edition('page_size');
-//     *
-//     *   // sets 'US-letter' as the value of 'page_size' option
-//     *   $app->edition('page_size', 'US-Letter');
-//     *
-//     * @param string $key      The configuration option key
-//     * @param mixed  $newValue The new value of the configuration option
-//     *
-//     * @return mixed It only returns a value when the second argument is null
-//     */
-//    public function edition($key, $newValue = null)
-//    {
-//        $bookConfig = $this['publishing.book.config'];
-//        $publishingEdition = $this['publishing.edition'];
-//
-//        if (null === $newValue) {
-//            return isset($bookConfig['book']['editions'][$publishingEdition][$key])
-//                ? $bookConfig['book']['editions'][$publishingEdition][$key]
-//                : null;
-//        } else {
-//            $bookConfig['book']['editions'][$publishingEdition][$key] = $newValue;
-//            $this['publishing.book.config'] = $bookConfig;
-//        }
-//    }
-
     /**
      * @return BundleInterface[]
      */

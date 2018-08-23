@@ -44,4 +44,12 @@ final class PublisherProvider
             $this->bookEdition
         ));
     }
+
+    /**
+     * @return PublisherInterface[]
+     */
+    public function getPublishers(): array
+    {
+        return $this->publishers;
+    }
 }

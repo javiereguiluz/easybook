@@ -4,6 +4,7 @@ namespace Easybook\Console\Command;
 
 use Easybook\Configuration\Option;
 use Easybook\Events\EasybookEvents as Events;
+use Easybook\Publishers\PublisherProvider;
 use Easybook\Util\Validator;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
@@ -11,9 +12,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 final class BookPublishCommand extends Command
 {
@@ -29,12 +32,35 @@ final class BookPublishCommand extends Command
      * @var Validator
      */
     private $validator;
+    /**
+     * @var PublisherProvider
+     */
+    private $publisherProvider;
+    /**
+     * @var SymfonyStyle
+     */
+    private $symfonyStyle;
+    /**
+     * @var ParameterProvider
+     */
+    private $parameterProvider;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher, string $bookTitle, Validator $validator)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        string $bookTitle,
+        Validator $validator,
+        PublisherProvider $publisherProvider,
+        SymfonyStyle $symfonyStyle,
+        ParameterProvider $parameterProvider
+    ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->bookTitle = $bookTitle;
         $this->validator = $validator;
+        $this->publisherProvider = $publisherProvider;
+
+        parent::__construct();
+        $this->symfonyStyle = $symfonyStyle;
+        $this->parameterProvider = $parameterProvider;
     }
 
     protected function configure(): void
@@ -54,43 +80,46 @@ final class BookPublishCommand extends Command
         // validate book dir and add some useful values to the app configuration
         $bookDir = $this->validator->validateBookDir($slug, $dir);
 
-         $this->app['publishing.dir.book'] = $bookDir;
+        $this->app['publishing.dir.book'] = $bookDir;
         $this->app['publishing.dir.contents'] = $bookDir . '/Contents';
         $this->app['publishing.dir.resources'] = $bookDir . '/Resources';
         $this->app['publishing.dir.plugins'] = $bookDir . '/Resources/Plugins';
         $this->app['publishing.dir.templates'] = $bookDir . '/Resources/Templates';
 
-        // load book configuration
-        $this->app->loadBookConfiguration($input->getOption('configuration'));
-
-        // load the custom easybook parameters defined by the book
-        $this->app->loadEasybookConfiguration();
+        // all parameters are loaded here...
 
         // execute the 'before_publish' scripts
-        $this->runScripts($this->app->edition('before_publish'));
+//        $this->runScripts( $this->app->edition('before_publish'));
+        $this->runScripts((array) $this->parameterProvider->provideParameter('before_publish'));
 
         // book publishing starts
         $this->eventDispatcher->dispatch(Events::PRE_PUBLISH, new Event());
 
-        $output->writeln(sprintf(
-            "\n Publishing <comment>%s</comment> edition of <info>%s</info> book...\n",
+        $this->symfonyStyle->note(sprintf(
+            'Publishing <comment>%s</comment> edition of <info>%s</info> book...',
             $edition,
             $this->bookTitle
         ));
 
-        // 1-line magic publication!
-        $this->app['publisher']->publishBook();
+        // @todo foreach book editions here
+
+        foreach ($this->publisherProvider->getPublishers() as $publisher) {
+             $publisher->publishBook();
+        }
 
         // book publishing finishes
         $this->eventDispatcher->dispatch(Events::POST_PUBLISH, new Event());
 
         // execute the 'after_publish' scripts
-        $this->runScripts($this->app->edition('after_publish'));
 
-        $output->writeln([
-            ' <bg=green;fg=black> OK </> You can access the book in the following directory:',
-            ' <comment>' . realpath($this->app['publishing.dir.output']) . '</comment>',
-        ]);
+
+//        $this->runScripts($this->app->edition('after_publish'));
+        $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'));
+
+        $this->symfonyStyle->success(
+            'You can access the book in:' .
+            realpath($this->app['publishing.dir.output'])
+        );
     }
 
     /**
@@ -113,18 +142,16 @@ final class BookPublishCommand extends Command
 
             return;
         }
-        $process = new Process($this->app->renderString($scripts), $this->app['publishing.dir.book']);
+        $process = new Process($scripts, $this->app['publishing.dir.book']);
         $process->run();
 
         if ($process->isSuccessful()) {
-            echo $process->getOutput();
+            $this->symfonyStyle->success($process->getOutput());
         } else {
             throw new RuntimeException(sprintf(
-                "There was an error executing the following script: \n"
-                . "  %s\n\n"
-                . "  %s\n",
-                $scripts,
-                $process->getErrorOutput()
+                "While executing scripts: %s an error happened: %s",
+                $scripts . PHP_EOL . PHP_EOL,
+                $process->getErrorOutput() . PHP_EOL
             ));
         }
     }
