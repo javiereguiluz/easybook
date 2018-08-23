@@ -25,7 +25,8 @@ final class Validator
      */
     private $symfonyStyle;
 
-    public function __construct(InputInterface $input, OutputInterface $output, SymfonyStyle $symfonyStyle) {
+    public function __construct(InputInterface $input, OutputInterface $output, SymfonyStyle $symfonyStyle)
+    {
         $this->input = $input;
         $this->output = $output;
         $this->symfonyStyle = $symfonyStyle;

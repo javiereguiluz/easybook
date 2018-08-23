@@ -44,8 +44,7 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
         int $itemNumber,
         bool $addLabels,
         array $expectedLabels
-    ): void
-    {
+    ): void {
         $this->currentItemProvider->setItem([
             'config' => ['number' => $itemNumber],
             'content' => file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath),

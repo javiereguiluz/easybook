@@ -54,8 +54,7 @@ final class BookNewCommand extends Command
         EventDispatcherInterface $eventDispatcher,
         Validator $validator,
         string $bookTitle
-    )
-    {
+    ) {
         parent::__construct();
         $this->bookGenerator = $bookGenerator;
         $this->symfonyStyle = $symfonyStyle;

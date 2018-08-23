@@ -4,7 +4,7 @@ imports:
     - { resource: 'vendor/symplify/easy-coding-standard/config/clean-code.yml' }
     - { resource: 'vendor/symplify/easy-coding-standard/config/symplify.yml' }
     - { resource: 'vendor/symplify/easy-coding-standard/config/common.yml' }
-#    - { resource: 'vendor/symplify/easy-coding-standard/config/psr12.yml' }
+    - { resource: 'vendor/symplify/easy-coding-standard/config/psr12.yml' }
 
 services:
     Symplify\CodingStandard\Sniffs\DependencyInjection\NoClassInstantiationSniff:
@@ -28,8 +28,8 @@ parameters:
         - 'Symplify\CodingStandard\Sniffs\CleanCode\CognitiveComplexitySniff'
         - 'Symplify\CodingStandard\Sniffs\Architecture\ExplicitExceptionSniff'
 #        # exclude from psr12.yml
-#        - 'PhpCsFixer\Fixer\PhpTag\BlankLineAfterOpeningTagFixer'
-#        - 'PhpCsFixer\Fixer\Operator\UnaryOperatorSpacesFixer'
+        - 'PhpCsFixer\Fixer\PhpTag\BlankLineAfterOpeningTagFixer'
+        - 'PhpCsFixer\Fixer\Operator\UnaryOperatorSpacesFixer'
 
     skip:
         Symplify\CodingStandard\Sniffs\CleanCode\ForbiddenStaticFunctionSniff:

@@ -24,5 +24,5 @@ abstract class AbstractCustomConfigContainerAwareTestCase extends TestCase
         parent::__construct($name, $data, $dataName);
     }
 
-    protected abstract function provideConfig(): string;
+    abstract protected function provideConfig(): string;
 }

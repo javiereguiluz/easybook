@@ -108,7 +108,7 @@ final class BookPublishCommand extends Command
         // @todo foreach book editions here
 
         foreach ($this->publisherProvider->getPublishers() as $publisher) {
-             $publisher->publishBook();
+            $publisher->publishBook();
         }
 
         // book publishing finishes

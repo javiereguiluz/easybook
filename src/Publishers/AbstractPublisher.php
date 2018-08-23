@@ -48,8 +48,7 @@ abstract class AbstractPublisher implements PublisherInterface
         Renderer $renderer,
         Slugger $slugger,
         string $publishingDirOutput
-    )
-    {
+    ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->filesystem = $filesystem;
         $this->renderer = $renderer;
