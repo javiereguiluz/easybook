@@ -11,7 +11,7 @@ parameters:
     translations_dir: '%kernel.project_dir%/app/Resources/Translations'
     app.dir.skeletons: '%kernel.project_dir%/app/Resources/Skeletons'
     skeleton_book_directory: '%kernel.project_dir%/app/Resources/Skeletons/Book'
-    app.dir.themes: '%kernel.project_dir%/app/Resources/Themes'
+    themes_dir: '%kernel.project_dir%/app/Resources/Themes'
 
     # publishing process variables
     # holds the app theme dir for the current edition

@@ -156,6 +156,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
         );
 
         // are you use? not content
-        $item->changeOrigin($decoratedOriginal);
+        $item->changeOriginal($decoratedOriginal);
     }
 }

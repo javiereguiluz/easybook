@@ -97,14 +97,13 @@ abstract class AbstractPublisher implements PublisherInterface
      */
     public function parseContents(): void
     {
-        foreach ($this->publishingItems as $key => $item) {
+        foreach ($this->publishingItems as $item) {
             $parseEvent = new ItemAwareEvent($item);
             $this->eventDispatcher->dispatch(Events::PRE_PARSE, $parseEvent);
 
             $item->changeContent($this->parser->transform($item->getOriginal()));
 
             $this->eventDispatcher->dispatch(Events::POST_PARSE, $parseEvent);
-            $this->publishingItems[$key] = $parseEvent->getItem();
         }
     }
 
@@ -118,7 +117,8 @@ abstract class AbstractPublisher implements PublisherInterface
 
             $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $itemAwareEvent);
 
-            $item->changeContent($this->renderer->render($item['config']['element'] . '.twig', ['item' => $item]));
+            $itemConfig = $item->getItemConfig();
+            $item->changeContent($this->renderer->render($itemConfig->getElement() . '.twig', ['item' => $item]));
 
             $this->eventDispatcher->dispatch(Events::POST_DECORATE, $itemAwareEvent);
         }
@@ -134,16 +134,15 @@ abstract class AbstractPublisher implements PublisherInterface
         foreach ($this->app->book('contents') as $itemConfig) {
             $item = $this->initializeItem($itemConfig);
 
-            // for now, easybook only supports Markdown format
-            $item['config']['format'] = 'md';
+            $itemConfig = $item->getItemConfig();
 
-            if (isset($itemConfig['content'])) {
+            if ($itemConfig->getContent()) {
                 // the element defines its own content file (usually chapters and appendices)
-                $item['original'] = $this->loadItemContent($itemConfig['content'], $itemConfig['element']);
+                $item->changeOriginal($this->loadItemContent($itemConfig->getContent(), $itemConfig->getElement()));
             } else {
                 // the element doesn't define its own content file (try to load the default
                 // content for this item type, if any)
-                $item['original'] = $this->loadDefaultItemContent($itemConfig['element']);
+                $item->changeOriginal($this->loadDefaultItemContent($itemConfig->getElement()));
             }
 
             $this->publishingItems[] = $item;

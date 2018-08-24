@@ -35,7 +35,6 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
         // new item...
         /** @var Item $item */
         $item = [
-            'config' => ['format' => 'md'],
             'original' => file_get_contents(__DIR__ . '/fixtures/code/' . $inputFilePath),
             'content' => '',
         ];

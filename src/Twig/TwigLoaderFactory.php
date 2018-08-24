@@ -12,9 +12,21 @@ final class TwigLoaderFactory
      */
     private $toolkit;
 
-    public function __construct(Toolkit $toolkit)
+    /**
+     * @var string
+     */
+    private $themesDir;
+
+    /**
+     * @var string
+     */
+    private $bookTemplatesDir;
+
+    public function __construct(Toolkit $toolkit, string $themesDir, string $bookTemplatesDir)
     {
         $this->toolkit = $toolkit;
+        $this->themesDir = $themesDir;
+        $this->bookTemplatesDir = $bookTemplatesDir;
     }
 
     public function create(): Twig_Loader_Filesystem
@@ -22,49 +34,49 @@ final class TwigLoaderFactory
         $theme = ucfirst($app->edition('theme'));
         $format = $this->toolkit->camelize($app->edition('format'));
 
-        $loader = new Twig_Loader_Filesystem($app['app.dir.themes']);
+        $twigLoaderFilesystem = new Twig_Loader_Filesystem($this->themesDir);
 
         // Base theme (common styles per edition type)
         // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
-        $baseThemeDir = sprintf('%s/Base/%s/Templates', $app['app.dir.themes'], $format);
-        $loader->addPath($baseThemeDir);
-        $loader->addPath($baseThemeDir, 'theme');
-        $loader->addPath($baseThemeDir, 'theme_base');
+        $baseThemeDir = sprintf('%s/Base/%s/Templates', $this->themesDir, $format);
+        $twigLoaderFilesystem->addPath($baseThemeDir);
+        $twigLoaderFilesystem->addPath($baseThemeDir, 'theme');
+        $twigLoaderFilesystem->addPath($baseThemeDir, 'theme_base');
 
         // Book theme (configured per edition in 'config.yml')
         // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
-        $bookThemeDir = sprintf('%s/%s/%s/Templates', $app['app.dir.themes'], $theme, $format);
-        $loader->prependPath($bookThemeDir);
-        $loader->prependPath($bookThemeDir, 'theme');
+        $bookThemeDir = sprintf('%s/%s/%s/Templates', $this->themesDir, $theme, $format);
+        $twigLoaderFilesystem->prependPath($bookThemeDir);
+        $twigLoaderFilesystem->prependPath($bookThemeDir, 'theme');
 
         $userTemplatePaths = [
             // <book-dir>/Resources/Templates/<template-name>.twig
-            $app['book_templates_dir'],
+            $this->bookTemplatesDir,
             // <book-dir>/Resources/Templates/<edition-type>/<template-name>.twig
-            sprintf('%s/%s', $app['book_templates_dir'], strtolower($format)),
+            sprintf('%s/%s', $this->bookTemplatesDir, strtolower($format)),
             // <book-dir>/Resources/Templates/<edition-name>/<template-name>.twig
-            sprintf('%s/%s', $app['book_templates_dir'], $app['publishing.edition']),
+            sprintf('%s/%s', $this->bookTemplatesDir, $app['publishing.edition']),
         ];
 
         foreach ($userTemplatePaths as $path) {
             if (file_exists($path)) {
-                $loader->prependPath($path);
+                $twigLoaderFilesystem->prependPath($path);
             }
         }
 
         $defaultContentPaths = [
             // <easybook>/app/Resources/Themes/Base/<edition-type>/Contents/<template-name>.twig
-            sprintf('%s/Base/%s/Contents', $app['app.dir.themes'], $format),
+            sprintf('%s/Base/%s/Contents', $this->themesDir, $format),
             // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Contents/<template-name>.twig
-            sprintf('%s/%s/%s/Contents', $app['app.dir.themes'], $theme, $format),
+            sprintf('%s/%s/%s/Contents', $this->themesDir, $theme, $format),
         ];
 
         foreach ($defaultContentPaths as $path) {
             if (file_exists($path)) {
-                $loader->prependPath($path, 'content');
+                $twigLoaderFilesystem->prependPath($path, 'content');
             }
         }
 
-        return $loader;
+        return $twigLoaderFilesystem;
     }
 }

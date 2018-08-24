@@ -32,14 +32,13 @@ final class PublisherTest extends AbstractContainerAwareTestCase
         // find the test books
         $books = $this->finder->directories()
             ->name('book*')
-            ->depth(0)
             ->in(__DIR__ . '/fixtures')
             ->getIterator();
 
         foreach ($books as $book) {
-            $this->markTestSkipped(
-                'Temporarily marked as skipped until we update these tests to be less fragile with whitespaces.'
-            );
+//            $this->markTestSkipped(
+//                'Temporarily marked as skipped until we update these tests to be less fragile with whitespaces.'
+//            );
 
             $slug = $book->getFileName();
 

@@ -4,7 +4,6 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ItemAwareEvent;
-use Easybook\Util\Slugger;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -13,16 +12,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class ParserPluginEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Slugger
-     */
-    private $slugger;
-
-    public function __construct(Slugger $slugger)
-    {
-        $this->slugger = $slugger;
-    }
-
     public static function getSubscribedEvents(): Iterator
     {
         yield EasybookEvents::PRE_PARSE => [['normalizeMarkdownHeaders', -1000]];
@@ -43,7 +32,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
     {
         $item = $itemAwareEvent->getItem();
 
-        $item['original'] = preg_replace_callback(
+        $item->changeOriginal(preg_replace_callback(
             '{
                 (^.+?)                              # $1: Header text
                 (?:[ ]+\{\#([-_:a-zA-Z0-9]+)\})?    # $2: Id attribute
@@ -54,8 +43,8 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
 
                 return sprintf('%s %s%s', str_repeat('#', $level), $matches[1], $matches[2]);
             },
-            $item['original']
-        );
+            $item->getOriginal()
+        ));
     }
 
     /**
@@ -67,7 +56,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
     {
         // replace <br> by <br/> (it causes problems for epub books)
         $item = $itemAwareEvent->getItem();
-        $item['content'] = str_replace('<br>', '<br/>', $item['content']);
+        $item->changeContent(str_replace('<br>', '<br/>', $item->getContent()));
     }
 
     /**
@@ -78,8 +67,8 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
     {
         $item = $itemAwareEvent->getItem();
 
-        if (count($item['toc']) > 0) {
-            $firstItemSection = $item['toc'][0];
+        if (count($item->getTableOfContents()) > 0) {
+            $firstItemSection = $item->getTableOfContents()[0];
 
             // the title of the content can only be a <h1> heading
             if ($firstItemSection['level'] === 1) {
@@ -88,15 +77,14 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
 
                 // strip the title from the parsed content, because the book templates
                 // always display the title separately from the rest of the content
-                $item['content'] = preg_replace('/^<h1.*<\/h1>\n+(.*)/x', '$1', $item['content']);
+                $item->changeContent(preg_replace('/^<h1.*<\/h1>\n+(.*)/x', '$1', $item->getContent()));
             }
         }
 
         // ensure that every item has a title by using
         // the default title if necessary
-        if ($item['title'] === '') {
+        if ($item->getTitle()) {
             $item['title'] = $itemAwareEvent->app->getTitle($item['config']['element']);
-            $item['slug'] = $this->slugger->slugify($item['title']);
         }
     }
 
@@ -152,10 +140,10 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
         }
 
         // the label of the item matches the label of its first TOC element
-        $item['label'] = $item['toc'][0]['label'];
+        $item['label'] = $item->getTableOfContents()[0]['label'];
 
         // add section labels to the content
-        foreach ($item['toc'] as $i => $entry) {
+        foreach ($item->getTableOfContents() as $i => $entry) {
             // the parsed title can be different from the TOC entry title
             // that's the case for the titles with markup code inside (* ` ** etc.)
             // thus, the replacement must be done based on a fuzzy title that

@@ -2,6 +2,7 @@
 
 namespace Easybook\Publishers;
 
+use Easybook\Book\BookProvider;
 use Easybook\Book\FileProvider;
 use Easybook\Book\Item;
 use Easybook\Events\EasybookEvents as Events;
@@ -45,23 +46,33 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private $fileProvider;
 
-    public function __construct(Toolkit $toolkit, Finder $finder, FileProvider $fileProvider)
-    {
+    /**
+     * @var BookProvider
+     */
+    private $bookProvider;
+
+    public function __construct(
+        Toolkit $toolkit,
+        Finder $finder,
+        FileProvider $fileProvider,
+        BookProvider $bookProvider
+    ) {
         $this->toolkit = $toolkit;
         $this->finder = $finder;
         $this->fileProvider = $fileProvider;
+        $this->bookProvider = $bookProvider;
     }
 
     public function loadContents(): void
     {
-        // strip excluded elements before loading book contents
-        $contents = [];
-        foreach ($this->app->book('contents') as $content) {
-            if (! in_array($content['element'], $this->excludedElements, true)) {
-                $contents[] = $content;
+        $book = $this->bookProvider->provide();
+
+        foreach ($book->getContents() as $content) {
+            // strip excluded elements before loading book contents
+            if (! in_array($content->getElement(), $this->excludedElements, true)) {
+                $book->removeContent($content);
             }
         }
-        $this->app->book('contents', $contents);
 
         parent::loadContents();
     }
@@ -73,12 +84,10 @@ final class Epub2Publisher extends AbstractPublisher
      */
     public function decorateContents(): void
     {
-        foreach ($this->publishingItems as $key => $item) {
+        foreach ($this->publishingItems as $item) {
             $parseEvent = new ItemAwareEvent($item);
             $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $parseEvent);
             $this->eventDispatcher->dispatch(Events::POST_DECORATE, $parseEvent);
-
-            $this->publishingItems[$key] = $item;
         }
     }
 
@@ -308,24 +317,18 @@ final class Epub2Publisher extends AbstractPublisher
      * stores the normalized page name that should have this chunk.
      *
      * @param Item[] $items
-     *
-     * @return Item[] The book items with their new 'page_name' property.
      */
-    private function normalizePageNames(array $items): array
+    private function normalizePageNames(array $items): void
     {
-        $itemsWithNormalizedPageNames = [];
+//        $itemsWithNormalizedPageNames = [];
 
         foreach ($items as $item) {
             $itemPageName = isset($item['config']['number'])
                 ? $item['config']['element'] . ' ' . $item['config']['number']
                 : $item['config']['element'];
 
-            $item['page_name'] = $this->app->slugifyUniquely($itemPageName);
-
-            $itemsWithNormalizedPageNames[] = $item;
+            $item['page_name'] = $this->slugger->slugifyUniquely($itemPageName);
         }
-
-        return $itemsWithNormalizedPageNames;
     }
 
     /*

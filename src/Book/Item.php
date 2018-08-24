@@ -116,7 +116,7 @@ final class Item
     }
 
     // wtf, are you used - maybe content?
-    public function changeOrigin(string $original): void
+    public function changeOriginal(string $original): void
     {
         $this->original = $original;
     }
