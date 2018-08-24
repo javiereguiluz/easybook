@@ -11,8 +11,6 @@ publish the book. These are also the templates that you can override
 [using your own templates](#custom-templates):
 
   * `code.twig`, `figure.twig`, `chunk.twig`, `layout.twig` and `table.twig` 
-    are the same templates and have the same meaning as for the `html_chunked` 
-    edition ([see `html_chunked` templates](#html-templates)).
   * `cover.twig`, the template used to generate the book cover when the book
     doesn't include its own cover (see the [book cover section](#epub-cover) 
     bellow).

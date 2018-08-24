@@ -28,7 +28,7 @@ timestamp of each moment.
 If the plugin is called `Timer`, create a new `TimerPlugin` class in the
 `<book>/Resources/Plugins/TimerPlugin.php` file and add the following content:
 
-``` .php
+```php
 // <book>/Resources/Plugins/TimerPlugin.php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -47,7 +47,7 @@ you need to *hook* into. In the next section, you'll find the
 that the event notified when the book publication begins is called
 `Events::PRE_PUBLISH` and the other event is called `Events::POST_PUBLISH`:
 
-``` .php
+```php
 // <book>/Resources/Plugins/TimerPlugin.php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
@@ -93,7 +93,7 @@ N> `ParseEvent` class.
 Finally, to register the begin and the end of the book publication, you can 
 simply store the timestamp of each moment in some application properties:
 
-``` .php
+```php
 // <book>/Resources/Plugins/TimerPlugin.php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
@@ -127,7 +127,7 @@ In order to keep things organized and to avoid the problems introduced by the
 [magic strings](http://en.wikipedia.org/wiki/Magic_string), **easybook** 
 follows the best practice of defining the event names in a special class:
 
-``` .php
+```php
 namespace Easybook\Events;
 
 final class EasybookEvents
@@ -172,9 +172,9 @@ In addition, it defines two methods:
     given item. This way you can modify any item configuration or event the
     whole item content.
 
-### The `ParseEvent` class ### {#parseevent-class}
+### The `ItemAwareEvent` class
 
-This class extends the previous `BaseEvent` class and adds new methods to ease
+This class extends the previous `Event` class and adds new methods to ease
 the access to the properties of the item being parsed. The only property
 defined by this class is the same `app` property explained in the previous
 section.
@@ -201,19 +201,21 @@ operations into several methods. When subscribing to the event, instead of
 passing a simple string with the method name, pass an array with all the 
 method names:
 
-``` .php
-class MyPlugin implements EventSubscriberInterface
+```php
+<?php
+
+final class MyPlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             // three different methods subscribed to the same event
             Events::PRE_PUBLISH  => array(
                 'registerPublicationStart',
                 'fixPublicationDirectory',
                 'prepareBookContents',
             )
-        );
+        ];
     }
 ```
 
@@ -232,7 +234,7 @@ priority of each subscribed method. When subscribing to the event, instead of
 passing a simple string with the method name, pass an array with the method 
 name and its priority:
 
-``` .php
+```php
 class MyPlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
@@ -249,7 +251,7 @@ The priority of each method is defined as an integer (positive or negative).
 The default priority is `0` and higher values mean more priority. You can also
 set priority when subscribing several methods to the same event:
 
-``` .php
+```php
 class MyPlugin implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
@@ -273,7 +275,7 @@ edition or for a specific edition format (e.g. only for PDF books). The easiest
 way to restrict the execution of the plugin is to get the edition being 
 published and check its name or format:
 
-``` .php
+```php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;
@@ -305,7 +307,7 @@ You can also stop the propagation of the event to prevent other plugins'
 methods from executing. To do so, invoke the `stopPropagation()` method of the 
 event object:
 
-``` .php
+```php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\BaseEvent;

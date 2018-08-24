@@ -87,10 +87,6 @@ Editions are defined under the `editions` options in `config.yml` file. By defau
                     deep:       2
                     elements:   ["appendix", "chapter"]
 
-            website:
-                extends:        web
-                format:         html_chunked
-
 The name of each edition must be unique for the same book and cannot contain spaces.  The edition name is used as the subdirectory inside `Output/` directory to separate the contents of each edition. You can define as many editions as you need, but all must belong to one of the following three types defined by the `format` option:
 
   * `pdf`, the book is published as a PDF file named `book.pdf`

@@ -2,7 +2,7 @@
 
 A theme is a set of templates, stylesheets and other resources that define the
 visual design of the book. **easybook** already includes a theme for each
-edition type (`epub`, `mobi`, `pdf`, `html`, `html_chunked`), so your books 
+edition type (`epub`, `mobi`, `pdf`), so your books 
 will look professional without any effort.
 
 **easybook** themes are located in the `app/Resources/Themes/` directory. If 
@@ -171,8 +171,7 @@ default template:
      match exactly the name of the edition being published.
   2. `<book>/Resources/Templates/<edition-type>/template.twig`, allows you to
      modify the design for all the editions of the same format. The directory 
-     inside `Templates/` must be named `epub`, `mobi`, `html`, `html_chunked` 
-     or `pdf`.
+     inside `Templates/` must be named `epub`, `mobi` or `pdf`.
   3. `<book>/Resources/Templates/template.twig`, applies the same same design
      to all editions. The template is located in the `Resources/Templates` 
      directory without including it in any subdirectory. This option is rarely 
@@ -208,9 +207,6 @@ published edition:
 
   * `epub` and `mobi`: CSS styling is pretty limited due to the abysmal 
     support of most e-book readers.
-  * `html` and `html_chunked`: the only limit is the highest CSS version 
-    that you can use on your website (CSS 2.1, CSS 3, CSS 4, etc..) because 
-    every modern web browser offers an excellent CSS support.
 
 ### Custom styles ###
 
@@ -223,7 +219,7 @@ within any of these directories:
 
   1. `<book>/Resources/Templates/<edition-name>/style.css`, if you want to
      apply the styles just to one specific edition.
-  2. `<book>/Resources/Templates/<edtion-type>/style.css`, if you want to apply the same styles to all the editions of the same type (`epub`, `mobi`, `html`, `html_chunked` or `pdf`). 
+  2. `<book>/Resources/Templates/<edtion-type>/style.css`, if you want to apply the same styles to all the editions of the same type (`epub`, `mobi` or `pdf`). 
   
   3. `<book>/Resources/Templates/style.css`, if you want to apply the same styles to all the editions of the book.
 
@@ -377,8 +373,7 @@ in one of the following directories:
       `Translations` must be named exactly like the edition being published.
    2. `<book>/Resources/Translations/<edition-type>/labels.en.yml`, if you want
       to change the labels in all editions of the same type. The directory in
-      `Translations` can only be named `epub`, `mobi`, `pdf`, `html`, or
-      `html_chunked`.
+      `Translations` can only be named `epub`, `mobi` or `pdf`.
    3. `<book>/Resources/Translations/labels.en.yml`, if you want to change the
       labels on all the editions of the book, regardless of its name or type.
 

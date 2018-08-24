@@ -24,15 +24,6 @@ parameters:
                     deep:       2
                     elements:   ["appendix", "chapter"]
 
-            website:
-                extends:        web
-                format:         html_chunked
-
-            website_chunked:
-                extends:        web
-                format:         html_chunked
-                chunk_level:    2
-
             ebook:
                 format:         epub
                 # as this ISBN value is only used for tests, it's irrelevant that

@@ -105,8 +105,6 @@ The reason is that `mobi` books are first generated as `epub` books and then
 transformed into `mobi` books using the `kindlegen` tool:
 
   * `code.twig`, `figure.twig`, `chunk.twig`, `layout.twig` and `table.twig` 
-    are the same templates and have the same meaning as for the `html_chunked` 
-    edition.
   * `cover.twig`, the template used to generate the book cover, which can also
     use your own image, as explained in the next sections.
   * `content.opf.twig`, the template that generates `content.opf` file listing

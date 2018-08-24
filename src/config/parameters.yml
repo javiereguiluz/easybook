@@ -26,7 +26,7 @@ parameters:
 
     publishing_dir_output: '%kernel.project_dir%/output'
 
-    # holds all the internal links (used in html_chunked and epub editions)
+    # holds all the internal links (used "epub" editions)
     publishing.links: []
     publishing.list.images: []
     publishing.list.tables: []

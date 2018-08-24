@@ -51,4 +51,3 @@ book:
 
         website:
             extends:      common
-            format:       html_chunked

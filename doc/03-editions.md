@@ -23,14 +23,6 @@ book:
         print:
             format:  pdf
             # ...
-
-        web:
-            format:  html
-            # ...
-
-        website:
-            extends: web
-            format:  html_chunked
 ```
 
 ## Edition formats ##
@@ -47,9 +39,6 @@ defined by the `format` option:
   * `mobi`, the book is published as a Kindle-compatible e-book named
     `book.mobi`.
   * `pdf`, the book is published as a PDF file named `book.pdf`.
-  * `html`, the book is published as a HTML page named `book.html`.
-  * `html_chunked`, the book is published as a static website in a directory
-    named `book/`.
 
 ## Configuration options ##
 
@@ -83,7 +72,6 @@ edition format and others are specific to each format.
 In addition to the common configuration options, some formats define their own
 specific configuration options:
 
-  * [Configuration options for the `html_chunked` format](#html-configuration-options)
   * [Configuration options for the `pdf` format](#pdf-configuration-options)
 
 ## Before and after scripts ##
@@ -154,88 +142,3 @@ book:
             before_publish: "git clone git://github.com/{{ app.get('book_slug') }}/book"
             after_publish:  "cp ... /home/{{ book.author }}/books/{{ 'now'|date('YmdHis') }}_book.pdf"
 ```
-
-## Extending editions ##
-
-In addition to the previous configuration options, editions can also set a 
-very useful option named `extends`. The value of this option is interpreted as
-the name of the edition from which this edition *inherits*. When an edition
-*inherits* from another edition, the options of the parent edition are copied 
-on the *heir* edition, which can then override any value.
-
-Imagine for example that you want to publish one PDF book with three slightly
-different designs. The draft version (`draft`) must be double-sided and must
-have very small margins to reduce its length, the normal version (`print`) is
-one-sided and has normal margins. The version prepared for lulu.com website
-(`lulu.com`) is similar to the normal version, except is double-sided:
-
-```yaml
-book:
-    # ...
-    editions:
-        print:
-            format:       pdf
-            margin:
-                top:      25mm
-                bottom:   25mm
-                inner:    30mm
-                outter:   20mm
-            page_size:    A4
-            two_sided:    false
-
-        draft:
-            extends:      print
-            margin:
-                top:      15mm
-                bottom:   15mm
-                inner:    20mm
-                outter:   10mm
-            two_sided:    true
-
-        lulu.com:
-            extends:      print
-            two_sided:    true
-```
-
-First, define a new `pdf` format edition called `print` and set the page size, 
-the margins and disable the two-sided printing. Then, instead of creating a new
-edition for the `draft` book, you inherit from the previous edition
-(`extends: print`) and override its margins and the `two_sided` option. 
-
-Similarly, as the `lulu.com` version is almost the same as the `print` edition,
-instead of creating a new edition, you just inherit from it (`extends: print`) 
-and then you override the only different configuration option.
-
-The only limitation of `extends` is that it only works with one level of 
-inheritance. Therefore, and edition cannot extend another edition that extends 
-a third one.
-
-If several editions share a large set of configuration options, you can 
-group them under a common *fake* edition and make the other *real* editions
-extend from it.
-
-If for example your `before_publish` and `after_publish` scripts are the
-same for every edition, group them in a *fake* edition:
-
-```yaml
-book:
-    # ...
-    editions:
-        common:
-            before_publish: ...
-            after_publish:  ...
-
-         edition1:
-            extends: common
-            # ...
-
-         edition2:
-            extends: common
-            # ...
-
-         edition3:
-            extends: common
-            # ...
-```
-
-[1]: http://about.travis-ci.org/docs/user/build-configuration/#before_script%2C-after_script

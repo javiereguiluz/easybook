@@ -21,13 +21,9 @@ Do you want to use different CSS frameworks to generate the book website? Add a 
 ```yaml
 editions:
     my_website1:
-        format:    html_chunked
+        format:    pdf
         framework: bootstrap_3
         # ...
-
-    my_website2:
-        extends:   my_website1
-        framework: foundation_4
 ```
 
 This new option is now available in any template through the following expression: `{{ edition.framework }}`.
@@ -207,10 +203,10 @@ The most important class of **easybook** is
 all the variables, functions and services of the application.
 
 The most interesting command of **easybook** is `publish`, which publishes an specific edition of the book. Internally it uses a `*Publisher` class which 
-depends on the type of edition that is published (`epub`, `pdf`, `html` or `html_chunked`). The details of each *publisher* vary, but the basic
+depends on the type of edition that is published (`epub` or `pdf`). The details of each *publisher* vary, but the basic
 workflow is always the same:
 
-``` .php
+```php
 public function publishBook()
 {
     $this->loadContents();

@@ -5,8 +5,6 @@ book:
     language:         en
     publication_date: '27-03-2013'
 
-    generator: { name: easybook, version: 5.0 }
-
     contents:
         - { element: cover }
         - { element: toc   }
@@ -24,22 +22,3 @@ book:
             toc:
                 deep:       1
                 elements:   ["appendix", "chapter", "part"]
-
-        web:
-            format:         html
-            include_styles: true
-            labels:         ["appendix", "chapter"]
-            theme:          clean
-            toc:
-                deep:       2
-                elements:   ["appendix", "chapter"]
-
-        website_not_chunked:
-            extends:        web
-            format:         html_chunked
-            chunk_level:    1
-
-        website_chunked:
-            extends:        web
-            format:         html_chunked
-            chunk_level:    2

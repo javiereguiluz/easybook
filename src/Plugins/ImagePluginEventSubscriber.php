@@ -48,8 +48,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
 
     /**
      * It fixes all the image URIs by prefixing the base_dir configured in the book
-     * edition. This is mostly used for 'html' and ' html_chunked' editions when
-     * the book is published as a website.
+     * edition.
      *
      * @see 'images_base_dir' option in easybook-doc-en/05-publishing-html-books.md
      */

@@ -1,6 +1,6 @@
 This code block should be properly parsed and highlighted:
 
-``` .php
+```php
 class Finder implements \IteratorAggregate, \Countable
 {
     /**
@@ -24,7 +24,7 @@ This is an expanded version of the previous code block and it should be also
 properly parsed and highlighted, because fenced code blocks don't suffer the
 shortcomings of the default code block type:
 
-``` .php
+```php
 <?php
 
 /*
@@ -115,7 +115,7 @@ The last code is a bit special, because it contains the special ````` tag
 that, in this case, should not be interpreted, but displayed:
 
 ```
-    ``` .php
+    ```php
     public function start($callback = null)
     {
         if (null === $this->getCommandLine()) {
