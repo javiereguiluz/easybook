@@ -1,9 +1,8 @@
 # default values for the main book configuration options
 parameters:
-    book_title: "Untitled"
-    book_author: "Anonymous"
+    book_title: 'Writing CLI Apps'
+    book_author: 'Tomas Votruba'
     book_edition: ~
-    book_language: en
+    book_language: 'en'
     book_publication_date: ~
     book_contents: ~
-    book_editions: ~

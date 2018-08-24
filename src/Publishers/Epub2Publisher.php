@@ -219,7 +219,7 @@ final class Epub2Publisher extends AbstractPublisher
             ));
         }
 
-        $imagesDir = $this->app['publishing.dir.contents'] . '/images';
+        $imagesDir = $this->bookContentsDir . '/images';
         $imagesData = [];
 
         if (file_exists($imagesDir)) {

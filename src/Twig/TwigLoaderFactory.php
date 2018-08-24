@@ -39,11 +39,11 @@ final class TwigLoaderFactory
 
         $userTemplatePaths = [
             // <book-dir>/Resources/Templates/<template-name>.twig
-            $app['publishing.dir.templates'],
+            $app['book_templates_dir'],
             // <book-dir>/Resources/Templates/<edition-type>/<template-name>.twig
-            sprintf('%s/%s', $app['publishing.dir.templates'], strtolower($format)),
+            sprintf('%s/%s', $app['book_templates_dir'], strtolower($format)),
             // <book-dir>/Resources/Templates/<edition-name>/<template-name>.twig
-            sprintf('%s/%s', $app['publishing.dir.templates'], $app['publishing.edition']),
+            sprintf('%s/%s', $app['book_templates_dir'], $app['publishing.edition']),
         ];
 
         foreach ($userTemplatePaths as $path) {

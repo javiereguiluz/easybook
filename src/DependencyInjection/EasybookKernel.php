@@ -163,9 +163,9 @@ final class EasybookKernel extends Kernel
 //    public function getCustomTemplate($templateName)
 //    {
 //        $paths = array(
-//            $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
-//            $this['publishing.dir.templates'].'/'.$this->edition('format'),
-//            $this['publishing.dir.templates'],
+//            $this['book_templates_dir'].'/'.$this['publishing.edition'],
+//            $this['book_templates_dir'].'/'.$this->edition('format'),
+//            $this['book_templates_dir'],
 //        );
 //
 //        return $this->getFirstExistingFile($templateName, $paths);
@@ -183,9 +183,9 @@ final class EasybookKernel extends Kernel
 //    {
 //        $labelsFileName = 'labels.'.$this->book('language').'.yml';
 //        $paths = array(
-//            $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
-//            $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
-//            $this['publishing.dir.resources'].'/Translations',
+//            $this['book_resources_dir'].'/Translations/'.$this['publishing.edition'],
+//            $this['book_resources_dir'].'/Translations/'.$this->edition('format'),
+//            $this['book_resources_dir'].'/Translations',
 //        );
 //
 //        return $this->getFirstExistingFile($labelsFileName, $paths);
@@ -203,9 +203,9 @@ final class EasybookKernel extends Kernel
 //    {
 //        $titlesFileName = 'titles.'.$this->book('language').'.yml';
 //        $paths = array(
-//            $this['publishing.dir.resources'].'/Translations/'.$this['publishing.edition'],
-//            $this['publishing.dir.resources'].'/Translations/'.$this->edition('format'),
-//            $this['publishing.dir.resources'].'/Translations',
+//            $this['book_resources_dir'].'/Translations/'.$this['publishing.edition'],
+//            $this['book_resources_dir'].'/Translations/'.$this->edition('format'),
+//            $this['book_resources_dir'].'/Translations',
 //        );
 //
 //        return $this->getFirstExistingFile($titlesFileName, $paths);
@@ -223,56 +223,14 @@ final class EasybookKernel extends Kernel
 //    {
 //        $coverFileName = 'cover.jpg';
 //        $paths = array(
-//            $this['publishing.dir.templates'].'/'.$this['publishing.edition'],
-//            $this['publishing.dir.templates'].'/'.$this->edition('format'),
-//            $this['publishing.dir.templates'],
+//            $this['book_templates_dir'].'/'.$this['publishing.edition'],
+//            $this['book_templates_dir'].'/'.$this->edition('format'),
+//            $this['book_templates_dir'],
 //        );
 //
 //        return $this->getFirstExistingFile($coverFileName, $paths);
 //    }
 //
-//    /**
-//     * It loads the full book configuration by combining all the different sources
-//     * (config.yml file, console command option and default values). It also loads
-//     * the edition configuration and resolves the edition inheritance (if used).
-//     *
-//     * @param string $configurationViaCommand The configuration options provided via the console command
-//     */
-//    public function loadBookConfiguration($configurationViaCommand = '')
-//    {
-//        $config = $this['configurator']->loadBookConfiguration($this['publishing.dir.book'], $configurationViaCommand);
-//        $this['publishing.book.config'] = $config;
-//
-//        $this['validator']->validatePublishingEdition($this['publishing.edition']);
-//
-//        $config = $this['configurator']->loadEditionConfiguration();
-//        $this['publishing.book.config'] = $config;
-//
-//        $config = $this['configurator']->processConfigurationValues();
-//        $this['publishing.book.config'] = $config;
-//    }
-//
-    ////    /**
-//     * It loads the (optional) easybook configuration parameters defined by the book.
-//     */
-//    public function loadEasybookConfiguration()
-//    {
-//        $bookFileConfig = $this['configurator']->loadBookFileConfiguration($this['publishing.dir.book']);
-//
-//        if (!isset($bookFileConfig['easybook'])) {
-//            return;
-//        }
-//
-//        foreach ($bookFileConfig['easybook']['parameters'] as $option => $value) {
-//            if (is_array($value)) {
-//                $previousArray = $this->offsetExists($option) ? $this[$option] : array();
-//                $newArray = array_merge($previousArray, $value);
-//                $this[$option] = $newArray;
-//            } else {
-//                $this[$option] = $value;
-//            }
-//        }
-//    }
 
     /**
      * @return BundleInterface[]

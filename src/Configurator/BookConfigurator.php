@@ -6,34 +6,8 @@ use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 use UnexpectedValueException;
 
-/**
- * Handles book and edition configurations.
- *
- * easybook doesn't use the Symfony Config component because the book
- * configuration isn't strict (each book can define an unlimited number
- * of configuration options and each option can store any value).
- */
 final class BookConfigurator
 {
-    /**
-     * It loads book configuration by merging all the different configuration
-     * sources (CLI command options, YAMltL configuration file and default configuration).
-     *
-     * @param string $bookDir                 The root dir of the book being published
-     * @param string $configurationViaCommand The optional configuration set via the publish command
-     *
-     * @return array The complete book configuration resulted from merging
-     *               all the different configuration sources
-     */
-    public function loadBookConfiguration(?string $bookDir = null, string $configurationViaCommand = ''): array
-    {
-        $configurationViaCommand = $this->loadCommandConfiguration($configurationViaCommand);
-        $configurationViaFile = $this->loadBookFileConfiguration($bookDir);
-//        $configurationViaDefaults = $this->loadDefaultBookConfiguration();
-
-        return array_replace_recursive($configurationViaDefaults, $configurationViaFile, $configurationViaCommand);
-    }
-
     /**
      * It loads the inline configuration that can be set via the --configuration
      * command option.
@@ -129,9 +103,9 @@ final class BookConfigurator
         if ($parentEdition !== null) {
             if (! isset($bookEditions[$parentEdition])) {
                 throw new UnexpectedValueException(sprintf(
-                    " ERROR: '%s' edition extends nonexistent '%s' edition"
+                    "'%s' edition extends nonexistent '%s' edition"
                         . "\n\n"
-                        . "Check in '%s' file \n"
+                        . "Check in '%s' file" . PHP_EOL
                         . "that the value of 'extends' option in '%s' edition is a valid \n"
                         . 'edition of the book',
                     $edition,
@@ -149,8 +123,6 @@ final class BookConfigurator
 
     /**
      * It loads the default configuration options for the editions.
-     *
-     * @return array The loaded configuration.
      */
     public function loadDefaultEditionConfiguration(): array
     {
@@ -173,7 +145,6 @@ final class BookConfigurator
         $editionConfig = $bookConfig['book']['editions'][$this->app['publishing.edition']];
 
         // prepare options needed to parse option values as Twig expressions
-        $app = clone $this->app;
         $twig_variables = [
             'book' => $bookConfig['book'],
             'edition' => $editionConfig,

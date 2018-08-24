@@ -4,6 +4,7 @@ namespace Easybook\Publishers;
 
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ParseEvent;
+use Easybook\Parsers\ParserInterface;
 use Easybook\Templating\Renderer;
 use Easybook\Util\Slugger;
 use RuntimeException;
@@ -40,6 +41,21 @@ abstract class AbstractPublisher implements PublisherInterface
     private $slugger;
 
     /**
+     * @var mixed[]
+     */
+    private $publishingItems = [];
+
+    /**
+     * @var ParserInterface
+     */
+    private $parser;
+
+    /**
+     * @var string
+     */
+    protected $bookContentsDir;
+
+    /**
      * @required
      */
     public function setRequiredDependencies(
@@ -47,13 +63,17 @@ abstract class AbstractPublisher implements PublisherInterface
         Filesystem $filesystem,
         Renderer $renderer,
         Slugger $slugger,
-        string $publishingDirOutput
+        ParserInterface $parser,
+        string $publishingDirOutput,
+        string $bookContentsDir
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->filesystem = $filesystem;
         $this->renderer = $renderer;
         $this->slugger = $slugger;
+        $this->parser = $parser;
         $this->publishingDirOutput = $publishingDirOutput;
+        $this->bookContentsDir = $bookContentsDir;
     }
 
     /**
@@ -76,38 +96,27 @@ abstract class AbstractPublisher implements PublisherInterface
      */
     public function parseContents(): void
     {
-        $parsedItems = [];
-
-        foreach ($this->app['publishing.items'] as $item) {
-            $this->app['publishing.active_item'] = $item;
-
-            // filter the original item content before parsing it
-            $this->eventDispatcher->dispatch(Events::PRE_PARSE, new ParseEvent());
-
-            // get again 'item' object because PRE_PARSE event can modify it
-            $item = $this->app['publishing.active_item'];
+        foreach ($this->publishingItems as $key => $item) {
+            $parseEvent = new ParseEvent($item);
+            $this->eventDispatcher->dispatch(Events::PRE_PARSE, $parseEvent);
 
             // when publishing a book as a website, two pages in different sections
             // can use the same slugs without resulting in collisions.
             // TODO: this method should be smarter: if chunk_level = 1, it's safe
             // to delete all previous slugs, but if chunk_level = 2, we should only
             // remove the generated slugs for each section
-            if ($this->app->edition('format') === 'html_chunked') {
+            if ($this->app->edition('format') === HtmlChunkedPublisher::NAME) {
                 $this->slugger->resetGeneratedSlugs();
             }
 
-            $item['content'] = $this->app['parser']->transform($item['original']);
-            $item['toc'] = $this->app['publishing.active_item.toc'];
+            $parseEvent->changeItemProperty(
+                'content',
+                $this->parser->transform($parseEvent->getItemProperty('original'))
+            );
 
-            $this->app['publishing.active_item'] = $item;
-
-            $this->eventDispatcher->dispatch(Events::POST_PARSE, new ParseEvent());
-
-            // get again 'item' object because POST_PARSE event can modify it
-            $parsedItems[] = $this->app['publishing.active_item'];
+            $this->eventDispatcher->dispatch(Events::POST_PARSE, $parseEvent);
+            $this->publishingItems[$key] = $parseEvent->getItem();
         }
-
-        $this->app['publishing.items'] = $parsedItems;
     }
 
     /**
@@ -115,28 +124,23 @@ abstract class AbstractPublisher implements PublisherInterface
      */
     public function decorateContents(): void
     {
-        $decoratedItems = [];
+        foreach ($this->publishingItems as $key => $item) {
+            $parseEvent = new ParseEvent($item);
 
-        foreach ($this->app['publishing.items'] as $item) {
-            $this->app['publishing.active_item'] = $item;
+            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $parseEvent);
 
-            // filter the original item content before decorating it
-            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, new Event());
+            $parseEvent->changeItemProperty(
+                'content',
+                $this->renderer->render(
+                    $item['config']['element'] . '.twig',
+                    ['item' => $item]
+                )
+            );
 
-            // get again 'item' object because PRE_DECORATE event can modify it
-            $item = $this->app['publishing.active_item'];
+            $this->eventDispatcher->dispatch(Events::POST_DECORATE, $parseEvent);
 
-            $item['content'] = $this->renderer->render($item['config']['element'] . '.twig', ['item' => $item]);
-
-            $this->app['publishing.active_item'] = $item;
-
-            $this->eventDispatcher->dispatch(Events::POST_DECORATE, new Event());
-
-            // get again 'item' object because POST_DECORATE event can modify it
-            $decoratedItems[] = $this->app['publishing.active_item'];
+            $this->publishingItems[$key] = $parseEvent->getItem();
         }
-
-        $this->app['publishing.items'] = $decoratedItems;
     }
 
     /**
@@ -184,12 +188,10 @@ abstract class AbstractPublisher implements PublisherInterface
      *
      * @return string The content of the item (currently, this content is always in
      *                Markdown format)
-     *
-     * @throws \RuntimeException If the content file doesn't exist or is not readable
      */
     private function loadItemContent(string $contentFileName, string $itemType): string
     {
-        $contentFilePath = $this->app['publishing.dir.contents'] . '/' . $contentFileName;
+        $contentFilePath = $this->bookContentsDir . '/' . $contentFileName;
 
         // check that content file exists and is readable
         if (! is_readable($contentFilePath)) {
@@ -200,7 +202,7 @@ abstract class AbstractPublisher implements PublisherInterface
                     . 'file exists and check its permissions.',
                 $contentFileName,
                 $itemType,
-                realpath($this->app['publishing.dir.contents']) . '/' . $contentFileName
+                realpath($this->bookContentsDir) . '/' . $contentFileName
             ));
         }
 
@@ -268,7 +270,7 @@ abstract class AbstractPublisher implements PublisherInterface
 
         if (! empty($item['config']['title'])) {
             $item['title'] = $item['config']['title'];
-            $item['slug'] = $this->app->slugify($item['title']);
+            $item['slug'] = $this->slugger->slugify($item['title']);
         }
 
         return $item;

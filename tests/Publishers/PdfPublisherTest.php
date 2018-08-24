@@ -33,28 +33,28 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
      */
     public function testBookUsesTheRightCustomCover($existingCoverFiles, $coverThatShouldBeUsed): void
     {
-        $app['publishing.dir.templates'] = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid(
+        $app['book_templates_dir'] = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid(
             'phpunit_'
         );
         $app['publishing.edition'] = 'print';
 
         $this->filesystem->mkdir([
-            $app['publishing.dir.templates'],
-            $app['publishing.dir.templates'] . '/print',
-            $app['publishing.dir.templates'] . '/pdf',
+            $app['book_templates_dir'],
+            $app['book_templates_dir'] . '/print',
+            $app['book_templates_dir'] . '/pdf',
         ]);
 
         foreach ($existingCoverFiles as $cover) {
-            $this->filesystem->touch($app['publishing.dir.templates'] . '/' . $cover);
+            $this->filesystem->touch($app['book_templates_dir'] . '/' . $cover);
         }
 
         $selectedCoverPath = $this->pdfPublisher->getCustomCover();
         if ($selectedCoverPath) {
-            $selectedCover = str_replace($app['publishing.dir.templates'] . '/', '', $selectedCoverPath);
+            $selectedCover = str_replace($app['book_templates_dir'] . '/', '', $selectedCoverPath);
             $this->assertSame($coverThatShouldBeUsed, $selectedCover);
         }
 
-        $this->filesystem->remove($app['publishing.dir.templates']);
+        $this->filesystem->remove($app['book_templates_dir']);
     }
 
     public function provideCoverSampleData(): array

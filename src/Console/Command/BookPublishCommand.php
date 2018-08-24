@@ -85,10 +85,8 @@ final class BookPublishCommand extends Command
         $bookDir = $this->validator->validateBookDir($slug, $dir);
 
         $this->app['publishing.dir.book'] = $bookDir;
-        $this->app['publishing.dir.contents'] = $bookDir . '/Contents';
-        $this->app['publishing.dir.resources'] = $bookDir . '/Resources';
-        $this->app['publishing.dir.plugins'] = $bookDir . '/Resources/Plugins';
-        $this->app['publishing.dir.templates'] = $bookDir . '/Resources/Templates';
+        $this->app['book_resources_dir'] = $bookDir . '/Resources';
+        $this->app['book_templates_dir'] = $bookDir . '/Resources/Templates';
 
         // all parameters are loaded here...
 

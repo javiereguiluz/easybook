@@ -19,14 +19,14 @@ parameters:
     book_dir: '...'
 
     publishing.dir.app_theme: ''
-    publishing.dir.book: ''
-    publishing.dir.contents: ''
-    publishing.dir.resources: ''
-    publishing.dir.plugins: ''
-    publishing.dir.templates: ''
+    book_contents_dir: '%book_dir%/Contents'
+    book_resources_dir: '%book_dir%/Resources'
+    book_templates_dir: '%book_resources_dir/Templates'
+
     publishing_dir_output: '%kernel.project_dir%/output'
-    publishing.dir.slug: '%kernel.project_dir%/output'
     publishing.items: []
+
+    # $this->app['publishing.dir.book'] = $bookDir;
 
     # the specific item currently being parsed/modified/decorated/...
     publishing.active_item: []

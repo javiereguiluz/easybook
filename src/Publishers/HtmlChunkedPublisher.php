@@ -17,6 +17,11 @@ use Twig_Error_Loader;
  */
 final class HtmlChunkedPublisher extends AbstractPublisher
 {
+    /**
+     * @var string
+     */
+    public const NAME = 'html_chunked';
+
     // these elements are so special that they cannot define a TOC
 
     /**
@@ -100,7 +105,7 @@ final class HtmlChunkedPublisher extends AbstractPublisher
         );
 
         // copy book images
-        $imagesDir = $this->app['publishing.dir.contents'] . '/images';
+        $imagesDir = $this->bookContentsDir . '/images';
         if (file_exists($imagesDir)) {
             $this->filesystem->mirror($imagesDir, $this->app['publishing.dir.output'] . '/images');
         }

@@ -54,7 +54,10 @@ final class PdfPublisher extends AbstractPublisher
 
         // implode all the contents to create the whole book
         $htmlBookFilePath = $tmpDir . '/book.html';
-        $this->renderer->renderToFile('book.twig', ['items' => $this->app['publishing.items']], $htmlBookFilePath);
+        $this->renderer->renderToFile('book.twig', [
+            'items' => $this->app['publishing.items']],
+            $htmlBookFilePath
+        );
 
         // use PrinceXML to transform the HTML book into a PDF book
         // Prepare and add stylesheets before PDF conversion
@@ -110,9 +113,9 @@ final class PdfPublisher extends AbstractPublisher
     public function getCustomCover(string $coverFileName = 'cover.pdf'): ?string
     {
         $paths = [
-            $this->app['publishing.dir.templates'] . '/' . $this->app['publishing.edition'],
-            $this->app['publishing.dir.templates'] . '/pdf',
-            $this->app['publishing.dir.templates'],
+            $this->app['book_templates_dir'] . '/' . $this->app['publishing.edition'],
+            $this->app['book_templates_dir'] . '/pdf',
+            $this->app['book_templates_dir'],
         ];
 
         return $this->betterFilesystem->getFirstExistingFile($coverFileName, $paths);

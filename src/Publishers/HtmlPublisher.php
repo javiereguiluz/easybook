@@ -48,7 +48,7 @@ final class HtmlPublisher extends AbstractPublisher
         );
 
         // copy book images
-        $imagesDir = $this->app['publishing.dir.contents'] . '/images';
+        $imagesDir = $this->bookContentsDir . '/images';
         if (file_exists($imagesDir)) {
             $this->filesystem->mirror($imagesDir, $this->app['publishing.dir.output'] . '/images');
         }
