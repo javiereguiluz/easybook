@@ -1,5 +1,5 @@
 parameters:
-    publishing.book.slug: 'test_book'
+    book_slug: 'test_book'
     publishing.edition: 'test_edition'
     book_slug: 'test_book'
     language: 'en'

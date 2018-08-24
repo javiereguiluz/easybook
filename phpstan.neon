@@ -14,8 +14,5 @@ parameters:
         # SplFileInfo() false positives
         - '#Parameter \#1 $file (.*?) expects string, string|false given#'
 
-        # false positivie due to missing pre-context
-        - '#Method Easybook\\Util\\BetterFilesystem::getFirstExistingFile\(\) should return string\|null but returns string\|false#'
-
         # false positive
         - '#Property Easybook\\Tests\\AbstractContainerAwareTestCase::\$container \(Symfony\\Component\\DependencyInjection\\Container\) does not accept Psr\\Container\\ContainerInterface#'

@@ -158,7 +158,7 @@ book:
 
         website:
             # ...
-            before_publish: "git clone git://github.com/{{ app.get('publishing.book.slug') }}/book"
+            before_publish: "git clone git://github.com/{{ app.get('book_slug') }}/book"
             after_publish:  "cp ... /home/{{ book.author }}/books/{{ 'now'|date('YmdHis') }}_book.pdf"
 ```
 

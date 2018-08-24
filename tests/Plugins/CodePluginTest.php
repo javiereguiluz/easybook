@@ -80,7 +80,7 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
     {
 //        $app = new Application();
 
-        $app['publishing.book.slug'] = 'test_book';
+        $app['book_slug'] = 'test_book';
         $app['publishing.edition'] = 'test_edition';
         $app['publishing.book.config'] = [
             'book' => [

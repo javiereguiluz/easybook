@@ -2,9 +2,9 @@
 
 namespace Easybook\Tests\Publishers;
 
+use Easybook\Book\FileProvider;
 use Easybook\Publishers\Epub2Publisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;
-use ReflectionMethod;
 use Symplify\PackageBuilder\Reflection\PrivatesCaller;
 
 final class Epub2PublisherTest extends AbstractContainerAwareTestCase
@@ -19,9 +19,15 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
      */
     private $privatesCaller;
 
+    /**
+     * @var FileProvider
+     */
+    private $fileProvider;
+
     protected function setUp(): void
     {
         $this->epub2Publisher = $this->container->get(Epub2Publisher::class);
+        $this->fileProvider = $this->container->get(FileProvider::class);
         $this->privatesCaller = new PrivatesCaller();
     }
 
@@ -36,7 +42,7 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
             'book/OEBPS/fonts',
         ];
 
-        $this->app['publishing.book.slug'] = uniqid('phpunit_');
+        $this->parameterProvider->changeParameter('book_slug', uniqid('phpunit_'));
 
         $bookDir = $this->privatesCaller->callPrivateMethod($this->epub2Publisher, 'prepareBookTemporaryDirectory');
 
@@ -46,21 +52,6 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
 
         // filesystem
         $this->filesystem->remove($bookDir);
-    }
-
-    public function testPrepareBookCoverImageIfTheBookDefinesNoCoverImage(): void
-    {
-        $app = $this->getMock('Easybook\DependencyInjection\Application', ['getCustomCoverImage']);
-        $app->expects($this->any())
-            ->method('getCustomCoverImage')
-            ->will($this->returnValue(null));
-
-        $bookTemporaryDir = $this->privatesCaller->callPrivateMethod(
-            $this->epub2Publisher,
-            'prepareBookTemporaryDirectory'
-        );
-
-        $this->assertNull($bookTemporaryDir);
     }
 
     /**
@@ -73,11 +64,47 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
 
         $imageFilePath = $tmpDir . '/' . $fileName;
 
-        $app = $this->getMock('Easybook\DependencyInjection\Application', ['getCustomCoverImage']);
-        $app->expects($this->any())
-            ->method('getCustomCoverImage')
-            ->will($this->returnValue($imageFilePath));
+        // custom cover image - create from config with defined one
 
+//        $app = $this->getMock('Easybook\DependencyInjection\Application', ['getCustomCoverImage']);
+//        $app->expects($this->any())
+//            ->method('getCustomCoverImage')
+//            ->will($this->returnValue($imageFilePath));
+
+        $this->createImageByMimeType($width, $height, $mimeType, $imageFilePath);
+
+        $coverImage = [
+            'height' => $height,
+            'width' => $width,
+            'filePath' => 'images/' . $fileName,
+            'mediaType' => 'image/' . $mimeType,
+        ];
+
+        $bookCoverImage = $this->privatesCaller->callPrivateMethod($this->epub2Publisher, 'prepareBookCoverImage');
+        $this->assertSame($coverImage, $bookCoverImage);
+
+        $this->filesystem->remove($tmpDir);
+        //imagedestroy($image);
+    }
+
+    public function getTestPrepareBookCoverImageData()
+    {
+        return [
+            [640, 1136, 'png', 'cover.png'],
+            [768, 1024, 'png', 'cover.png'],
+            [1536, 2048, 'png', 'cover.png'],
+            [640, 1136, 'gif', 'cover.gif'],
+            [768, 1024, 'gif', 'cover.gif'],
+            [1536, 2048, 'gif', 'cover.gif'],
+            // JPEG images are disabled because I get errors that I can't solve
+            // array(640, 1136, 'jpeg', 'cover.jpg'),
+            // array(768, 1024, 'jpeg', 'cover.jpg'),
+            // array(1536, 2048, 'jpeg', 'cover.jpg'),
+        ];
+    }
+
+    private function createImageByMimeType(int $width, int $height, string $mimeType, string $imageFilePath): void
+    {
         switch ($mimeType) {
             case 'png':
                 $image = imagecreate($width, $height);
@@ -95,36 +122,5 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
                 imagegif($image, $imageFilePath);
                 break;
         }
-
-        $method = new ReflectionMethod(Epub2Publisher::class, 'prepareBookCoverImage');
-        $method->setAccessible(true);
-
-        $coverImage = [
-            'height' => $height,
-            'width' => $width,
-            'filePath' => 'images/' . $fileName,
-            'mediaType' => 'image/' . $mimeType,
-        ];
-
-        $this->assertSame($coverImage, $method->invoke($this->epub2Publisher, $tmpDir));
-
-        $this->filesystem->remove($tmpDir);
-        imagedestroy($image);
-    }
-
-    public function getTestPrepareBookCoverImageData()
-    {
-        return [
-            [640, 1136, 'png', 'cover.png'],
-            [768, 1024, 'png', 'cover.png'],
-            [1536, 2048, 'png', 'cover.png'],
-            [640, 1136, 'gif', 'cover.gif'],
-            [768, 1024, 'gif', 'cover.gif'],
-            [1536, 2048, 'gif', 'cover.gif'],
-            // JPEG images are disabled because I get errors that I can't solve
-            // array(640, 1136, 'jpeg', 'cover.jpg'),
-            // array(768, 1024, 'jpeg', 'cover.jpg'),
-            // array(1536, 2048, 'jpeg', 'cover.jpg'),
-        ];
     }
 }

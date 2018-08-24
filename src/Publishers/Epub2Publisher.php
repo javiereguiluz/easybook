@@ -2,6 +2,7 @@
 
 namespace Easybook\Publishers;
 
+use Easybook\Book\FileProvider;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Util\Toolkit;
@@ -33,10 +34,16 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private $finder;
 
-    public function __construct(Toolkit $toolkit, Finder $finder)
+    /**
+     * @var FileProvider
+     */
+    private $fileProvider;
+
+    public function __construct(Toolkit $toolkit, Finder $finder, FileProvider $fileProvider)
     {
         $this->toolkit = $toolkit;
         $this->finder = $finder;
+        $this->fileProvider = $fileProvider;
     }
 
     public function loadContents(): void
@@ -83,7 +90,7 @@ final class Epub2Publisher extends AbstractPublisher
         }
 
         // generate custom CSS file
-        $customCss = $this->app->getCustomTemplate('style.css');
+        $customCss = $this->fileProvider->getCustomTemplate('style.css');
         $hasCustomCss = file_exists($customCss);
         if ($hasCustomCss) {
             $this->filesystem->copy($customCss, $bookTmpDir . '/book/OEBPS/css/styles.css', true);
@@ -171,9 +178,7 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private function prepareBookTemporaryDirectory(): string
     {
-        $bookDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid(
-            $this->app['publishing.book.slug']
-        );
+        $bookDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid($this->app['book_slug']);
 
         $this->filesystem->mkdir([
             $bookDir,
@@ -203,7 +208,7 @@ final class Epub2Publisher extends AbstractPublisher
     {
         if (! file_exists($targetDir)) {
             throw new RuntimeException(sprintf(
-                " ERROR: Books images couldn't be copied because \n"
+                "Books images couldn't be copied because \n"
                 . " the given '%s' \n"
                 . " directory doesn't exist.",
                 $targetDir
@@ -245,7 +250,7 @@ final class Epub2Publisher extends AbstractPublisher
     {
         $cover = null;
 
-        $image = $this->app->getCustomCoverImage();
+        $image = $this->fileProvider->getCustomCoverImage();
         if ($image !== null) {
             [$width, $height, $type] = getimagesize($image);
 
@@ -278,7 +283,7 @@ final class Epub2Publisher extends AbstractPublisher
     {
         if (! file_exists($targetDir)) {
             throw new RuntimeException(sprintf(
-                " ERROR: Books fonts couldn't be copied because \n"
+                "Books fonts couldn't be copied because \n"
                     . " the given '%s' \n"
                     . " directory doesn't exist.",
                 $targetDir

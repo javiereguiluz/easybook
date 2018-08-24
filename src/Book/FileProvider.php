@@ -29,7 +29,7 @@ final class FileProvider
         return $this->getFirstExistingFile($templateName, $paths);
     }
 
-    public function getCustomLabelsFile(): ?string
+    public function getCustomLabelsFile(): ?stringetFirstExistingFi
     {
         $labelsFileName = 'labels.' . $this->book('language') . '.yml';
         $paths = [
