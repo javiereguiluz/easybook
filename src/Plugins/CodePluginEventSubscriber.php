@@ -168,7 +168,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
 
                 return PHP_EOL . PHP_EOL . $code;
             },
-
             $item['original']
         );
         $parseEvent->setItem($item);

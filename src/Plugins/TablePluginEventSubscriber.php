@@ -90,7 +90,6 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
 
                 return $this->renderer->render('table.twig', $parameters);
             }
-
         );
 
         if (count($this->listOfTables) > 0) {
