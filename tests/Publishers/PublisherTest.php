@@ -11,6 +11,9 @@ use Symfony\Component\Yaml\Yaml;
 
 final class PublisherTest extends AbstractContainerAwareTestCase
 {
+    /**
+     * @var string
+     */
     private $tmpDir;
 
     /**
@@ -20,6 +23,7 @@ final class PublisherTest extends AbstractContainerAwareTestCase
 
     protected function setUp(): void
     {
+        $this->tmpDir = sys_get_temp_dir() . '/_easybook_tests/' . uniqid();
         $this->toolkit = $this->container->get(Toolkit::class);
     }
 
@@ -117,7 +121,7 @@ final class PublisherTest extends AbstractContainerAwareTestCase
     /*
      * Assert that all expected files were generated
      */
-    protected function checkForMissingFiles($dirExpected, $dirGenerated): void
+    protected function checkForMissingFiles(string $dirExpected, string $dirGenerated): void
     {
         $expectedFiles = $this->finder->files()
             ->notName('.gitignore')

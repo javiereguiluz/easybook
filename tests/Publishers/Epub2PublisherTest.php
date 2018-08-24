@@ -50,7 +50,7 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
     /**
      * @dataProvider getTestPrepareBookCoverImageData
      */
-    public function testPrepareBookCoverImage($width, $height, $mimeType, $fileName): void
+    public function testPrepareBookCoverImage(int $width, int $height, string $mimeType, string $fileName): void
     {
         $tmpDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid('phpunit_');
         $this->filesystem->mkdir($tmpDir);
@@ -80,7 +80,10 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
         //imagedestroy($image);
     }
 
-    public function getTestPrepareBookCoverImageData()
+    /**
+     * @return mixed[]
+     */
+    public function getTestPrepareBookCoverImageData(): array
     {
         return [
             [640, 1136, 'png', 'cover.png'],

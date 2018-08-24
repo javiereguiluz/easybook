@@ -12,13 +12,16 @@ final class ToolkitTest extends AbstractContainerAwareTestCase
      */
     private $toolkit;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->toolkit = $this->container->get(Toolkit::class);
     }
 
     /**
      * @dataProvider getArrayDeepMergeAndReplaceData()
+     *
+     * @param mixed[] $arguments
+     * @param mixed[] $expectedArray
      */
     public function testArrayDeepMergeAndReplace(array $arguments, array $expectedArray): void
     {

@@ -62,7 +62,10 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
         $this->assertSame(file_get_contents(__DIR__ . '/fixtures/code/' . $expectedFilePath), $item['content']);
     }
 
-    public function getCodeBlockConfiguration()
+    /**
+     * @return mixed[]
+     */
+    public function getCodeBlockConfiguration(): array
     {
         return [
             ['input_1.md', 'expected_easybook_type_disabled_highlight.html', false],
@@ -76,9 +79,9 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
         ];
     }
 
-    private function getApp($enableCodeHightlight)
+    private function getApp(bool $enableCodeHightlight)
     {
-//        $app = new Application();
+        // @todo use parameters
 
         $app['book_slug'] = 'test_book';
         $app['publishing.edition'] = 'test_edition';

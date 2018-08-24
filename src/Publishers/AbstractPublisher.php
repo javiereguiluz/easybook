@@ -65,7 +65,7 @@ abstract class AbstractPublisher implements PublisherInterface
         ParserInterface $parser,
         string $publishingDirOutput,
         string $bookContentsDir
-    ) {
+    ): void {
         $this->eventDispatcher = $eventDispatcher;
         $this->filesystem = $filesystem;
         $this->renderer = $renderer;
@@ -165,7 +165,7 @@ abstract class AbstractPublisher implements PublisherInterface
         }
     }
 
-    abstract protected function assembleBook();
+    abstract protected function assembleBook(): void;
 
     private function prepareOutputDir(): void
     {

@@ -352,7 +352,7 @@ final class Epub2Publisher extends AbstractPublisher
      *
      * See: https://github.com/php/php-src/commit/3a55ea02
      */
-    private function zipBookContents($directory, $zip_file)
+    private function zipBookContents($directory, $zip_file): void
     {
         $this->toolkit->zip($directory, $zip_file);
     }

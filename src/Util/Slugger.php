@@ -32,7 +32,7 @@ final class Slugger
         // ensure the uniqueness of the slug
         $occurrences = array_count_values($this->generatedSlugs);
 
-        $count = isset($occurrences[$slug]) ? $occurrences[$slug] : 0;
+        $count = $occurrences[$slug] ?? 0;
         if ($count > 1) {
             $slug = $slug . '-' . $count;
         }

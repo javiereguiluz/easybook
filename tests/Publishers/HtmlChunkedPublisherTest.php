@@ -63,9 +63,10 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
     }
 
     /**
-     * @dataProvider getFilterBookTocData
+     * @dataProvider getFilterBookTocData()
+     * @param mixed[] $expectedBookToc
      */
-    public function testFilterBookToc($maxLevel, $expectedBookToc): void
+    public function testFilterBookToc(int $maxLevel, array $expectedBookToc): void
     {
         $originalBookToc = [
             [
@@ -97,7 +98,10 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
         $this->assertSame($expectedBookToc, $filteredBookToc);
     }
 
-    public function getFilterBookTocData()
+    /**
+     * @return mixed[]
+     */
+    public function getFilterBookTocData(): array
     {
         return [
             [0, []],
@@ -193,9 +197,10 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
     }
 
     /**
-     * @dataProvider getFindItemPositionData
+     * @dataProvider getFindItemPositionData()
+     * @param mixed[] $itemToFind
      */
-    public function testFindItemPosition($expectedPosition, $itemToFind, $criteria): void
+    public function testFindItemPosition(string $expectedPosition, array $itemToFind, string $criteria): void
     {
         $bookToc = [
             [
@@ -229,7 +234,10 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
         );
     }
 
-    public function getFindItemPositionData()
+    /**
+     * @return mixed[]
+     */
+    public function getFindItemPositionData(): array
     {
         return [
             [0, ['slug' => 'item1'], 'slug'],
@@ -248,9 +256,10 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
     }
 
     /**
-     * @dataProvider getGetPreviousChunkData
+     * @dataProvider getGetPreviousChunkData()
+     * @param mixed[] $expectedItem
      */
-    public function testGetPreviousChunk($currentPosition, $expectedItem): void
+    public function testGetPreviousChunk(int $currentPosition, array $expectedItem): void
     {
         $bookToc = [
             ['slug' => 'item1'],
@@ -266,7 +275,10 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
         $this->assertSame($expectedItem, $method->invoke($this->htmlChunkedPublisher, $currentPosition, $bookToc));
     }
 
-    public function getGetPreviousChunkData()
+    /**
+     * @return mixed[]
+     */
+    public function getGetPreviousChunkData(): array
     {
         return [
             [0, [
@@ -289,8 +301,9 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
 
     /**
      * @dataProvider getGetNextChunkData
+     * @param mixed[] $expectedItem
      */
-    public function testGetNextChunk($currentPosition, $expectedItem): void
+    public function testGetNextChunk(int $currentPosition, array $expectedItem): void
     {
         $bookToc = [
             ['slug' => 'item1'],
@@ -306,7 +319,10 @@ final class HtmlChunkedPublisherTest extends AbstractContainerAwareTestCase
         $this->assertSame($expectedItem, $method->invoke($this->htmlChunkedPublisher, $currentPosition, $bookToc));
     }
 
-    public function getGetNextChunkData()
+    /**
+     * @return mixed[]
+     */
+    public function getGetNextChunkData(): array
     {
         return [
             [-1, ['slug' => 'item1']],
