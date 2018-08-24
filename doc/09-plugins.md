@@ -181,16 +181,7 @@ section.
 
 This class defines four methods:
 
-  * `getItem()`, it returns the active item that it's being parsed.
-  * `setItem(array $item)`, it allows you to replace the active item being 
-    parsed with your own item.
-  * `getItemProperty($key)`, it returns the value of the given `$key` property
-    of the item. To get for example the original Markdown content of the item
-    being parsed, use `$event->getItemProperty('original')`
-  * `setItemProperty($key, $value)`, it modifies the value of the `$key` property
-    of the item with the `$value` content. To replace for example the original
-    Markdown content of the item being parsed, use
-    `$event->setItemProperty('original', '...')`
+  * `getItem()`, it returns the active `Item` that it's being parsed.
 
 ## Creating an advanced plugin ##
 

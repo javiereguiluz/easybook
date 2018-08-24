@@ -2,6 +2,7 @@
 
 namespace Easybook\Tests\Plugins;
 
+use Easybook\Book\Item;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Parsers\MarkdownParser;
 use Easybook\Plugins\CodePluginEventSubscriber;
@@ -31,6 +32,8 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
      */
     public function testCodeBlocksTypes(string $inputFilePath, string $expectedFilePath): void
     {
+        // new item...
+        /** @var Item $item */
         $item = [
             'config' => ['format' => 'md'],
             'original' => file_get_contents(__DIR__ . '/fixtures/code/' . $inputFilePath),
@@ -38,20 +41,13 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
         ];
 
         // execute pre-parse method of the plugin
-        $parseEvent = new ItemAwareEvent($item);
-        $this->codePluginEventSubscriber->parseCodeBlocks(new ItemAwareEvent($item));
+        $itemAwareEvent = new ItemAwareEvent($item);
+        $this->codePluginEventSubscriber->parseCodeBlocks($itemAwareEvent);
 
         // parse the item original content
-        $parseEvent->changeItemProperty(
-            'contant',
-            $this->markdownParser->transform($parseEvent->getItemProperty('content'))
-        );
+        $item->changeContent($this->markdownParser->transform($item->getContent()));
 
-        // execute post-parse method of the plugin
-        $this->codePluginEventSubscriber->fixYamlStyleComments($parseEvent);
-        $item = $parseEvent->getItem();
-
-        $this->assertSame(file_get_contents(__DIR__ . '/fixtures/code/' . $expectedFilePath), $item['content']);
+        $this->assertSame(file_get_contents(__DIR__ . '/fixtures/code/' . $expectedFilePath), $item->getContent());
     }
 
     public function getCodeBlockConfiguration(): Iterator

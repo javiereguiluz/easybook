@@ -9,10 +9,6 @@ use Symfony\Component\Yaml\Yaml;
 
 final class BookNewCommandTest extends AbstractContainerAwareTestCase
 {
-    protected $tmpDir;
-
-    protected $console;
-
     public function testCommand(): void
     {
         $tester = $this->createNewBook();
@@ -112,23 +108,14 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
         ]);
     }
 
-    // code copied from Sensio\Bundle\GeneratorBundle\Tests\Command\GenerateCommandTest.php
-    protected function getInputStream($input)
-    {
-        $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, $input . str_repeat("\n", 10));
-        rewind($stream);
-
-        return $stream;
-    }
-
     private function createNewBook(): CommandTester
     {
-        $command = $this->console->find('new');
-        $tester = new CommandTester($command);
+        /** @var BookNewCommand $bookNewCommand */
+        $bookNewCommand = $this->container->get(BookNewCommand::class);
+        $tester = new CommandTester($bookNewCommand);
 
         $tester->execute([
-            'command' => $command->getName(),
+            'command' => $bookNewCommand->getName(),
             'title' => 'The Origin of Species',
             '--dir' => $this->tmpDir,
         ]);

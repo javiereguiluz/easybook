@@ -34,7 +34,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): Iterator
     {
         yield EasybookEvents::PRE_PARSE => ['parseCodeBlocks', -500];
-        yield EasybookEvents::POST_PARSE => ['fixParsedCodeBlocks', -500];
     }
 
     /**
@@ -50,17 +49,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
         }
 
         $this->parseGithubTypeCodeBlocks($itemAwareEvent);
-    }
-
-    /**
-     * It fixes the resulting contents of the parsed code blocks.
-     */
-    public function fixYamlStyleComments(ItemAwareEvent $itemAwareEvent): void
-    {
-        // unescape yaml-style comments that before parsing could
-        // be interpreted as Markdown first-level headings
-        $content = str_replace('&#35;', '#', $itemAwareEvent->getItemProperty('content'));
-        $itemAwareEvent->changeItemProperty('content', $content);
     }
 
     /**
@@ -164,8 +152,10 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
 
                 return PHP_EOL . PHP_EOL . $code;
             },
-            $item['original']
+            $item->getOriginal()
         );
-        $itemAwareEvent->changeItemProperty('origin', $decoratedOriginal);
+
+        // are you use? not content
+        $item->changeOrigin($decoratedOriginal);
     }
 }

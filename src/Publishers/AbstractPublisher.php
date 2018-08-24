@@ -37,7 +37,7 @@ abstract class AbstractPublisher implements PublisherInterface
     protected $slugger;
 
     /**
-     * @var mixed[]
+     * @var Item[]
      */
     protected $publishingItems = [];
 
@@ -101,10 +101,7 @@ abstract class AbstractPublisher implements PublisherInterface
             $parseEvent = new ItemAwareEvent($item);
             $this->eventDispatcher->dispatch(Events::PRE_PARSE, $parseEvent);
 
-            $parseEvent->changeItemProperty(
-                'content',
-                $this->parser->transform($parseEvent->getItemProperty('original'))
-            );
+            $item->changeContent($this->parser->transform($item->getOriginal()));
 
             $this->eventDispatcher->dispatch(Events::POST_PARSE, $parseEvent);
             $this->publishingItems[$key] = $parseEvent->getItem();
@@ -116,19 +113,14 @@ abstract class AbstractPublisher implements PublisherInterface
      */
     public function decorateContents(): void
     {
-        foreach ($this->publishingItems as $key => $item) {
-            $parseEvent = new ItemAwareEvent($item);
+        foreach ($this->publishingItems as $item) {
+            $itemAwareEvent = new ItemAwareEvent($item);
 
-            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $parseEvent);
+            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $itemAwareEvent);
 
-            $parseEvent->changeItemProperty(
-                'content',
-                $this->renderer->render($item['config']['element'] . '.twig', ['item' => $item])
-            );
+            $item->changeContent($this->renderer->render($item['config']['element'] . '.twig', ['item' => $item]));
 
-            $this->eventDispatcher->dispatch(Events::POST_DECORATE, $parseEvent);
-
-            $this->publishingItems[$key] = $parseEvent->getItem();
+            $this->eventDispatcher->dispatch(Events::POST_DECORATE, $itemAwareEvent);
         }
     }
 

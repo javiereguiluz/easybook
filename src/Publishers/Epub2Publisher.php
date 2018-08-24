@@ -3,6 +3,7 @@
 namespace Easybook\Publishers;
 
 use Easybook\Book\FileProvider;
+use Easybook\Book\Item;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Util\Toolkit;
@@ -268,9 +269,7 @@ final class Epub2Publisher extends AbstractPublisher
      * For now, epub books only include the Inconsolata font to display
      * their code listings.
      *
-     * @param string $targetDir The directory where the fonts are copied.
-     *
-     * @return array Font data needed to create the book manifest.
+     * @return mixed[]
      */
     private function prepareBookFonts(string $targetDir): array
     {
@@ -308,9 +307,9 @@ final class Epub2Publisher extends AbstractPublisher
      * This method creates a new property for each item called 'page_name' which
      * stores the normalized page name that should have this chunk.
      *
-     * @param array $items The original book items.
+     * @param Item[] $items
      *
-     * @return array The book items with their new 'page_name' property.
+     * @return Item[] The book items with their new 'page_name' property.
      */
     private function normalizePageNames(array $items): array
     {
@@ -338,7 +337,7 @@ final class Epub2Publisher extends AbstractPublisher
      *
      * See: https://github.com/php/php-src/commit/3a55ea02
      */
-    private function zipBookContents($directory, $zip_file): void
+    private function zipBookContents(string $directory, string $zip_file): void
     {
         $this->toolkit->zip($directory, $zip_file);
     }

@@ -22,28 +22,10 @@ final class ItemAwareEvent extends Event
      */
     private $editionFormat;
 
-    // @todo should be object to prevent set/get games just to keep reference
-
     public function __construct(Item $item, ?string $editionFormat = null)
     {
         $this->item = $item;
         $this->editionFormat = $editionFormat;
-    }
-
-    /**
-     * @return mixed The value of the requested property
-     */
-    public function getItemProperty(string $key)
-    {
-        return $this->item[$key];
-    }
-
-    /**
-     * @param mixed $value
-     */
-    public function changeItemProperty(string $key, $value): void
-    {
-        $this->item[$key] = $value;
     }
 
     public function getItem(): Item

@@ -106,11 +106,19 @@ final class Item
     }
 
     /**
+     * @todo value object?
+     *
      * @return mixed[]
      */
     public function getTableOfContents(): array
     {
         return $this->tableOfContents;
+    }
+
+    // wtf, are you used - maybe content?
+    public function changeOrigin(string $original): void
+    {
+        $this->original = $original;
     }
 
     private function setTitle(string $title): void

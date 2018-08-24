@@ -56,8 +56,6 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             },
             $item['original']
         );
-
-        $itemAwareEvent->setItem($item);
     }
 
     /**
@@ -70,7 +68,6 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
         // replace <br> by <br/> (it causes problems for epub books)
         $item = $itemAwareEvent->getItem();
         $item['content'] = str_replace('<br>', '<br/>', $item['content']);
-        $itemAwareEvent->setItem($item);
     }
 
     /**
@@ -101,8 +98,6 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             $item['title'] = $itemAwareEvent->app->getTitle($item['config']['element']);
             $item['slug'] = $this->slugger->slugify($item['title']);
         }
-
-        $itemAwareEvent->setItem($item);
     }
 
     /**
@@ -178,7 +173,5 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
 
             $item['content'] = preg_replace($fuzzyTitle, $labeledTitle, $item['content']);
         }
-
-        $itemAwareEvent->setItem($item);
     }
 }
