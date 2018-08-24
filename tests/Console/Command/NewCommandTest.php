@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Tests\Commands;
+namespace Easybook\Tests\Console\Command;
 
-use Easybook\Console\Command\BookNewCommand;
+use Easybook\Console\Command\NewCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Yaml\Yaml;
 
-final class BookNewCommandTest extends AbstractContainerAwareTestCase
+final class NewCommandTest extends AbstractContainerAwareTestCase
 {
     /**
      * @var string
@@ -108,8 +108,8 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
      */
     public function testNonexistentDir(): void
     {
-        /** @var BookNewCommand $command */
-        $command = $this->container->get(BookNewCommand::class);
+        /** @var NewCommand $command */
+        $command = $this->container->get(NewCommand::class);
 
         $tester = new CommandTester($command);
         $tester->execute([
@@ -120,8 +120,8 @@ final class BookNewCommandTest extends AbstractContainerAwareTestCase
 
     private function createNewBook(): CommandTester
     {
-        /** @var BookNewCommand $bookNewCommand */
-        $bookNewCommand = $this->container->get(BookNewCommand::class);
+        /** @var NewCommand $bookNewCommand */
+        $bookNewCommand = $this->container->get(NewCommand::class);
         $tester = new CommandTester($bookNewCommand);
 
         $tester->execute([

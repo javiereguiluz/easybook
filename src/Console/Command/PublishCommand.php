@@ -2,26 +2,39 @@
 
 namespace Easybook\Console\Command;
 
-use Easybook\Book\Book;
-use Easybook\Book\Edition;
-use Easybook\Book\Provider\BookProvider;
-use Easybook\Book\Provider\CurrentEditionProvider;
 use Easybook\Configuration\Option;
-use Easybook\Exception\Process\BeforeOrAfterPublishScriptFailedException;
-use Easybook\Guard\FilesystemGuard;
-use Easybook\Publisher\PublisherProvider;
+use Easybook\Events\EasybookEvents as Events;
+use Easybook\Publishers\PublisherProvider;
+use Easybook\Util\Validator;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
 use Symplify\PackageBuilder\Console\Command\CommandNaming;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 final class PublishCommand extends Command
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @var string
+     */
+    private $bookTitle;
+
+    /**
+     * @var Validator
+     */
+    private $validator;
+
     /**
      * @var PublisherProvider
      */
@@ -37,117 +50,93 @@ final class PublishCommand extends Command
      */
     private $parameterProvider;
 
-    /**
-     * @var FilesystemGuard
-     */
-    private $filesystemGuard;
-
-    /**
-     * @var BookProvider
-     */
-    private $bookProvider;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var CurrentEditionProvider
-     */
-    private $currentEditionProvider;
-
     public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        string $bookTitle,
+        Validator $validator,
         PublisherProvider $publisherProvider,
         SymfonyStyle $symfonyStyle,
-        ParameterProvider $parameterProvider,
-        FilesystemGuard $filesystemGuard,
-        BookProvider $bookProvider,
-        Filesystem $filesystem,
-        CurrentEditionProvider $currentEditionProvider
+        ParameterProvider $parameterProvider
     ) {
-        parent::__construct();
-
+        $this->eventDispatcher = $eventDispatcher;
+        $this->bookTitle = $bookTitle;
+        $this->validator = $validator;
         $this->publisherProvider = $publisherProvider;
+
+        parent::__construct();
         $this->symfonyStyle = $symfonyStyle;
         $this->parameterProvider = $parameterProvider;
-        $this->filesystemGuard = $filesystemGuard;
-        $this->bookProvider = $bookProvider;
-        $this->filesystem = $filesystem;
-        $this->currentEditionProvider = $currentEditionProvider;
     }
 
     protected function configure(): void
     {
         $this->setName(CommandNaming::classToName(self::class));
-        $this->setDescription('Publishes book editions.');
-        $this->addArgument(Option::BOOK_DIR, InputArgument::REQUIRED, 'Path to book directory.');
+        $this->setDescription('Publishes an edition of a book');
+        $this->addOption(Option::DIR, '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
+
+        $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookPublishCommandHelp.txt'));
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $bookDirectory = $input->getArgument(Option::BOOK_DIR);
+        $slug = $input->getArgument('slug');
+        $dir = $input->getOption('dir') ?: $this->app['app.dir.doc'];
 
-        $this->filesystemGuard->ensureBookDirectoryExists($bookDirectory);
+        // validate book dir and add some useful values to the app configuration
+        $bookDir = $this->validator->validateBookDir($slug, $dir);
 
-        $this->parameterProvider->changeParameter('source_book_dir', $bookDirectory);
-        $this->parameterProvider->changeParameter('book_resources_dir', $bookDirectory . '/Resources');
-        $this->parameterProvider->changeParameter('book_templates_dir', $bookDirectory . '/Resources/Templates');
+        $this->parameterProvider->changeParameter('source_book_dir', $bookDir);
+        $this->parameterProvider->changeParameter('book_resources_dir', $bookDir . '/Resources');
+        $this->parameterProvider->changeParameter('book_templates_dir', $bookDir . '/Resources/Templates');
 
-        $book = $this->bookProvider->provide();
+        // all parameters are loaded here...
 
-        foreach ($book->getEditions() as $edition) {
-            $this->publishEdition($bookDirectory, $edition, $book);
+        // execute the 'before_publish' scripts
+        $this->runScripts((array) $this->parameterProvider->provideParameter('before_publish'));
+
+        // book publishing starts
+        $this->eventDispatcher->dispatch(Events::PRE_PUBLISH, new Event());
+
+        $this->symfonyStyle->note(sprintf(
+            'Publishing <comment>%s</comment> edition of <info>%s</info> book...',
+            $edition,
+            $this->bookTitle
+        ));
+
+        // @todo foreach book editions here
+
+        foreach ($this->publisherProvider->getPublishers() as $publisher) {
+            $publisher->publishBook();
         }
 
-        $this->symfonyStyle->success('Book was published');
+        $this->eventDispatcher->dispatch(Events::POST_PUBLISH, new Event());
 
-        // success
-        return 0;
+        $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'));
+
+        $this->symfonyStyle->success(
+            'You can access the book in:' .
+            realpath($this->app['publishing.dir.output'])
+        );
     }
 
     /**
      * @param string[] $scripts
      */
-    private function runScripts(array $scripts, string $workingDirectory): void
+    private function runScripts(array $scripts): void
     {
         foreach ($scripts as $script) {
-            $process = new Process($script, $workingDirectory);
+            $process = new Process($script, $this->app['publishing.dir.book']);
             $process->run();
 
             if ($process->isSuccessful()) {
                 $this->symfonyStyle->success($process->getOutput());
             } else {
-                throw new BeforeOrAfterPublishScriptFailedException(sprintf(
-                    'Executing script "%s" failed in "%s" directory: "%s"',
-                    $script,
-                    $workingDirectory,
+                throw new RuntimeException(sprintf(
+                    'Executing script "%s" failed: "%s"',
+                    $script . PHP_EOL,
                     $process->getErrorOutput()
                 ));
             }
         }
-    }
-
-    private function publishEdition(string $bookDirectory, Edition $edition, Book $book): void
-    {
-        $bookEditionDirectory = $bookDirectory . DIRECTORY_SEPARATOR . 'output' . DIRECTORY_SEPARATOR . $edition->getFormat();
-        $this->filesystem->mkdir($bookEditionDirectory);
-
-        $this->currentEditionProvider->setEdition($edition->getFormat());
-
-        $this->runScripts($edition->getBeforePublishScripts(), $bookEditionDirectory);
-
-        $this->symfonyStyle->note(sprintf(
-            'Publishing <comment>%s</comment> edition of <info>%s</info> book...',
-            $edition->getFormat(),
-            $book->getName()
-        ));
-
-        $publisher = $this->publisherProvider->provideByFormat($edition->getFormat());
-        $publisher->publishBook();
-
-        $this->runScripts($edition->getAfterPublishScripts(), $bookEditionDirectory);
-
-        $this->symfonyStyle->success(sprintf('You can access the book in: "%s"', realpath($bookEditionDirectory)));
     }
 }

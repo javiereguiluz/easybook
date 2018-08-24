@@ -1,23 +1,23 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Tests\Commands;
+namespace Easybook\Tests\Console\Command;
 
-use Easybook\Console\Command\BookNewCommand;
-use Easybook\Console\Command\BookPublishCommand;
+use Easybook\Console\Command\NewCommand;
+use Easybook\Console\Command\PublishCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Iterator;
 use RuntimeException;
 use Symfony\Component\Console\Tester\CommandTester;
 
-final class BookPublishCommandTest extends AbstractContainerAwareTestCase
+final class PublishCommandTest extends AbstractContainerAwareTestCase
 {
     /**
-     * @var BookNewCommand
+     * @var NewCommand
      */
     private $bookNewCommand;
 
     /**
-     * @var BookPublishCommand
+     * @var PublishCommand
      */
     private $bookPublishCommand;
 
@@ -32,14 +32,14 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 
         $this->tmpDir = sys_get_temp_dir() . '/_easybook_tests/' . uniqid();
 
-        $this->bookNewCommand = $this->container->get(BookNewCommand::class);
+        $this->bookNewCommand = $this->container->get(NewCommand::class);
         $tester = new CommandTester($this->bookNewCommand);
         $tester->execute([
             'command' => $this->bookNewCommand->getName(),
             //            '--dir' => $this->tmpDir,
         ]);
 
-        $this->bookPublishCommand = $this->container->get(BookPublishCommand::class);
+        $this->bookPublishCommand = $this->container->get(PublishCommand::class);
     }
 
     /**
@@ -163,7 +163,7 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
 
     private function publishBook(string $edition = 'web'): CommandTester
     {
-        $command = $this->container->get(BookPublishCommand::class);
+        $command = $this->container->get(PublishCommand::class);
         $tester = new CommandTester($command);
 
         $tester->execute([

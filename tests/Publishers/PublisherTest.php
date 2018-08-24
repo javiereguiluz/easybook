@@ -2,7 +2,7 @@
 
 namespace Easybook\Tests\Publishers;
 
-use Easybook\Console\Command\BookPublishCommand;
+use Easybook\Console\Command\PublishCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Easybook\Util\Toolkit;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -58,8 +58,8 @@ final class PublisherTest extends AbstractContainerAwareTestCase
                     '--dir' => $this->tmpDir,
                 ]);
 
-                /** @var BookPublishCommand $bookPublishCommand */
-                $bookPublishCommand = $this->container->get(BookPublishCommand::class);
+                /** @var PublishCommand $bookPublishCommand */
+                $bookPublishCommand = $this->container->get(PublishCommand::class);
                 $bookPublishCommand->run($input, new NullOutput());
 
                 // assert that generated files are exactly the same as expected

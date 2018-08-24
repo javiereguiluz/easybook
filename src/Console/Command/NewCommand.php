@@ -12,8 +12,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
+use Symplify\PackageBuilder\Console\Command\CommandNaming;
 
-final class BookNewCommand extends Command
+final class NewCommand extends Command
 {
     /**
      * @var string
@@ -59,7 +60,7 @@ final class BookNewCommand extends Command
 
     protected function configure(): void
     {
-        $this->setName('new');
+        $this->setName(CommandNaming::classToName(self::class));
         $this->setDescription('Creates a new empty book');
 
         $this->addArgument(Option::TITLE, null, InputOption::VALUE_REQUIRED, 'Name of your book');
