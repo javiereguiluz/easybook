@@ -6,8 +6,9 @@ use Easybook\Events\ItemAwareEvent;
 use Easybook\Parsers\MarkdownParser;
 use Easybook\Plugins\CodePluginEventSubscriber;
 use Easybook\Tests\AbstractContainerAwareTestCase;
+use Iterator;
 
-final class CodePluginTest extends AbstractContainerAwareTestCase
+final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
 {
     /**
      * @var MarkdownParser
@@ -37,8 +38,6 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
         string $expectedFilePath,
         bool $enableCodeHightlight
     ): void {
-        $app = $this->getApp($enableCodeHightlight);
-
         $item = [
             'config' => ['format' => 'md'],
             'original' => file_get_contents(__DIR__ . '/fixtures/code/' . $inputFilePath),
@@ -56,49 +55,16 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
         );
 
         // execute post-parse method of the plugin
-        $this->codePluginEventSubscriber->fixParsedCodeBlocks($parseEvent);
+        $this->codePluginEventSubscriber->fixYamlStyleComments($parseEvent);
         $item = $parseEvent->getItem();
 
         $this->assertSame(file_get_contents(__DIR__ . '/fixtures/code/' . $expectedFilePath), $item['content']);
     }
 
-    /**
-     * @return mixed[]
-     */
-    public function getCodeBlockConfiguration(): array
+    public function getCodeBlockConfiguration(): Iterator
     {
-        return [
-            ['input_1.md', 'expected_easybook_type_disabled_highlight.html', false],
-            ['input_1.md', 'expected_easybook_type_enabled_highlight.html', true],
-
-            ['input_2.md', 'expected_fenced_type_disabled_highlight.html', false],
-            ['input_2.md', 'expected_fenced_type_enabled_highlight.html', true],
-
-            ['input_3.md', 'expected_github_type_disabled_highlight.html', false],
-            ['input_3.md', 'expected_github_type_enabled_highlight.html', true],
-        ];
-    }
-
-    private function getApp(bool $enableCodeHightlight)
-    {
-        // @todo use parameters
-
-        $app['book_slug'] = 'test_book';
-        $app['publishing.edition'] = 'test_edition';
-        $app['publishing.book.config'] = [
-            'book' => [
-                'slug' => 'test_book',
-                'language' => 'en',
-                'editions' => [
-                    'test_edition' => [
-                        'format' => 'html',
-                        'highlight_code' => $enableCodeHightlight,
-                        'theme' => 'clean',
-                    ],
-                ],
-            ],
-        ];
-
-        return $app;
+        yield ['input_1.md', 'expected_easybook_type_enabled_highlight.html'];
+        yield ['input_2.md', 'expected_fenced_type_enabled_highlight.html'];
+        yield ['input_3.md', 'expected_github_type_enabled_highlight.html'];
     }
 }

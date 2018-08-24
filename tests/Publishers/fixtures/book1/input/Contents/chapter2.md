@@ -82,7 +82,6 @@ Editions are defined under the `editions` options in `config.yml` file. By defau
             web:
                 format:         html
                 auto_label:     true
-                highlight_code: true
                 include_styles: true
                 toc:
                     deep:       2

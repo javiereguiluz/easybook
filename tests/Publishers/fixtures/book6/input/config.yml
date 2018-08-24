@@ -17,7 +17,6 @@ book:
     editions:
         ebook:
             format:         epub
-            highlight_code: false
             include_styles: true
             isbn:           '0000000000'
             labels:         ['appendix', 'chapter']
@@ -28,7 +27,6 @@ book:
 
         web:
             format:         html
-            highlight_code: true
             include_styles: true
             labels:         ["appendix", "chapter"]
             theme:          clean

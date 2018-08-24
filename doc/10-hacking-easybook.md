@@ -72,13 +72,12 @@ minimize digital piracy displaying the buyer name inside the book (use `{{ book.
 
 ``` .cli
 $ ./book publish the-origin-of-species print
-         --configuration='{ "book": { "buyer": "John Smith" } }'
 ```
 
 Likewise, any edition option can be set dynamically:
 
 ``` .cli
-$ ./book publish the-origin-of-species web --configuration='{ "book": { "editions": { "web": { "highlight_code": true } } } }'
+$ ./book publish the-origin-of-species web
 ```
 
 When passing a lot of configuration options, you must be very careful with JSON braces and quotes. If you run the command automatically, it is easier to create

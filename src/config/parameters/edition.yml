@@ -4,7 +4,6 @@ parameters:
         -
             format: ~
             chunk_level: 1
-            highlight_code: false
             images_base_dir: 'images/'
             include_styles: true
             isbn: ~

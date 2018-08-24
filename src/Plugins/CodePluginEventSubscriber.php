@@ -4,6 +4,7 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ItemAwareEvent;
+use Easybook\Publishers\Epub2Publisher;
 use Easybook\Templating\Renderer;
 use Easybook\Util\CodeHighlighter;
 use Iterator;
@@ -24,16 +25,10 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      */
     private $renderer;
 
-    /**
-     * @var bool
-     */
-    private $shouldHighlightCode;
-
-    public function __construct(CodeHighlighter $codeHighlighter, Renderer $renderer, bool $shouldHighlightCode)
+    public function __construct(CodeHighlighter $codeHighlighter, Renderer $renderer)
     {
         $this->codeHighlighter = $codeHighlighter;
         $this->renderer = $renderer;
-        $this->shouldHighlightCode = $shouldHighlightCode;
     }
 
     public static function getSubscribedEvents(): Iterator
@@ -49,13 +44,18 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      */
     public function parseCodeBlocks(ItemAwareEvent $itemAwareEvent): void
     {
+        // the syntax highlight is stricly not recommended for epub formats
+        if ($itemAwareEvent->getEditionFormat() === Epub2Publisher::NAME) {
+            return;
+        }
+
         $this->parseGithubTypeCodeBlocks($itemAwareEvent);
     }
 
     /**
      * It fixes the resulting contents of the parsed code blocks.
      */
-    public function fixParsedCodeBlocks(ItemAwareEvent $itemAwareEvent): void
+    public function fixYamlStyleComments(ItemAwareEvent $itemAwareEvent): void
     {
         // unescape yaml-style comments that before parsing could
         // be interpreted as Markdown first-level headings
@@ -73,9 +73,9 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      *
      * @return string The resulting code after the highlight and rendering process
      */
-    public function highlightAndDecorateCode(string $code, string $language): string
+    public function highlightAndDecorateCode(ItemAwareEvent $itemAwareEvent, string $code, string $language): string
     {
-        if ($this->shouldHighlightCode) {
+        if ($itemAwareEvent->getEditionFormat() !== Epub2Publisher::NAME) {
             // highlight code if the edition wants to
             $code = $this->codeHighlighter->highlight($code, $language);
         } else {
@@ -83,9 +83,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
 
             // yaml-style comments could be interpreted as Markdown headings
             // replace any starting # character by its HTML entity (&#35;)
-            $code = '<pre>'
-                . preg_replace('/^# (.*)/', '&#35; $1', htmlspecialchars($code))
-                . '</pre>';
+            $code = '<pre>' . preg_replace('/^# (.*)/', '&#35; $1', htmlspecialchars($code)) . '</pre>';
         }
 
         return $this->renderer->render('code.twig', [
@@ -116,10 +114,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      *     ```javascript
      *     var lorem = 'ipsum';
      *     // ...
-     *     ```
-     *
-     *     ```
-     *     Generic code not associated with any language
      *     ```
      *
      *                          the $item being parsed
@@ -166,7 +160,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
                     $language = 'code';
                 }
 
-                $code = $this->highlightAndDecorateCode($code, $language);
+                $code = $this->highlightAndDecorateCode($itemAwareEvent, $code, $language);
 
                 return PHP_EOL . PHP_EOL . $code;
             },

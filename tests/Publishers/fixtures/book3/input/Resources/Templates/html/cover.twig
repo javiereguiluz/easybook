@@ -11,7 +11,6 @@
         format         : {{ edition.format }}
         labels         : {{ edition.labels|join(', ') }}
         include_styles : {{ edition.include_styles ? 'true' : 'false' }}
-        highlight_code : {{ edition.highlight_code ? 'true' : 'false' }}
         toc deep       : {{ edition.toc.deep }}
         toc elements   : {{ edition.toc.elements|join(', ') }}
     </pre>

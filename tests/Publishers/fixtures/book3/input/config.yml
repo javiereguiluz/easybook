@@ -18,7 +18,6 @@ parameters:
         editions:
             my_edition_1:
                 format:         html
-                highlight_code: false
                 include_styles: false
                 labels:         ['appendix', 'chapter', 'figure', 'table']
                 toc:
@@ -27,7 +26,6 @@ parameters:
 
             my_edition_2:
                 format:         html_chunked
-                highlight_code: true
                 include_styles: true
                 labels:         ['appendix', 'chapter', 'figure', 'table']
                 toc:

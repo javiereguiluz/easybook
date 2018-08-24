@@ -17,6 +17,11 @@ use Twig_Error_Loader;
 final class Epub2Publisher extends AbstractPublisher
 {
     /**
+     * @var string
+     */
+    public const NAME = 'epub';
+
+    /**
      * - 'toc' content type usually makes no sense in epub books (see below)
      * - 'cover' is a very special content for epub books
      *

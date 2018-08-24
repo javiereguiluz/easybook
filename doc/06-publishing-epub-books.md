@@ -1,4 +1,4 @@
-# Publishing EPUB books #
+# Publishing EPUB books
 
 EPUB books published with **easybook** are compatible with most e-book readers.
 The only notable exception are the Kindle readers, that require MOBI format
@@ -41,17 +41,8 @@ The cover image format must be JPEG, because this is the most supported format
 in e-book readers. In order to visualize it correctly in advanced readers such
 as the iPad, create a large color image (at least 800 pixel height).
 
-## Code highlighting ##
-
-The support of fixed-width fonts in current e-book readers is abysmal. For 
-that reason, syntax highlighting doesn't work as expected. The configuration 
-options are the same as for any other format (`highlight_code` and
-`highlight_cache`) but the actual result depends completely on the e-book 
-reader used to read the book.
-
 The following screenshot shows a comparison of the same highlighted code 
-displayed in a browser (`html` edition) and in a desktop application to read
-e-books (`epub` edition):
+displayed in a browser (`html` edition) and in a desktop application to read e-books (`epub` edition):
 
 ![Syntax highlighting in the browser vs an epub application](syntax_highlighting_browser_vs_app.png)
 
@@ -61,15 +52,4 @@ instead of the fixed-width font of the non-highlighted code:
 
 ![Syntax highlighting in the browser vs the iPad](syntax_highlighting_browser_vs_ipad.png)
 
-Considering the actual support for syntax highlighting in e-book readers, it's
-strongly recommended to disable the code highlighting for epub editions:
-
-```yaml
-book:
-    # ...
-    editions:
-        ebook:
-            format:         epub
-            highlight_code: false
-            # ...
-```
+Considering the actual support for syntax highlighting in e-book readers, it's strongly recommended to disable the code highlighting for epub editions:

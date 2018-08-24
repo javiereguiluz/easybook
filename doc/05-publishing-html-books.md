@@ -80,28 +80,6 @@ languages (`php`, `java`, `c`, `javascript`, `ruby`, `python`,
 `perl`, `erlang`, `haskell`, ...), markup languages ​​(`html`, `yaml`, 
 `xml`,...) and configuration files (`ini`, `apache`, ...).
 
-### Configuration ###
-
-Syntax highlighting is disabled by default. Set the `highlight_code` option to 
-`true` in any edition you want to highlight:
-
-```yaml
-book:
-    # ...
-    editions:
-        edition1:
-            highlight_code: true
-            # ...
-
-         edition2:
-            highlight_code: true
-            # ...
-
-         edition3:
-            highlight_code: false
-            # ...
-```
-
 ### Code block types ###
 
 As developers cannot agree on what code block style should be used,
@@ -235,23 +213,6 @@ book:
 Syntax highlighting is a very slow and time consuming process for books with
 hundreds to thousands lines of code. In order to improve its performance,
 **easybook** includes an internal highlight cache.
-
-This cache is disabled by default, because it's not useful for books with a 
-small number of lines of code. However, for large books it can reduce more than
-90% the publication time.
-
-Set the `highlight_cache` option to `true` in any edition you want to enable
-this cache:
-
-```yaml
-book:
-    # ...
-    editions:
-        edition1:
-            highlight_code:  true
-            highlight_cache: true
-            # ...
-```
 
 [1]: http://qbnz.com/highlighter
 [2]: http://michelf.ca/projects/php-markdown/

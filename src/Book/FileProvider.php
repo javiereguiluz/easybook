@@ -9,9 +9,15 @@ final class FileProvider
      */
     private $bookTemplatesDir;
 
-    public function __construct(string $bookTemplatesDir)
+    /**
+     * @var string
+     */
+    private $bookResourcesDir;
+
+    public function __construct(string $bookTemplatesDir, string $bookResourcesDir)
     {
         $this->bookTemplatesDir = $bookTemplatesDir;
+        $this->bookResourcesDir = $bookResourcesDir;
     }
 
     /*
@@ -29,13 +35,14 @@ final class FileProvider
         return $this->getFirstExistingFile($templateName, $paths);
     }
 
-    public function getCustomLabelsFile(): ?stringetFirstExistingFi
+    public function getCustomLabelsFile(): ?string
     {
         $labelsFileName = 'labels.' . $this->book('language') . '.yml';
+
         $paths = [
-            $this['book_resources_dir'] . '/Translations/' . $this['publishing.edition'],
-            $this['book_resources_dir'] . '/Translations/' . $this->edition('format'),
-            $this['book_resources_dir'] . '/Translations',
+            $this->bookResourcesDir . '/Translations/' . $this['publishing.edition'],
+            $this->bookResourcesDir . '/Translations/' . $this->edition('format'),
+            $this->bookResourcesDir . '/Translations',
         ];
 
         return $this->getFirstExistingFile($labelsFileName, $paths);
@@ -44,10 +51,11 @@ final class FileProvider
     public function getCustomTitlesFile(): ?string
     {
         $titlesFileName = 'titles.' . $this->book('language') . '.yml';
+
         $paths = [
-            $this['book_resources_dir'] . '/Translations/' . $this['publishing.edition'],
-            $this['book_resources_dir'] . '/Translations/' . $this->edition('format'),
-            $this['book_resources_dir'] . '/Translations',
+            $this->bookResourcesDir . '/Translations/' . $this['publishing.edition'],
+            $this->bookResourcesDir . '/Translations/' . $this->edition('format'),
+            $this->bookResourcesDir . '/Translations',
         ];
 
         return $this->getFirstExistingFile($titlesFileName, $paths);

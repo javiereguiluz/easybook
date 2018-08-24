@@ -60,13 +60,6 @@ edition format and others are specific to each format.
 
 ### Common configuration options ### {#common-edition-options}
 
-  * `highlight_code`, this option is only useful for technical books that 
-    include code listings. If `true`, the syntax of the code is highlighted.
-  * `highlight_cache`, this option is only useful for technical books that 
-    include source code. If `true`, all the highlighted code listings will be 
-    cached to boost book publishing performance. By default this cache is 
-    disabled because it's only appropriate for complex books that are 
-    generated regularly.
   * `include_styles`, if `true` **easybook** default CSS styles are applied to
     the published book. If you want to fully customize the design of your 
     book, don't apply these styles.
