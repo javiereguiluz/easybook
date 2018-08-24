@@ -99,15 +99,6 @@ abstract class AbstractPublisher implements PublisherInterface
             $parseEvent = new ItemAwareEvent($item);
             $this->eventDispatcher->dispatch(Events::PRE_PARSE, $parseEvent);
 
-            // when publishing a book as a website, two pages in different sections
-            // can use the same slugs without resulting in collisions.
-            // TODO: this method should be smarter: if chunk_level = 1, it's safe
-            // to delete all previous slugs, but if chunk_level = 2, we should only
-            // remove the generated slugs for each section
-            if ($this->app->edition('format') === HtmlChunkedPublisher::NAME) {
-                $this->slugger->resetGeneratedSlugs();
-            }
-
             $parseEvent->changeItemProperty(
                 'content',
                 $this->parser->transform($parseEvent->getItemProperty('original'))
@@ -237,8 +228,6 @@ abstract class AbstractPublisher implements PublisherInterface
      *
      * @param array $itemConfig The configuration options set in the config.yml
      *                          file for this item.
-     *
-     * @return array An array with all the configuration options and data for the item
      */
     private function initializeItem(array $itemConfig): array
     {

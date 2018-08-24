@@ -28,16 +28,9 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
 
     /**
      * @dataProvider getCodeBlockConfiguration()
-     *
-     * @param string $inputFilePath        The contents to be parsed
-     * @param string $expectedFilePath     The expected result of parsing the contents
-     * @param bool   $enableCodeHightlight Whether or not code listings should be highlighted
      */
-    public function testCodeBlocksTypes(
-        string $inputFilePath,
-        string $expectedFilePath,
-        bool $enableCodeHightlight
-    ): void {
+    public function testCodeBlocksTypes(string $inputFilePath, string $expectedFilePath): void
+    {
         $item = [
             'config' => ['format' => 'md'],
             'original' => file_get_contents(__DIR__ . '/fixtures/code/' . $inputFilePath),
