@@ -6,7 +6,7 @@ matrix:
   fast_finish: true
   include:
     - php: 7.1
-      env: CHECK_PHP_SYNTAX="yes"
+      env: CHECK_CODE="yes"
     - php: 7.2
     - php: nigtly
 
@@ -15,4 +15,5 @@ install:
 
 script:
   - vendor/bin/phpunit
-  - if [[ "$CHECK_PHP_SYNTAX" == "yes" ]]; then composer check-cs; fi;
+  - if [[ "$CHECK_CODE" == "yes" ]]; then composer check-cs; fi;
+  - if [[ "$CHECK_CODE" == "yes" ]]; then composer phpstan; fi;
