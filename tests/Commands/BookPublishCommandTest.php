@@ -21,9 +21,16 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
      */
     private $bookPublishCommand;
 
+    /**
+     * @var string
+     */
+    private $tmpDir;
+
     protected function setUp(): void
     {
         // generate a sample book before testing its publication
+
+        $this->tmpDir = sys_get_temp_dir() . '/_easybook_tests/' . uniqid();
 
         $this->bookNewCommand = $this->container->get(BookNewCommand::class);
         $tester = new CommandTester($this->bookNewCommand);
@@ -68,7 +75,7 @@ final class BookPublishCommandTest extends AbstractContainerAwareTestCase
      */
     public function testNonInteractionInvalidBookAndEdition(): void
     {
-        $this->publishBook(uniqid('non_existent_edition_'), uniqid('non_existent_book_'));
+        $this->publishBook(uniqid('non_existent_edition_'));
     }
 
     /**

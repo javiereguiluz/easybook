@@ -9,6 +9,16 @@ use Symfony\Component\Yaml\Yaml;
 
 final class BookNewCommandTest extends AbstractContainerAwareTestCase
 {
+    /**
+     * @var string
+     */
+    private $tmpDir;
+
+    protected function setUp(): void
+    {
+        $this->tmpDir = sys_get_temp_dir() . '/_easybook_tests/' . uniqid();
+    }
+
     public function testCommand(): void
     {
         $tester = $this->createNewBook();

@@ -3,6 +3,7 @@
 namespace Easybook\Templating;
 
 use RuntimeException;
+use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
 
@@ -47,13 +48,16 @@ final class Renderer
 
     private function ensureIsTwig(string $template): void
     {
-        if (substr($template, -5) === '.twig') {
+        $templateSplFileInfo = new SplFileInfo($template);
+
+        if ($templateSplFileInfo->getExtension() === 'twig') {
             return;
         }
 
         throw new RuntimeException(sprintf(
-            'Unsupported format for "%s" template (easybook only supports Twig, _s given)',
-            $template
+            'Unsupported format for "%s" template. Easybook only supports Twig, "%s" given.',
+            $template,
+            $templateSplFileInfo->getExtension()
         ));
     }
 }

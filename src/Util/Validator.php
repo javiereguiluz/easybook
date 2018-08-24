@@ -71,24 +71,12 @@ final class Validator
         }
 
         // check that the given book already exists or ask for another slug
-        while (! file_exists($bookDir) && $attempts--) {
-            if (! $attempts) {
-                throw new InvalidArgumentException(sprintf(
-                    "Too many failed attempts of getting the book directory.\n"
-                    . " Check that '%s' directory \n"
-                    . " has a folder named as the book slug ('%s')",
-                    $baseDir,
-                    $slug
-                ));
-            }
-
+        while (! file_exists($bookDir)) {
             throw new RuntimeException(sprintf(
                 'The given "%s" slug does not match any book in "%s" directory.',
                 $slug,
                 realpath($baseDir)
             ));
-
-            $bookDir = $baseDir . '/' . $slug;
         }
 
         return $bookDir;

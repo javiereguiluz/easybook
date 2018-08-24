@@ -1,7 +1,4 @@
 parameters:
-    autoload_files:
-        - 'tests/Publishers/fixtures/book4/input/Resources/Plugins/ParserPluginEventSubscriber.php'
-
     ignoreErrors:
         - '#Parameter (.*?) of function (.*?) expects resource, resource\|false given#'
 

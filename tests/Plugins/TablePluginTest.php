@@ -2,6 +2,7 @@
 
 namespace Easybook\Tests\Plugins;
 
+use Easybook\Book\Item;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Plugins\TablePluginEventSubscriber;
 use Easybook\Tests\AbstractCustomConfigContainerAwareTestCase;
@@ -38,6 +39,8 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
         bool $addLabels,
         array $expectedLabels
     ): void {
+        // @todo item
+        /** @var Item $item */
         $item = [
             'config' => ['number' => $itemNumber],
             'content' => file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath),
@@ -48,7 +51,7 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
 
         $item = $parseEvent->getItem();
 
-        $this->assertSame(file_get_contents(__DIR__ . '/fixtures/tables/' . $expectedFilePath), $item['content']);
+        $this->assertSame(file_get_contents(__DIR__ . '/fixtures/tables/' . $expectedFilePath), $item->getContent());
 
         $publishingListTables = $this->parameterProvider->provideParameter('publishing.list.tables');
         foreach ($publishingListTables as $i => $table) {
