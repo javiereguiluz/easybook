@@ -25,17 +25,6 @@ parameters:
 
     publishing_dir_output: '%kernel.project_dir%/output'
 
-    # $this->app['publishing.dir.book'] = $bookDir;
-
-    # the specific item currently being parsed/modified/decorated/...
-    publishing.active_item: []
-    publishing.active_item.toc: []
-
-    publishing.book.items: []
-
-    # the real TOC used to generate the book (needed for html_chunked editions)
-    publishing.book.toc: []
-
     # holds all the internal links (used in html_chunked and epub editions)
     publishing.links: []
     publishing.list.images: []

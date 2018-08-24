@@ -30,6 +30,11 @@ final class HtmlChunkedPublisher extends AbstractPublisher
     private $elementsWithoutToc = ['cover', 'toc'];
 
     /**
+     * @var mixed
+     */
+    private $tableOfContents;
+
+    /**
      * Overrides the base publisher method to avoid the decoration of the book items.
      * Instead of using the regular Twig templates based on the item type (e.g. chapter),
      * the items of the books published as websites are decorated afterwards with some
@@ -69,7 +74,7 @@ final class HtmlChunkedPublisher extends AbstractPublisher
 
         // generate the chunks (HTML pages) of the published book
         $toc = $this->flattenToc();
-        $this->app['publishing.book.toc'] = $toc;
+        $this->tableOfContents = $toc;
 
         foreach ($this->publishingItems as $item) {
             if (! in_array($item['config']['element'], $this->elementsWithoutToc, true)) {
@@ -309,9 +314,9 @@ final class HtmlChunkedPublisher extends AbstractPublisher
         $chunks = $this->prepareItemChunks($item);
 
         // bookToc can be modified by the previous prepareItemChunks() method
-        $bookToc = $this->app['publishing.book.toc'];
+        $bookToc = $this->tableOfContents;
         $bookToc = $this->filterBookToc($bookToc, 2);
-        $this->app['publishing.book.toc'] = $bookToc;
+        $this->tableOfContents = $bookToc;
 
         foreach ($chunks as $chunk) {
             $itemPosition = $this->findItemPosition($chunk, $bookToc, 'url');
@@ -437,16 +442,13 @@ final class HtmlChunkedPublisher extends AbstractPublisher
             $itemChunks[0]['content'] = $firstH2SectionHeading . "\n" . $firstH2SectionContent;
 
             // look for and unset this item from the global flatten TOC
-            $toc = $this->app['publishing.book.toc'];
-            foreach ($toc as $i => $entry) {
+            foreach ($this->tableOfContents as $i => $entry) {
                 if ($itemChunks[1]['slug'] === $entry['slug']) {
-                    unset($toc[$i]);
+                    unset($this->tableOfContents[$i]);
 
                     // needed to recreate sequential numeric keys lost when
                     // removing the previous TOC item
-                    $toc = array_values($toc);
-
-                    $this->app['publishing.book.toc'] = $toc;
+                    $this->tableOfContents = array_values($this->tableOfContents);
 
                     break;
                 }
