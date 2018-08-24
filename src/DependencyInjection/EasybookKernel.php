@@ -33,7 +33,7 @@ final class EasybookKernel extends Kernel
 //        // -- labels ---------------------------------------------------------
 //        $this['labels'] = function () use ($app) {
 //            $labels = Yaml::parse(
-//                $app['app.dir.translations'].'/labels.'.$app->book('language').'.yml'
+//                $app['translations_dir'].'/labels.'.$app->book('language').'.yml'
 //            );
 //
 //            // books can define their own labels files
@@ -49,7 +49,7 @@ final class EasybookKernel extends Kernel
 //        // -- titles ----------------------------------------------------------
 //        $this['titles'] = function () use ($app) {
 //            $titles = Yaml::parse(
-//                $app['app.dir.translations'].'/titles.'.$app->book('language').'.yml'
+//                $app['translations_dir'].'/titles.'.$app->book('language').'.yml'
 //            );
 //
 //            // books can define their own titles files
@@ -122,7 +122,7 @@ final class EasybookKernel extends Kernel
 //
 //        return $this->renderString($label, $variables);
 //    }
-//
+
 //    /**
 //     * Shortcut method to get the title of any element type.
 //     *

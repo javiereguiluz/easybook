@@ -1,23 +1,16 @@
-# Markdown reference # {#markdown-reference}
+# Markdown reference
 
 **easybook** uses Markdown as the standard markup language to create books and
 contents. In the future, **easybook** will support other markup languages such
 as reStructuredText. Meanwhile, **easybook** enhances the original Markdown
 syntax to provide some of the most demanded features for book writers.
 
-## Basic syntax ##
-
-**easybook** supports all of the original features described in the
-[official Markdown syntax](http://daringfireball.net/projects/markdown/syntax/).
-Please, refer to that reference to learn how to define headers, paragraphs,
-lists, code blocks, images, and so on.
-
-## Extended syntax ##
+## Extended syntax
 
 **easybook** includes a Markdown parser based on [PHP Markdown Extra Project](http://michelf.com/projects/php-markdown/extra/).
 This project brings some nice extra features to the basic Markdown syntax.
 
-### Header id attributes ###
+### Header id attributes
 
 You can add custom `id` attributes to any header (both *setext* and *atx* style
 headers):
@@ -44,7 +37,7 @@ In the [first section](#header1) you can see the differences between
 
 As a bonus, in PDF books the internal links display the linked book page.
 
-### Tables ###
+### Tables
 
 You can add leading and trailing pipes to table rows:
 
@@ -75,7 +68,7 @@ right-aligned:
 
 Table contents can include any simple formatting as bold, italics, code, etc.
 
-### Other features ###
+### Other features
 
 As explained in the [official PHP Markdown Extra syntax](http://michelf.com/projects/php-markdown/extra/)
 you can also create definition lists, footnotes, automatic abbreviations, fenced
@@ -83,7 +76,7 @@ code blocks, etc.
 
 ## easybook exclusive syntax ##
 
-### Code blocks ###
+### Code blocks
 
 Code blocks can be automatically highlighted using the following syntax:
 
@@ -101,7 +94,7 @@ Code blocks can be automatically highlighted using the following syntax:
 **easybook** recognizes automatically tens of programming languages thanks to
 the use of [GeSHi highlighting library](http://qbnz.com/highlighter/).
 
-### Image alignment ###
+### Image alignment
 
 (Added in easybook 4.8)
 
@@ -159,7 +152,7 @@ Image alignment is also possible when using the alternative image syntax:
 [1]: figure1.png
 ```
 
-### Decorative images ###
+### Decorative images
 
 (Added in easybook 5.0)
 
@@ -193,7 +186,7 @@ All other image options also work, so the following examples are still valid:
 [1]: image1.png
 ```
 
-### Page breaks ###
+### Page breaks
 
 (Added in easybook 5.0)
 
@@ -211,46 +204,3 @@ whitespace.
 
 You can mix the two tags in the same content and you can place them anywhere
 (inside a table, inside a list, inside a heading, etc.)
-
-### Admonitions ###
-
-(Added in easybook 5.0)
-
-**easybook** supports several kinds of admonitions. The syntax is based on
-LeanPub and Marked and it's very similar to blockquotes:
-
-```
-> This is a regular bloquote
-> Nothing special here
-
-A> This is a sidebar or aside
-A> You can use **any markup** inside
-A>
-A> > even
-A> > nested
-A> > blockquotes
-A>
-A> And lists:
-A>
-A>   * Item 1
-A>   * Item 2
-A>   * Item 3
-
-N> This is a note
-N> ...
-
-T> This is a tip
-T> ...
-
-E> This is an error message
-E> ...
-
-I> This is just an information
-I> ...
-
-Q> This is a question
-Q> ...
-
-D> This is a discussion
-D> ...
-```

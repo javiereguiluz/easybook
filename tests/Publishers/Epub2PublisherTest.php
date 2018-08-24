@@ -2,7 +2,6 @@
 
 namespace Easybook\Tests\Publishers;
 
-use Easybook\Book\FileProvider;
 use Easybook\Publishers\Epub2Publisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symplify\PackageBuilder\Reflection\PrivatesCaller;
@@ -19,15 +18,9 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
      */
     private $privatesCaller;
 
-    /**
-     * @var FileProvider
-     */
-    private $fileProvider;
-
     protected function setUp(): void
     {
         $this->epub2Publisher = $this->container->get(Epub2Publisher::class);
-        $this->fileProvider = $this->container->get(FileProvider::class);
         $this->privatesCaller = new PrivatesCaller();
     }
 
