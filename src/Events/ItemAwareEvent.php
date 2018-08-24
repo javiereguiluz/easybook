@@ -2,6 +2,7 @@
 
 namespace Easybook\Events;
 
+use Easybook\Book\Item;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -12,9 +13,9 @@ use Symfony\Component\EventDispatcher\Event;
 final class ItemAwareEvent extends Event
 {
     /**
-     * @var mixed[]
+     * @var Item
      */
-    private $item = [];
+    private $item;
 
     /**
      * @var null|string
@@ -23,10 +24,7 @@ final class ItemAwareEvent extends Event
 
     // @todo should be object to prevent set/get games just to keep reference
 
-    /**
-     * @param mixed[] $item
-     */
-    public function __construct(array $item, ?string $editionFormat = null)
+    public function __construct(Item $item, ?string $editionFormat = null)
     {
         $this->item = $item;
         $this->editionFormat = $editionFormat;
@@ -48,10 +46,7 @@ final class ItemAwareEvent extends Event
         $this->item[$key] = $value;
     }
 
-    /**
-     * @return mixed[]
-     */
-    public function getItem(): array
+    public function getItem(): Item
     {
         return $this->item;
     }

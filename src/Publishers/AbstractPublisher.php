@@ -2,6 +2,8 @@
 
 namespace Easybook\Publishers;
 
+use Easybook\Book\Item;
+use Easybook\Book\ItemConfig;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Parsers\ParserInterface;
@@ -226,38 +228,33 @@ abstract class AbstractPublisher implements PublisherInterface
      * It initializes an array with the configuration options and data of each
      * book element (a chapter, an appendix, the table of contens, etc.).
      *
-     * @param array $itemConfig The configuration options set in the config.yml
-     *                          file for this item.
+     * @param array $itemConfig The configuration options set in the config.yml file for this item.
      */
-    private function initializeItem(array $itemConfig): array
+    private function initializeItem(array $itemConfig): Item
     {
-        $item = [];
-
-        $item['config'] = array_merge([
+        $itemConfig = new ItemConfig(
             // the name of this item contents file (it's a relative path from book's `Contents/`)
-            'content' => '',
+            $itemConfig['content'] ?? '',
             // the type of this content (`chapter`, `appendix`, `toc`, `license`, ...)
-            'element' => '',
+            $itemConfig['element'] ?? '',
             // the format in which contents are written ('md' for Markdown)
-            'format' => '',
+            $itemConfig['format'] ?? '',
             // the number/letter of the content (useful for `chapter`, `part` and `appendix`)
-            'number' => '',
+            $itemConfig['number'] ?? '',
             // the title of the content defined in `config.yml` (usually only `part` defines it)
-            'title' => '',
-        ], $itemConfig);
+            $itemConfig['title'] ?? ''
+        );
 
-        $item['original'] = '';      // original content as written by book author (Markdown usually)
-        $item['content'] = '';      // transformed content of the item (HTML usually)
-        $item['label'] = '';      // the label of this item ('Chapter XX', 'Appendix XX', ...)
-        $item['title'] = '';      // the title of the item without any label ('Lorem ipsum dolor')
-        $item['slug'] = '';      // the slug of the title
-        $item['toc'] = []; // the table of contents of this item
-
-        if (! empty($item['config']['title'])) {
-            $item['title'] = $item['config']['title'];
-            $item['slug'] = $this->slugger->slugify($item['title']);
-        }
-
-        return $item;
+        return new Item(
+            $itemConfig,
+            // original content as written by book author (Markdown usually)
+           '',
+            // the label of this item ('Chapter XX', 'Appendix XX', ...)
+            '',
+            // the title of the item without any label ('Lorem ipsum dolor')
+            $item['config']['title'] ?? '',
+            // the table of contents of this item
+            []
+        );
     }
 }

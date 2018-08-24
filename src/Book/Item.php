@@ -2,6 +2,8 @@
 
 namespace Easybook\Book;
 
+use Nette\Utils\Strings;
+
 final class Item
 {
     /**
@@ -40,8 +42,6 @@ final class Item
     /**
      * The slug of the title
      *
-     * @toto create on setTitle()? uniques?
-     *
      * @var string
      */
     private $slug;
@@ -61,14 +61,12 @@ final class Item
         string $original,
         string $label,
         string $title,
-        string $slug,
         array $tableOfContents
     ) {
         $this->itemConfig = $itemConfig;
         $this->original = $original;
         $this->label = $label;
-        $this->title = $title;
-        $this->slug = $slug;
+        $this->setTitle($title);
         $this->tableOfContents = $tableOfContents;
     }
 
@@ -113,5 +111,10 @@ final class Item
     public function getTableOfContents(): array
     {
         return $this->tableOfContents;
+    }
+
+    private function setTitle(string $title): void
+    {
+        $this->slug = Strings::webalize($title);
     }
 }
