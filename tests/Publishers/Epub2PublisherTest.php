@@ -5,7 +5,6 @@ namespace Easybook\Tests\Publishers;
 use Easybook\Publishers\Epub2Publisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use ReflectionMethod;
-use Symfony\Component\Filesystem\Filesystem;
 use Symplify\PackageBuilder\Reflection\PrivatesCaller;
 
 final class Epub2PublisherTest extends AbstractContainerAwareTestCase
@@ -23,8 +22,7 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
     protected function setUp(): void
     {
         $this->epub2Publisher = $this->container->get(Epub2Publisher::class);
-
-        $this->privatesCaller = (new PrivatesCaller());
+        $this->privatesCaller = new PrivatesCaller();
     }
 
     public function testPrepareBookTemporaryDirectory(): void
