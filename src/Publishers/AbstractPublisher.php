@@ -8,7 +8,6 @@ use Easybook\Parsers\ParserInterface;
 use Easybook\Templating\Renderer;
 use Easybook\Util\Slugger;
 use RuntimeException;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig_Error_Loader;
@@ -31,29 +30,29 @@ abstract class AbstractPublisher implements PublisherInterface
     protected $renderer;
 
     /**
-     * @var string
-     */
-    private $publishingDirOutput;
-
-    /**
      * @var Slugger
      */
-    private $slugger;
+    protected $slugger;
 
     /**
      * @var mixed[]
      */
-    private $publishingItems = [];
-
-    /**
-     * @var ParserInterface
-     */
-    private $parser;
+    protected $publishingItems = [];
 
     /**
      * @var string
      */
     protected $bookContentsDir;
+
+    /**
+     * @var string
+     */
+    private $publishingDirOutput;
+
+    /**
+     * @var ParserInterface
+     */
+    private $parser;
 
     /**
      * @required
@@ -131,10 +130,7 @@ abstract class AbstractPublisher implements PublisherInterface
 
             $parseEvent->changeItemProperty(
                 'content',
-                $this->renderer->render(
-                    $item['config']['element'] . '.twig',
-                    ['item' => $item]
-                )
+                $this->renderer->render($item['config']['element'] . '.twig', ['item' => $item])
             );
 
             $this->eventDispatcher->dispatch(Events::POST_DECORATE, $parseEvent);
@@ -165,7 +161,7 @@ abstract class AbstractPublisher implements PublisherInterface
                 $item['original'] = $this->loadDefaultItemContent($itemConfig['element']);
             }
 
-            $this->app->append('publishing.items', $item);
+            $this->publishingItems[] = $item;
         }
     }
 

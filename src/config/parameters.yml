@@ -24,7 +24,6 @@ parameters:
     book_templates_dir: '%book_resources_dir/Templates'
 
     publishing_dir_output: '%kernel.project_dir%/output'
-    publishing.items: []
 
     # $this->app['publishing.dir.book'] = $bookDir;
 

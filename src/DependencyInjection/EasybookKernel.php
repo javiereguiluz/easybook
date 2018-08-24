@@ -230,7 +230,6 @@ final class EasybookKernel extends Kernel
 //
 //        return $this->getFirstExistingFile($coverFileName, $paths);
 //    }
-//
 
     /**
      * @return BundleInterface[]

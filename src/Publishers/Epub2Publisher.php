@@ -3,9 +3,9 @@
 namespace Easybook\Publishers;
 
 use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\ParseEvent;
 use Easybook\Util\Toolkit;
 use RuntimeException;
-use Symfony\Component\EventDispatcher\Event as SymfonyEvent;
 use Symfony\Component\Finder\Finder;
 use Twig_Error_Loader;
 
@@ -60,22 +60,13 @@ final class Epub2Publisher extends AbstractPublisher
      */
     public function decorateContents(): void
     {
-        $decoratedItems = [];
+        foreach ($this->publishingItems as $key => $item) {
+            $parseEvent = new ParseEvent($item);
+            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $parseEvent);
+            $this->eventDispatcher->dispatch(Events::POST_DECORATE, $parseEvent);
 
-        foreach ($this->app['publishing.items'] as $item) {
-            $this->app['publishing.active_item'] = $item;
-
-            // filter the original item content before decorating it
-            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, new SymfonyEvent());
-
-            // Do nothing to decorate the item
-            $this->eventDispatcher->dispatch(Events::POST_DECORATE, new SymfonyEvent());
-
-            // get again 'item' object because POST_DECORATE event can modify it
-            $decoratedItems[] = $this->app['publishing.active_item'];
+            $this->publishingItems[$key] = $item;
         }
-
-        $this->app['publishing.items'] = $decoratedItems;
     }
 
     public function assembleBook(): void
@@ -98,8 +89,8 @@ final class Epub2Publisher extends AbstractPublisher
             $this->filesystem->copy($customCss, $bookTmpDir . '/book/OEBPS/css/styles.css', true);
         }
 
-        $bookItems = $this->normalizePageNames($this->app['publishing.items']);
-        $this->app['publishing.items'] = $bookItems;
+        $bookItems = $this->normalizePageNames($this->publishingItems);
+        $this->publishingItems = $bookItems;
 
         // generate one HTML page for every book item
         foreach ($bookItems as $item) {

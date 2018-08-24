@@ -6,7 +6,7 @@
 <h1 class="title" id="{{ item.slug }}"><span>{{ item.label }}</span> {{ item.title }}</h1>
 
 <div class="item toc">
-{% for item in app.get('publishing.items') if item.config.element in edition.toc.elements|default([]) %}
+{% for item in items if item.config.element in edition.toc.elements|default([]) %}
 {# item has several elements in its toc #}
 {% if item.toc|length > 0 %}
     {%- for entry in item.toc if entry.level <= edition.toc.deep %}

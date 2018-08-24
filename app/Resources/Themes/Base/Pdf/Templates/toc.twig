@@ -3,7 +3,7 @@
 <h1>{{ item.title }}</h1>
 
 <ul>
-{% for item in app.get('publishing.items') %}
+{% for item in items %}
     {# editions define the *tocable* items #}
     {% if item.config.element in edition.toc.elements %}
 

@@ -41,7 +41,7 @@ final class HtmlPublisher extends AbstractPublisher
         $this->renderer->renderToFile(
             'book.twig',
             [
-                'items' => $this->app['publishing.items'],
+                'items' => $this->publishingItems,
                 'has_custom_css' => $hasCustomCss,
             ],
             $this->app['publishing.dir.output'] . '/book.html'

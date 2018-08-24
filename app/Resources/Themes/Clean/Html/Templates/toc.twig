@@ -3,7 +3,7 @@
 <h1>{{ app.getTitle('toc') }}</h1>
 
 <ul class="unstyled">
-{% for item in app.get('publishing.items')
+{% for item in items
    if item.config.element in edition.toc.elements|default([]) %}
 {# item has several elements in its toc #}
 {% if item.toc|length > 0 %}

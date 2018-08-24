@@ -24,10 +24,16 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      */
     private $renderer;
 
-    public function __construct(CodeHighlighter $codeHighlighter, Renderer $renderer)
+    /**
+     * @var bool
+     */
+    private $shouldHighlightCode;
+
+    public function __construct(CodeHighlighter $codeHighlighter, Renderer $renderer, bool $shouldHighlightCode)
     {
         $this->codeHighlighter = $codeHighlighter;
         $this->renderer = $renderer;
+        $this->shouldHighlightCode = $shouldHighlightCode;
     }
 
     public static function getSubscribedEvents(): Iterator
@@ -37,8 +43,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * It parses different code blocks types (Markdown classic, fenced
-     * and GitHub).
+     * It parses different code blocks types.
      *
      * @see 'Code block types' section in easybook-doc-en/05-publishing-html-books.md
      */
@@ -52,13 +57,10 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      */
     public function fixParsedCodeBlocks(ParseEvent $parseEvent): void
     {
-        $item = $parseEvent->getItem();
-
         // unescape yaml-style comments that before parsing could
         // be interpreted as Markdown first-level headings
-        $item['content'] = str_replace('&#35;', '#', $item['content']);
-
-        $parseEvent->setItem($item);
+        $content = str_replace('&#35;', '#', $parseEvent->getItemProperty('content'));
+        $parseEvent->changeItemProperty('content', $content);
     }
 
     /**
@@ -73,7 +75,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      */
     public function highlightAndDecorateCode(string $code, string $language): string
     {
-        if ($application->edition('highlight_code')) {
+        if ($this->shouldHighlightCode) {
             // highlight code if the edition wants to
             $code = $this->codeHighlighter->highlight($code, $language);
         } else {
@@ -127,7 +129,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
         $item = $parseEvent->getItem();
 
         // regexp adapted from PHP-Markdown
-        $item['original'] = preg_replace_callback(
+        $decoratedOriginal = preg_replace_callback(
             '{
                 (?:\n|\A)
                 # 1: Opening marker
@@ -170,6 +172,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
             },
             $item['original']
         );
-        $parseEvent->setItem($item);
+        $parseEvent->changeItemProperty('origin', $decoratedOriginal);
     }
 }
