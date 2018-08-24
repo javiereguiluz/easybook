@@ -108,12 +108,8 @@ final class BookPublishCommand extends Command
             $publisher->publishBook();
         }
 
-        // book publishing finishes
         $this->eventDispatcher->dispatch(Events::POST_PUBLISH, new Event());
 
-        // execute the 'after_publish' scripts
-
-//        $this->runScripts($this->app->edition('after_publish'));
         $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'));
 
         $this->symfonyStyle->success(
@@ -123,36 +119,23 @@ final class BookPublishCommand extends Command
     }
 
     /**
-     * Run the given scripts before/after the book publication.
-     *
-     * @param array|string $scripts The list of scripts to be executed
-     *
-     * @throws \RuntimeException if any script execution produces an error.
+     * @param string[] $scripts
      */
-    private function runScripts($scripts): void
+    private function runScripts(array $scripts): void
     {
-        if ($scripts === null) {
-            return;
-        }
+        foreach ($scripts as $script) {
+            $process = new Process($script, $this->app['publishing.dir.book']);
+            $process->run();
 
-        if (is_array($scripts)) {
-            foreach ($scripts as $script) {
-                $this->runScripts($script);
+            if ($process->isSuccessful()) {
+                $this->symfonyStyle->success($process->getOutput());
+            } else {
+                throw new RuntimeException(sprintf(
+                    'Executing script "%s" failed: "%s"',
+                    $script . PHP_EOL,
+                    $process->getErrorOutput()
+                ));
             }
-
-            return;
-        }
-        $process = new Process($scripts, $this->app['publishing.dir.book']);
-        $process->run();
-
-        if ($process->isSuccessful()) {
-            $this->symfonyStyle->success($process->getOutput());
-        } else {
-            throw new RuntimeException(sprintf(
-                'While executing scripts: %s an error happened: %s',
-                $scripts . PHP_EOL . PHP_EOL,
-                $process->getErrorOutput() . PHP_EOL
-            ));
         }
     }
 }

@@ -32,7 +32,7 @@ final class Validator
         $this->symfonyStyle = $symfonyStyle;
     }
 
-    public function validateDirExistsAndWritable($dir)
+    public function validateDirExistsAndWritable(?string $dir): string
     {
         if ($dir === null || trim($dir) === '') {
             // it throws an exception for invalid values because it's used in console commands
@@ -55,10 +55,10 @@ final class Validator
     /**
      * Validates that the book represented by the given $slug exists in $dir directory.
      */
-    public function validateBookDir($slug, $baseDir)
+    public function validateBookDir(string $slug, string $baseDir): string
     {
         $attempts = 6;
-        $bookDir = $baseDir . '/' . $slug;
+        $bookDir = $baseDir . DIRECTORY_SEPARATOR . $slug;
 
         if (! file_exists($bookDir)) {
             throw new RuntimeException(sprintf(
@@ -97,7 +97,7 @@ final class Validator
     /**
      * Validates that the given $edition is defined in the book configuration.
      */
-    public function validatePublishingEdition($edition)
+    public function validatePublishingEdition(string $edition): string
     {
         // if the book defines no edition, raise an exception
         if (count($this->app->book('editions') ?: []) === 0) {

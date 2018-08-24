@@ -205,20 +205,11 @@ final class Epub2Publisher extends AbstractPublisher
      *
      * @param string $targetDir The directory where the images are copied.
      *
-     * @return array Images data needed to create the book manifest.
-     *
-     * @throws \RuntimeException If the $targetDir doesn't exist.
+     * @return mixed[]
      */
     private function prepareBookImages(string $targetDir): array
     {
-        if (! file_exists($targetDir)) {
-            throw new RuntimeException(sprintf(
-                "Books images couldn't be copied because \n"
-                . " the given '%s' \n"
-                . " directory doesn't exist.",
-                $targetDir
-            ));
-        }
+        $this->ensureDirectoryExists($targetDir, 'images');
 
         $imagesDir = $this->bookContentsDir . '/images';
         $imagesData = [];
@@ -246,10 +237,7 @@ final class Epub2Publisher extends AbstractPublisher
     /**
      * It prepares the book cover image (if the book defines one).
      *
-     * @param string $targetDir The directory where the cover image is copied.
-     *
-     * @return array|null Book cover image data or null if the book doesn't
-     *                    include a cover image.
+     * @return mixed[]|null Book cover image data or null if the book doesn't include a cover image.
      */
     private function prepareBookCoverImage(string $targetDir): ?array
     {
@@ -286,14 +274,7 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private function prepareBookFonts(string $targetDir): array
     {
-        if (! file_exists($targetDir)) {
-            throw new RuntimeException(sprintf(
-                "Books fonts couldn't be copied because \n"
-                    . " the given '%s' \n"
-                    . " directory doesn't exist.",
-                $targetDir
-            ));
-        }
+        $this->ensureDirectoryExists($targetDir, 'fonts');
 
         $fontsDir = $this->app['app.dir.resources'] . '/Fonts/Inconsolata';
         $fontsData = [];
@@ -440,5 +421,20 @@ final class Epub2Publisher extends AbstractPublisher
 
             $this->filesystem->dumpFile($chunk->getPathname(), $htmlContent);
         }
+    }
+
+    private function ensureDirectoryExists(string $targetDir, string $source): void
+    {
+        if (file_exists($targetDir)) {
+            return;
+        }
+
+        throw new RuntimeException(sprintf(
+            "Books %s couldn't be copied because \n"
+            . " the given '%s' \n"
+            . " directory doesn't exist.",
+            $source,
+            $targetDir
+        ));
     }
 }

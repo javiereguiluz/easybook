@@ -93,7 +93,7 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
         );
 
         if (count($this->listOfTables) > 0) {
-            $itemAwareEvent->app->append('publishing.list.tables', $this->listOfTables);
+            //$itemAwareEvent->app->append('publishing.list.tables', $this->listOfTables);
         }
 
         $itemAwareEvent->setItem($item);

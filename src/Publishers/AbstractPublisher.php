@@ -228,7 +228,7 @@ abstract class AbstractPublisher implements PublisherInterface
      * It initializes an array with the configuration options and data of each
      * book element (a chapter, an appendix, the table of contens, etc.).
      *
-     * @param array $itemConfig The configuration options set in the config.yml file for this item.
+     * @param mixed[] $itemConfig
      */
     private function initializeItem(array $itemConfig): Item
     {
@@ -248,7 +248,7 @@ abstract class AbstractPublisher implements PublisherInterface
         return new Item(
             $itemConfig,
             // original content as written by book author (Markdown usually)
-           '',
+            '',
             // the label of this item ('Chapter XX', 'Appendix XX', ...)
             '',
             // the title of the item without any label ('Lorem ipsum dolor')

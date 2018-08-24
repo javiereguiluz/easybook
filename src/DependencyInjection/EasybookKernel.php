@@ -72,24 +72,6 @@ final class EasybookKernel extends Kernel
         $loader->load(__DIR__ . '/../config/config.yml');
     }
 
-    /**
-     * Appends the given value to the content of the container element identified
-     * by the 'id' parameter. It only works for container elements that store arrays.
-     *
-     * @param string $id    The id of the element that is modified
-     * @param mixed  $value The value to append to the original element
-     *
-     * @return array The resulting array element (with the new value appended)
-     */
-    public function append(string $id, $value): array
-    {
-        $array = $this[$id];
-        $array[] = $value;
-        $this[$id] = $array;
-
-        return $array;
-    }
-
     public function getCacheDir(): string
     {
         return sys_get_temp_dir() . '/_easybook';

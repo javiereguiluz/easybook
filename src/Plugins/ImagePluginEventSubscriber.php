@@ -135,7 +135,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
         );
 
         if (count($this->listOfImages) > 0) {
-            $itemAwareEvent->app->append('publishing.list.images', $this->listOfImages);
+            //$itemAwareEvent->app->append('publishing.list.images', $this->listOfImages);
         }
 
         $itemAwareEvent->setItem($item);

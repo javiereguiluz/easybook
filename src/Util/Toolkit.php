@@ -19,6 +19,8 @@ final class Toolkit
      * code inspired by:
      * http://www.php.net/manual/en/function.array-merge-recursive.php#104145
      *
+     * @param mixed ...$arrays
+     *
      * @return mixed[]
      */
     public function arrayDeepMergeAndReplace(...$arrays): array
@@ -43,11 +45,8 @@ final class Toolkit
      *     zip('/path/to/any/dir', 'compressed.zip');
      *
      * Code copied from http://stackoverflow.com/a/1334949
-     *
-     * @param  string $source       The directory with the files to compress
-     * @param  string $destination  The path of the generated ZIP file
      */
-    public function zip(string $source, string $destination)
+    public function zip(string $source, string $destination): bool
     {
         if (! file_exists($source)) {
             return false;
