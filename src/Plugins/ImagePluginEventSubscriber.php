@@ -3,7 +3,7 @@
 namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
-use Easybook\Events\ParseEvent;
+use Easybook\Events\ItemAwareEvent;
 use Easybook\Templating\Renderer;
 use Easybook\Util\Slugger;
 use Iterator;
@@ -53,10 +53,10 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
      *
      * @see 'images_base_dir' option in easybook-doc-en/05-publishing-html-books.md
      */
-    public function fixImageUris(ParseEvent $parseEvent): void
+    public function fixImageUris(ItemAwareEvent $itemAwareEvent): void
     {
-        $item = $parseEvent->getItem();
-        $baseDir = $parseEvent->app->edition('images_base_dir');
+        $item = $itemAwareEvent->getItem();
+        $baseDir = $itemAwareEvent->app->edition('images_base_dir');
 
         $item['content'] = preg_replace_callback(
             '/<img src="(.*)"(.*) \/>/U',
@@ -69,18 +69,18 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
             $item['content']
         );
 
-        $parseEvent->setItem($item);
+        $itemAwareEvent->setItem($item);
     }
 
     /**
      * It decorates each image with a template and, if the edition configures it,
      * with the appropriate auto-numbered label.
      */
-    public function decorateAndLabelImages(ParseEvent $parseEvent): void
+    public function decorateAndLabelImages(ItemAwareEvent $itemAwareEvent): void
     {
-        $item = $parseEvent->getItem();
+        $item = $itemAwareEvent->getItem();
 
-        $addImageLabels = in_array('figure', $parseEvent->app->edition('labels') ?: [], true);
+        $addImageLabels = in_array('figure', $itemAwareEvent->app->edition('labels') ?: [], true);
         $parentItemNumber = $item['config']['number'];
 
         $this->listOfImages = [];
@@ -95,7 +95,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
             //        <img (...optional...) alt="..." (...optional...) />
             //      </div>
             '/(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>[^"]*)".*\/>)(<\/div>)?(<\/p>)?/',
-            function ($matches) use ($parseEvent, $addImageLabels, $parentItemNumber) {
+            function ($matches) use ($itemAwareEvent, $addImageLabels, $parentItemNumber) {
                 // prepare figure parameters for the template and the label
                 $parameters = [
                     'item' => [
@@ -122,7 +122,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
 
                     // the publishing edition wants to label figures/images
                     if ($addImageLabels) {
-                        $label = $parseEvent->app->getLabel('figure', $parameters);
+                        $label = $itemAwareEvent->app->getLabel('figure', $parameters);
                         $parameters['item']['label'] = $label;
                     }
 
@@ -136,9 +136,9 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
         );
 
         if (count($this->listOfImages) > 0) {
-            $parseEvent->app->append('publishing.list.images', $this->listOfImages);
+            $itemAwareEvent->app->append('publishing.list.images', $this->listOfImages);
         }
 
-        $parseEvent->setItem($item);
+        $itemAwareEvent->setItem($item);
     }
 }

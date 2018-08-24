@@ -3,7 +3,7 @@
 namespace Easybook\Publishers;
 
 use Easybook\Events\EasybookEvents as Events;
-use Easybook\Events\ParseEvent;
+use Easybook\Events\ItemAwareEvent;
 use RuntimeException;
 use Twig_Error_Loader;
 
@@ -43,7 +43,7 @@ final class HtmlChunkedPublisher extends AbstractPublisher
     public function decorateContents(): void
     {
         foreach ($this->publishingItems as $key => $item) {
-            $parseEvent = new ParseEvent($item);
+            $parseEvent = new ItemAwareEvent($item);
             $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $parseEvent);
             $this->eventDispatcher->dispatch(Events::POST_DECORATE, $parseEvent);
 

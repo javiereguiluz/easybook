@@ -9,7 +9,7 @@ use Symfony\Component\EventDispatcher\Event;
  * It provides access for the application object, the specific item
  * being published and to any of the item's properties.
  */
-final class ParseEvent extends Event
+final class ItemAwareEvent extends Event
 {
     /**
      * @var mixed[]

@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use Easybook\Events\EasybookEvents;
-use Easybook\Events\ParseEvent;
+use Easybook\Events\ItemAwareEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class ParserPluginEventSubscriber implements EventSubscriberInterface
@@ -12,21 +12,21 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
         yield EasybookEvents::POST_PARSE => 'onItemPostParse';
     }
 
-    public function onItemPreParse(ParseEvent $parseEvent): void
+    public function onItemPreParse(ItemAwareEvent $itemAwareEvent): void
     {
-        $txt = str_replace('**easybook**', '*eAsYbOoK*', $parseEvent->getItemProperty('original'));
+        $txt = str_replace('**easybook**', '*eAsYbOoK*', $itemAwareEvent->getItemProperty('original'));
 
-        $parseEvent->changeItemProperty('original', $txt);
+        $itemAwareEvent->changeItemProperty('original', $txt);
     }
 
-    public function onItemPostParse(ParseEvent $parseEvent): void
+    public function onItemPostParse(ItemAwareEvent $itemAwareEvent): void
     {
         $html = str_replace(
             '<em>eAsYbOoK</em>',
             '<strong class="branding">easybook</strong>',
-            $parseEvent->getItemProperty('content')
+            $itemAwareEvent->getItemProperty('content')
         );
 
-        $parseEvent->changeItemProperty('content', $html);
+        $itemAwareEvent->changeItemProperty('content', $html);
     }
 }

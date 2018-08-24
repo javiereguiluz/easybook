@@ -3,7 +3,7 @@
 namespace Easybook\Publishers;
 
 use Easybook\Events\EasybookEvents as Events;
-use Easybook\Events\ParseEvent;
+use Easybook\Events\ItemAwareEvent;
 use Easybook\Parsers\ParserInterface;
 use Easybook\Templating\Renderer;
 use Easybook\Util\Slugger;
@@ -96,7 +96,7 @@ abstract class AbstractPublisher implements PublisherInterface
     public function parseContents(): void
     {
         foreach ($this->publishingItems as $key => $item) {
-            $parseEvent = new ParseEvent($item);
+            $parseEvent = new ItemAwareEvent($item);
             $this->eventDispatcher->dispatch(Events::PRE_PARSE, $parseEvent);
 
             // when publishing a book as a website, two pages in different sections
@@ -124,7 +124,7 @@ abstract class AbstractPublisher implements PublisherInterface
     public function decorateContents(): void
     {
         foreach ($this->publishingItems as $key => $item) {
-            $parseEvent = new ParseEvent($item);
+            $parseEvent = new ItemAwareEvent($item);
 
             $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $parseEvent);
 

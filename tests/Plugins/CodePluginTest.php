@@ -2,7 +2,7 @@
 
 namespace Easybook\Tests\Plugins;
 
-use Easybook\Events\ParseEvent;
+use Easybook\Events\ItemAwareEvent;
 use Easybook\Parsers\MarkdownParser;
 use Easybook\Plugins\CodePluginEventSubscriber;
 use Easybook\Tests\AbstractContainerAwareTestCase;
@@ -46,8 +46,8 @@ final class CodePluginTest extends AbstractContainerAwareTestCase
         ];
 
         // execute pre-parse method of the plugin
-        $parseEvent = new ParseEvent($item);
-        $this->codePluginEventSubscriber->parseCodeBlocks(new ParseEvent($item));
+        $parseEvent = new ItemAwareEvent($item);
+        $this->codePluginEventSubscriber->parseCodeBlocks(new ItemAwareEvent($item));
 
         // parse the item original content
         $parseEvent->changeItemProperty(

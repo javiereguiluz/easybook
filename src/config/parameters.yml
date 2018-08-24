@@ -19,6 +19,8 @@ parameters:
     book_dir: '...'
 
     publishing.dir.app_theme: ''
+
+    book_source_dir: '%kernel.project_dir%/book' # default value that can be overriden by "--dir" cli option
     book_contents_dir: '%book_dir%/Contents'
     book_resources_dir: '%book_dir%/Resources'
     book_templates_dir: '%book_resources_dir/Templates'

@@ -2,7 +2,7 @@
 
 namespace Easybook\Tests\Plugins;
 
-use Easybook\Events\ParseEvent;
+use Easybook\Events\ItemAwareEvent;
 use Easybook\Plugins\TablePluginEventSubscriber;
 use Easybook\Tests\AbstractCustomConfigContainerAwareTestCase;
 use Iterator;
@@ -43,7 +43,7 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
             'content' => file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath),
         ];
 
-        $parseEvent = new ParseEvent($item);
+        $parseEvent = new ItemAwareEvent($item);
         $this->tablePluginEventSubscriber->decorateAndLabelTables($parseEvent);
 
         $item = $parseEvent->getItem();

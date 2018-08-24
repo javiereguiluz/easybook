@@ -3,7 +3,7 @@
 namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
-use Easybook\Events\ParseEvent;
+use Easybook\Events\ItemAwareEvent;
 use Easybook\Templating\Renderer;
 use Easybook\Util\Slugger;
 use Iterator;
@@ -50,11 +50,11 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
      * It decorates each table with a template and, if the edition configures it,
      * with the appropriate auto-numbered label.
      */
-    public function decorateAndLabelTables(ParseEvent $parseEvent): void
+    public function decorateAndLabelTables(ItemAwareEvent $itemAwareEvent): void
     {
-        $item = $parseEvent->getItem();
+        $item = $itemAwareEvent->getItem();
 
-        $addTableLabels = in_array('table', $parseEvent->app->edition('labels') ?: [], true);
+        $addTableLabels = in_array('table', $itemAwareEvent->app->edition('labels') ?: [], true);
         $parentItemNumber = $item['config']['number'];
 
         $this->listOfTables = [];
@@ -63,7 +63,7 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
         $item['content'] = Strings::replace(
             $item['content'],
             "#(?<content><table.*\n<\/table>)#Ums",
-            function ($matches) use ($parseEvent, $addTableLabels, $parentItemNumber) {
+            function ($matches) use ($itemAwareEvent, $addTableLabels, $parentItemNumber) {
                 // prepare table parameters for template and label
                 $this->counter++;
                 $parameters = [
@@ -81,7 +81,7 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
 
                 // the publishing edition wants to label tables
                 if ($addTableLabels) {
-                    $label = $parseEvent->app->getLabel('table', $parameters);
+                    $label = $itemAwareEvent->app->getLabel('table', $parameters);
                     $parameters['item']['label'] = $label;
                 }
 
@@ -93,9 +93,9 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
         );
 
         if (count($this->listOfTables) > 0) {
-            $parseEvent->app->append('publishing.list.tables', $this->listOfTables);
+            $itemAwareEvent->app->append('publishing.list.tables', $this->listOfTables);
         }
 
-        $parseEvent->setItem($item);
+        $itemAwareEvent->setItem($item);
     }
 }

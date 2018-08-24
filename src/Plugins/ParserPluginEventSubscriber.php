@@ -3,7 +3,7 @@
 namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
-use Easybook\Events\ParseEvent;
+use Easybook\Events\ItemAwareEvent;
 use Easybook\Util\Slugger;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -39,9 +39,9 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
      * headers by ATX-style headers. This is necessary to avoid problems with
      * auto-numbering of sections when mixing both styles in a single book.
      */
-    public function normalizeMarkdownHeaders(ParseEvent $parseEvent): void
+    public function normalizeMarkdownHeaders(ItemAwareEvent $itemAwareEvent): void
     {
-        $item = $parseEvent->getItem();
+        $item = $itemAwareEvent->getItem();
 
         $item['original'] = preg_replace_callback(
             '{
@@ -57,7 +57,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             $item['original']
         );
 
-        $parseEvent->setItem($item);
+        $itemAwareEvent->setItem($item);
     }
 
     /**
@@ -65,21 +65,21 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
      * to avoid problems with the invalid-HTML-markup-sensitive editions such
      * as the ePub books.
      */
-    public function fixHtmlCode(ParseEvent $parseEvent): void
+    public function fixHtmlCode(ItemAwareEvent $itemAwareEvent): void
     {
         // replace <br> by <br/> (it causes problems for epub books)
-        $item = $parseEvent->getItem();
+        $item = $itemAwareEvent->getItem();
         $item['content'] = str_replace('<br>', '<br/>', $item['content']);
-        $parseEvent->setItem($item);
+        $itemAwareEvent->setItem($item);
     }
 
     /**
      * Sets the book item title by extracting it from its contents or
      * by using the default title for that book item type.
      */
-    public function setItemTitle(ParseEvent $parseEvent): void
+    public function setItemTitle(ItemAwareEvent $itemAwareEvent): void
     {
-        $item = $parseEvent->getItem();
+        $item = $itemAwareEvent->getItem();
 
         if (count($item['toc']) > 0) {
             $firstItemSection = $item['toc'][0];
@@ -98,19 +98,19 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
         // ensure that every item has a title by using
         // the default title if necessary
         if ($item['title'] === '') {
-            $item['title'] = $parseEvent->app->getTitle($item['config']['element']);
+            $item['title'] = $itemAwareEvent->app->getTitle($item['config']['element']);
             $item['slug'] = $this->slugger->slugify($item['title']);
         }
 
-        $parseEvent->setItem($item);
+        $itemAwareEvent->setItem($item);
     }
 
     /**
      * It adds the appropriate auto-numbered labels to the book item sections.
      */
-    public function addSectionLabels(ParseEvent $parseEvent): void
+    public function addSectionLabels(ItemAwareEvent $itemAwareEvent): void
     {
-        $item = $parseEvent->getItem();
+        $item = $itemAwareEvent->getItem();
 
         // special book items without a TOC don't need labels
         if (count($item['toc']) === 0) {
@@ -125,7 +125,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             5 => 0,
             6 => 0,
         ];
-        $addSectionLabels = in_array($item['config']['element'], $parseEvent->app->edition('labels') ?: [], true);
+        $addSectionLabels = in_array($item['config']['element'], $itemAwareEvent->app->edition('labels') ?: [], true);
 
         foreach ($item['toc'] as $key => $entry) {
             if ($addSectionLabels) {
@@ -145,7 +145,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
                     'level' => $level,
                 ]);
 
-                $label = $parseEvent->app->getLabel($item['config']['element'], [
+                $label = $itemAwareEvent->app->getLabel($item['config']['element'], [
                     'item' => $parameters,
                 ]);
             } else {
@@ -179,6 +179,6 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             $item['content'] = preg_replace($fuzzyTitle, $labeledTitle, $item['content']);
         }
 
-        $parseEvent->setItem($item);
+        $itemAwareEvent->setItem($item);
     }
 }

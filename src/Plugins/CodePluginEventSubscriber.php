@@ -3,7 +3,7 @@
 namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
-use Easybook\Events\ParseEvent;
+use Easybook\Events\ItemAwareEvent;
 use Easybook\Templating\Renderer;
 use Easybook\Util\CodeHighlighter;
 use Iterator;
@@ -47,20 +47,20 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      *
      * @see 'Code block types' section in easybook-doc-en/05-publishing-html-books.md
      */
-    public function parseCodeBlocks(ParseEvent $parseEvent): void
+    public function parseCodeBlocks(ItemAwareEvent $itemAwareEvent): void
     {
-        $this->parseGithubTypeCodeBlocks($parseEvent);
+        $this->parseGithubTypeCodeBlocks($itemAwareEvent);
     }
 
     /**
      * It fixes the resulting contents of the parsed code blocks.
      */
-    public function fixParsedCodeBlocks(ParseEvent $parseEvent): void
+    public function fixParsedCodeBlocks(ItemAwareEvent $itemAwareEvent): void
     {
         // unescape yaml-style comments that before parsing could
         // be interpreted as Markdown first-level headings
-        $content = str_replace('&#35;', '#', $parseEvent->getItemProperty('content'));
-        $parseEvent->changeItemProperty('content', $content);
+        $content = str_replace('&#35;', '#', $itemAwareEvent->getItemProperty('content'));
+        $itemAwareEvent->changeItemProperty('content', $content);
     }
 
     /**
@@ -124,9 +124,9 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      *
      *                          the $item being parsed
      */
-    private function parseGithubTypeCodeBlocks(ParseEvent $parseEvent): void
+    private function parseGithubTypeCodeBlocks(ItemAwareEvent $itemAwareEvent): void
     {
-        $item = $parseEvent->getItem();
+        $item = $itemAwareEvent->getItem();
 
         // regexp adapted from PHP-Markdown
         $decoratedOriginal = preg_replace_callback(
@@ -153,7 +153,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
                 # Closing marker.
                 \1 [ ]* \n
             }Uxm',
-            function ($matches) use ($parseEvent) {
+            function ($matches) use ($itemAwareEvent) {
                 $language = $matches[2];
 
                 // codeblocks always end with an empty new line (due to the regexp used)
@@ -172,6 +172,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
             },
             $item['original']
         );
-        $parseEvent->changeItemProperty('origin', $decoratedOriginal);
+        $itemAwareEvent->changeItemProperty('origin', $decoratedOriginal);
     }
 }

@@ -84,14 +84,13 @@ final class BookPublishCommand extends Command
         // validate book dir and add some useful values to the app configuration
         $bookDir = $this->validator->validateBookDir($slug, $dir);
 
-        $this->app['publishing.dir.book'] = $bookDir;
-        $this->app['book_resources_dir'] = $bookDir . '/Resources';
-        $this->app['book_templates_dir'] = $bookDir . '/Resources/Templates';
+        $this->parameterProvider->changeParameter('source_book_dir', $bookDir);
+        $this->parameterProvider->changeParameter('book_resources_dir', $bookDir . '/Resources');
+        $this->parameterProvider->changeParameter('book_templates_dir', $bookDir . '/Resources/Templates');
 
         // all parameters are loaded here...
 
         // execute the 'before_publish' scripts
-//        $this->runScripts( $this->app->edition('before_publish'));
         $this->runScripts((array) $this->parameterProvider->provideParameter('before_publish'));
 
         // book publishing starts
