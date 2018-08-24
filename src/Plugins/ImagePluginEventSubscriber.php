@@ -78,13 +78,13 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
         $item = $itemAwareEvent->getItem();
 
         $addImageLabels = in_array('figure', $itemAwareEvent->app->edition('labels') ?: [], true);
-        $parentItemNumber = $item['config']['number'];
+        $parentItemNumber = $item->getItemConfig()->getNumber();
 
         $this->listOfImages = [];
 
         $this->counter = 0;
 
-        $item['content'] = preg_replace_callback(
+        $item->changeContent(preg_replace_callback(
             // the regexp matches:
             //   1. <img (...optional...) alt="..." (...optional...) />
             //
@@ -129,8 +129,8 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
 
                 return $this->renderer->render('figure.twig', $parameters);
             },
-            $item['content']
-        );
+            $item->getContent()
+        ));
 
         if (count($this->listOfImages) > 0) {
             //$itemAwareEvent->app->append('publishing.list.images', $this->listOfImages);

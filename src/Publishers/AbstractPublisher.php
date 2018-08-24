@@ -2,6 +2,7 @@
 
 namespace Easybook\Publishers;
 
+use Easybook\Book\BookProvider;
 use Easybook\Book\Item;
 use Easybook\Book\ItemConfig;
 use Easybook\Events\EasybookEvents as Events;
@@ -57,6 +58,11 @@ abstract class AbstractPublisher implements PublisherInterface
     private $parser;
 
     /**
+     * @var BookProvider
+     */
+    private $bookProvider;
+
+    /**
      * @required
      */
     public function setRequiredDependencies(
@@ -66,7 +72,8 @@ abstract class AbstractPublisher implements PublisherInterface
         Slugger $slugger,
         ParserInterface $parser,
         string $publishingDirOutput,
-        string $bookContentsDir
+        string $bookContentsDir,
+        BookProvider $bookProvider
     ): void {
         $this->eventDispatcher = $eventDispatcher;
         $this->filesystem = $filesystem;
@@ -75,6 +82,7 @@ abstract class AbstractPublisher implements PublisherInterface
         $this->parser = $parser;
         $this->publishingDirOutput = $publishingDirOutput;
         $this->bookContentsDir = $bookContentsDir;
+        $this->bookProvider = $bookProvider;
     }
 
     /**
@@ -118,7 +126,9 @@ abstract class AbstractPublisher implements PublisherInterface
             $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $itemAwareEvent);
 
             $itemConfig = $item->getItemConfig();
-            $item->changeContent($this->renderer->render($itemConfig->getElement() . '.twig', ['item' => $item]));
+            $item->changeContent($this->renderer->render($itemConfig->getElement() . '.twig', [
+                'item' => $item,
+            ]));
 
             $this->eventDispatcher->dispatch(Events::POST_DECORATE, $itemAwareEvent);
         }
@@ -131,7 +141,7 @@ abstract class AbstractPublisher implements PublisherInterface
      */
     protected function loadContents(): void
     {
-        foreach ($this->app->book('contents') as $itemConfig) {
+        foreach ($this->bookProvider->provide()->getContents() as $itemConfig) {
             $item = $this->initializeItem($itemConfig);
 
             $itemConfig = $item->getItemConfig();

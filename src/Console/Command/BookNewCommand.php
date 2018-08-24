@@ -4,20 +4,21 @@ namespace Easybook\Console\Command;
 
 use Easybook\Configuration\Option;
 use Easybook\Exception\Configuration\MissingOptionException;
-use Easybook\Generator\BookGenerator;
+use Easybook\Templating\Renderer;
 use Easybook\Util\Slugger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class BookNewCommand extends Command
 {
     /**
-     * @var BookGenerator
+     * @var string
      */
-    private $bookGenerator;
+    private $skeletonBookDirectory;
 
     /**
      * @var SymfonyStyle
@@ -34,46 +35,26 @@ final class BookNewCommand extends Command
      */
     private $bookTitle;
 
-    public function __construct(
-        BookGenerator $bookGenerator,
-        SymfonyStyle $symfonyStyle,
-        Slugger $slugger,
-        string $bookTitle
-    ) {
-        parent::__construct();
-        $this->bookGenerator = $bookGenerator;
-        $this->symfonyStyle = $symfonyStyle;
-        $this->slugger = $slugger;
-        $this->bookTitle = $bookTitle;
-    }
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
     /**
-     * Validates that the book represented by the given $slug exists in $dir directory.
+     * @var string
      */
-    public function validateBookDir(string $slug, string $baseDir): string
+    private $bookDirectory;
+
+    /**
+     * @var Renderer
+     */
+    private $renderer;
+
+    public function __construct(SymfonyStyle $symfonyStyle, Slugger $slugger)
     {
-        $bookDir = $baseDir . DIRECTORY_SEPARATOR . $slug;
-
-        if (! file_exists($bookDir)) {
-            throw new RuntimeException(sprintf(
-                "The directory of the book cannot be found.\n"
-                . " Check that '%s' directory \n"
-                . " has a folder named as the book slug ('%s')",
-                $baseDir,
-                $slug
-            ));
-        }
-
-        // check that the given book already exists or ask for another slug
-        while (! file_exists($bookDir)) {
-            throw new RuntimeException(sprintf(
-                'The given "%s" slug does not match any book in "%s" directory.',
-                $slug,
-                realpath($baseDir)
-            ));
-        }
-
-        return $bookDir;
+        parent::__construct();
+        $this->symfonyStyle = $symfonyStyle;
+        $this->slugger = $slugger;
     }
 
     protected function configure(): void
@@ -96,26 +77,49 @@ final class BookNewCommand extends Command
 
         $this->validateDirExistsAndWritable($dir);
 
-        $bookSlug = $this->slugger->slugify($this->bookTitle);
-        $bookDirectory = $dir . '/' . $bookSlug;
+        $bookDirectory = $dir . DIRECTORY_SEPARATOR . $this->slugger->slugify($this->bookTitle);
+        $this->generateToDirectory($bookDirectory);
 
-        $this->bookGenerator->generateToDirectory($bookDirectory);
-
-        $this->symfonyStyle->success(
-            'You can start writing your book in the following directory: ' . realpath($bookDirectory)
-        );
+        $this->symfonyStyle->success(sprintf(
+            'You can start writing your book in: "%s"',
+            realpath($bookDirectory)
+        ));
     }
 
-    private function validateDirExistsAndWritable(string $dir): void
+    private function generateToDirectory(string $directory): void
     {
-        if (! is_dir($dir)) {
-            // it throws an exception for invalid values because it's used in console commands
-            throw new InvalidArgumentException("'${dir}' directory doesn't exist.");
+        $this->setBookDirectory($directory);
+        $this->generate();
+    }
+
+    private function setBookDirectory(string $bookDirectory): void
+    {
+        // check if `$bookDir` directory is available
+        // if not, create a unique directory name appending a numeric suffix
+        $i = 1;
+        $bookDir = $bookDirectory;
+        while ($this->filesystem->exists($bookDirectory)) {
+            $bookDirectory = $bookDir . '-' . $i++;
         }
 
-        if (! is_writable($dir)) {
-            // it throws an exception for invalid values because it's used in console commands
-            throw new InvalidArgumentException("'${dir}' directory is not writable.");
+        $this->bookDirectory = $bookDirectory;
+    }
+
+    /**
+     * Generates the hierarchy of files and directories needed to publish a book.
+     */
+    private function generate(): void
+    {
+        // why is this hardcoded? Finder?
+        foreach (['chapter1.md', 'chapter2.md'] as $file) {
+            $file = 'Contents/' . $file;
+            $this->filesystem->copy($this->skeletonBookDirectory . '/' . $file, $this->bookDirectory . '/' . $file);
         }
+
+        $this->renderer->renderToFile(
+            $this->skeletonBookDirectory . '/config.yml.twig',
+            [],
+            $this->bookDirectory . '/config.yml'
+        );
     }
 }

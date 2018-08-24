@@ -121,6 +121,11 @@ final class Item
         $this->original = $original;
     }
 
+    public function changeLabel(string $label): void
+    {
+        $this->label = $label;
+    }
+
     private function setTitle(string $title): void
     {
         $this->slug = Strings::webalize($title);

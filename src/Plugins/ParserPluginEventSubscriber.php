@@ -81,8 +81,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             }
         }
 
-        // ensure that every item has a title by using
-        // the default title if necessary
+        // ensure that every item has a title by using the default title if necessary
         if ($item->getTitle()) {
             $item['title'] = $itemAwareEvent->app->getTitle($item['config']['element']);
         }
@@ -140,7 +139,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
         }
 
         // the label of the item matches the label of its first TOC element
-        $item['label'] = $item->getTableOfContents()[0]['label'];
+        $item->changeLabel($item->getTableOfContents()[0]['label']);
 
         // add section labels to the content
         foreach ($item->getTableOfContents() as $i => $entry) {

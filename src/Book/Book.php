@@ -17,10 +17,10 @@ final class Book
         return $this->contents;
     }
 
-    public function removeContent(Content $content): void
+    public function removeContent(Content $toBeRemovedContent): void
     {
         foreach ($this->contents as $key => $content) {
-            if ($content === $content) {
+            if ($content === $toBeRemovedContent) {
                 unset($this->contents[$key]);
                 break;
             }

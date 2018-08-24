@@ -54,8 +54,18 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
     {
         $item = $itemAwareEvent->getItem();
 
+        // ...
+//        edition()
+//            // tady
+//
+//            =>
+//
+//        foreach ($edistion as $edition) {
+//            // tady
+//        }
+
         $addTableLabels = in_array('table', $itemAwareEvent->app->edition('labels') ?: [], true);
-        $parentItemNumber = $item['config']['number'];
+        $parentItemNumber = $item->getItemConfig()->getNumber();
 
         $this->listOfTables = [];
         $this->counter = 0;
