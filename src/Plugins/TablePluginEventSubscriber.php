@@ -59,24 +59,12 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * It decorates each table with a template and, if the edition configures it,
-     * with the appropriate auto-numbered label.
+     * It decorates each table with a template and with the appropriate auto-numbered label.
      */
     public function decorateAndLabelTables(ItemAwareEvent $itemAwareEvent): void
     {
         $item = $itemAwareEvent->getItem();
 
-        // ...
-//        edition()
-//            // tady
-//
-//            =>
-//
-//        foreach ($edistion as $edition) {
-//            // tady
-//        }
-
-//        $addTableLabels = in_array('table', $itemAwareEvent->app->edition('labels') ?: [], true);
         $parentItemNumber = $item->getConfigNumber();
 
         $this->counter = 0;
@@ -84,7 +72,7 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
         $item->changeContent(Strings::replace(
             $item->getContent(),
             "#(?<content><table.*\n<\/table>)#Ums",
-            function ($matches) use ($parentItemNumber) {
+            function (array $matches) use ($parentItemNumber): string {
                 // prepare table parameters for template and label
                 $this->counter++;
                 $parameters = [
@@ -99,6 +87,11 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
                         'number' => $parentItemNumber,
                     ],
                 ];
+
+                // render the label
+                if ($parameters['item']['label']) {
+                    $parameters['item']['label'] = $this->renderer->render($parameters['item']['label'], $parameters);
+                }
 
                 // add table details to the list-of-tables
                 $this->tablesProvider->addTable($parameters);

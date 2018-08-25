@@ -6,10 +6,11 @@ use Easybook\Book\Provider\BookProvider;
 use Easybook\Book\Provider\EditionProvider;
 use Easybook\Book\Provider\ImagesProvider;
 use Easybook\Book\Provider\TablesProvider;
-use RuntimeException;
-use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
+use Twig\Loader\ArrayLoader;
+use Twig\Loader\ChainLoader;
+use Twig\Loader\FilesystemLoader;
 
 final class Renderer
 {
@@ -43,13 +44,19 @@ final class Renderer
      */
     private $imagesProvider;
 
+    /**
+     * @var string
+     */
+    private $themesDir;
+
     public function __construct(
         Filesystem $filesystem,
         Environment $twigEnvironment,
         BookProvider $bookProvider,
         EditionProvider $editionProvider,
         TablesProvider $tablesProvider,
-        ImagesProvider $imagesProvider
+        ImagesProvider $imagesProvider,
+        string $themesDir
     ) {
         $this->filesystem = $filesystem;
         $this->twigEnvironment = $twigEnvironment;
@@ -57,6 +64,7 @@ final class Renderer
         $this->editionProvider = $editionProvider;
         $this->tablesProvider = $tablesProvider;
         $this->imagesProvider = $imagesProvider;
+        $this->themesDir = $themesDir;
     }
 
     /**
@@ -80,39 +88,27 @@ final class Renderer
         $this->filesystem->dumpFile($targetFile, $rendered);
     }
 
-    private function ensureIsTwig(string $template): void
-    {
-        $templateSplFileInfo = new SplFileInfo($template);
-
-        if ($templateSplFileInfo->getExtension() === 'twig') {
-            return;
-        }
-
-        throw new RuntimeException(sprintf(
-            'Unsupported format for "%s" template. Easybook only supports Twig, "%s" given.',
-            $template,
-            $templateSplFileInfo->getExtension()
-        ));
-    }
-
     private function beforeRender(string $template): void
     {
-        $this->ensureIsTwig($template);
+        /** @var ChainLoader $twigLoader */
+        $twigLoader = $this->twigEnvironment->getLoader();
 
-        // @todo use absolute paths instead of theme magic per edition
+        $pathInfo = pathinfo($template);
+        if ($pathInfo['extension'] !== 'twig') {
+            // is not file name but a content - add to array loader
+            $twigLoader->addLoader(new ArrayLoader([
+                $template => $template,
+            ]));
+        }
 
-//        $twigLoader = $this->twigEnvironment->getLoader();
-
-//        dump($template);
-
-        // required for internal template dependencies
-        //        $twigLoaderFilesystem->addPath($baseThemeDir, 'theme_base');
+        $themeFilesystemLoader = new FilesystemLoader();
 
         // Base theme (common styles per edition type)
         // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
-//        $baseThemeDir = sprintf('%s/Base/%s/Templates', $this->themesDir, $format);
-//        $twigLoaderFilesystem->addPath($baseThemeDir);
-//        $twigLoaderFilesystem->addPath($baseThemeDir, 'theme');
+        $baseThemeDir = sprintf('%s/Base/%s/Templates', $this->themesDir, $this->editionProvider->provide());
+        $themeFilesystemLoader->addPath($baseThemeDir);
+        $themeFilesystemLoader->addPath($baseThemeDir, 'theme'); // use "@theme" reference in the code - pick just one
+        $twigLoader->addLoader($themeFilesystemLoader);
 
         // Book theme (configured per edition in 'config.yml')
         // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig

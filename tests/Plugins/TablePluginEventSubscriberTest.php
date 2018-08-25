@@ -3,13 +3,14 @@
 namespace Easybook\Tests\Plugins;
 
 use Easybook\Book\Item;
+use Easybook\Book\Provider\EditionProvider;
 use Easybook\Book\Provider\TablesProvider;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Plugins\TablePluginEventSubscriber;
 use Easybook\Tests\AbstractCustomConfigContainerAwareTestCase;
 use Iterator;
 
-final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
+final class TablePluginEventSubscriberTest extends AbstractCustomConfigContainerAwareTestCase
 {
     /**
      * @var TablePluginEventSubscriber
@@ -21,16 +22,22 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
      */
     private $tablesProvider;
 
+    /**
+     * @var EditionProvider
+     */
+    private $editionProvider;
+
     protected function setUp(): void
     {
         $this->tablePluginEventSubscriber = $this->container->get(TablePluginEventSubscriber::class);
         $this->tablesProvider = $this->container->get(TablesProvider::class);
+        $this->editionProvider = $this->container->get(EditionProvider::class);
     }
 
     /**
      * @dataProvider getTestTablePluginData()
      *
-     * @param mixed[] $expectedLabels
+     * @param string[] $expectedLabels
      */
     public function testTablePlugin(
         string $inputFilePath,
@@ -39,19 +46,21 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
         bool $addLabels,
         array $expectedLabels
     ): void {
+        $this->editionProvider->setEdition('Pdf');
+
         $content = file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath);
         $item = Item::createFromConfigNumberAndContent($itemNumber, $content);
 
         $parseEvent = new ItemAwareEvent($item);
         $this->tablePluginEventSubscriber->decorateAndLabelTables($parseEvent);
 
-        $this->assertSame(file_get_contents(__DIR__ . '/fixtures/tables/' . $expectedFilePath), $item->getContent());
+        $this->assertStringEqualsFile(__DIR__ . '/fixtures/tables/' . $expectedFilePath, $item->getContent());
 
         foreach ($this->tablesProvider->getTables() as $i => $table) {
-            $this->assertRegexp('/<table.*<\/table>/s', $table[$i]['item']['content']);
+            $this->assertRegexp('/<table.*<\/table>/s', $table['item']['content']);
 
             if ($addLabels) {
-                $this->assertSame($expectedLabels[$i], $table[$i]['item']['label']);
+                $this->assertSame($expectedLabels[$i], $table['item']['label']);
             }
         }
     }

@@ -11,7 +11,8 @@ services:
         extraAllowedClasses:
             - 'ZipArchive'
             - 'Easybook\Book\Item'
-            - 'Easybook\Book\ItemConfig'
+            - 'Easybook\Book\Item*'
+            - 'Twig\Loader\*Loader'
 
     Symplify\CodingStandard\Sniffs\CleanCode\CognitiveComplexitySniff:
         maxCognitiveComplexity: 15

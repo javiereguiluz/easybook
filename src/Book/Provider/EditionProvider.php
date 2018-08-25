@@ -2,21 +2,19 @@
 
 namespace Easybook\Book\Provider;
 
-use Easybook\Book\Edition;
-
 final class EditionProvider
 {
     /**
-     * @var Edition
+     * @var string
      */
     private $edition;
 
-    public function setEdition(Edition $edition): void
+    public function setEdition(string $edition): void
     {
         $this->edition = $edition;
     }
 
-    public function provide(): ?Edition
+    public function provide(): string
     {
         return $this->edition;
     }
