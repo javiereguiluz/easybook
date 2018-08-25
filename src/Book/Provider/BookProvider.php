@@ -16,7 +16,7 @@ final class BookProvider
         $this->book = $book;
     }
 
-    public function provide(): Book
+    public function provide(): ?Book
     {
         return $this->book;
     }

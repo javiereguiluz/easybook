@@ -4,6 +4,8 @@ namespace Easybook\Templating;
 
 use Easybook\Book\Provider\BookProvider;
 use Easybook\Book\Provider\EditionProvider;
+use Easybook\Book\Provider\ImagesProvider;
+use Easybook\Book\Provider\TablesProvider;
 use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
@@ -31,16 +33,30 @@ final class Renderer
      */
     private $editionProvider;
 
+    /**
+     * @var TablesProvider
+     */
+    private $tablesProvider;
+
+    /**
+     * @var ImagesProvider
+     */
+    private $imagesProvider;
+
     public function __construct(
         Filesystem $filesystem,
         Environment $twigEnvironment,
         BookProvider $bookProvider,
-        EditionProvider $editionProvider
+        EditionProvider $editionProvider,
+        TablesProvider $tablesProvider,
+        ImagesProvider $imagesProvider
     ) {
         $this->filesystem = $filesystem;
         $this->twigEnvironment = $twigEnvironment;
         $this->bookProvider = $bookProvider;
         $this->editionProvider = $editionProvider;
+        $this->tablesProvider = $tablesProvider;
+        $this->imagesProvider = $imagesProvider;
     }
 
     /**
@@ -85,7 +101,10 @@ final class Renderer
 
         // @todo use absolute paths instead of theme magic per edition
 
-        $twigLoader = $this->twigEnvironment->getLoader();
+//        $twigLoader = $this->twigEnvironment->getLoader();
+
+//        dump($template);
+
         // required for internal template dependencies
         //        $twigLoaderFilesystem->addPath($baseThemeDir, 'theme_base');
 
@@ -125,5 +144,10 @@ final class Renderer
 
         $this->twigEnvironment->addGlobal('book', $this->bookProvider->provide());
         $this->twigEnvironment->addGlobal('edition', $this->editionProvider->provide());
+
+        // publishing.list.images
+        $this->twigEnvironment->addGlobal('all_images', $this->imagesProvider->getImages());
+        // publishing.list.tables
+        $this->twigEnvironment->addGlobal('all_table', $this->tablesProvider->getTables());
     }
 }

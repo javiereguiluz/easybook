@@ -125,12 +125,11 @@ final class Epub2Publisher extends AbstractPublisher
             $this->filesystem->copy($customCss, $bookTmpDir . '/book/OEBPS/css/styles.css', true);
         }
 
-        $bookItems = $this->normalizePageNames($this->publishingItems);
-        $this->publishingItems = $bookItems;
+        $this->normalizePageNames($this->publishingItems);
 
         // generate one HTML page for every book item
-        foreach ($bookItems as $item) {
-            $renderedTemplatePath = $bookTmpDir . '/book/OEBPS/' . $item['page_name'] . '.html';
+        foreach ($this->publishingItems as $item) {
+            $renderedTemplatePath = $bookTmpDir . '/book/OEBPS/' . $item->getPageName() . '.html';
             $templateVariables = [
                 'item' => $item,
                 'has_custom_css' => $hasCustomCss,
@@ -167,13 +166,17 @@ final class Epub2Publisher extends AbstractPublisher
                 'has_custom_css' => $hasCustomCss,
                 'fonts' => $bookFonts,
                 'images' => $bookImages,
-                'items' => $bookItems,
+                'items' => $this->publishingItems,
             ],
             $bookTmpDir . '/book/OEBPS/content.opf'
         );
 
         // generate the NCX file (the table of contents)
-        $this->renderer->renderToFile('toc.ncx.twig', ['items' => $bookItems], $bookTmpDir . '/book/OEBPS/toc.ncx');
+        $this->renderer->renderToFile(
+            'toc.ncx.twig',
+            ['items' => $this->publishingItems],
+            $bookTmpDir . '/book/OEBPS/toc.ncx'
+        );
 
         // generate container.xml and mimetype files
         $this->renderer->renderToFile('container.xml.twig', [], $bookTmpDir . '/book/META-INF/container.xml');
@@ -250,6 +253,7 @@ final class Epub2Publisher extends AbstractPublisher
         foreach ($images as $image) {
             $this->filesystem->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
 
+            // @todo object
             $imagesData[] = [
                 'id' => 'figure-' . $i++,
                 'filePath' => 'images/' . $image->getFileName(),
@@ -274,6 +278,7 @@ final class Epub2Publisher extends AbstractPublisher
 
         [$width, $height, $type] = getimagesize($image);
 
+        // @todo object
         $cover = [
             'height' => $height,
             'width' => $width,
@@ -316,6 +321,7 @@ final class Epub2Publisher extends AbstractPublisher
         foreach ($fonts as $font) {
             $this->filesystem->copy($font->getPathName(), $targetDir . DIRECTORY_SEPARATOR . $font->getFileName());
 
+            // @todo object
             $fontsData[] = [
                 'id' => 'font-' . ++$i,
                 'filePath' => 'fonts/' . $font->getFileName(),

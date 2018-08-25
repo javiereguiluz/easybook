@@ -32,12 +32,10 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
      */
     public function testCodeBlocksTypes(string $inputFilePath, string $expectedFilePath): void
     {
-        // new item...
+        $content = file_get_contents(__DIR__ . '/fixtures/code/' . $inputFilePath);
+
         /** @var Item $item */
-        $item = [
-            'original' => file_get_contents(__DIR__ . '/fixtures/code/' . $inputFilePath),
-            'content' => '',
-        ];
+        $item = Item::createFromOriginal($content);
 
         // execute pre-parse method of the plugin
         $itemAwareEvent = new ItemAwareEvent($item);
@@ -46,7 +44,7 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
         // parse the item original content
         $item->changeContent($this->markdownParser->transform($item->getContent()));
 
-        $this->assertSame(file_get_contents(__DIR__ . '/fixtures/code/' . $expectedFilePath), $item->getContent());
+        $this->assertStringEqualsFile(__DIR__ . '/fixtures/code/' . $expectedFilePath, $item->getContent());
     }
 
     public function getCodeBlockConfiguration(): Iterator

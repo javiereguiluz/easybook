@@ -2,6 +2,7 @@
 
 namespace Easybook\Plugins;
 
+use Easybook\Book\Provider\ImagesProvider;
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Templating\Renderer;
@@ -21,11 +22,6 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
     private $renderer;
 
     /**
-     * @var string[]
-     */
-    private $listOfImages = [];
-
-    /**
      * @var int
      */
     private $counter = 0;
@@ -35,10 +31,16 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
      */
     private $slugger;
 
-    public function __construct(Renderer $renderer, Slugger $slugger)
+    /**
+     * @var ImagesProvider
+     */
+    private $imagesProvider;
+
+    public function __construct(Renderer $renderer, Slugger $slugger, ImagesProvider $imagesProvider)
     {
         $this->renderer = $renderer;
         $this->slugger = $slugger;
+        $this->imagesProvider = $imagesProvider;
     }
 
     public static function getSubscribedEvents(): Iterator
@@ -57,7 +59,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
         $item = $itemAwareEvent->getItem();
         $baseDir = $itemAwareEvent->app->edition('images_base_dir');
 
-        $item['content'] = preg_replace_callback(
+        $item->changeContent(preg_replace_callback(
             '/<img src="(.*)"(.*) \/>/U',
             function ($matches) use ($baseDir) {
                 $uri = $matches[1];
@@ -65,8 +67,8 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
 
                 return sprintf('<img src="%s"%s />', $uri, $matches[2]);
             },
-            $item['content']
-        );
+            $item->getContent()
+        ));
     }
 
     /**
@@ -80,8 +82,6 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
         $addImageLabels = in_array('figure', $itemAwareEvent->app->edition('labels') ?: [], true);
         $parentItemNumber = $item->getConfigNumber();
 
-        $this->listOfImages = [];
-
         $this->counter = 0;
 
         $item->changeContent(preg_replace_callback(
@@ -94,6 +94,8 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
             '/(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>[^"]*)".*\/>)(<\/div>)?(<\/p>)?/',
             function ($matches) use ($itemAwareEvent, $addImageLabels, $parentItemNumber) {
                 // prepare figure parameters for the template and the label
+
+                // @todo object Image
                 $parameters = [
                     'item' => [
                         'align' => $matches['align'],
@@ -124,16 +126,12 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
                     }
 
                     // add image details to the list-of-images
-                    $this->listOfImages[] = $parameters;
+                    $this->imagesProvider->addImage($parameters);
                 }
 
                 return $this->renderer->render('figure.twig', $parameters);
             },
             $item->getContent()
         ));
-
-        if (count($this->listOfImages) > 0) {
-            //$itemAwareEvent->app->append('publishing.list.images', $this->listOfImages);
-        }
     }
 }

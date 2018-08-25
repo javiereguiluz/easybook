@@ -36,7 +36,8 @@
         "phpunit/phpunit": "^7.3",
         "rector/rector": "^0.3.4",
         "slam/php-cs-fixer-extensions": "^1.15",
-        "symplify/easy-coding-standard": "^4.6"
+        "symplify/easy-coding-standard": "^4.6",
+        "tracy/tracy": "^2.5"
     },
     "autoload": {
         "psr-4": {

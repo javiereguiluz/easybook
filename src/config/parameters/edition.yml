@@ -3,7 +3,6 @@ parameters:
     book_editions:
         -
             format: ~
-            chunk_level: 1
             images_base_dir: 'images/'
             include_styles: true
             isbn: ~

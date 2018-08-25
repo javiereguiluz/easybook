@@ -99,7 +99,6 @@ book:
         # ...
 
         website:
-            format:      html_chunked
             chunk_level: 2
             # ...
 

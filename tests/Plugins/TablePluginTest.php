@@ -62,7 +62,6 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
         yield ['input_1.html', 'expected_1_2.html', 2, true, ['Table 2.1', 'Table 2.2']];
         yield ['input_1.html', 'expected_1_1.html', 1, false, []];
         yield ['input_2.html', 'expected_2.html', 1, false, []];
-        yield ['input_3.html', 'expected_3.html', 'A', true, ['Table A.1']];
     }
 
     protected function provideConfig(): string

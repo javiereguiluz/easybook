@@ -72,8 +72,8 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
 
             // the title of the content can only be a <h1> heading
             if ($firstItemSection['level'] === 1) {
-                $item['slug'] = $firstItemSection['slug'];
-                $item['title'] = $firstItemSection['title'];
+                $item->setSlug($firstItemSection['slug']);
+                $item->setTitle($firstItemSection['title']);
 
                 // strip the title from the parsed content, because the book templates
                 // always display the title separately from the rest of the content
@@ -83,7 +83,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
 
         // ensure that every item has a title by using the default title if necessary
         if ($item->getTitle()) {
-            $item['title'] = $itemAwareEvent->app->getTitle($item['config']['element']);
+            $item->setTitle($itemAwareEvent->app->getTitle($item->getConfigElement()));
         }
     }
 
@@ -95,21 +95,21 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
         $item = $itemAwareEvent->getItem();
 
         // special book items without a TOC don't need labels
-        if (count($item['toc']) === 0) {
+        if (count($item->getTableOfContents()) === 0) {
             return;
         }
 
         $counters = [
-            1 => $item['config']['number'],
+            1 => $item->getConfigNumber(),
             2 => 0,
             3 => 0,
             4 => 0,
             5 => 0,
             6 => 0,
         ];
-        $addSectionLabels = in_array($item['config']['element'], $itemAwareEvent->app->edition('labels') ?: [], true);
+        $addSectionLabels = in_array($item->getConfigElement(), $itemAwareEvent->app->edition('labels') ?: [], true);
 
-        foreach ($item['toc'] as $key => $entry) {
+        foreach ($item->getTableOfContents() as $key => $entry) {
             if ($addSectionLabels) {
                 $level = $entry['level'];
 
@@ -127,7 +127,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
                     'level' => $level,
                 ]);
 
-                $label = $itemAwareEvent->app->getLabel($item['config']['element'], [
+                $label = $itemAwareEvent->app->getLabel($item->getConfigElement(), [
                     'item' => $parameters,
                 ]);
             } else {
@@ -135,7 +135,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             }
 
             $entry['label'] = $label;
-            $item['toc'][$key] = $entry;
+            $item->addTableOfContentItem($key, $entry);
         }
 
         // the label of the item matches the label of its first TOC element
@@ -158,7 +158,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
                 $entry['level']
             );
 
-            $item['content'] = preg_replace($fuzzyTitle, $labeledTitle, $item['content']);
+            $item->changeContent(preg_replace($fuzzyTitle, $labeledTitle, $item->getContent()));
         }
     }
 }

@@ -16,7 +16,7 @@ final class EditionProvider
         $this->edition = $edition;
     }
 
-    public function provide(): Edition
+    public function provide(): ?Edition
     {
         return $this->edition;
     }

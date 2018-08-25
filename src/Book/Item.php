@@ -74,17 +74,24 @@ final class Item
 
         $this->original = $original;
         $this->content = $original;
-
         $this->label = $label;
-        $this->setTitle($title);
+
+        $this->title = $title;
+        $this->slug = Strings::webalize($title);
+
         $this->tableOfContents = $tableOfContents;
     }
 
     public static function createFromConfigNumberAndContent(int $itemNumber, string $content): self
     {
-        $itemConfig = new ItemConfig('', '', '', $itemNumber, '');
+        $itemConfig = new ItemConfig('', '', $itemNumber, '');
 
         return new self($itemConfig, $content, '', '', []);
+    }
+
+    public static function createFromOriginal(string $content): self
+    {
+        return new self(new ItemConfig('', '', null, ''), $content, '', '', []);
     }
 
     /**
@@ -166,8 +173,22 @@ final class Item
         return $this->pageName;
     }
 
-    private function setTitle(string $title): void
+    public function setTitle(string $title): void
     {
-        $this->slug = Strings::webalize($title);
+        $this->title = $title;
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
+    }
+
+    /**
+     * @param mixed $key
+     * @param mixed $entry
+     */
+    public function addTableOfContentItem($key, $entry): void
+    {
+        $this->tableOfContents[$key] = $entry;
     }
 }

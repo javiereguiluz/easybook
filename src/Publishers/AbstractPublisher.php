@@ -250,7 +250,7 @@ abstract class AbstractPublisher implements PublisherInterface
             // the label of this item ('Chapter XX', 'Appendix XX', ...)
             '',
             // the title of the item without any label ('Lorem ipsum dolor')
-            $item['config']['title'] ?? '',
+            (string) $itemConfig->getTitle(),
             // the table of contents of this item
             []
         );
