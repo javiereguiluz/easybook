@@ -19,6 +19,11 @@ final class Content
      */
     private $content;
 
+    /**
+     * @var string|null
+     */
+    private $title;
+
     public function getElement(): string
     {
         return $this->element;
@@ -39,6 +44,11 @@ final class Content
         $this->number = $number;
     }
 
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
     public function getContent(): ?string
     {
         return $this->content;
@@ -47,5 +57,10 @@ final class Content
     public function setContent(string $content): void
     {
         $this->content = $content;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
     }
 }

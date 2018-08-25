@@ -84,7 +84,7 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
         $item->changeContent(Strings::replace(
             $item->getContent(),
             "#(?<content><table.*\n<\/table>)#Ums",
-            function ($matches) use ($itemAwareEvent, $parentItemNumber) {
+            function ($matches) use ($parentItemNumber) {
                 // prepare table parameters for template and label
                 $this->counter++;
                 $parameters = [

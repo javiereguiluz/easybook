@@ -19,16 +19,9 @@ final class ItemConfig
     private $element;
 
     /**
-     * The format in which contents are written ('md' for Markdown)
-     *
-     * @var string
-     */
-    private $format;
-
-    /**
      * The number/letter of the content (useful for `chapter`, `part` and `appendix`)
      *
-     * @var int
+     * @var int|null
      */
     private $number;
 
@@ -39,11 +32,10 @@ final class ItemConfig
      */
     private $title;
 
-    public function __construct(string $content, string $element, string $format, int $number, string $title)
+    public function __construct(string $content, string $element, ?int $number, string $title)
     {
         $this->content = $content;
         $this->element = $element;
-        $this->format = $format;
         $this->number = $number;
         $this->title = $title;
     }
@@ -58,12 +50,7 @@ final class ItemConfig
         return $this->element;
     }
 
-    public function getFormat(): string
-    {
-        return $this->format;
-    }
-
-    public function getNumber(): int
+    public function getNumber(): ?int
     {
         return $this->number;
     }

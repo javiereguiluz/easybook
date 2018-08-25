@@ -2,6 +2,7 @@
 
 namespace Easybook\Publishers;
 
+use Easybook\Book\Content;
 use Easybook\Book\Item;
 use Easybook\Book\ItemConfig;
 use Easybook\Book\Provider\BookProvider;
@@ -141,8 +142,8 @@ abstract class AbstractPublisher implements PublisherInterface
      */
     protected function loadContents(): void
     {
-        foreach ($this->bookProvider->provide()->getContents() as $itemConfig) {
-            $item = $this->initializeItem($itemConfig);
+        foreach ($this->bookProvider->provide()->getContents() as $content) {
+            $item = $this->initializeItem($content);
 
             $itemConfig = $item->getItemConfig();
 
@@ -228,22 +229,18 @@ abstract class AbstractPublisher implements PublisherInterface
     /**
      * It initializes an array with the configuration options and data of each
      * book element (a chapter, an appendix, the table of contens, etc.).
-     *
-     * @param mixed[] $itemConfig
      */
-    private function initializeItem(array $itemConfig): Item
+    private function initializeItem(Content $content): Item
     {
         $itemConfig = new ItemConfig(
             // the name of this item contents file (it's a relative path from book's `Contents/`)
-            $itemConfig['content'] ?? '',
+            $content->getContent(),
             // the type of this content (`chapter`, `appendix`, `toc`, `license`, ...)
-            $itemConfig['element'] ?? '',
-            // the format in which contents are written ('md' for Markdown)
-            $itemConfig['format'] ?? '',
+            $content->getElement(),
             // the number/letter of the content (useful for `chapter`, `part` and `appendix`)
-            $itemConfig['number'] ?? '',
+            $content->getNumber(),
             // the title of the content defined in `config.yml` (usually only `part` defines it)
-            $itemConfig['title'] ?? ''
+            $content->getTitle()
         );
 
         return new Item(
