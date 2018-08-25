@@ -56,18 +56,25 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private $resourcesDir;
 
+    /**
+     * @var string
+     */
+    private $bookTemporaryCacheDir;
+
     public function __construct(
         Toolkit $toolkit,
         Finder $finder,
         FileProvider $fileProvider,
         BookProvider $bookProvider,
-        string $resourcesDir
+        string $resourcesDir,
+        string $bookTemporaryCacheDir
     ) {
         $this->toolkit = $toolkit;
         $this->finder = $finder;
         $this->fileProvider = $fileProvider;
         $this->bookProvider = $bookProvider;
         $this->resourcesDir = $resourcesDir;
+        $this->bookTemporaryCacheDir = $bookTemporaryCacheDir;
     }
 
     public function loadContents(): void
@@ -200,7 +207,7 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private function prepareBookTemporaryDirectory(): string
     {
-        $bookDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid($this->app['book_slug']);
+        $bookDir = $this->bookTemporaryCacheDir . uniqid();
 
         $this->filesystem->mkdir([
             $bookDir,
@@ -229,23 +236,25 @@ final class Epub2Publisher extends AbstractPublisher
         $this->ensureDirectoryExists($targetDir, 'images');
 
         $imagesDir = $this->bookContentsDir . '/images';
+        if (! file_exists($imagesDir)) {
+            return [];
+        }
+
         $imagesData = [];
 
-        if (file_exists($imagesDir)) {
-            $images = $this->finder->files()
-                ->in($imagesDir)
-                ->getIterator();
+        $images = $this->finder->files()
+            ->in($imagesDir)
+            ->getIterator();
 
-            $i = 1;
-            foreach ($images as $image) {
-                $this->filesystem->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
+        $i = 1;
+        foreach ($images as $image) {
+            $this->filesystem->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
 
-                $imagesData[] = [
-                    'id' => 'figure-' . $i++,
-                    'filePath' => 'images/' . $image->getFileName(),
-                    'mediaType' => 'image/' . pathinfo($image->getFilename(), PATHINFO_EXTENSION),
-                ];
-            }
+            $imagesData[] = [
+                'id' => 'figure-' . $i++,
+                'filePath' => 'images/' . $image->getFileName(),
+                'mediaType' => 'image/' . pathinfo($image->getFilename(), PATHINFO_EXTENSION),
+            ];
         }
 
         return $imagesData;
@@ -439,9 +448,7 @@ final class Epub2Publisher extends AbstractPublisher
         }
 
         throw new RuntimeException(sprintf(
-            "Books %s couldn't be copied because \n"
-            . " the given '%s' \n"
-            . " directory doesn't exist.",
+            "Books %s couldn't be copied because the given '%s' directory doesn't exist.",
             $source,
             $targetDir
         ));

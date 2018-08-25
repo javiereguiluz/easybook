@@ -52,7 +52,7 @@ final class Epub2PublisherTest extends AbstractContainerAwareTestCase
      */
     public function testPrepareBookCoverImage(int $width, int $height, string $mimeType, string $fileName): void
     {
-        $tmpDir = $this->container->getParameter('%kernel.cache_dir') . '/' . uniqid('phpunit_');
+        $tmpDir = $this->container->getParameter('kernel.cache_dir') . '/' . uniqid('phpunit_');
         $this->filesystem->mkdir($tmpDir);
 
         $imageFilePath = $tmpDir . '/' . $fileName;
