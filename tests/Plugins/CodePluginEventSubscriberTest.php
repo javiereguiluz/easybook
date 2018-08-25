@@ -3,6 +3,7 @@
 namespace Easybook\Tests\Plugins;
 
 use Easybook\Book\Item;
+use Easybook\Book\Provider\EditionProvider;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Parsers\MarkdownParser;
 use Easybook\Plugins\CodePluginEventSubscriber;
@@ -21,10 +22,16 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
      */
     private $codePluginEventSubscriber;
 
+    /**
+     * @var EditionProvider
+     */
+    private $editionProvider;
+
     protected function setUp(): void
     {
         $this->markdownParser = $this->container->get(MarkdownParser::class);
         $this->codePluginEventSubscriber = $this->container->get(CodePluginEventSubscriber::class);
+        $this->editionProvider = $this->container->get(EditionProvider::class);
     }
 
     /**
@@ -32,6 +39,8 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
      */
     public function testCodeBlocksTypes(string $inputFilePath, string $expectedFilePath): void
     {
+        $this->editionProvider->setEdition('pdf');
+
         $content = file_get_contents(__DIR__ . '/fixtures/code/' . $inputFilePath);
 
         /** @var Item $item */

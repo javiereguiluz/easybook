@@ -1,51 +1,53 @@
 # English translation of the strings managed by easybook
-label:
-    appendix:
-        - 'Appendix {{ item.number }}'
-        - '{{ item.counters[0:2]|join(".") }}' # 1.1
-        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
-        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
-        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
-        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+# todo use classic "|trans}" in Twig rendering
+parameters:
+    translation:
+        appendix:
+            - 'Appendix {{ item.number }}'
+            - '{{ item.counters[0:2]|join(".") }}' # 1.1
+            - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+            - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+            - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+            - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
 
-    chapter:
-        - 'Chapter {{ item.number }}'
-        - '{{ item.counters[0:2]|join(".") }}' # 1.1
-        - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
-        - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
-        - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
-        - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
+        chapter:
+            - 'Chapter {{ item.number }}'
+            - '{{ item.counters[0:2]|join(".") }}' # 1.1
+            - '{{ item.counters[0:3]|join(".") }}' # 1.1.1
+            - '{{ item.counters[0:4]|join(".") }}' # 1.1.1.1
+            - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
+            - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
 
-    figure:          'Figure {{ element.number }}.{{ item.number }}'
-    part:            'Part {{ item.number }}'
-    table:           'Table {{ element.number }}.{{ item.number }}'
+        figure:          'Figure {{ element.number }}.{{ item.number }}'
+        part:            'Part {{ item.number }}'
+        table:           'Table {{ element.number }}.{{ item.number }}'
 
-    acknowledgement: ''
-    afterword:       ''
-    author:          ''
-    conclusion:      ''
-    cover:           ''
-    dedication:      ''
-    edition:         ''
-    epilogue:        ''
-    foreword:        ''
-    glossary:        ''
-    introduction:    ''
-    preface:         ''
-    prologue:        ''
-    title:           ''
-    toc:             ''
+        acknowledgement: ''
+        afterword:       ''
+        author:          ''
+        conclusion:      ''
+        cover:           ''
+        dedication:      ''
+        edition:         ''
+        epilogue:        ''
+        foreword:        ''
+        glossary:        ''
+        introduction:    ''
+        preface:         ''
+        prologue:        ''
+        title:           ''
+        toc:             ''
 
-    # Navigation elements
-    index:           'Index'
-    next:            'Next'
-    previous:        'Previous'
+        # Navigation elements
+        index:           'Index'
+        next:            'Next'
+        previous:        'Previous'
 
-    # Special
-    date_format:     'm/d/Y'
-    datetime_format: 'm/d/Y H:i'
+        # Special
+        date_format:     'm/d/Y'
+        datetime_format: 'm/d/Y H:i'
 
-    # Other
-    by:              'by'
-    page:            'page'
-    blank:           'This Page Intentionally Left Blank'
+        # Other
+        by:              'by'
+        page:            'page'
+        blank:           'This Page Intentionally Left Blank'

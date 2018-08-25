@@ -11,7 +11,7 @@ final class EditionProvider
 
     public function setEdition(string $edition): void
     {
-        $this->edition = $edition;
+        $this->edition = ucfirst($edition);
     }
 
     public function provide(): string
