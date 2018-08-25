@@ -2,7 +2,7 @@
 
 namespace Easybook\Templating;
 
-use Easybook\Book\BookProvider;
+use Easybook\Book\Provider\BookProvider;
 use Easybook\Book\Provider\EditionProvider;
 use RuntimeException;
 use SplFileInfo;

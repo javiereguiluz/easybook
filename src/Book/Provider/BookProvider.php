@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Book;
+namespace Easybook\Book\Provider;
+
+use Easybook\Book\Book;
 
 final class BookProvider
 {

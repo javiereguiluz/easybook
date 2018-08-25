@@ -2,9 +2,9 @@
 
 namespace Easybook\Publishers;
 
-use Easybook\Book\BookProvider;
-use Easybook\Book\FileProvider;
 use Easybook\Book\Item;
+use Easybook\Book\Provider\BookProvider;
+use Easybook\Book\Provider\FileProvider;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Util\Toolkit;

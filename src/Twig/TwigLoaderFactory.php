@@ -14,15 +14,9 @@ final class TwigLoaderFactory
      */
     private $themesDir;
 
-    /**
-     * @var string
-     */
-    private $bookTemplatesDir;
-
-    public function __construct(string $themesDir, string $bookTemplatesDir)
+    public function __construct(string $themesDir)
     {
         $this->themesDir = $themesDir;
-        $this->bookTemplatesDir = $bookTemplatesDir;
     }
 
     public function create(): Twig_LoaderInterface
@@ -32,12 +26,9 @@ final class TwigLoaderFactory
         // for absolute paths in code
         $twigLoaderChain->addLoader(new ArrayLoader());
 
-        // for relative paths in templatse
-        $filesystemLoader = new FilesystemLoader;
-
-//        $filesystemLoader
-                    //        $twigLoaderFilesystem->addPath($baseThemeDir, 'theme_base');
-
+        // for relative paths in templates
+        $filesystemLoader = new FilesystemLoader();
+        $filesystemLoader->addPath($this->themesDir, 'theme_base');
 
         $twigLoaderChain->addLoader($filesystemLoader);
 

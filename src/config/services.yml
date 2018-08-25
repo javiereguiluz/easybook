@@ -10,7 +10,7 @@ services:
 
     Easybook\:
         resource: '..'
-        exclude: '../{Events}'
+        exclude: '../{Events,Book/*.php}'
 
     # from providers
     GeSHi:

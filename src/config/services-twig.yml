@@ -3,10 +3,12 @@ services:
         public: true
         autowire: true
 
-    Twig_LoaderInterface:
+    Twig_Loader_Chain:
+        class: 'Twig_Loader_Chain'
         factory: ['@Easybook\Twig\TwigLoaderFactory', 'create']
 
     Twig\Environment:
         arguments:
-            cache: '%kernel.cache_dir%/twig'
-            autoescape: false
+            $options:
+                cache: '%kernel.cache_dir%/twig'
+                autoescape: false

@@ -5,7 +5,7 @@ namespace Easybook\Console\Command;
 use Easybook\Configuration\Option;
 use Easybook\Events\EasybookEvents as Events;
 use Easybook\Publishers\PublisherProvider;
-use Easybook\Util\Validator;
+use Easybook\Validator\Validator;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
