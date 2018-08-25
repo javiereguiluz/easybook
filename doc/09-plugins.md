@@ -163,14 +163,11 @@ notifications. It only defines one property:
 
   * `app`, it stores the object that represents the whole **easybook** application. Access to any application property with `$event->app['property_name']` and modify any property with `$event->app['property_name'] = 'property_value';`
 
-In addition, it defines two methods:
+In addition, it defines method:
 
   * `getItem()`, it returns the active book item. When used for example with 
     the `PRE_DECORATE` event, it stores the book item that is about to be
     decorated with the Twig template.
-  * `setItem(array $item)`, it allows you to replace the active item by the
-    given item. This way you can modify any item configuration or event the
-    whole item content.
 
 ### The `ItemAwareEvent` class
 

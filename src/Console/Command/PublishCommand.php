@@ -8,6 +8,7 @@ use Easybook\Publishers\PublisherProvider;
 use Easybook\Util\Validator;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -72,7 +73,8 @@ final class PublishCommand extends Command
     {
         $this->setName(CommandNaming::classToName(self::class));
         $this->setDescription('Publishes an edition of a book');
-        $this->addOption(Option::DIR, '', InputOption::VALUE_OPTIONAL, 'Path of the documentation directory');
+        $this->addArgument(Option::SLUG, InputArgument::REQUIRED, '');
+        $this->addOption(Option::DIR, '', InputOption::VALUE_REQUIRED, 'Path of the documentation directory');
 
         $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookPublishCommandHelp.txt'));
     }
@@ -80,10 +82,10 @@ final class PublishCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $slug = $input->getArgument('slug');
-        $dir = $input->getOption('dir') ?: $this->app['app.dir.doc'];
+        $outputDir = $input->getOption('dir'); // ?: $this->app['app.dir.doc'];
 
         // validate book dir and add some useful values to the app configuration
-        $bookDir = $this->validator->validateBookDir($slug, $dir);
+        $bookDir = $this->validator->validateBookDir($slug, $outputDir);
 
         $this->parameterProvider->changeParameter('source_book_dir', $bookDir);
         $this->parameterProvider->changeParameter('book_resources_dir', $bookDir . '/Resources');
@@ -92,10 +94,12 @@ final class PublishCommand extends Command
         // all parameters are loaded here...
 
         // execute the 'before_publish' scripts
-        $this->runScripts((array) $this->parameterProvider->provideParameter('before_publish'));
+        $this->runScripts((array) $this->parameterProvider->provideParameter('before_publish'), $outputDir);
 
         // book publishing starts
         $this->eventDispatcher->dispatch(Events::PRE_PUBLISH, new Event());
+
+        // just one edition?
 
         $this->symfonyStyle->note(sprintf(
             'Publishing <comment>%s</comment> edition of <info>%s</info> book...',
@@ -111,7 +115,7 @@ final class PublishCommand extends Command
 
         $this->eventDispatcher->dispatch(Events::POST_PUBLISH, new Event());
 
-        $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'));
+        $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'), $outputDir);
 
         $this->symfonyStyle->success(
             'You can access the book in:' .
@@ -122,10 +126,10 @@ final class PublishCommand extends Command
     /**
      * @param string[] $scripts
      */
-    private function runScripts(array $scripts): void
+    private function runScripts(array $scripts, string $outputDir): void
     {
         foreach ($scripts as $script) {
-            $process = new Process($script, $this->app['publishing.dir.book']);
+            $process = new Process($script, $outputDir);
             $process->run();
 
             if ($process->isSuccessful()) {

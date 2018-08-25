@@ -3,11 +3,11 @@
 namespace Easybook\Tests\Plugins;
 
 use Easybook\Book\Item;
+use Easybook\Book\Provider\TablesProvider;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Plugins\TablePluginEventSubscriber;
 use Easybook\Tests\AbstractCustomConfigContainerAwareTestCase;
 use Iterator;
-use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
 {
@@ -17,14 +17,14 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
     private $tablePluginEventSubscriber;
 
     /**
-     * @var ParameterProvider
+     * @var TablesProvider
      */
-    private $parameterProvider;
+    private $tablesProvider;
 
     protected function setUp(): void
     {
         $this->tablePluginEventSubscriber = $this->container->get(TablePluginEventSubscriber::class);
-        $this->parameterProvider = $this->container->get(ParameterProvider::class);
+        $this->tablesProvider = $this->container->get(TablesProvider::class);
     }
 
     /**
@@ -39,22 +39,15 @@ final class TablePluginTest extends AbstractCustomConfigContainerAwareTestCase
         bool $addLabels,
         array $expectedLabels
     ): void {
-        // @todo item
-        /** @var Item $item */
-        $item = [
-            'config' => ['number' => $itemNumber],
-            'content' => file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath),
-        ];
+        $content = file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath);
+        $item = Item::createFromConfigNumberAndContent($itemNumber, $content);
 
         $parseEvent = new ItemAwareEvent($item);
         $this->tablePluginEventSubscriber->decorateAndLabelTables($parseEvent);
 
-        $item = $parseEvent->getItem();
-
         $this->assertSame(file_get_contents(__DIR__ . '/fixtures/tables/' . $expectedFilePath), $item->getContent());
 
-        $publishingListTables = $this->parameterProvider->provideParameter('publishing.list.tables');
-        foreach ($publishingListTables as $i => $table) {
+        foreach ($this->tablesProvider->getTables() as $i => $table) {
             $this->assertRegexp('/<table.*<\/table>/s', $table[$i]['item']['content']);
 
             if ($addLabels) {

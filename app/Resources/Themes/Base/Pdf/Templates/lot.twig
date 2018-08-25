@@ -3,6 +3,7 @@
 <h1>{{ item.title }}</h1>
 
 <ul>
+    {# use TablesProvider #}
 {% for item in app.get('publishing.list.tables') %}
     {% if item|length > 0 %}
         {% for entry in item %}

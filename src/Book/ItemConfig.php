@@ -28,7 +28,7 @@ final class ItemConfig
     /**
      * The number/letter of the content (useful for `chapter`, `part` and `appendix`)
      *
-     * @var string
+     * @var int
      */
     private $number;
 
@@ -39,7 +39,7 @@ final class ItemConfig
      */
     private $title;
 
-    public function __construct(string $content, string $element, string $format, string $number, string $title)
+    public function __construct(string $content, string $element, string $format, int $number, string $title)
     {
         $this->content = $content;
         $this->element = $element;
@@ -63,7 +63,7 @@ final class ItemConfig
         return $this->format;
     }
 
-    public function getNumber(): string
+    public function getNumber(): int
     {
         return $this->number;
     }

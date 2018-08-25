@@ -6,8 +6,7 @@ parameters:
     book_slug: ''
 
     # global directories location
-    app.dir.doc: '%kernel.project_dir%/doc'
-    app.dir.resources: '%kernel.project_dir%/app/Resources'
+    resources_dir: '%kernel.project_dir%/app/Resources'
     translations_dir: '%kernel.project_dir%/app/Resources/Translations'
     app.dir.skeletons: '%kernel.project_dir%/app/Resources/Skeletons'
     skeleton_book_directory: '%kernel.project_dir%/app/Resources/Skeletons/Book'

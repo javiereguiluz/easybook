@@ -2,6 +2,7 @@
 
 namespace Easybook\Plugins;
 
+use Easybook\Book\Provider\TablesProvider;
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Templating\Renderer;
@@ -28,17 +29,23 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
     /**
      * @var string[]
      */
-    private $listOfTables = [];
+    private $tables = [];
 
     /**
      * @var int
      */
     private $counter = 0;
 
-    public function __construct(Renderer $renderer, Slugger $slugger)
+    /**
+     * @var TablesProvider
+     */
+    private $tablesProvider;
+
+    public function __construct(Renderer $renderer, Slugger $slugger, TablesProvider $tablesProvider)
     {
         $this->renderer = $renderer;
         $this->slugger = $slugger;
+        $this->tablesProvider = $tablesProvider;
     }
 
     public static function getSubscribedEvents(): Iterator
@@ -65,13 +72,13 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
 //        }
 
         $addTableLabels = in_array('table', $itemAwareEvent->app->edition('labels') ?: [], true);
-        $parentItemNumber = $item->getItemConfig()->getNumber();
+        $parentItemNumber = $item->getConfigNumber();
 
-        $this->listOfTables = [];
+        $this->tables = [];
         $this->counter = 0;
 
-        $item['content'] = Strings::replace(
-            $item['content'],
+        $item->changeContent(Strings::replace(
+            $item->getContent(),
             "#(?<content><table.*\n<\/table>)#Ums",
             function ($matches) use ($itemAwareEvent, $addTableLabels, $parentItemNumber) {
                 // prepare table parameters for template and label
@@ -96,14 +103,11 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
                 }
 
                 // add table details to the list-of-tables
-                $this->listOfTables[] = $parameters;
+                $this->tables[] = $parameters;
+                $this->tablesProvider->addTable($parameters);
 
                 return $this->renderer->render('table.twig', $parameters);
             }
-        );
-
-        if (count($this->listOfTables) > 0) {
-            //$itemAwareEvent->app->append('publishing.list.tables', $this->listOfTables);
-        }
+        ));
     }
 }

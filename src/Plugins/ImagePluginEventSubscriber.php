@@ -78,7 +78,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
         $item = $itemAwareEvent->getItem();
 
         $addImageLabels = in_array('figure', $itemAwareEvent->app->edition('labels') ?: [], true);
-        $parentItemNumber = $item->getItemConfig()->getNumber();
+        $parentItemNumber = $item->getConfigNumber();
 
         $this->listOfImages = [];
 

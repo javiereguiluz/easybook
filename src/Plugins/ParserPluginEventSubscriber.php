@@ -150,7 +150,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             $fuzzyTitle = '/<h' . $entry['level'] . ' id="' . $entry['slug'] . "\">.*<\/h" . $entry['level'] . ">\n\n/";
 
             $labeledTitle = sprintf(
-                "<h%s id=\"%s\">%s%s</h%s>" . PHP_EOL . PHP_EOL,
+                '<h%s id="%s">%s%s</h%s>' . PHP_EOL . PHP_EOL,
                 $entry['level'],
                 $entry['slug'],
                 $entry['label'],
@@ -162,4 +162,3 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
         }
     }
 }
-

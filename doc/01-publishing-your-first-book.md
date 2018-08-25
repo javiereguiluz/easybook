@@ -136,7 +136,7 @@ $ ./book publish easybook-doc-en web
 
  Publishing 'web' edition of 'easybook documentation' book...
 
- [ OK ]  You can access the book in the following directory:
+ You can access the book in:
  <installation-dir>/doc/easybook-doc-en/Output/web
 
  The publishing process took 0.5 seconds

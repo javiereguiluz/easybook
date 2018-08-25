@@ -51,16 +51,23 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private $bookProvider;
 
+    /**
+     * @var string
+     */
+    private $resourcesDir;
+
     public function __construct(
         Toolkit $toolkit,
         Finder $finder,
         FileProvider $fileProvider,
-        BookProvider $bookProvider
+        BookProvider $bookProvider,
+        string $resourcesDir
     ) {
         $this->toolkit = $toolkit;
         $this->finder = $finder;
         $this->fileProvider = $fileProvider;
         $this->bookProvider = $bookProvider;
+        $this->resourcesDir = $resourcesDir;
     }
 
     public function loadContents(): void
@@ -251,21 +258,21 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private function prepareBookCoverImage(string $targetDir): ?array
     {
-        $cover = null;
-
         $image = $this->fileProvider->getCustomCoverImage();
-        if ($image !== null) {
-            [$width, $height, $type] = getimagesize($image);
-
-            $cover = [
-                'height' => $height,
-                'width' => $width,
-                'filePath' => 'images/' . basename($image),
-                'mediaType' => image_type_to_mime_type($type),
-            ];
-
-            $this->filesystem->copy($image, $targetDir . '/' . basename($image));
+        if (! $image) {
+            return null;
         }
+
+        [$width, $height, $type] = getimagesize($image);
+
+        $cover = [
+            'height' => $height,
+            'width' => $width,
+            'filePath' => 'images/' . basename($image),
+            'mediaType' => image_type_to_mime_type($type),
+        ];
+
+        $this->filesystem->copy($image, $targetDir . '/' . basename($image));
 
         return $cover;
     }
@@ -284,25 +291,27 @@ final class Epub2Publisher extends AbstractPublisher
     {
         $this->ensureDirectoryExists($targetDir, 'fonts');
 
-        $fontsDir = $this->app['app.dir.resources'] . '/Fonts/Inconsolata';
+        $fontsDir = $this->resourcesDir . '/Fonts/Inconsolata';
+        if (! file_exists($fontsDir)) {
+            return [];
+        }
+
         $fontsData = [];
 
-        if (file_exists($fontsDir)) {
-            $fonts = $this->finder->files()
-                ->name('*.ttf')
-                ->in($fontsDir)
-                ->getIterator();
+        $fonts = $this->finder->files()
+            ->name('*.ttf')
+            ->in($fontsDir)
+            ->getIterator();
 
-            $i = 1;
-            foreach ($fonts as $font) {
-                $this->filesystem->copy($font->getPathName(), $targetDir . '/' . $font->getFileName());
+        $i = 0;
+        foreach ($fonts as $font) {
+            $this->filesystem->copy($font->getPathName(), $targetDir . DIRECTORY_SEPARATOR . $font->getFileName());
 
-                $fontsData[] = [
-                    'id' => 'font-' . $i++,
-                    'filePath' => 'fonts/' . $font->getFileName(),
-                    'mediaType' => finfo_file(finfo_open(FILEINFO_MIME_TYPE), $font->getPathName()),
-                ];
-            }
+            $fontsData[] = [
+                'id' => 'font-' . ++$i,
+                'filePath' => 'fonts/' . $font->getFileName(),
+                'mediaType' => finfo_file(finfo_open(FILEINFO_MIME_TYPE), $font->getPathName()),
+            ];
         }
 
         return $fontsData;
@@ -320,14 +329,12 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private function normalizePageNames(array $items): void
     {
-//        $itemsWithNormalizedPageNames = [];
-
         foreach ($items as $item) {
-            $itemPageName = isset($item['config']['number'])
-                ? $item['config']['element'] . ' ' . $item['config']['number']
-                : $item['config']['element'];
+            $itemPageName = $item->getConfigNumber()
+                ? $item->getConfigElement() . ' ' . $item->getConfigNumber()
+                : $item->getConfigElement();
 
-            $item['page_name'] = $this->slugger->slugifyUniquely($itemPageName);
+            $item->setPageName($this->slugger->slugifyUniquely($itemPageName));
         }
     }
 

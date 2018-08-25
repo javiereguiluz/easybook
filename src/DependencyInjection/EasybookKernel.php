@@ -82,54 +82,6 @@ final class EasybookKernel extends Kernel
         return sys_get_temp_dir() . '/_easybook_log';
     }
 
-//    /**
-//     * Shortcut method to get the label of any element type.
-//     *
-//     * @param string $element   The element type ('chapter', 'foreword', ...)
-//     * @param array  $variables Optional variables used to render the label
-//     *
-//     * @return string The label of the element or an empty string
-//     */
-//    public function getLabel($element, $variables = array())
-//    {
-//        $label = isset($this['labels']['label'][$element])
-//            ? $this['labels']['label'][$element]
-//            : '';
-//
-//        // some elements (mostly chapters and appendices) have a different label for each level (h1, ..., h6)
-//        if (is_array($label)) {
-//            $index = $variables['item']['level'] - 1;
-//            $label = $label[$index];
-//        }
-//
-//        return $this->renderString($label, $variables);
-//    }
-
-//    /**
-//     * Shortcut method to get the title of any element type.
-//     *
-//     * @param string $element The element type ('chapter', 'foreword', ...)
-//     *
-//     * @return string The title of the element or an empty string
-//     */
-//    public function getTitle($element)
-//    {
-//        return isset($this['titles']['title'][$element])
-//            ? $this['titles']['title'][$element]
-//            : '';
-    ////    }
-//
-//        if (null !== $bookConfig = $this['publishing.book.config']) {
-//            $twig->addGlobal('book', $bookConfig['book']);
-//
-//            $publishingEdition = $this['publishing.edition'];
-//            $editions = $this->book('editions');
-//            $twig->addGlobal('edition', $editions[$publishingEdition]);
-//        }
-//
-//        return $twig->render($string, $variables);
-//    }
-
     /**
      * @return BundleInterface[]
      */

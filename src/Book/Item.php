@@ -54,6 +54,13 @@ final class Item
     private $tableOfContents = [];
 
     /**
+     * Required by epub2
+     *
+     * @var string
+     */
+    private $pageName;
+
+    /**
      * @param mixed[] $tableOfContents
      */
     public function __construct(
@@ -64,10 +71,28 @@ final class Item
         array $tableOfContents
     ) {
         $this->itemConfig = $itemConfig;
+
         $this->original = $original;
+        $this->content = $original;
+
         $this->label = $label;
         $this->setTitle($title);
         $this->tableOfContents = $tableOfContents;
+    }
+
+    public static function createFromConfigNumberAndContent(int $itemNumber, string $content): self
+    {
+        $itemConfig = new ItemConfig('', '', '', $itemNumber, '');
+
+        return new self($itemConfig, $content, '', '', []);
+    }
+
+    /**
+     * @todo use "page_name"
+     */
+    public function setPageName(string $pageName): void
+    {
+        $this->pageName = $pageName;
     }
 
     public function getItemConfig(): ItemConfig
@@ -124,6 +149,21 @@ final class Item
     public function changeLabel(string $label): void
     {
         $this->label = $label;
+    }
+
+    public function getConfigNumber(): ?int
+    {
+        return $this->itemConfig->getNumber();
+    }
+
+    public function getConfigElement(): string
+    {
+        return $this->itemConfig->getElement();
+    }
+
+    public function getPageName(): ?string
+    {
+        return $this->pageName;
     }
 
     private function setTitle(string $title): void

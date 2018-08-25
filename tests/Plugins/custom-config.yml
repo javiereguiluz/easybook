@@ -1,7 +1,6 @@
 parameters:
     book_slug: 'test_book'
     publishing.edition: 'test_edition'
-    book_slug: 'test_book'
     language: 'en'
     editions:
         test_edition:

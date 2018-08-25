@@ -24,7 +24,7 @@ final class NewCommandTest extends AbstractContainerAwareTestCase
         $tester = $this->createNewBook();
 
         $this->assertRegExp(
-            '/.* OK .* You can start writing your book in the following directory/',
+            '/You can start writing your book in the following directory/',
             $tester->getDisplay(),
             'The book skeleton has been generated'
         );
@@ -87,11 +87,14 @@ final class NewCommandTest extends AbstractContainerAwareTestCase
 
     public function testGenerateTheSameBookTwoConsecutivetimes(): void
     {
-        $tester = $this->createNewBook();
+        // first book
+        $this->createNewBook();
+
+        // second book
         $tester = $this->createNewBook();
 
         $this->assertRegExp(
-            '/.* OK .* You can start writing your book in the following directory/',
+            '/You can start writing your book in the following directory/',
             $tester->getDisplay(),
             'The second book skeleton has been generated'
         );
