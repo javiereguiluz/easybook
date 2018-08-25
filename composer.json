@@ -1,22 +1,12 @@
 {
     "name": "easybook/easybook",
-    "bin": [
-        "bin/easybook"
-    ],
-    "description": "Book publishing application",
-    "keywords": ["book", "publish", "ebook", "e-book", "documentation", "pdf", "epub"],
-    "homepage": "http://easybook-project.org",
+    "description": "Turns Markdown files into MOBI, EPUB and PDF book formats.",
+    "keywords": ["book", "publish", "ebook", "e-book", "mobi", "pdf", "epub"],
     "license": "MIT",
+    "bin": ["bin/easybook"],
     "authors": [
-        {
-            "name": "Javier Eguiluz",
-            "email": "javier.eguiluz@gmail.com",
-            "homepage": "http://javiereguiluz.com"
-        },
-        {
-            "name": "Contributors",
-            "homepage": "http://github.com/javiereguiluz/easybook/blob/master/CONTRIBUTORS.md"
-        }
+        { "name": "Javier Eguiluz", "email": "javier.eguiluz@gmail.com", "homepage": "http://javiereguiluz.com" },
+        { "name": "Contributors", "homepage": "http://github.com/javiereguiluz/easybook/blob/master/CONTRIBUTORS.md" }
     ],
     "require": {
         "php": "^7.1",
@@ -50,7 +40,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Easybook\\": "src"
+            "Easybook\\": "src",
+            "Easybook\\Twig\\": "packages/Twig/src"
         }
     },
     "autoload-dev": {
