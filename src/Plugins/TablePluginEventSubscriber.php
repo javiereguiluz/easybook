@@ -27,11 +27,6 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
     private $slugger;
 
     /**
-     * @var string[]
-     */
-    private $tables = [];
-
-    /**
      * @var int
      */
     private $counter = 0;
@@ -41,11 +36,21 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
      */
     private $tablesProvider;
 
-    public function __construct(Renderer $renderer, Slugger $slugger, TablesProvider $tablesProvider)
-    {
+    /**
+     * @var string
+     */
+    private $tableLabel;
+
+    public function __construct(
+        Renderer $renderer,
+        Slugger $slugger,
+        TablesProvider $tablesProvider,
+        string $tableLabel
+    ) {
         $this->renderer = $renderer;
         $this->slugger = $slugger;
         $this->tablesProvider = $tablesProvider;
+        $this->tableLabel = $tableLabel;
     }
 
     public static function getSubscribedEvents(): Iterator
@@ -71,23 +76,22 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
 //            // tady
 //        }
 
-        $addTableLabels = in_array('table', $itemAwareEvent->app->edition('labels') ?: [], true);
+//        $addTableLabels = in_array('table', $itemAwareEvent->app->edition('labels') ?: [], true);
         $parentItemNumber = $item->getConfigNumber();
 
-        $this->tables = [];
         $this->counter = 0;
 
         $item->changeContent(Strings::replace(
             $item->getContent(),
             "#(?<content><table.*\n<\/table>)#Ums",
-            function ($matches) use ($itemAwareEvent, $addTableLabels, $parentItemNumber) {
+            function ($matches) use ($itemAwareEvent, $parentItemNumber) {
                 // prepare table parameters for template and label
                 $this->counter++;
                 $parameters = [
                     'item' => [
                         'caption' => '',
                         'content' => $matches['content'],
-                        'label' => '',
+                        'label' => $this->tableLabel,
                         'number' => $this->counter,
                         'slug' => $this->slugger->slugify('Table ' . $parentItemNumber . '-' . $this->counter),
                     ],
@@ -96,14 +100,7 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
                     ],
                 ];
 
-                // the publishing edition wants to label tables
-                if ($addTableLabels) {
-                    $label = $itemAwareEvent->app->getLabel('table', $parameters);
-                    $parameters['item']['label'] = $label;
-                }
-
                 // add table details to the list-of-tables
-                $this->tables[] = $parameters;
                 $this->tablesProvider->addTable($parameters);
 
                 return $this->renderer->render('table.twig', $parameters);

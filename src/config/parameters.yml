@@ -5,6 +5,8 @@ parameters:
     # to be configured by the user
     book_slug: ''
 
+    table_label: 'Table {{ item.number }}.{{ counter }}'
+
     # global directories location
     resources_dir: '%kernel.project_dir%/app/Resources'
     translations_dir: '%kernel.project_dir%/app/Resources/Translations'
