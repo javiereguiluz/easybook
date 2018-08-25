@@ -40,8 +40,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Easybook\\": "src",
-            "Easybook\\Twig\\": "packages/Twig/src"
+            "Easybook\\": "src"
         }
     },
     "autoload-dev": {

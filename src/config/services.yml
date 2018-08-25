@@ -21,23 +21,6 @@ services:
             - ['enable_line_numbers', ['!php/const GESHI_NO_LINE_NUMBERS']]
             - ['enable_keyword_links', [false]]
 
-    Twig\Environment:
-        arguments:
-            $options:
-                autoescape: false
-                cache: '%kernel.cache_dir%/Twig'
-                debug: '%kernel.debug%'
-                strict_variables: '%kernel.debug%'
-
-    Twig_Loader_Filesystem:
-        class: 'Twig_Loader_Filesystem'
-        factory: ['@Easybook\Twig\TwigLoaderFactory', 'create']
-#        if (null !== $bookConfig = $app['publishing.book.config']) {
-#        $twig->addGlobal('book', $bookConfig['book']);
-#        $publishingEdition = $app['publishing.edition'];
-#        $editions = $app->book('editions');
-#        $twig->addGlobal('edition', $editions[$publishingEdition]);
-
     Michelf\MarkdownExtra: ~
 
     Symplify\PackageBuilder\Parameter\ParameterProvider: ~

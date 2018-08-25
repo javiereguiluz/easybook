@@ -105,13 +105,4 @@ final class Toolkit
 
         return $zip->close();
     }
-
-    public function camelize(string $string): string
-    {
-        return preg_replace_callback('#(^|_|\.)+(.)#', function ($match) {
-            $camelized = ($match[1] === '.' ? '_' : '') . strtoupper($match[2]);
-
-            return ucfirst($camelized);
-        }, $string);
-    }
 }

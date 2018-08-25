@@ -1,0 +1,12 @@
+services:
+    _defaults:
+        public: true
+        autowire: true
+
+    Twig_LoaderInterface:
+        factory: ['@Easybook\Twig\TwigLoaderFactory', 'create']
+
+    Twig\Environment:
+        arguments:
+            cache: '%kernel.cache_dir%/twig'
+            autoescape: false
