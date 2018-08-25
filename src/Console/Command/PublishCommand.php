@@ -2,8 +2,8 @@
 
 namespace Easybook\Console\Command;
 
+use Easybook\Book\Book;
 use Easybook\Configuration\Option;
-use Easybook\Events\EasybookEvents as Events;
 use Easybook\Publishers\PublisherProvider;
 use Easybook\Validator\Validator;
 use RuntimeException;
@@ -13,19 +13,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
 use Symplify\PackageBuilder\Console\Command\CommandNaming;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 final class PublishCommand extends Command
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
     /**
      * @var string
      */
@@ -52,19 +45,17 @@ final class PublishCommand extends Command
     private $parameterProvider;
 
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
         string $bookTitle,
         Validator $validator,
         PublisherProvider $publisherProvider,
         SymfonyStyle $symfonyStyle,
         ParameterProvider $parameterProvider
     ) {
-        $this->eventDispatcher = $eventDispatcher;
+        parent::__construct();
+
         $this->bookTitle = $bookTitle;
         $this->validator = $validator;
         $this->publisherProvider = $publisherProvider;
-
-        parent::__construct();
         $this->symfonyStyle = $symfonyStyle;
         $this->parameterProvider = $parameterProvider;
     }
@@ -73,8 +64,8 @@ final class PublishCommand extends Command
     {
         $this->setName(CommandNaming::classToName(self::class));
         $this->setDescription('Publishes an edition of a book');
-        $this->addArgument(Option::SLUG, InputArgument::REQUIRED, '');
-        $this->addOption(Option::DIR, '', InputOption::VALUE_REQUIRED, 'Path of the documentation directory');
+        $this->addArgument(Option::SLUG, InputArgument::REQUIRED, 'Outpu slug');
+        $this->addOption(Option::DIR, '', InputOption::VALUE_REQUIRED);
 
         $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookPublishCommandHelp.txt'));
     }
@@ -82,10 +73,10 @@ final class PublishCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $slug = $input->getArgument('slug');
-        $outputDir = $input->getOption('dir'); // ?: $this->app['app.dir.doc'];
+        $outputDir = $input->getOption('dir');
 
         // validate book dir and add some useful values to the app configuration
-        $bookDir = $this->validator->validateBookDir($slug, $outputDir);
+        $this->validator->validateBookDir($slug, $outputDir);
 
         $this->parameterProvider->changeParameter('source_book_dir', $bookDir);
         $this->parameterProvider->changeParameter('book_resources_dir', $bookDir . '/Resources');
@@ -96,10 +87,12 @@ final class PublishCommand extends Command
         // execute the 'before_publish' scripts
         $this->runScripts((array) $this->parameterProvider->provideParameter('before_publish'), $outputDir);
 
-        // book publishing starts
-        $this->eventDispatcher->dispatch(Events::PRE_PUBLISH, new Event());
+        // create book
 
-        // just one edition?
+        /** @var Book $book */
+        foreach ($book->getEditions() as $edition) {
+            // ...
+        }
 
         $this->symfonyStyle->note(sprintf(
             'Publishing <comment>%s</comment> edition of <info>%s</info> book...',
@@ -113,14 +106,12 @@ final class PublishCommand extends Command
             $publisher->publishBook();
         }
 
-        $this->eventDispatcher->dispatch(Events::POST_PUBLISH, new Event());
-
         $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'), $outputDir);
 
-        $this->symfonyStyle->success(
-            'You can access the book in:' .
+        $this->symfonyStyle->success(sprintf(
+            'You can access the book in: "%s"',
             realpath($this->app['publishing.dir.output'])
-        );
+        ));
     }
 
     /**

@@ -63,7 +63,7 @@ final class NewCommand extends Command
         $this->setName(CommandNaming::classToName(self::class));
         $this->setDescription('Creates a new empty book');
 
-        $this->addArgument(Option::TITLE, null, InputOption::VALUE_REQUIRED, 'Name of your book');
+        $this->addArgument(Option::TITLE, InputOption::VALUE_REQUIRED, 'Name of your book');
 
         $this->addOption(Option::DIR, null, InputOption::VALUE_REQUIRED, 'Path of the documentation directory');
         $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookNewCommandHelp.txt'));
@@ -75,8 +75,6 @@ final class NewCommand extends Command
         if ($dir === null) {
             throw new MissingOptionException(sprintf('"%s" needs to be set', Option::DIR));
         }
-
-        $this->validateDirExistsAndWritable($dir);
 
         $bookDirectory = $dir . DIRECTORY_SEPARATOR . $this->slugger->slugify($this->bookTitle);
         $this->generateToDirectory($bookDirectory);
