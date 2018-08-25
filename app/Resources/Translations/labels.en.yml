@@ -1,7 +1,7 @@
 # English translation of the strings managed by easybook
-# todo use classic "|trans}" in Twig rendering
 parameters:
-    translation:
+    # kind of translations + blank replaces at the same time
+    labels:
         appendix:
             - 'Appendix {{ item.number }}'
             - '{{ item.counters[0:2]|join(".") }}' # 1.1
@@ -18,36 +18,37 @@ parameters:
             - '{{ item.counters[0:5]|join(".") }}' # 1.1.1.1.1
             - '{{ item.counters[0:6]|join(".") }}' # 1.1.1.1.1.1
 
-        figure:          'Figure {{ element.number }}.{{ item.number }}'
-        part:            'Part {{ item.number }}'
-        table:           'Table {{ element.number }}.{{ item.number }}'
+        figure: 'Figure {{ element.number }}.{{ item.number }}'
+        part: 'Part {{ item.number }}'
+        table: 'Table {{ element.number }}.{{ item.number }}'
 
+        # @todo why is this empty?
         acknowledgement: ''
-        afterword:       ''
-        author:          ''
-        conclusion:      ''
-        cover:           ''
-        dedication:      ''
-        edition:         ''
-        epilogue:        ''
-        foreword:        ''
-        glossary:        ''
-        introduction:    ''
-        preface:         ''
-        prologue:        ''
-        title:           ''
-        toc:             ''
+        afterword: ''
+        author: ''
+        conclusion: ''
+        cover: ''
+        dedication: ''
+        edition: ''
+        epilogue: ''
+        foreword: ''
+        glossary: ''
+        introduction: ''
+        preface: ''
+        prologue: ''
+        title: ''
+        toc: ''
 
         # Navigation elements
-        index:           'Index'
-        next:            'Next'
-        previous:        'Previous'
+        index: 'Index'
+        next: 'Next'
+        previous: 'Previous'
 
         # Special
-        date_format:     'm/d/Y'
+        date_format: 'm/d/Y'
         datetime_format: 'm/d/Y H:i'
 
         # Other
-        by:              'by'
-        page:            'page'
-        blank:           'This Page Intentionally Left Blank'
+        by: 'by'
+        page: 'page'
+        blank: 'This Page Intentionally Left Blank'

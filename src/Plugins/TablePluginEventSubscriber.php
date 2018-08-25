@@ -37,20 +37,23 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
     private $tablesProvider;
 
     /**
-     * @var string
+     * @var mixed[]
      */
-    private $tableLabel;
+    private $labels = [];
 
+    /**
+     * @param mixed[] $labels
+     */
     public function __construct(
         Renderer $renderer,
         Slugger $slugger,
         TablesProvider $tablesProvider,
-        string $tableLabel
+        array $labels
     ) {
         $this->renderer = $renderer;
         $this->slugger = $slugger;
         $this->tablesProvider = $tablesProvider;
-        $this->tableLabel = $tableLabel;
+        $this->labels = $labels;
     }
 
     public static function getSubscribedEvents(): Iterator
@@ -75,11 +78,13 @@ final class TablePluginEventSubscriber implements EventSubscriberInterface
             function (array $matches) use ($parentItemNumber): string {
                 // prepare table parameters for template and label
                 $this->counter++;
+
+                // @todo object?
                 $parameters = [
                     'item' => [
                         'caption' => '',
                         'content' => $matches['content'],
-                        'label' => $this->tableLabel,
+                        'label' => $this->labels['table'],
                         'number' => $this->counter,
                         'slug' => $this->slugger->slugify('Table ' . $parentItemNumber . '-' . $this->counter),
                     ],

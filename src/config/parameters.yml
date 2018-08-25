@@ -1,12 +1,11 @@
 imports:
     - { resource: 'parameters/*.yml' }
+    - { resource: '../../app/Resources/Translations/labels.en.yml' }
 
 parameters:
     # to be configured by the user
     book_slug: ''
     book_temporary_cache_dir: '%kernel.project_dir%/_temp_books'
-
-    table_label: 'Table {{ element.number }}.{{ item.number }}'
 
     # global directories location
     resources_dir: '%kernel.project_dir%/app/Resources'
