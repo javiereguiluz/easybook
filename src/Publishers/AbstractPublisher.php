@@ -8,9 +8,9 @@ use Easybook\Book\ItemConfig;
 use Easybook\Book\Provider\BookProvider;
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ItemAwareEvent;
-use Easybook\Parsers\ParserInterface;
 use Easybook\Templating\Renderer;
 use Easybook\Util\Slugger;
+use Michelf\MarkdownExtra;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -54,14 +54,14 @@ abstract class AbstractPublisher implements PublisherInterface
     private $publishingDirOutput;
 
     /**
-     * @var ParserInterface
-     */
-    private $parser;
-
-    /**
      * @var BookProvider
      */
     private $bookProvider;
+
+    /**
+     * @var MarkdownExtra
+     */
+    private $markdownExtra;
 
     /**
      * @required
@@ -71,7 +71,7 @@ abstract class AbstractPublisher implements PublisherInterface
         Filesystem $filesystem,
         Renderer $renderer,
         Slugger $slugger,
-        ParserInterface $parser,
+        MarkdownExtra $markdownExtra,
         string $publishingDirOutput,
         string $bookContentsDir,
         BookProvider $bookProvider
@@ -80,7 +80,7 @@ abstract class AbstractPublisher implements PublisherInterface
         $this->filesystem = $filesystem;
         $this->renderer = $renderer;
         $this->slugger = $slugger;
-        $this->parser = $parser;
+        $this->markdownExtra = $markdownExtra;
         $this->publishingDirOutput = $publishingDirOutput;
         $this->bookContentsDir = $bookContentsDir;
         $this->bookProvider = $bookProvider;
@@ -108,7 +108,7 @@ abstract class AbstractPublisher implements PublisherInterface
             $itemAwareEvent = new ItemAwareEvent($item);
             $this->eventDispatcher->dispatch(EasybookEvents::PRE_PARSE, $itemAwareEvent);
 
-            $item->changeContent($this->parser->transform($item->getOriginal()));
+            $item->changeContent($this->markdownExtra->transform($item->getOriginal()));
 
             $this->eventDispatcher->dispatch(EasybookEvents::POST_PARSE, $itemAwareEvent);
         }

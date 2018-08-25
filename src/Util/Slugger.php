@@ -13,9 +13,7 @@ final class Slugger
 
     public function slugify(string $string): string
     {
-        $slug = Strings::webalize($string);
-        $this->generatedSlugs[] = $slug;
-        return $slug;
+        return Strings::webalize($string);
     }
 
     /**
@@ -26,6 +24,9 @@ final class Slugger
     public function slugifyUniquely(string $string): string
     {
         $slug = Strings::webalize($string);
+
+        $this->generatedSlugs[] = $slug;
+
         // ensure the uniqueness of the slug
         $occurrences = array_count_values($this->generatedSlugs);
         $count = $occurrences[$slug] ?? 0;

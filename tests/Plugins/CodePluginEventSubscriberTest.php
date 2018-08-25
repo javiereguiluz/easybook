@@ -5,17 +5,13 @@ namespace Easybook\Tests\Plugins;
 use Easybook\Book\Item;
 use Easybook\Book\Provider\EditionProvider;
 use Easybook\Events\ItemAwareEvent;
-use Easybook\Parsers\MarkdownParser;
 use Easybook\Plugins\CodePluginEventSubscriber;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Iterator;
+use Michelf\MarkdownExtra;
 
 final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
 {
-    /**
-     * @var MarkdownParser
-     */
-    private $markdownParser;
 
     /**
      * @var CodePluginEventSubscriber
@@ -27,9 +23,14 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
      */
     private $editionProvider;
 
+    /**
+     * @var MarkdownExtra
+     */
+    private $markdownExtra;
+
     protected function setUp(): void
     {
-        $this->markdownParser = $this->container->get(MarkdownParser::class);
+        $this->markdownExtra = $this->container->get(MarkdownExtra::class);
         $this->codePluginEventSubscriber = $this->container->get(CodePluginEventSubscriber::class);
         $this->editionProvider = $this->container->get(EditionProvider::class);
     }
@@ -51,7 +52,7 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
         $this->codePluginEventSubscriber->parseCodeBlocks($itemAwareEvent);
 
         // parse the item original content
-        $item->changeContent($this->markdownParser->transform($item->getContent()));
+        $item->changeContent($this->markdownExtra->transform($item->getContent()));
 
         $this->assertStringEqualsFile(__DIR__ . '/fixtures/code/' . $expectedFilePath, $item->getContent());
     }
