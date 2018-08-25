@@ -36,11 +36,6 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
         yield EasybookEvents::PRE_PARSE => ['parseCodeBlocks', -500];
     }
 
-    /**
-     * It parses different code blocks types.
-     *
-     * @see 'Code block types' section in easybook-doc-en/05-publishing-html-books.md
-     */
     public function parseCodeBlocks(ItemAwareEvent $itemAwareEvent): void
     {
         // the syntax highlight is stricly not recommended for epub formats

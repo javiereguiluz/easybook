@@ -11,4 +11,6 @@ interface PublisherInterface
      * contents, transform them into HTML files, etc.).
      */
     public function publishBook(): void;
+
+    public function decorateContents(): void;
 }

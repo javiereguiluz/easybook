@@ -6,7 +6,7 @@ use Easybook\Book\Content;
 use Easybook\Book\Item;
 use Easybook\Book\ItemConfig;
 use Easybook\Book\Provider\BookProvider;
-use Easybook\Events\EasybookEvents as Events;
+use Easybook\Events\EasybookEvents;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Parsers\ParserInterface;
 use Easybook\Templating\Renderer;
@@ -99,20 +99,18 @@ abstract class AbstractPublisher implements PublisherInterface
     }
 
     /**
-     * It parses the original (Markdown) book contents and transforms
-     * them into the output (HTML) format. It also notifies several
-     * events to allow plugins modify the content before and/or after
-     * the transformation.
+     * It parses the original (Markdown) book contents and transforms  them into the output (HTML) format.
+     * It also notifies several events to allow plugins modify the content before and/or after the transformation.
      */
     public function parseContents(): void
     {
         foreach ($this->publishingItems as $item) {
-            $parseEvent = new ItemAwareEvent($item);
-            $this->eventDispatcher->dispatch(Events::PRE_PARSE, $parseEvent);
+            $itemAwareEvent = new ItemAwareEvent($item);
+            $this->eventDispatcher->dispatch(EasybookEvents::PRE_PARSE, $itemAwareEvent);
 
             $item->changeContent($this->parser->transform($item->getOriginal()));
 
-            $this->eventDispatcher->dispatch(Events::POST_PARSE, $parseEvent);
+            $this->eventDispatcher->dispatch(EasybookEvents::POST_PARSE, $itemAwareEvent);
         }
     }
 
@@ -122,16 +120,9 @@ abstract class AbstractPublisher implements PublisherInterface
     public function decorateContents(): void
     {
         foreach ($this->publishingItems as $item) {
-            $itemAwareEvent = new ItemAwareEvent($item);
-
-            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $itemAwareEvent);
-
-            $itemConfig = $item->getItemConfig();
-            $item->changeContent($this->renderer->render($itemConfig->getElement() . '.twig', [
+            $item->changeContent($this->renderer->render($item->getConfigElement() . '.twig', [
                 'item' => $item,
             ]));
-
-            $this->eventDispatcher->dispatch(Events::POST_DECORATE, $itemAwareEvent);
         }
     }
 

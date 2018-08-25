@@ -5,8 +5,6 @@ namespace Easybook\Publishers;
 use Easybook\Book\Item;
 use Easybook\Book\Provider\BookProvider;
 use Easybook\Book\Provider\FileProvider;
-use Easybook\Events\EasybookEvents as Events;
-use Easybook\Events\ItemAwareEvent;
 use Easybook\Util\Toolkit;
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
@@ -98,11 +96,7 @@ final class Epub2Publisher extends AbstractPublisher
      */
     public function decorateContents(): void
     {
-        foreach ($this->publishingItems as $item) {
-            $parseEvent = new ItemAwareEvent($item);
-            $this->eventDispatcher->dispatch(Events::PRE_DECORATE, $parseEvent);
-            $this->eventDispatcher->dispatch(Events::POST_DECORATE, $parseEvent);
-        }
+        return;
     }
 
     public function assembleBook(): void
