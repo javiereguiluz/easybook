@@ -4,6 +4,7 @@ namespace Easybook\Book\Provider;
 
 use Easybook\Book\Book;
 use Easybook\Book\Factory\BookFactory;
+use Easybook\Exception\Configuration\MissingParameterException;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 final class BookProvider
@@ -33,6 +34,15 @@ final class BookProvider
     {
         if ($this->book) {
             return $this->book;
+        }
+
+        $bookParameter = $this->parameterProvider->provideParameter('book');
+        if (! is_array($bookParameter)) {
+            throw new MissingParameterException(sprintf(
+                'Parameter "%s" is missing, have you add it under "parameters > %s" section?',
+                'book',
+                'book'
+            ));
         }
 
         $this->book = $this->bookFactory->createFromBookParameter($this->parameterProvider->provideParameter('book'));

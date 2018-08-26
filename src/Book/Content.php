@@ -15,7 +15,7 @@ final class Content
     private $number;
 
     /**
-     * @var null|string
+     * @var string|null
      */
     private $content;
 

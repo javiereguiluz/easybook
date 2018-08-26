@@ -18,7 +18,7 @@ final class ItemAwareEvent extends Event
     private $item;
 
     /**
-     * @var null|string
+     * @var string|null
      */
     private $editionFormat;
 

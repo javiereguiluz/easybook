@@ -9,7 +9,6 @@ use Easybook\Configuration\Option;
 use Easybook\Exception\Process\BeforeOrAfterPublishScriptFailedException;
 use Easybook\Filesystem\FilesystemGuard;
 use Easybook\Publishers\PublisherProvider;
-use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,10 +40,12 @@ final class PublishCommand extends Command
      * @var FilesystemGuard
      */
     private $filesystemGuard;
+
     /**
      * @var BookProvider
      */
     private $bookProvider;
+
     /**
      * @var Filesystem
      */
@@ -56,7 +57,7 @@ final class PublishCommand extends Command
         ParameterProvider $parameterProvider,
         FilesystemGuard $filesystemGuard,
         BookProvider $bookProvider,
-    Filesystem $filesystem
+        Filesystem $filesystem
     ) {
         parent::__construct();
 
@@ -87,7 +88,7 @@ final class PublishCommand extends Command
 
         $book = $this->bookProvider->provide();
 
-        foreach ($book->getEditions() as $edition)  {
+        foreach ($book->getEditions() as $edition) {
             $this->publishEdition($bookDirectory, $edition, $book);
         }
 
@@ -121,29 +122,22 @@ final class PublishCommand extends Command
 
     private function publishEdition(string $bookDirectory, Edition $edition, Book $book): void
     {
-        $bookEditionDirectory = $bookDirectory . DIRECTORY_SEPARATOR . 'published' . DIRECTORY_SEPARATOR . $edition->getFormat();
-
+        $bookEditionDirectory = $bookDirectory . DIRECTORY_SEPARATOR . 'output' . DIRECTORY_SEPARATOR . $edition->getFormat();
         $this->filesystem->mkdir($bookEditionDirectory);
 
         $this->runScripts($edition->getBeforePublishScripts(), $bookEditionDirectory);
 
-        // ... publish
         $this->symfonyStyle->note(sprintf(
             'Publishing <comment>%s</comment> edition of <info>%s</info> book...',
             $edition->getFormat(),
             $book->getName()
         ));
 
-//        foreach ($this->publisherProvider->getPublishers() as $publisher) {
-//            $publisher->publishBook();
-//        }
+        $publisher = $this->publisherProvider->provideByFormat($edition->getFormat());
+        $publisher->publishBook();
 
         $this->runScripts($edition->getAfterPublishScripts(), $bookEditionDirectory);
 
-
-        $this->symfonyStyle->success(sprintf(
-            'You can access the book in: "%s"',
-            realpath($bookEditionDirectory)
-        ));
+        $this->symfonyStyle->success(sprintf('You can access the book in: "%s"', realpath($bookEditionDirectory)));
     }
 }

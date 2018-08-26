@@ -6,8 +6,6 @@ use Easybook\Configuration\Option;
 use Easybook\Console\Command\NewCommand;
 use Easybook\Exception\Filesystem\DirectoryNotEmptyException;
 use Easybook\Tests\AbstractContainerAwareTestCase;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Tester\CommandTester;
 
 final class NewCommandTest extends AbstractContainerAwareTestCase
@@ -20,9 +18,6 @@ final class NewCommandTest extends AbstractContainerAwareTestCase
     protected function setUp(): void
     {
         $this->bookDirectory = sys_get_temp_dir() . '/_easybook_tests/' . uniqid() . '/book/my-first-book';
-
-        $symfonyStyle = $this->container->get(SymfonyStyle::class);
-        $symfonyStyle->setVerbosity(OutputInterface::VERBOSITY_QUIET);
     }
 
     protected function tearDown(): void

@@ -2,7 +2,8 @@
 
 namespace Easybook\Exception\Process;
 
-final class BeforeOrAfterPublishScriptFailedException extends \Exception
-{
+use Exception;
 
+final class BeforeOrAfterPublishScriptFailedException extends Exception
+{
 }

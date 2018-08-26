@@ -4,6 +4,6 @@ namespace Easybook\Exception\Configuration;
 
 use Exception;
 
-final class MissingOptionException extends Exception
+final class MissingParameterException extends Exception
 {
 }

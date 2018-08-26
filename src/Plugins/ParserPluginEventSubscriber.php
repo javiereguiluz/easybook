@@ -142,7 +142,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
         $item->changeLabel($item->getTableOfContents()[0]['label']);
 
         // add section labels to the content
-        foreach ($item->getTableOfContents() as $i => $entry) {
+        foreach ($item->getTableOfContents() as $entry) {
             // the parsed title can be different from the TOC entry title
             // that's the case for the titles with markup code inside (* ` ** etc.)
             // thus, the replacement must be done based on a fuzzy title that
@@ -154,7 +154,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
                 $entry['level'],
                 $entry['slug'],
                 $entry['label'],
-                ($entry['label'] !== '') ? ' ' . $entry['title'] : $entry['title'],
+                $entry['label'] !== '' ? ' ' . $entry['title'] : $entry['title'],
                 $entry['level']
             );
 

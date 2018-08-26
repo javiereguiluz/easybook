@@ -13,6 +13,7 @@ final class Edition
      * @var string[]
      */
     private $afterPublishScripts = [];
+
     /**
      * @var string
      */

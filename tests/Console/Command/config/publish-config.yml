@@ -1,0 +1,6 @@
+parameters:
+    book:
+        name: 'Some Book'
+        editions:
+            anything:
+                format: 'epub'

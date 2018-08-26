@@ -13,33 +13,20 @@ final class PublisherProvider
 
     public function addPublisher(PublisherInterface $publisher): void
     {
-        $this->publishers[] = $publisher;
+        $this->publishers[strtolower($publisher->getFormat())] = $publisher;
     }
 
     public function provideByFormat(string $format): PublisherInterface
     {
-        foreach ($this->publishers as $publisher) {
-            if (strtolower($publisher->getFormat()) === strtolower($format)) {
-                return $publisher;
-            }
+        $format = strtolower($format);
+        if (isset($this->publishers[$format])) {
+            return $this->publishers[$format];
         }
-
-        $supportedFormats = array_map(function (PublisherInterface $publisher) {
-            return $publisher->getFormat();
-        }, $this->publishers);
 
         throw new FormatPublisherNotSupportedException(sprintf(
             'Unknown "%s" format. Try one of "%s".',
             $format,
-            implode('", "', $supportedFormats)
+            implode('", "', array_keys($this->publishers))
         ));
-    }
-
-    /**
-     * @return PublisherInterface[]
-     */
-    public function getPublishers(): array
-    {
-        return $this->publishers;
     }
 }

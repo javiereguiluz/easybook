@@ -67,14 +67,14 @@ final class Book
         return $this->slug;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     private function setName(string $name): void
     {
         $this->name = $name;
         $this->slug = Strings::webalize($name);
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 }

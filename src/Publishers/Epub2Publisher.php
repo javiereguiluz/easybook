@@ -254,9 +254,9 @@ final class Epub2Publisher extends AbstractPublisher
         foreach ($images as $image) {
             $this->filesystem->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
 
-            // @todo object
+            // @todo object?
             $imagesData[] = [
-                'id' => 'figure-' . $i++,
+                'id' => 'figure-' . ++$i,
                 'filePath' => 'images/' . $image->getFileName(),
                 'mediaType' => 'image/' . pathinfo($image->getFilename(), PATHINFO_EXTENSION),
             ];
