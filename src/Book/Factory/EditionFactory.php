@@ -3,14 +3,27 @@
 namespace Easybook\Book\Factory;
 
 use Easybook\Book\Edition;
+use Easybook\Guard\EditionGuard;
 
 final class EditionFactory
 {
     /**
+     * @var EditionGuard
+     */
+    private $editionGuard;
+
+    public function __construct(EditionGuard $editionGuard)
+    {
+        $this->editionGuard = $editionGuard;
+    }
+
+    /**
      * @param mixed[] $editionParameter
      */
-    public function createFromEditionParameter(array $editionParameter): Edition
+    public function createFromEditionParameter(array $editionParameter, string $name): Edition
     {
+        $this->editionGuard->ensureEditionParameterHasKey($editionParameter, 'format', $name);
+
         // @todo require params
         $edition = new Edition($editionParameter['format']);
 

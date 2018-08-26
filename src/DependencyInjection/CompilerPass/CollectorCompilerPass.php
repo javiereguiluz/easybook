@@ -2,8 +2,8 @@
 
 namespace Easybook\DependencyInjection\CompilerPass;
 
-use Easybook\Console\Command\PublishCommand;
 use Easybook\Publishers\PublisherInterface;
+use Easybook\Publishers\PublisherProvider;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -45,7 +45,7 @@ final class CollectorCompilerPass implements CompilerPassInterface
 
         $this->definitionCollector->loadCollectorWithType(
             $containerBuilder,
-            PublishCommand::class,
+            PublisherProvider::class,
             PublisherInterface::class,
             'addPublisher'
         );

@@ -4,6 +4,7 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ItemAwareEvent;
+use Easybook\Templating\Renderer;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -12,6 +13,25 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class ParserPluginEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var mixed[]
+     */
+    private $labels = [];
+
+    /**
+     * @var Renderer
+     */
+    private $renderer;
+
+    /**
+     * @param mixed[] $labels
+     */
+    public function __construct(array $labels, Renderer $renderer)
+    {
+        $this->labels = $labels;
+        $this->renderer = $renderer;
+    }
+
     public static function getSubscribedEvents(): Iterator
     {
         yield EasybookEvents::PRE_PARSE => [['normalizeMarkdownHeaders', -1000]];
@@ -83,7 +103,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
 
         // ensure that every item has a title by using the default title if necessary
         if ($item->getTitle()) {
-            $item->setTitle($itemAwareEvent->app->getTitle($item->getConfigElement()));
+            $item->setTitle($this->renderer->render($item->getTitle(), [$item->getConfigElement()]));
         }
     }
 
@@ -127,7 +147,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
                     'level' => $level,
                 ]);
 
-                $label = $itemAwareEvent->app->getLabel($item->getConfigElement(), [
+                $label = $this->renderer->render($this->labels[$item->getConfigElement()], [
                     'item' => $parameters,
                 ]);
             } else {

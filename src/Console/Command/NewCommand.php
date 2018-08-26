@@ -3,7 +3,7 @@
 namespace Easybook\Console\Command;
 
 use Easybook\Configuration\Option;
-use Easybook\Filesystem\FilesystemGuard;
+use Easybook\Guard\FilesystemGuard;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

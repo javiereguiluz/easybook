@@ -7,7 +7,7 @@ use Easybook\Book\Edition;
 use Easybook\Book\Provider\BookProvider;
 use Easybook\Configuration\Option;
 use Easybook\Exception\Process\BeforeOrAfterPublishScriptFailedException;
-use Easybook\Filesystem\FilesystemGuard;
+use Easybook\Guard\FilesystemGuard;
 use Easybook\Publishers\PublisherProvider;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

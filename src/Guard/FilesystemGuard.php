@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Filesystem;
+namespace Easybook\Guard;
 
 use Easybook\Exception\Filesystem\DirectoryNotEmptyException;
 use Easybook\Exception\Filesystem\DirectoryNotExistsException;
