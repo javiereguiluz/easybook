@@ -1,3 +1,6 @@
+imports:
+    - { resource: 'services/*.yml' }
+
 services:
     _defaults:
         public: true
