@@ -106,7 +106,10 @@ final class Renderer
             // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
             $baseThemeDir = sprintf('%s/Base/%s/Templates', $this->themesDir, $this->editionProvider->provide());
             $themeFilesystemLoader->addPath($baseThemeDir);
-            $themeFilesystemLoader->addPath($baseThemeDir, 'theme'); // use "@theme" reference in the code - pick just one
+            $themeFilesystemLoader->addPath(
+                $baseThemeDir,
+                'theme'
+            ); // use "@theme" reference in the code - pick just one
             $twigLoader->addLoader($themeFilesystemLoader);
 
             // Book theme (configured per edition in 'config.yml')
@@ -137,7 +140,6 @@ final class Renderer
 //            sprintf('%s/%s/%s/Contents', $this->themesDir, $theme, $format),
 //        ];
         }
-
 
         $this->twigEnvironment->addGlobal('book', $this->bookProvider->provide());
         $this->twigEnvironment->addGlobal('edition', $this->editionProvider->provide());

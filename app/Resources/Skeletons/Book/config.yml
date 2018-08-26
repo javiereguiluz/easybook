@@ -1,9 +1,8 @@
 parameters:
     book:
-        title:            "{{ title|replace({'"': '\\"'}) }}"
-        author:           "Change this: Author Name"
-        edition:          "First edition"
-        language:         en
+        title: "Change this: Book name"
+        author: "Change this: Author Name"
+        subtitle: "First edition"
         publication_date: ~
 
         contents:
@@ -27,8 +26,13 @@ parameters:
                     elements:   ["appendix", "chapter", "part"]
 
             kindle:
-                extends:        ebook
                 format:         mobi
+                include_styles: true
+                labels:         ['appendix', 'chapter']  # labels also available for: "figure", "table"
+                theme:          clean
+                toc:
+                    deep:       1
+                    elements:   ["appendix", "chapter", "part"]
 
             print:
                 format:         pdf
@@ -45,12 +49,3 @@ parameters:
                     deep:       2
                     elements:   ["appendix", "chapter", "part"]
                 two_sided:      true
-
-            web:
-                format:         html
-                include_styles: true
-                labels:         ["appendix", "chapter"]  # labels also available for: "figure", "table"
-                theme:          clean
-                toc:
-                    deep:       2
-                    elements:   ["appendix", "chapter"]

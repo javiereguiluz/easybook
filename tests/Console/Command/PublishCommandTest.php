@@ -35,8 +35,7 @@ final class PublishCommandTest extends AbstractContainerAwareTestCase
         $this->bookNewCommand = $this->container->get(NewCommand::class);
         $tester = new CommandTester($this->bookNewCommand);
         $tester->execute([
-            'command' => $this->bookNewCommand->getName(),
-            //            '--dir' => $this->tmpDir,
+            '--dir' => $this->tmpDir,
         ]);
 
         $this->bookPublishCommand = $this->container->get(PublishCommand::class);
@@ -116,7 +115,6 @@ final class PublishCommandTest extends AbstractContainerAwareTestCase
         $tester = new CommandTester($this->bookPublishCommand);
 
         $tester->execute([
-            'command' => $this->bookPublishCommand->getName(),
             'edition' => 'web',
             '--dir' => $this->tmpDir,
         ]);
@@ -155,8 +153,6 @@ final class PublishCommandTest extends AbstractContainerAwareTestCase
 //        $this->assertContains('There was an error executing the following script', $e->getMessage());
 
         $tester->execute([
-            'command' => $this->bookPublishCommand->getName(),
-            'edition' => 'web',
             '--dir' => $this->tmpDir,
         ]);
     }

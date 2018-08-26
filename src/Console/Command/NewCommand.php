@@ -3,9 +3,7 @@
 namespace Easybook\Console\Command;
 
 use Easybook\Configuration\Option;
-use Easybook\Exception\Configuration\MissingOptionException;
-use Easybook\Templating\Renderer;
-use Easybook\Util\Slugger;
+use Easybook\Exception\Filesystem\DirectoryNotEmptyException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,98 +25,52 @@ final class NewCommand extends Command
     private $symfonyStyle;
 
     /**
-     * @var Slugger
-     */
-    private $slugger;
-
-    /**
-     * @var string
-     */
-    private $bookTitle;
-
-    /**
      * @var Filesystem
      */
     private $filesystem;
 
-    /**
-     * @var string
-     */
-    private $bookDirectory;
-
-    /**
-     * @var Renderer
-     */
-    private $renderer;
-
-    public function __construct(SymfonyStyle $symfonyStyle, Slugger $slugger)
+    public function __construct(SymfonyStyle $symfonyStyle, Filesystem $filesystem, string $skeletonBookDirectory)
     {
         parent::__construct();
         $this->symfonyStyle = $symfonyStyle;
-        $this->slugger = $slugger;
+        $this->filesystem = $filesystem;
+        $this->skeletonBookDirectory = $skeletonBookDirectory;
     }
 
     protected function configure(): void
     {
         $this->setName(CommandNaming::classToName(self::class));
-        $this->setDescription('Creates a new empty book');
+        $this->setDescription('Creates a new empty book to given directory');
 
-        $this->addArgument(Option::TITLE, InputOption::VALUE_REQUIRED, 'Name of your book');
-
-        $this->addOption(Option::DIR, null, InputOption::VALUE_REQUIRED, 'Path of the documentation directory');
-        $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookNewCommandHelp.txt'));
+        $this->addArgument(
+            Option::DIR,
+            InputOption::VALUE_REQUIRED,
+            'Directory to generate empty book to, e.g. "books/my-first-book"'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $dir = $input->getOption(Option::DIR);
-        if ($dir === null) {
-            throw new MissingOptionException(sprintf('"%s" needs to be set', Option::DIR));
-        }
+        $outputDirectory = $input->getArgument(Option::DIR);
 
-        $bookDirectory = $dir . DIRECTORY_SEPARATOR . $this->slugger->slugify($this->bookTitle);
-        $this->generateToDirectory($bookDirectory);
+        $this->ensureDirectoryIsEmpty($outputDirectory);
 
-        $this->symfonyStyle->success(sprintf(
-            'You can start writing your book in: "%s"',
-            realpath($bookDirectory)
-        ));
+        $this->filesystem->mirror($this->skeletonBookDirectory, $outputDirectory);
+
+        $this->symfonyStyle->success(sprintf('You can start writing your book in: "%s"', realpath($outputDirectory)));
     }
 
-    private function generateToDirectory(string $directory): void
+    private function ensureDirectoryIsEmpty(string $directory): void
     {
-        $this->setBookDirectory($directory);
-        $this->generate();
-    }
-
-    private function setBookDirectory(string $bookDirectory): void
-    {
-        // check if `$bookDir` directory is available
-        // if not, create a unique directory name appending a numeric suffix
-        $i = 1;
-        $bookDir = $bookDirectory;
-        while ($this->filesystem->exists($bookDirectory)) {
-            $bookDirectory = $bookDir . '-' . $i++;
+        if (! $this->filesystem->exists($directory)) {
+            return;
         }
 
-        $this->bookDirectory = $bookDirectory;
-    }
-
-    /**
-     * Generates the hierarchy of files and directories needed to publish a book.
-     */
-    private function generate(): void
-    {
-        // why is this hardcoded? Finder?
-        foreach (['chapter1.md', 'chapter2.md'] as $file) {
-            $file = 'Contents/' . $file;
-            $this->filesystem->copy($this->skeletonBookDirectory . '/' . $file, $this->bookDirectory . '/' . $file);
+        if ((bool) glob($directory . '/*')) {
+            throw new DirectoryNotEmptyException(sprintf(
+                'Directory "%s" for new book is not empty. Delete it or choose a new one.',
+                $directory
+            ));
         }
-
-        $this->renderer->renderToFile(
-            $this->skeletonBookDirectory . '/config.yml.twig',
-            [],
-            $this->bookDirectory . '/config.yml'
-        );
     }
 }

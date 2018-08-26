@@ -12,11 +12,6 @@ final class Option
     /**
      * @var string
      */
-    public const EDITION = 'edition';
-
-    /**
-     * @var string
-     */
     public const DIR = 'dir';
 
     /**
