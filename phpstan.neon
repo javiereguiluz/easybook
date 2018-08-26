@@ -12,4 +12,4 @@ parameters:
         - '#Parameter \#1 $file (.*?) expects string, string|false given#'
 
         # false positive
-        - '#Property Easybook\\Tests\\AbstractContainerAwareTestCase::\$container \(Symfony\\Component\\DependencyInjection\\Container\) does not accept Psr\\Container\\ContainerInterface#'
+        - '#Property Easybook\\Tests\\(.*?)::\$container \(Symfony\\Component\\DependencyInjection\\Container\) does not accept Psr\\Container\\ContainerInterface#'

@@ -1,0 +1,18 @@
+parameters:
+    book:
+        name: 'Some Book'
+        editions:
+            anything:
+                format: 'pdf'
+
+                before_publish:
+                    - 'touch before_publish_script.txt'
+                    - "echo '123' > before_publish_script.txt"
+                    - "touch {{ 'other' ~ '_before_publish_script' ~ '.txt' }}"
+                    - "echo 'MY CUSTOM TITLE' > other_before_publish_script.txt"
+
+                after_publish:
+                    - 'touch after_publish_script.txt'
+                    - "echo '456' > after_publish_script.txt"
+                    - "touch {{ 'other' ~ '_after_publish_script' ~ '.txt' }}"
+                    - "echo 'MY CUSTOM' > other_after_publish_script.txt"

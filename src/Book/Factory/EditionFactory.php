@@ -11,7 +11,9 @@ final class EditionFactory
      */
     public function createFromEditionParameter(array $editionParameter): Edition
     {
-        $edition = new Edition();
+        // @todo require params
+        $edition = new Edition($editionParameter['format']);
+
         if (isset($editionParameter['before_publish'])) {
             $edition->addBeforePublishScripts((array) $editionParameter['before_publish']);
         }

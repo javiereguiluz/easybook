@@ -13,6 +13,15 @@ final class Edition
      * @var string[]
      */
     private $afterPublishScripts = [];
+    /**
+     * @var string
+     */
+    private $format;
+
+    public function __construct(string $format)
+    {
+        $this->format = $format;
+    }
 
     /**
      * @param string[] $beforePublishScripts
@@ -44,5 +53,10 @@ final class Edition
     public function getAfterPublishScripts(): array
     {
         return $this->afterPublishScripts;
+    }
+
+    public function getFormat(): string
+    {
+        return $this->format;
     }
 }

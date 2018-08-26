@@ -2,7 +2,11 @@
 
 namespace Easybook\Console\Command;
 
+use Easybook\Book\Book;
+use Easybook\Book\Edition;
+use Easybook\Book\Provider\BookProvider;
 use Easybook\Configuration\Option;
+use Easybook\Exception\Process\BeforeOrAfterPublishScriptFailedException;
 use Easybook\Filesystem\FilesystemGuard;
 use Easybook\Publishers\PublisherProvider;
 use RuntimeException;
@@ -11,22 +15,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Symplify\PackageBuilder\Console\Command\CommandNaming;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 final class PublishCommand extends Command
 {
-    /**
-     * @var string
-     */
-    private const BEFORE_PUBLISH = 'before_publish';
-
-    /**
-     * @var string
-     */
-    private const AFTER_PUBLISH = 'after_publish';
-
     /**
      * @var PublisherProvider
      */
@@ -46,12 +41,22 @@ final class PublishCommand extends Command
      * @var FilesystemGuard
      */
     private $filesystemGuard;
+    /**
+     * @var BookProvider
+     */
+    private $bookProvider;
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
     public function __construct(
         PublisherProvider $publisherProvider,
         SymfonyStyle $symfonyStyle,
         ParameterProvider $parameterProvider,
-        FilesystemGuard $filesystemGuard
+        FilesystemGuard $filesystemGuard,
+        BookProvider $bookProvider,
+    Filesystem $filesystem
     ) {
         parent::__construct();
 
@@ -59,6 +64,8 @@ final class PublishCommand extends Command
         $this->symfonyStyle = $symfonyStyle;
         $this->parameterProvider = $parameterProvider;
         $this->filesystemGuard = $filesystemGuard;
+        $this->bookProvider = $bookProvider;
+        $this->filesystem = $filesystem;
     }
 
     protected function configure(): void
@@ -68,7 +75,7 @@ final class PublishCommand extends Command
         $this->addArgument(Option::BOOK_DIR, InputArgument::REQUIRED, 'Path to book directory.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $bookDirectory = $input->getArgument(Option::BOOK_DIR);
 
@@ -78,63 +85,65 @@ final class PublishCommand extends Command
         $this->parameterProvider->changeParameter('book_resources_dir', $bookDirectory . '/Resources');
         $this->parameterProvider->changeParameter('book_templates_dir', $bookDirectory . '/Resources/Templates');
 
-        // all parameters are loaded here...
+        $book = $this->bookProvider->provide();
 
-        // execute the 'before_publish' scripts
-        $this->runScripts((array) $this->parameterProvider->provideParameter(self::BEFORE_PUBLISH), $bookDirectory);
-
-//        dump('EEE');
-//        die;
-//
-//        // create book
-//
-//        /** @var Book $book */
-//        foreach ($book->getEditions() as $edition) {
-//            // ...
-//        }
-
-        dump($this->parameterProvider->provideParameter(self::BEFORE_PUBLISH));
-
-        die;
-
-        $this->symfonyStyle->note(sprintf(
-            'Publishing <comment>%s</comment> edition of <info>%s</info> book...',
-            $edition,
-            $book->getTitle()
-        ));
-
-        // @todo foreach book editions here
-
-        foreach ($this->publisherProvider->getPublishers() as $publisher) {
-            $publisher->publishBook();
+        foreach ($book->getEditions() as $edition)  {
+            $this->publishEdition($bookDirectory, $edition, $book);
         }
 
-        $this->runScripts((array) $this->parameterProvider->provideParameter(self::AFTER_PUBLISH), $bookDirectory);
+        $this->symfonyStyle->success('Book was published');
 
-        $this->symfonyStyle->success(sprintf(
-            'You can access the book in: "%s"',
-            realpath($this->app['publishing.dir.output'])
-        ));
+        // success
+        return 0;
     }
 
     /**
      * @param string[] $scripts
      */
-    private function runScripts(array $scripts, string $outputDir): void
+    private function runScripts(array $scripts, string $workingDirectory): void
     {
         foreach ($scripts as $script) {
-            $process = new Process($script, $outputDir);
+            $process = new Process($script, $workingDirectory);
             $process->run();
 
             if ($process->isSuccessful()) {
                 $this->symfonyStyle->success($process->getOutput());
             } else {
-                throw new RuntimeException(sprintf(
-                    'Executing script "%s" failed: "%s"',
-                    $script . PHP_EOL,
+                throw new BeforeOrAfterPublishScriptFailedException(sprintf(
+                    'Executing script "%s" failed in "%s" directory: "%s"',
+                    $script,
+                    $workingDirectory,
                     $process->getErrorOutput()
                 ));
             }
         }
+    }
+
+    private function publishEdition(string $bookDirectory, Edition $edition, Book $book): void
+    {
+        $bookEditionDirectory = $bookDirectory . DIRECTORY_SEPARATOR . 'published' . DIRECTORY_SEPARATOR . $edition->getFormat();
+
+        $this->filesystem->mkdir($bookEditionDirectory);
+
+        $this->runScripts($edition->getBeforePublishScripts(), $bookEditionDirectory);
+
+        // ... publish
+        $this->symfonyStyle->note(sprintf(
+            'Publishing <comment>%s</comment> edition of <info>%s</info> book...',
+            $edition->getFormat(),
+            $book->getName()
+        ));
+
+//        foreach ($this->publisherProvider->getPublishers() as $publisher) {
+//            $publisher->publishBook();
+//        }
+
+        $this->runScripts($edition->getAfterPublishScripts(), $bookEditionDirectory);
+
+
+        $this->symfonyStyle->success(sprintf(
+            'You can access the book in: "%s"',
+            realpath($bookEditionDirectory)
+        ));
     }
 }

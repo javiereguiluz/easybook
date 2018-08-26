@@ -21,7 +21,8 @@ final class BookFactory
      */
     public function createFromBookParameter(array $bookParameter): Book
     {
-        $book = new Book();
+        // @todo required items 'name'
+        $book = new Book($bookParameter['name']);
 
         if (isset($bookParameter['editions'])) {
             foreach ((array) $bookParameter['editions'] as $editionParameter) {

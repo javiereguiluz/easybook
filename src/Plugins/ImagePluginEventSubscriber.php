@@ -105,7 +105,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
             //        <img (...optional...) alt="..." (...optional...) />
             //      </div>
             '#(<p>)?(<div class="(?<align>.*)">)?(?<content><img .*alt="(?<title>[^"]*)".*\/>)(<\/div>)?(<\/p>)?#',
-            function ($matches) use ($itemAwareEvent, $parentItemNumber) {
+            function ($matches) use ($parentItemNumber) {
                 // prepare figure parameters for the template and the label
 
                 // @todo object Image?

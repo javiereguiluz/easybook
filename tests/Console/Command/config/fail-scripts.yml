@@ -1,5 +1,7 @@
 parameters:
     book:
+        name: 'Some Book'
         editions:
             anything:
+                format: 'pdf'
                 before_publish: 'not a command'

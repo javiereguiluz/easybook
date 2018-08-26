@@ -25,7 +25,8 @@ final class EasybookKernel extends Kernel
 
     public function __construct()
     {
-        parent::__construct('dev', true);
+        // random_int is used to prevent container name duplication during tests
+        parent::__construct((string) random_int(1, 1000000), false);
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
