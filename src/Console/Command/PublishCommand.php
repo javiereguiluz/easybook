@@ -8,6 +8,7 @@ use Easybook\Publishers\PublisherProvider;
 use Easybook\Validator\Validator;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -62,15 +63,12 @@ final class PublishCommand extends Command
     protected function configure(): void
     {
         $this->setName(CommandNaming::classToName(self::class));
-        $this->setDescription('Publishes book editions');
-        $this->addOption(Option::DIR, '', InputOption::VALUE_REQUIRED);
-
-        $this->setHelp(file_get_contents(__DIR__ . '/Resources/BookPublishCommandHelp.txt'));
+        $this->setDescription('Publishes book editions.');
+        $this->addArgument(Option::DIR, InputArgument::REQUIRED, 'Path to book directory.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $slug = $input->getArgument('slug');
         $outputDir = $input->getOption('dir');
 
         // validate book dir and add some useful values to the app configuration

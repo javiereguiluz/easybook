@@ -5,6 +5,7 @@ namespace Easybook\Console\Command;
 use Easybook\Configuration\Option;
 use Easybook\Exception\Filesystem\DirectoryNotEmptyException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -44,7 +45,7 @@ final class NewCommand extends Command
 
         $this->addArgument(
             Option::DIR,
-            InputOption::VALUE_REQUIRED,
+            InputArgument::REQUIRED,
             'Directory to generate empty book to, e.g. "books/my-first-book"'
         );
     }
@@ -52,7 +53,6 @@ final class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $outputDirectory = $input->getArgument(Option::DIR);
-
         $this->ensureDirectoryIsEmpty($outputDirectory);
 
         $this->filesystem->mirror($this->skeletonBookDirectory, $outputDirectory);

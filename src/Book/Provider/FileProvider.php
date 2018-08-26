@@ -21,8 +21,8 @@ final class FileProvider
     public function getCustomTemplate(string $templateName): ?string
     {
         $paths = [
-            $this->bookTemplatesDir . '/' . $this['publishing.edition'],
-            $this->bookTemplatesDir . '/' . $this->edition('format'),
+            $this->bookTemplatesDir . DIRECTORY_SEPARATOR . $this['publishing.edition'],
+            $this->bookTemplatesDir . DIRECTORY_SEPARATOR . $this->edition('format'),
             $this->bookTemplatesDir,
         ];
 

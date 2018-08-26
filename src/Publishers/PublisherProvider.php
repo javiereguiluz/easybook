@@ -11,16 +11,6 @@ final class PublisherProvider
      */
     private $publishers = [];
 
-    /**
-     * @var string
-     */
-    private $bookEdition;
-
-    public function __construct(string $bookEdition)
-    {
-        $this->bookEdition = $bookEdition;
-    }
-
     public function addPublisher(PublisherInterface $publisher): void
     {
         $this->publishers[] = $publisher;
@@ -39,9 +29,8 @@ final class PublisherProvider
         }, $this->publishers);
 
         throw new FormatPublisherNotSupportedException(sprintf(
-            'Unknown "%s" format for "%s" edition. Try one of "%s".',
+            'Unknown "%s" format. Try one of "%s".',
             $format,
-            $this->bookEdition,
             implode('", "', $supportedFormats)
         ));
     }
