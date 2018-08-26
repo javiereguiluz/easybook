@@ -5,7 +5,7 @@ namespace Easybook\Book\Provider;
 final class EditionProvider
 {
     /**
-     * @var string
+     * @var string|null
      */
     private $edition;
 
@@ -14,7 +14,7 @@ final class EditionProvider
         $this->edition = ucfirst($edition);
     }
 
-    public function provide(): string
+    public function provide(): ?string
     {
         return $this->edition;
     }

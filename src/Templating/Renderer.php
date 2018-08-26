@@ -99,19 +99,18 @@ final class Renderer
             $twigLoader->addLoader(new ArrayLoader([
                 $template => $template,
             ]));
-        }
+        } else {
+            $themeFilesystemLoader = new FilesystemLoader();
 
-        $themeFilesystemLoader = new FilesystemLoader();
+            // Base theme (common styles per edition type)
+            // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
+            $baseThemeDir = sprintf('%s/Base/%s/Templates', $this->themesDir, $this->editionProvider->provide());
+            $themeFilesystemLoader->addPath($baseThemeDir);
+            $themeFilesystemLoader->addPath($baseThemeDir, 'theme'); // use "@theme" reference in the code - pick just one
+            $twigLoader->addLoader($themeFilesystemLoader);
 
-        // Base theme (common styles per edition type)
-        // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
-        $baseThemeDir = sprintf('%s/Base/%s/Templates', $this->themesDir, $this->editionProvider->provide());
-        $themeFilesystemLoader->addPath($baseThemeDir);
-        $themeFilesystemLoader->addPath($baseThemeDir, 'theme'); // use "@theme" reference in the code - pick just one
-        $twigLoader->addLoader($themeFilesystemLoader);
-
-        // Book theme (configured per edition in 'config.yml')
-        // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
+            // Book theme (configured per edition in 'config.yml')
+            // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Templates/<template-name>.twig
 //        $bookThemeDir = sprintf('%s/%s/%s/Templates', $this->themesDir, $theme, $format);
 //        $twigLoaderFilesystem->prependPath($bookThemeDir);
 //        $twigLoaderFilesystem->prependPath($bookThemeDir, 'theme');
@@ -137,6 +136,8 @@ final class Renderer
 //            // <easybook>/app/Resources/Themes/<theme>/<edition-type>/Contents/<template-name>.twig
 //            sprintf('%s/%s/%s/Contents', $this->themesDir, $theme, $format),
 //        ];
+        }
+
 
         $this->twigEnvironment->addGlobal('book', $this->bookProvider->provide());
         $this->twigEnvironment->addGlobal('edition', $this->editionProvider->provide());
