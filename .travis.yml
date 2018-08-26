@@ -17,3 +17,6 @@ script:
   - vendor/bin/phpunit
   - if [[ "$CHECK_CODE" == "yes" ]]; then composer check-cs; fi;
   - if [[ "$CHECK_CODE" == "yes" ]]; then composer phpstan; fi;
+
+notifications:
+  email: false
