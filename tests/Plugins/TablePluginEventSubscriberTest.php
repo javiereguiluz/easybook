@@ -7,7 +7,7 @@ use Easybook\Book\Item;
 use Easybook\Book\Provider\CurrentEditionProvider;
 use Easybook\Book\Provider\TablesProvider;
 use Easybook\Events\ItemAwareEvent;
-use Easybook\Plugins\TablePluginEventSubscriber;
+use Easybook\Plugin\TablePluginEventSubscriber;
 use Easybook\Tests\AbstractCustomConfigContainerAwareTestCase;
 use Iterator;
 

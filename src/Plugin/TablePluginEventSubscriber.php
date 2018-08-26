@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Plugins;
+namespace Easybook\Plugin;
 
 use Easybook\Book\Provider\TablesProvider;
 use Easybook\Events\EasybookEvents;

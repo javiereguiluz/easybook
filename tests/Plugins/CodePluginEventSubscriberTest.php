@@ -6,7 +6,7 @@ use Easybook\Book\Edition;
 use Easybook\Book\Item;
 use Easybook\Book\Provider\CurrentEditionProvider;
 use Easybook\Events\ItemAwareEvent;
-use Easybook\Plugins\CodePluginEventSubscriber;
+use Easybook\Plugin\CodePluginEventSubscriber;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Iterator;
 use Michelf\MarkdownExtra;
