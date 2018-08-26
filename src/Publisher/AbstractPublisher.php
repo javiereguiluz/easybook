@@ -3,6 +3,7 @@
 namespace Easybook\Publisher;
 
 use Easybook\Book\Content;
+use Easybook\Book\Edition;
 use Easybook\Book\Item;
 use Easybook\Book\ItemConfig;
 use Easybook\Book\Provider\BookProvider;
@@ -11,6 +12,7 @@ use Easybook\Events\ItemAwareEvent;
 use Easybook\Templating\Renderer;
 use Easybook\Util\Slugger;
 use Michelf\MarkdownExtra;
+use Nette\Utils\FileSystem as NetteFileSystem;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -105,7 +107,7 @@ abstract class AbstractPublisher implements PublisherInterface
     public function parseContents(): void
     {
         foreach ($this->publishingItems as $item) {
-            $itemAwareEvent = new ItemAwareEvent($item);
+            $itemAwareEvent = new ItemAwareEvent($item, new Edition('pdf'));
             $this->eventDispatcher->dispatch(EasybookEvents::PRE_PARSE, $itemAwareEvent);
 
             $item->changeContent($this->markdownExtra->transform($item->getOriginal()));
@@ -196,7 +198,7 @@ abstract class AbstractPublisher implements PublisherInterface
 
         // if the element content only uses Markdown (*.md), load
         // directly its contents in the $item['original'] property
-        return file_get_contents($contentFilePath);
+        return NetteFileSystem::read($contentFilePath);
     }
 
     /**
@@ -225,7 +227,7 @@ abstract class AbstractPublisher implements PublisherInterface
     {
         $itemConfig = new ItemConfig(
             // the name of this item contents file (it's a relative path from book's `Contents/`)
-            $content->getContent(),
+            (string) $content->getContent(),
             // the type of this content (`chapter`, `appendix`, `toc`, `license`, ...)
             $content->getElement(),
             // the number/letter of the content (useful for `chapter`, `part` and `appendix`)

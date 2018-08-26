@@ -28,11 +28,11 @@ final class ItemConfig
     /**
      * The title of the content defined in `config.yml` (usually only `part` defines it)
      *
-     * @var string
+     * @var string|null
      */
     private $title;
 
-    public function __construct(string $content, string $element, ?int $number, string $title)
+    public function __construct(string $content, string $element, ?int $number, ?string $title)
     {
         $this->content = $content;
         $this->element = $element;
@@ -55,7 +55,7 @@ final class ItemConfig
         return $this->number;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
