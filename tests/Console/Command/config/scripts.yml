@@ -1,0 +1,5 @@
+parameters:
+    book:
+        editions:
+            anything:
+                before_publish: 'not a command'

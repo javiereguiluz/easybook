@@ -6,9 +6,30 @@ use Easybook\Book\Book;
 
 final class BookFactory
 {
-    public function createFromBookParameter(array $book): Book
+    /**
+     * @var EditionFactory
+     */
+    private $editionFactory;
+
+    public function __construct(EditionFactory $editionFactory)
     {
-        dump($book);
-        die;
+        $this->editionFactory = $editionFactory;
+    }
+
+    /**
+     * @param mixed[] $bookParameter
+     */
+    public function createFromBookParameter(array $bookParameter): Book
+    {
+        $book = new Book();
+
+        if (isset($bookParameter['editions'])) {
+            foreach ((array) $bookParameter['editions'] as $editionParameter) {
+                $edition = $this->editionFactory->createFromEditionParameter($editionParameter);
+                $book->addEdition($edition);
+            }
+        }
+
+        return $book;
     }
 }

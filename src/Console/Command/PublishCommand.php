@@ -2,17 +2,13 @@
 
 namespace Easybook\Console\Command;
 
-use Easybook\Book\Book;
 use Easybook\Configuration\Option;
-use Easybook\Exception\Filesystem\DirectoryNotExistsException;
 use Easybook\Filesystem\FilesystemGuard;
 use Easybook\Publishers\PublisherProvider;
-use Easybook\Validator\Validator;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
@@ -24,7 +20,12 @@ final class PublishCommand extends Command
     /**
      * @var string
      */
-    private $bookTitle;
+    private const BEFORE_PUBLISH = 'before_publish';
+
+    /**
+     * @var string
+     */
+    private const AFTER_PUBLISH = 'after_publish';
 
     /**
      * @var PublisherProvider
@@ -40,21 +41,20 @@ final class PublishCommand extends Command
      * @var ParameterProvider
      */
     private $parameterProvider;
+
     /**
      * @var FilesystemGuard
      */
     private $filesystemGuard;
 
     public function __construct(
-        string $bookTitle,
         PublisherProvider $publisherProvider,
         SymfonyStyle $symfonyStyle,
         ParameterProvider $parameterProvider,
-    FilesystemGuard $filesystemGuard
+        FilesystemGuard $filesystemGuard
     ) {
         parent::__construct();
 
-        $this->bookTitle = $bookTitle;
         $this->publisherProvider = $publisherProvider;
         $this->symfonyStyle = $symfonyStyle;
         $this->parameterProvider = $parameterProvider;
@@ -81,22 +81,26 @@ final class PublishCommand extends Command
         // all parameters are loaded here...
 
         // execute the 'before_publish' scripts
-        $this->runScripts((array) $this->parameterProvider->provideParameter('before_publish'), $bookDirectory);
+        $this->runScripts((array) $this->parameterProvider->provideParameter(self::BEFORE_PUBLISH), $bookDirectory);
 
-        dump('EEE');
+//        dump('EEE');
+//        die;
+//
+//        // create book
+//
+//        /** @var Book $book */
+//        foreach ($book->getEditions() as $edition) {
+//            // ...
+//        }
+
+        dump($this->parameterProvider->provideParameter(self::BEFORE_PUBLISH));
+
         die;
-
-        // create book
-
-        /** @var Book $book */
-        foreach ($book->getEditions() as $edition) {
-            // ...
-        }
 
         $this->symfonyStyle->note(sprintf(
             'Publishing <comment>%s</comment> edition of <info>%s</info> book...',
             $edition,
-            $this->bookTitle
+            $book->getTitle()
         ));
 
         // @todo foreach book editions here
@@ -105,7 +109,7 @@ final class PublishCommand extends Command
             $publisher->publishBook();
         }
 
-        $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'), $bookDirectory);
+        $this->runScripts((array) $this->parameterProvider->provideParameter(self::AFTER_PUBLISH), $bookDirectory);
 
         $this->symfonyStyle->success(sprintf(
             'You can access the book in: "%s"',
@@ -133,6 +137,4 @@ final class PublishCommand extends Command
             }
         }
     }
-
-
 }

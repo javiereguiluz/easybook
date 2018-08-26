@@ -10,6 +10,11 @@ final class Book
     private $contents = [];
 
     /**
+     * @var Edition[]
+     */
+    private $editions = [];
+
+    /**
      * @return Content[]
      */
     public function getContents(): array
@@ -25,5 +30,18 @@ final class Book
                 break;
             }
         }
+    }
+
+    public function addEdition(Edition $edition): void
+    {
+        $this->editions[] = $edition;
+    }
+
+    /**
+     * @return Edition[]
+     */
+    public function getEditions(): array
+    {
+        return $this->editions;
     }
 }
