@@ -12,7 +12,7 @@ final class Option
     /**
      * @var string
      */
-    public const DIR = 'dir';
+    public const BOOK_DIR = 'dir';
 
     /**
      * @var string

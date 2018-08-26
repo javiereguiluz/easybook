@@ -57,7 +57,7 @@ final class NewCommandTest extends AbstractContainerAwareTestCase
         $tester = new CommandTester($bookNewCommand);
 
         $tester->execute([
-            Option::DIR => $bookDir,
+            Option::BOOK_DIR => $bookDir,
         ]);
 
         return $tester;

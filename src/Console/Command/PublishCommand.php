@@ -4,6 +4,8 @@ namespace Easybook\Console\Command;
 
 use Easybook\Book\Book;
 use Easybook\Configuration\Option;
+use Easybook\Exception\Filesystem\DirectoryNotExistsException;
+use Easybook\Filesystem\FilesystemGuard;
 use Easybook\Publishers\PublisherProvider;
 use Easybook\Validator\Validator;
 use RuntimeException;
@@ -25,11 +27,6 @@ final class PublishCommand extends Command
     private $bookTitle;
 
     /**
-     * @var Validator
-     */
-    private $validator;
-
-    /**
      * @var PublisherProvider
      */
     private $publisherProvider;
@@ -43,45 +40,51 @@ final class PublishCommand extends Command
      * @var ParameterProvider
      */
     private $parameterProvider;
+    /**
+     * @var FilesystemGuard
+     */
+    private $filesystemGuard;
 
     public function __construct(
         string $bookTitle,
-        Validator $validator,
         PublisherProvider $publisherProvider,
         SymfonyStyle $symfonyStyle,
-        ParameterProvider $parameterProvider
+        ParameterProvider $parameterProvider,
+    FilesystemGuard $filesystemGuard
     ) {
         parent::__construct();
 
         $this->bookTitle = $bookTitle;
-        $this->validator = $validator;
         $this->publisherProvider = $publisherProvider;
         $this->symfonyStyle = $symfonyStyle;
         $this->parameterProvider = $parameterProvider;
+        $this->filesystemGuard = $filesystemGuard;
     }
 
     protected function configure(): void
     {
         $this->setName(CommandNaming::classToName(self::class));
         $this->setDescription('Publishes book editions.');
-        $this->addArgument(Option::DIR, InputArgument::REQUIRED, 'Path to book directory.');
+        $this->addArgument(Option::BOOK_DIR, InputArgument::REQUIRED, 'Path to book directory.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $outputDir = $input->getOption('dir');
+        $bookDirectory = $input->getArgument(Option::BOOK_DIR);
 
-        // validate book dir and add some useful values to the app configuration
-        $this->validator->validateBookDir($slug, $outputDir);
+        $this->filesystemGuard->ensureBookDirectoryExists($bookDirectory);
 
-        $this->parameterProvider->changeParameter('source_book_dir', $bookDir);
-        $this->parameterProvider->changeParameter('book_resources_dir', $bookDir . '/Resources');
-        $this->parameterProvider->changeParameter('book_templates_dir', $bookDir . '/Resources/Templates');
+        $this->parameterProvider->changeParameter('source_book_dir', $bookDirectory);
+        $this->parameterProvider->changeParameter('book_resources_dir', $bookDirectory . '/Resources');
+        $this->parameterProvider->changeParameter('book_templates_dir', $bookDirectory . '/Resources/Templates');
 
         // all parameters are loaded here...
 
         // execute the 'before_publish' scripts
-        $this->runScripts((array) $this->parameterProvider->provideParameter('before_publish'), $outputDir);
+        $this->runScripts((array) $this->parameterProvider->provideParameter('before_publish'), $bookDirectory);
+
+        dump('EEE');
+        die;
 
         // create book
 
@@ -102,7 +105,7 @@ final class PublishCommand extends Command
             $publisher->publishBook();
         }
 
-        $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'), $outputDir);
+        $this->runScripts((array) $this->parameterProvider->provideParameter('after_publish'), $bookDirectory);
 
         $this->symfonyStyle->success(sprintf(
             'You can access the book in: "%s"',
@@ -130,4 +133,6 @@ final class PublishCommand extends Command
             }
         }
     }
+
+
 }

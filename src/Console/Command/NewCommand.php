@@ -3,11 +3,10 @@
 namespace Easybook\Console\Command;
 
 use Easybook\Configuration\Option;
-use Easybook\Exception\Filesystem\DirectoryNotEmptyException;
+use Easybook\Filesystem\FilesystemGuard;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
@@ -15,11 +14,6 @@ use Symplify\PackageBuilder\Console\Command\CommandNaming;
 
 final class NewCommand extends Command
 {
-    /**
-     * @var string
-     */
-    private $skeletonBookDirectory;
-
     /**
      * @var SymfonyStyle
      */
@@ -30,12 +24,27 @@ final class NewCommand extends Command
      */
     private $filesystem;
 
-    public function __construct(SymfonyStyle $symfonyStyle, Filesystem $filesystem, string $skeletonBookDirectory)
-    {
+    /**
+     * @var FilesystemGuard
+     */
+    private $filesystemGuard;
+
+    /**
+     * @var string
+     */
+    private $skeletonBookDirectory;
+
+    public function __construct(
+        SymfonyStyle $symfonyStyle,
+        FilesystemGuard $filesystemGuard,
+        Filesystem $filesystem,
+        string $skeletonBookDirectory
+    ) {
         parent::__construct();
         $this->symfonyStyle = $symfonyStyle;
-        $this->filesystem = $filesystem;
         $this->skeletonBookDirectory = $skeletonBookDirectory;
+        $this->filesystemGuard = $filesystemGuard;
+        $this->filesystem = $filesystem;
     }
 
     protected function configure(): void
@@ -44,7 +53,7 @@ final class NewCommand extends Command
         $this->setDescription('Creates a new empty book to given directory');
 
         $this->addArgument(
-            Option::DIR,
+            Option::BOOK_DIR,
             InputArgument::REQUIRED,
             'Directory to generate empty book to, e.g. "books/my-first-book"'
         );
@@ -52,25 +61,11 @@ final class NewCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $outputDirectory = $input->getArgument(Option::DIR);
-        $this->ensureDirectoryIsEmpty($outputDirectory);
+        $outputDirectory = $input->getArgument(Option::BOOK_DIR);
+        $this->filesystemGuard->ensureDirectoryIsEmpty($outputDirectory);
 
         $this->filesystem->mirror($this->skeletonBookDirectory, $outputDirectory);
 
         $this->symfonyStyle->success(sprintf('You can start writing your book in: "%s"', realpath($outputDirectory)));
-    }
-
-    private function ensureDirectoryIsEmpty(string $directory): void
-    {
-        if (! $this->filesystem->exists($directory)) {
-            return;
-        }
-
-        if ((bool) glob($directory . '/*')) {
-            throw new DirectoryNotEmptyException(sprintf(
-                'Directory "%s" for new book is not empty. Delete it or choose a new one.',
-                $directory
-            ));
-        }
     }
 }
