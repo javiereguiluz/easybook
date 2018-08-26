@@ -59,13 +59,19 @@ final class Epub2Publisher extends AbstractPublisher
      */
     private $bookTemporaryCacheDir;
 
+    /**
+     * @var string
+     */
+    private $coverImage;
+
     public function __construct(
         Toolkit $toolkit,
         Finder $finder,
         FileProvider $fileProvider,
         BookProvider $bookProvider,
         string $resourcesDir,
-        string $bookTemporaryCacheDir
+        string $bookTemporaryCacheDir,
+        string $coverImage
     ) {
         $this->toolkit = $toolkit;
         $this->finder = $finder;
@@ -73,6 +79,7 @@ final class Epub2Publisher extends AbstractPublisher
         $this->bookProvider = $bookProvider;
         $this->resourcesDir = $resourcesDir;
         $this->bookTemporaryCacheDir = $bookTemporaryCacheDir;
+        $this->coverImage = $coverImage;
     }
 
     public function loadContents(): void
@@ -259,28 +266,27 @@ final class Epub2Publisher extends AbstractPublisher
     }
 
     /**
-     * It prepares the book cover image (if the book defines one).
+     * It prepares the book cover image if defined
      *
-     * @return mixed[]|null Book cover image data or null if the book doesn't include a cover image.
+     * @return mixed[]|null
      */
     private function prepareBookCoverImage(string $targetDir): ?array
     {
-        $image = $this->fileProvider->getCustomCoverImage();
-        if (! $image) {
+        if (! $this->coverImage) {
             return null;
         }
 
-        [$width, $height, $type] = getimagesize($image);
+        [$width, $height, $type] = getimagesize($this->coverImage);
 
-        // @todo object
+        // @todo object?
         $cover = [
             'height' => $height,
             'width' => $width,
-            'filePath' => 'images/' . basename($image),
+            'filePath' => 'images/' . basename($this->coverImage),
             'mediaType' => image_type_to_mime_type($type),
         ];
 
-        $this->filesystem->copy($image, $targetDir . '/' . basename($image));
+        $this->filesystem->copy($this->coverImage, $targetDir . DIRECTORY_SEPARATOR . basename($this->coverImage));
 
         return $cover;
     }

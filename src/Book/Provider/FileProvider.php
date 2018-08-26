@@ -9,15 +9,9 @@ final class FileProvider
      */
     private $bookTemplatesDir;
 
-    /**
-     * @var string
-     */
-    private $bookResourcesDir;
-
-    public function __construct(string $bookTemplatesDir, string $bookResourcesDir)
+    public function __construct(string $bookTemplatesDir)
     {
         $this->bookTemplatesDir = $bookTemplatesDir;
-        $this->bookResourcesDir = $bookResourcesDir;
     }
 
     /*
@@ -35,39 +29,14 @@ final class FileProvider
         return $this->getFirstExistingFile($templateName, $paths);
     }
 
-    public function getCustomTitlesFile(): ?string
-    {
-        $titlesFileName = 'titles.' . $this->book('language') . '.yml';
-
-        $paths = [
-            $this->bookResourcesDir . '/Translations/' . $this['publishing.edition'],
-            $this->bookResourcesDir . '/Translations/' . $this->edition('format'),
-            $this->bookResourcesDir . '/Translations',
-        ];
-
-        return $this->getFirstExistingFile($titlesFileName, $paths);
-    }
-
-    public function getCustomCoverImage(): ?string
-    {
-        $coverFileName = 'cover.jpg';
-        $paths = [
-            $this->bookTemplatesDir . '/' . $this['publishing.edition'],
-            $this->bookTemplatesDir . '/' . $this->edition('format'),
-            $this->bookTemplatesDir,
-        ];
-
-        return $this->getFirstExistingFile($coverFileName, $paths);
-    }
-
     /**
      * @param string[] $paths
      */
     private function getFirstExistingFile(string $file, array $paths): ?string
     {
         foreach ($paths as $path) {
-            if (file_exists($path . '/' . $file)) {
-                return realpath($path . '/' . $file);
+            if (file_exists($path . DIRECTORY_SEPARATOR . $file)) {
+                return realpath($path . DIRECTORY_SEPARATOR . $file);
             }
         }
 
