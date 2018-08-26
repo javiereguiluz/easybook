@@ -98,7 +98,7 @@ final class Epub2Publisher extends AbstractPublisher
         return;
     }
 
-    public function assembleBook(): void
+    public function assembleBook(string $outputDirectory): void
     {
         $bookTmpDir = $this->prepareBookTemporaryDirectory();
 
@@ -172,7 +172,7 @@ final class Epub2Publisher extends AbstractPublisher
         $this->zipBookContents($bookTmpDir . '/book', $bookTmpDir . '/book.zip');
         $this->filesystem->copy(
             $bookTmpDir . '/book.zip',
-            $this->app['publishing.dir.output'] . '/book.epub',
+            $outputDirectory . '/book.epub',
             true
         );
 
@@ -345,9 +345,9 @@ final class Epub2Publisher extends AbstractPublisher
      *
      * See: https://github.com/php/php-src/commit/3a55ea02
      */
-    private function zipBookContents(string $directory, string $zip_file): void
+    private function zipBookContents(string $directory, string $zipFile): void
     {
-        $this->toolkit->zip($directory, $zip_file);
+        $this->toolkit->zip($directory, $zipFile);
     }
 
     /**

@@ -12,7 +12,7 @@ final class PdfPublisher extends AbstractPublisher
         return 'pdf';
     }
 
-    protected function assembleBook(): void
+    protected function assembleBook(string $outputDirectory): void
     {
         return;
     }

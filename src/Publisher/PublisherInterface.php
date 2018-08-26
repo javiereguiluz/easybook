@@ -10,7 +10,7 @@ interface PublisherInterface
      * It defines the complete workflow followed to publish a book (load its
      * contents, transform them into HTML files, etc.).
      */
-    public function publishBook(): void;
+    public function publishBook(string $outputDirectory): void;
 
     public function decorateContents(): void;
 }

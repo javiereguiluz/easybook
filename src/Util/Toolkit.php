@@ -34,8 +34,9 @@ final class Toolkit
                 RecursiveIteratorIterator::SELF_FIRST
             );
 
+            /** @var \SplFileInfo $file */
             foreach ($files as $file) {
-                $file = str_replace('\\', '/', realpath($file));
+                $file = str_replace('\\', '/', $file->getRealPath());
 
                 if (is_dir($file)) {
                     if ($file !== $parent) {

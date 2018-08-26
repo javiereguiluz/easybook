@@ -89,13 +89,13 @@ abstract class AbstractPublisher implements PublisherInterface
     /**
      * It controls the book publishing workflow for this particular publisher.
      */
-    public function publishBook(): void
+    public function publishBook(string $outputDirectory): void
     {
         $this->loadContents();
         $this->parseContents();
         $this->prepareOutputDir();
         $this->decorateContents();
-        $this->assembleBook();
+        $this->assembleBook($outputDirectory);
     }
 
     /**
@@ -151,7 +151,7 @@ abstract class AbstractPublisher implements PublisherInterface
         }
     }
 
-    abstract protected function assembleBook(): void;
+    abstract protected function assembleBook(string $outputDirectory): void;
 
     private function prepareOutputDir(): void
     {

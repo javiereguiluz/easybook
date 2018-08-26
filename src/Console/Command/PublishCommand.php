@@ -143,7 +143,7 @@ final class PublishCommand extends Command
         ));
 
         $publisher = $this->publisherProvider->provideByFormat($edition->getFormat());
-        $publisher->publishBook();
+        $publisher->publishBook($bookEditionDirectory);
 
         $this->runScripts($edition->getAfterPublishScripts(), $bookEditionDirectory);
 
