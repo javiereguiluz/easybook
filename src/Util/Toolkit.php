@@ -9,38 +9,6 @@ use ZipArchive;
 final class Toolkit
 {
     /**
-     * Merges any number of arrays. The values of the right arrays
-     * replace the values of the left arrays. This is very different
-     * from PHP built-in array_merge_recursive().
-     *
-     * All the keys of the arrays will be replaced. This is rare for most
-     * applications but it's the common case for easybook.
-     *
-     * code inspired by:
-     * http://www.php.net/manual/en/function.array-merge-recursive.php#104145
-     *
-     * @param mixed ...$arrays
-     *
-     * @return mixed[]
-     */
-    public function arrayDeepMergeAndReplace(...$arrays): array
-    {
-        $merged = [];
-
-        foreach ($arrays as $array) {
-            foreach ($array as $key => $value) {
-                if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                    $merged[$key] = self::arrayDeepMergeAndReplace($merged[$key], $value);
-                } else {
-                    $merged[$key] = $value;
-                }
-            }
-        }
-
-        return $merged;
-    }
-
-    /**
      * Zips recursively a complete directory with one call (using PHP ZIP extension):
      *     zip('/path/to/any/dir', 'compressed.zip');
      *

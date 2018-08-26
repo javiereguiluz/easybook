@@ -35,19 +35,6 @@ final class FileProvider
         return $this->getFirstExistingFile($templateName, $paths);
     }
 
-    public function getCustomLabelsFile(): ?string
-    {
-        $labelsFileName = 'labels.' . $this->book('language') . '.yml';
-
-        $paths = [
-            $this->bookResourcesDir . '/Translations/' . $this['publishing.edition'],
-            $this->bookResourcesDir . '/Translations/' . $this->edition('format'),
-            $this->bookResourcesDir . '/Translations',
-        ];
-
-        return $this->getFirstExistingFile($labelsFileName, $paths);
-    }
-
     public function getCustomTitlesFile(): ?string
     {
         $titlesFileName = 'titles.' . $this->book('language') . '.yml';

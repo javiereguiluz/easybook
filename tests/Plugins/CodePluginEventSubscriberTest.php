@@ -12,7 +12,6 @@ use Michelf\MarkdownExtra;
 
 final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
 {
-
     /**
      * @var CodePluginEventSubscriber
      */
