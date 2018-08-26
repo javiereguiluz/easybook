@@ -12,6 +12,7 @@ services:
             - 'ZipArchive'
             - 'Easybook\Book\Item'
             - 'Easybook\Book\Item*'
+            - 'Easybook\Book\Edition'
             - 'Twig\Loader\*Loader'
 
     Symplify\CodingStandard\Sniffs\CleanCode\CognitiveComplexitySniff:

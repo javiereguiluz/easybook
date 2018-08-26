@@ -170,11 +170,7 @@ final class Epub2Publisher extends AbstractPublisher
 
         // compress book contents as ZIP file and rename to .epub
         $this->zipBookContents($bookTmpDir . '/book', $bookTmpDir . '/book.zip');
-        $this->filesystem->copy(
-            $bookTmpDir . '/book.zip',
-            $outputDirectory . '/book.epub',
-            true
-        );
+        $this->filesystem->copy($bookTmpDir . '/book.zip', $outputDirectory . '/book.epub', true);
 
         // remove temp directory used to build the book
         $this->filesystem->remove($bookTmpDir);

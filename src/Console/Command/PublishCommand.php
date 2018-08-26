@@ -51,6 +51,7 @@ final class PublishCommand extends Command
      * @var Filesystem
      */
     private $filesystem;
+
     /**
      * @var CurrentEditionProvider
      */
