@@ -16,7 +16,6 @@ book:
         ebook:
             format:         epub
             include_styles: true
-            isbn:           '0000000000'
             labels:         ['appendix', 'chapter']
             theme:          clean
             toc:

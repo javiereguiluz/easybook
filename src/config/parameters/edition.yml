@@ -5,7 +5,6 @@ parameters:
             format: ~
             images_base_dir: 'images/'
             include_styles: true
-            isbn: ~
             labels: ['appendix', 'chapter', 'figure']
             # margins
             margin_top: '25mm'

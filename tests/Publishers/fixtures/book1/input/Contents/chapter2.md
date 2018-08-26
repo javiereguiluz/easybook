@@ -67,7 +67,6 @@ Editions are defined under the `editions` options in `config.yml` file. By defau
                 format:         pdf
                 auto_label:     true
                 include_styles: true
-                isbn:           ~
                 margin:
                     top:        25mm
                     bottom:     25mm
@@ -121,7 +120,6 @@ Imagine for example you want to publish one PDF book with three slightly differe
         editions:
             print:
                 format:       pdf
-                isbn:         ~
                 auto_label:   true
                 two_sided:    false
                 page_size:    A4

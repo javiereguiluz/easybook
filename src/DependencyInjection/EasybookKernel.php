@@ -20,16 +20,6 @@ final class EasybookKernel extends Kernel
     public function __construct()
     {
         parent::__construct('dev', true);
-//        dynamic parameters
-//        $this['publishing.edition.id'] = function ($app) {
-//            if (null !== $isbn = $app->edition('isbn')) {
-//                return ['scheme' => 'isbn', 'value' => $isbn];
-//            }
-//
-//            // for ISBN-less books, generate a unique RFC 4211 UUID v4 ID
-//            return ['scheme' => 'URN', 'value' => Uuid::uuid4()];
-//        };
-//
 //        // -- labels ---------------------------------------------------------
 //        $this['labels'] = function () use ($app) {
 //            $labels = Yaml::parse(

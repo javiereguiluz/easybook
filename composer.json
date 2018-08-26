@@ -19,7 +19,6 @@
         "jean85/pretty-package-versions": "^1.2",
         "michelf/php-markdown": "^1.4",
         "mikehaertl/phpwkhtmltopdf": "^2.3",
-        "ramsey/uuid": "^3.8",
         "symfony/console": "^4.1",
         "symfony/dependency-injection": "^4.1",
         "symfony/event-dispatcher": "^4.1",
