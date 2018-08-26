@@ -1,10 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Publishers;
+namespace Easybook\Publisher;
 
 use Easybook\Book\Item;
 use Easybook\Book\Provider\BookProvider;
-use Easybook\Book\Provider\FileProvider;
 use Easybook\Util\Toolkit;
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
@@ -40,11 +39,6 @@ final class Epub2Publisher extends AbstractPublisher
     private $finder;
 
     /**
-     * @var FileProvider
-     */
-    private $fileProvider;
-
-    /**
      * @var BookProvider
      */
     private $bookProvider;
@@ -60,22 +54,20 @@ final class Epub2Publisher extends AbstractPublisher
     private $bookTemporaryCacheDir;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $coverImage;
 
     public function __construct(
         Toolkit $toolkit,
         Finder $finder,
-        FileProvider $fileProvider,
         BookProvider $bookProvider,
         string $resourcesDir,
         string $bookTemporaryCacheDir,
-        string $coverImage
+        ?string $coverImage
     ) {
         $this->toolkit = $toolkit;
         $this->finder = $finder;
-        $this->fileProvider = $fileProvider;
         $this->bookProvider = $bookProvider;
         $this->resourcesDir = $resourcesDir;
         $this->bookTemporaryCacheDir = $bookTemporaryCacheDir;
@@ -111,20 +103,13 @@ final class Epub2Publisher extends AbstractPublisher
         $bookTmpDir = $this->prepareBookTemporaryDirectory();
 
         // generate easybook CSS file
-        if ($this->app->edition('include_styles')) {
-            $this->renderer->renderToFile(
-                '@theme/style.css.twig',
-                ['resources_dir' => '..'],
-                $bookTmpDir . '/book/OEBPS/css/easybook.css'
-            );
-        }
-
-        // generate custom CSS file
-        $customCss = $this->fileProvider->getCustomTemplate('style.css');
-        $hasCustomCss = file_exists($customCss);
-        if ($hasCustomCss) {
-            $this->filesystem->copy($customCss, $bookTmpDir . '/book/OEBPS/css/styles.css', true);
-        }
+//        if ($this->app->edition('include_styles')) {
+        $this->renderer->renderToFile(
+            '@theme/style.css.twig',
+            ['resources_dir' => '..'],
+            $bookTmpDir . '/book/OEBPS/css/easybook.css'
+        );
+//        }
 
         $this->normalizePageNames($this->publishingItems);
 
@@ -133,7 +118,6 @@ final class Epub2Publisher extends AbstractPublisher
             $renderedTemplatePath = $bookTmpDir . '/book/OEBPS/' . $item->getPageName() . '.html';
             $templateVariables = [
                 'item' => $item,
-                'has_custom_css' => $hasCustomCss,
             ];
 
             // try first to render the specific template for each content
@@ -164,7 +148,6 @@ final class Epub2Publisher extends AbstractPublisher
             'content.opf.twig',
             [
                 'cover' => $bookCover,
-                'has_custom_css' => $hasCustomCss,
                 'fonts' => $bookFonts,
                 'images' => $bookImages,
                 'items' => $this->publishingItems,

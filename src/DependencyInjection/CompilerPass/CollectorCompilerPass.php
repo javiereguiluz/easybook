@@ -2,8 +2,8 @@
 
 namespace Easybook\DependencyInjection\CompilerPass;
 
-use Easybook\Publishers\PublisherInterface;
-use Easybook\Publishers\PublisherProvider;
+use Easybook\Publisher\PublisherInterface;
+use Easybook\Publisher\PublisherProvider;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

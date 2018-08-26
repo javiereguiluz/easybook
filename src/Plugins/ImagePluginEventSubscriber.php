@@ -59,8 +59,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * It fixes all the image URIs by prefixing the base_dir configured in the book
-     * edition.
+     * It fixes all the image URIs by prefixing the base_dir configured in the book edition.
      *
      * @see 'images_base_dir' option in easybook-doc-en/05-publishing-html-books.md
      */
@@ -91,7 +90,6 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
     {
         $item = $itemAwareEvent->getItem();
 
-//        $addImageLabels = ;
         $parentItemNumber = $item->getConfigNumber();
 
         $this->counter = 0;

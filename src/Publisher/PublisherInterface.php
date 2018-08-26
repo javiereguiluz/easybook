@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Publishers;
+namespace Easybook\Publisher;
 
 interface PublisherInterface
 {

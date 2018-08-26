@@ -2,7 +2,7 @@
 
 namespace Easybook\Book\Provider;
 
-final class EditionProvider
+final class CurrentEditionProvider
 {
     /**
      * @var string|null

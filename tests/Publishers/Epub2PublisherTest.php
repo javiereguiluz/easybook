@@ -2,7 +2,7 @@
 
 namespace Easybook\Tests\Publishers;
 
-use Easybook\Publishers\Epub2Publisher;
+use Easybook\Publisher\Epub2Publisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;
 use Symplify\PackageBuilder\Reflection\PrivatesCaller;
 

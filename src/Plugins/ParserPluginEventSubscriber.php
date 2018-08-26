@@ -8,9 +8,6 @@ use Easybook\Templating\Renderer;
 use Iterator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * It performs some operations on the book items after they have been parsed.
- */
 final class ParserPluginEventSubscriber implements EventSubscriberInterface
 {
     /**
@@ -69,8 +66,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
 
     /**
      * It fixes the resulting HTML code of the book item. This is necessary
-     * to avoid problems with the invalid-HTML-markup-sensitive editions such
-     * as the ePub books.
+     * to avoid problems with the invalid-HTML-markup-sensitive editions such as the ePub books.
      */
     public function fixHtmlCode(ItemAwareEvent $itemAwareEvent): void
     {
@@ -142,7 +138,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
                     $counters[$i] = 0;
                 }
 
-                $parameters = array_merge($item['config'], [
+                $parameters = array_merge($item->getItemConfig(), [
                     'counters' => $counters,
                     'level' => $level,
                 ]);

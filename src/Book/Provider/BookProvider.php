@@ -10,7 +10,7 @@ use Symplify\PackageBuilder\Parameter\ParameterProvider;
 final class BookProvider
 {
     /**
-     * @var Book
+     * @var Book|null
      */
     private $book;
 

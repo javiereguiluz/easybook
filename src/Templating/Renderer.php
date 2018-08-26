@@ -3,7 +3,7 @@
 namespace Easybook\Templating;
 
 use Easybook\Book\Provider\BookProvider;
-use Easybook\Book\Provider\EditionProvider;
+use Easybook\Book\Provider\CurrentEditionProvider;
 use Easybook\Book\Provider\ImagesProvider;
 use Easybook\Book\Provider\TablesProvider;
 use Symfony\Component\Filesystem\Filesystem;
@@ -30,9 +30,9 @@ final class Renderer
     private $bookProvider;
 
     /**
-     * @var EditionProvider
+     * @var CurrentEditionProvider
      */
-    private $editionProvider;
+    private $currentEditionProvider;
 
     /**
      * @var TablesProvider
@@ -53,7 +53,7 @@ final class Renderer
         Filesystem $filesystem,
         Environment $twigEnvironment,
         BookProvider $bookProvider,
-        EditionProvider $editionProvider,
+        CurrentEditionProvider $currentEditionProvider,
         TablesProvider $tablesProvider,
         ImagesProvider $imagesProvider,
         string $themesDir
@@ -61,7 +61,7 @@ final class Renderer
         $this->filesystem = $filesystem;
         $this->twigEnvironment = $twigEnvironment;
         $this->bookProvider = $bookProvider;
-        $this->editionProvider = $editionProvider;
+        $this->currentEditionProvider = $currentEditionProvider;
         $this->tablesProvider = $tablesProvider;
         $this->imagesProvider = $imagesProvider;
         $this->themesDir = $themesDir;
@@ -104,7 +104,7 @@ final class Renderer
 
             // Base theme (common styles per edition type)
             // <easybook>/app/Resources/Themes/Base/<edition-type>/Templates/<template-name>.twig
-            $baseThemeDir = sprintf('%s/Base/%s/Templates', $this->themesDir, $this->editionProvider->provide());
+            $baseThemeDir = sprintf('%s/Base/%s/Templates', $this->themesDir, $this->currentEditionProvider->provide());
             $themeFilesystemLoader->addPath($baseThemeDir);
             $themeFilesystemLoader->addPath(
                 $baseThemeDir,
@@ -142,7 +142,7 @@ final class Renderer
         }
 
         $this->twigEnvironment->addGlobal('book', $this->bookProvider->provide());
-        $this->twigEnvironment->addGlobal('edition', $this->editionProvider->provide());
+        $this->twigEnvironment->addGlobal('edition', $this->currentEditionProvider->provide());
 
         // publishing.list.images
         $this->twigEnvironment->addGlobal('all_images', $this->imagesProvider->getImages());

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Publishers;
+namespace Easybook\Publisher;
 
 use Easybook\Exception\Publisher\FormatPublisherNotSupportedException;
 
@@ -24,7 +24,7 @@ final class PublisherProvider
         }
 
         throw new FormatPublisherNotSupportedException(sprintf(
-            'Unknown "%s" format. Try one of "%s".',
+            'Unknown "%s" format. Try one of: "%s".',
             $format,
             implode('", "', array_keys($this->publishers))
         ));

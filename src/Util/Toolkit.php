@@ -46,7 +46,7 @@ final class Toolkit
                     $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
 
                     $zip->setCompressionName($filename, ZipArchive::CM_STORE);
-                    // due too \Easybook\Publishers\Epub2Publisher::zipBookContents()
+                    // due too \Easybook\Publisher\Epub2Publisher::zipBookContents()
                     // see https://github.com/php/php-src/commit/3a55ea02
                     // $zip->setCompressionIndex(2, ZipArchive::CM_STORE);
                 }

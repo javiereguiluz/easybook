@@ -4,7 +4,7 @@ namespace Easybook\Plugins;
 
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ItemAwareEvent;
-use Easybook\Publishers\Epub2Publisher;
+use Easybook\Publisher\Epub2Publisher;
 use Easybook\Templating\Renderer;
 use Easybook\Util\CodeHighlighter;
 use Iterator;

@@ -5,10 +5,11 @@ namespace Easybook\Console\Command;
 use Easybook\Book\Book;
 use Easybook\Book\Edition;
 use Easybook\Book\Provider\BookProvider;
+use Easybook\Book\Provider\CurrentEditionProvider;
 use Easybook\Configuration\Option;
 use Easybook\Exception\Process\BeforeOrAfterPublishScriptFailedException;
 use Easybook\Guard\FilesystemGuard;
-use Easybook\Publishers\PublisherProvider;
+use Easybook\Publisher\PublisherProvider;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,6 +51,10 @@ final class PublishCommand extends Command
      * @var Filesystem
      */
     private $filesystem;
+    /**
+     * @var CurrentEditionProvider
+     */
+    private $currentEditionProvider;
 
     public function __construct(
         PublisherProvider $publisherProvider,
@@ -57,7 +62,8 @@ final class PublishCommand extends Command
         ParameterProvider $parameterProvider,
         FilesystemGuard $filesystemGuard,
         BookProvider $bookProvider,
-        Filesystem $filesystem
+        Filesystem $filesystem,
+        CurrentEditionProvider $currentEditionProvider
     ) {
         parent::__construct();
 
@@ -67,6 +73,7 @@ final class PublishCommand extends Command
         $this->filesystemGuard = $filesystemGuard;
         $this->bookProvider = $bookProvider;
         $this->filesystem = $filesystem;
+        $this->currentEditionProvider = $currentEditionProvider;
     }
 
     protected function configure(): void
@@ -124,6 +131,8 @@ final class PublishCommand extends Command
     {
         $bookEditionDirectory = $bookDirectory . DIRECTORY_SEPARATOR . 'output' . DIRECTORY_SEPARATOR . $edition->getFormat();
         $this->filesystem->mkdir($bookEditionDirectory);
+
+        $this->currentEditionProvider->setEdition($edition->getFormat());
 
         $this->runScripts($edition->getBeforePublishScripts(), $bookEditionDirectory);
 

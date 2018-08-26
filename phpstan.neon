@@ -5,7 +5,6 @@ parameters:
         # phsptan-symfony doesn't work due to missing .xml file
         # get() call on container
         - '#Property (.*?)Test::(.*?) does not accept object#'
-        - '#Call to an undefined method object(.*?)#'
         - '#Parameter \#1 (.*?) expects (.*?), object given#'
 
         # SplFileInfo() false positives

@@ -3,7 +3,7 @@
 namespace Easybook\Tests\Plugins;
 
 use Easybook\Book\Item;
-use Easybook\Book\Provider\EditionProvider;
+use Easybook\Book\Provider\CurrentEditionProvider;
 use Easybook\Book\Provider\TablesProvider;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Plugins\TablePluginEventSubscriber;
@@ -23,15 +23,15 @@ final class TablePluginEventSubscriberTest extends AbstractCustomConfigContainer
     private $tablesProvider;
 
     /**
-     * @var EditionProvider
+     * @var CurrentEditionProvider
      */
-    private $editionProvider;
+    private $currentEditionProvider;
 
     protected function setUp(): void
     {
         $this->tablePluginEventSubscriber = $this->container->get(TablePluginEventSubscriber::class);
         $this->tablesProvider = $this->container->get(TablesProvider::class);
-        $this->editionProvider = $this->container->get(EditionProvider::class);
+        $this->currentEditionProvider = $this->container->get(CurrentEditionProvider::class);
     }
 
     /**
@@ -46,7 +46,7 @@ final class TablePluginEventSubscriberTest extends AbstractCustomConfigContainer
         bool $addLabels,
         array $expectedLabels
     ): void {
-        $this->editionProvider->setEdition('Pdf');
+        $this->currentEditionProvider->setEdition('Pdf');
 
         $content = file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath);
         $item = Item::createFromConfigNumberAndContent($itemNumber, $content);
