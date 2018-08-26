@@ -2,6 +2,7 @@
 
 namespace Easybook\Tests\Plugins;
 
+use Easybook\Book\Edition;
 use Easybook\Book\Item;
 use Easybook\Book\Provider\CurrentEditionProvider;
 use Easybook\Book\Provider\TablesProvider;
@@ -51,7 +52,7 @@ final class TablePluginEventSubscriberTest extends AbstractCustomConfigContainer
         $content = file_get_contents(__DIR__ . '/fixtures/tables/' . $inputFilePath);
         $item = Item::createFromConfigNumberAndContent($itemNumber, $content);
 
-        $parseEvent = new ItemAwareEvent($item);
+        $parseEvent = new ItemAwareEvent($item, new Edition('pdf'));
         $this->tablePluginEventSubscriber->decorateAndLabelTables($parseEvent);
 
         $this->assertStringEqualsFile(__DIR__ . '/fixtures/tables/' . $expectedFilePath, $item->getContent());

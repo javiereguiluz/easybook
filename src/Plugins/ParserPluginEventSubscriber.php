@@ -123,7 +123,7 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
             5 => 0,
             6 => 0,
         ];
-        $addSectionLabels = in_array($item->getConfigElement(), $itemAwareEvent->app->edition('labels') ?: [], true);
+        $addSectionLabels = $labels[$item->getConfigElement()] ?? [];
 
         foreach ($item->getTableOfContents() as $key => $entry) {
             if ($addSectionLabels) {
@@ -138,10 +138,14 @@ final class ParserPluginEventSubscriber implements EventSubscriberInterface
                     $counters[$i] = 0;
                 }
 
-                $parameters = array_merge($item->getItemConfig(), [
+                $parameters = [
                     'counters' => $counters,
                     'level' => $level,
-                ]);
+                ];
+                $parameters['title'] = $item->getItemConfig()->getTitle();
+                $parameters['content'] = $item->getItemConfig()->getContent();
+                $parameters['number'] = $item->getItemConfig()->getNumber();
+                $parameters['element'] = $item->getItemConfig()->getElement();
 
                 $label = $this->renderer->render($this->labels[$item->getConfigElement()], [
                     'item' => $parameters,

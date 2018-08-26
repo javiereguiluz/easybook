@@ -39,7 +39,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
     public function parseCodeBlocks(ItemAwareEvent $itemAwareEvent): void
     {
         // the syntax highlight is stricly not recommended for epub formats
-        if ($itemAwareEvent->getEditionFormat() === Epub2Publisher::NAME) {
+        if ($itemAwareEvent->getEdition()->getFormat() === Epub2Publisher::NAME) {
             return;
         }
 
@@ -58,7 +58,7 @@ final class CodePluginEventSubscriber implements EventSubscriberInterface
      */
     public function highlightAndDecorateCode(ItemAwareEvent $itemAwareEvent, string $code, string $language): string
     {
-        if ($itemAwareEvent->getEditionFormat() !== Epub2Publisher::NAME) {
+        if ($itemAwareEvent->getEdition()->getFormat() !== Epub2Publisher::NAME) {
             // highlight code if the edition wants to
             $code = $this->codeHighlighter->highlight($code, $language);
         } else {

@@ -19,6 +19,11 @@ final class Edition
      */
     private $format;
 
+    /**
+     * @var string
+     */
+    private $imagesBaseDir;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -27,7 +32,7 @@ final class Edition
     /**
      * @param string[] $beforePublishScripts
      */
-    public function addBeforePublishScripts(array $beforePublishScripts): void
+    public function setBeforePublishScripts(array $beforePublishScripts): void
     {
         $this->beforePublishScripts = $beforePublishScripts;
     }
@@ -35,7 +40,7 @@ final class Edition
     /**
      * @param string[] $afterPublishScripts
      */
-    public function addAfterPublishScripts(array $afterPublishScripts): void
+    public function setAfterPublishScripts(array $afterPublishScripts): void
     {
         $this->afterPublishScripts = $afterPublishScripts;
     }
@@ -59,5 +64,15 @@ final class Edition
     public function getFormat(): string
     {
         return $this->format;
+    }
+
+    public function setImagesBaseDir(string $imagesBaseDir): void
+    {
+        $this->imagesBaseDir = $imagesBaseDir;
+    }
+
+    public function getImagesBaseDir(): ?string
+    {
+        return $this->imagesBaseDir;
     }
 }

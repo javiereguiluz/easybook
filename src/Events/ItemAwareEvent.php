@@ -2,6 +2,7 @@
 
 namespace Easybook\Events;
 
+use Easybook\Book\Edition;
 use Easybook\Book\Item;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -18,14 +19,14 @@ final class ItemAwareEvent extends Event
     private $item;
 
     /**
-     * @var string|null
+     * @var Edition
      */
-    private $editionFormat;
+    private $edition;
 
-    public function __construct(Item $item, ?string $editionFormat = null)
+    public function __construct(Item $item, Edition $edition)
     {
         $this->item = $item;
-        $this->editionFormat = $editionFormat;
+        $this->edition = $edition;
     }
 
     public function getItem(): Item
@@ -33,8 +34,8 @@ final class ItemAwareEvent extends Event
         return $this->item;
     }
 
-    public function getEditionFormat(): ?string
+    public function getEdition(): Edition
     {
-        return $this->editionFormat;
+        return $this->edition;
     }
 }

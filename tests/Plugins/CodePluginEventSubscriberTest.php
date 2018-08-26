@@ -2,6 +2,7 @@
 
 namespace Easybook\Tests\Plugins;
 
+use Easybook\Book\Edition;
 use Easybook\Book\Item;
 use Easybook\Book\Provider\CurrentEditionProvider;
 use Easybook\Events\ItemAwareEvent;
@@ -47,7 +48,7 @@ final class CodePluginEventSubscriberTest extends AbstractContainerAwareTestCase
         $item = Item::createFromOriginal($content);
 
         // execute pre-parse method of the plugin
-        $itemAwareEvent = new ItemAwareEvent($item);
+        $itemAwareEvent = new ItemAwareEvent($item, new Edition('pdf'));
         $this->codePluginEventSubscriber->parseCodeBlocks($itemAwareEvent);
 
         // parse the item original content

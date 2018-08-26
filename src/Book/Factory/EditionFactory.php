@@ -28,11 +28,15 @@ final class EditionFactory
         $edition = new Edition($editionParameter['format']);
 
         if (isset($editionParameter['before_publish'])) {
-            $edition->addBeforePublishScripts((array) $editionParameter['before_publish']);
+            $edition->setBeforePublishScripts((array) $editionParameter['before_publish']);
         }
 
         if (isset($editionParameter['after_publish'])) {
-            $edition->addAfterPublishScripts((array) $editionParameter['after_publish']);
+            $edition->setAfterPublishScripts((array) $editionParameter['after_publish']);
+        }
+
+        if (isset($editionParameter['images_base_dir'])) {
+            $edition->setImagesBaseDir((string) $editionParameter['images_base_dir']);
         }
 
         return $edition;

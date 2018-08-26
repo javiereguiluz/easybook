@@ -66,7 +66,7 @@ final class ImagePluginEventSubscriber implements EventSubscriberInterface
     public function fixImageUris(ItemAwareEvent $itemAwareEvent): void
     {
         $item = $itemAwareEvent->getItem();
-        $baseDir = $itemAwareEvent->app->edition('images_base_dir');
+        $baseDir = $itemAwareEvent->getEdition()->getImagesBaseDir();
 
         $item->changeContent(
             Strings::replace(

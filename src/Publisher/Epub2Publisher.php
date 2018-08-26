@@ -124,7 +124,7 @@ final class Epub2Publisher extends AbstractPublisher
             // type, if it exists (e.g. toc.twig, chapter.twig, etc.) and
             // use chunk.twig as the fallback template
             try {
-                $templateName = $item['config']['element'] . '.twig';
+                $templateName = $item->getConfigElement() . '.twig';
 
                 $this->renderer->renderToFile($templateName, $templateVariables, $renderedTemplatePath);
             } catch (Twig_Error_Loader $e) {
