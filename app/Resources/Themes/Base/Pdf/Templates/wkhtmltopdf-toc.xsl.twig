@@ -16,15 +16,16 @@
         <div class="item toc">
             <h1>{{ toc_title }}</h1>
             <ul>
-                <xsl:apply-templates select="outline:item/outline:item"/>
+                <!-- ignore HTML cover page and the TOC itself -->
+                <xsl:apply-templates select="outline:item[@title!='' and @title!='Table of Contents']/outline:item"/>
             </ul>
         </div>
         </body>
         </html>
     </xsl:template>
     <xsl:template match="outline:item">
-        <!-- ignore items in page 1 (cover) and the TOC itself -->
-        <xsl:if test="@page!='1' and @title!='{{ toc_title }}'">
+        <!-- ignore items in the "edition" page-->
+        <xsl:if test="@title!='{{ book.title }}'">
             <li>
                 <!-- TODO: setting "level-n" does not work for styling (investigate) -->
                 <xsl:attribute name="class">
