@@ -73,7 +73,6 @@ Editions are defined under the `editions` options in `config.yml` file. By defau
                     inner:      30mm
                     outter:     20mm
                 page_size:      A4
-                two_sided:      true
                 toc:
                     deep:       2
                     elements:   ["appendix", "chapter"]
@@ -109,7 +108,6 @@ The `pdf` editions can define even more options:
   * `margin`, sets the four margins of the printed book: `top`, `bottom`, `inner` and `outter`. If the book is one-sided, `inner` equals left margin and `outter` equals right margin. The values of the margins can be set with any CSS valid lenght unit (`1in`, `25mm`, `2.5cm`).
   * `page_size`, the page size of the printed book. **easybook** only supports `A4` size for the moment (`A4` size is 8.27 inches × 11.69 inches).
   * `toc`, it's the same option and has the same meaning as for the `html` and `html_chunked` editions
-  * `two_sided`, if `true` the PDF file is ready for two-sided printing.
 
 In addition to all these options, editions can set a very useful option named `extends`. The value of this option indicates the name of the edition from which this edition *inherits*. When an edition *inherits* from another edition, the options of the parent edition are copied on the *heir* edition, which can then override any value.
 
@@ -121,7 +119,6 @@ Imagine for example you want to publish one PDF book with three slightly differe
             print:
                 format:       pdf
                 auto_label:   true
-                two_sided:    false
                 page_size:    A4
                 margin:
                     top:      25mm
@@ -134,7 +131,6 @@ Imagine for example you want to publish one PDF book with three slightly differe
     
             draft:
                 extends:      print
-                two_sided:    true
                 margin:
                     top:      15mm
                     bottom:   15mm
@@ -143,7 +139,6 @@ Imagine for example you want to publish one PDF book with three slightly differe
 
             lulu:
                 extends:      print
-                two_sided:    true
 
 The only limitation of `extends` is that it only works with one level inheritance. Therefore, and edition cannot extend another edition that extends a third one.
 

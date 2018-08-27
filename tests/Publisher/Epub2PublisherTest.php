@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Tests\Publishers;
+namespace Easybook\Tests\Publisher;
 
 use Easybook\Publisher\Epub2Publisher;
 use Easybook\Tests\AbstractContainerAwareTestCase;

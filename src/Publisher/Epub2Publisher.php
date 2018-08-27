@@ -169,6 +169,13 @@ final class Epub2Publisher extends AbstractPublisher
     }
 
     /**
+     * @param $TYPE$[] $$$END$
+     */
+    public function setExcludedElements(array $excludedElements): void
+    {
+    }
+
+    /**
      * Prepares the temporary directory where the book contents are generated
      * before packing them into the resulting EPUB file. It also creates the
      * full directory structure required for EPUB books.

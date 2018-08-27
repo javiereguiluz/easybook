@@ -27,11 +27,8 @@ parameters:
     book_resources_dir: '%book_dir%/Resources'
     book_templates_dir: '%book_resources_dir/Templates'
 
-    # kindle gen - required fro MOBI
+    # kindlegen bin path - required fro MOBI
     kindlegen_path: ~
-        # common options
-        # Mac OS X & Linux
-#        - '/usr/local/bin/kindlegen'
-#        - '/usr/bin/kindlegen'
-        # Windows
-#        - 'c:\KindleGen\kindlegen'
+
+    # wkhtmlpdf bin path - required fro PDF
+    wkhtmlpdf_path: ~

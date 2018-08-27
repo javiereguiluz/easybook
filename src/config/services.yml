@@ -27,3 +27,4 @@ services:
     Michelf\MarkdownExtra: ~
 
     Symplify\PackageBuilder\Parameter\ParameterProvider: ~
+

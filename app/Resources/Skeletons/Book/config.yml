@@ -48,4 +48,3 @@ parameters:
                 toc:
                     deep:       2
                     elements:   ["appendix", "chapter", "part"]
-                two_sided:      true

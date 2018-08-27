@@ -35,6 +35,9 @@ parameters:
         - 'PhpCsFixer\Fixer\PhpTag\BlankLineAfterOpeningTagFixer'
         - 'PhpCsFixer\Fixer\Operator\UnaryOperatorSpacesFixer'
 
+        # bugged
+        - 'SlevomatCodingStandard\Sniffs\ControlStructures\RequireShortTernaryOperatorSniff'
+
     skip:
         Symplify\CodingStandard\Sniffs\CleanCode\ForbiddenStaticFunctionSniff:
             -  '*EventSubscriber.php'

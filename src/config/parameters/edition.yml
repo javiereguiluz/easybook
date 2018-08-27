@@ -17,5 +17,3 @@ parameters:
 
             toc_deep: 2
             tco_elements: ['appendix', 'chapter']
-
-            two_sided: true

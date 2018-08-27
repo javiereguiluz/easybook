@@ -6,69 +6,6 @@
     size: {{ edition.page_size }};
 }
 
-{% if edition.two_sided %}
-@page:right {
-    margin: {{ edition.margin.top|default('25mm') }} {{ edition.margin.outer|default(edition.margin.outter)|default('20mm') }} {{ edition.margin.bottom|default('25mm') }} {{ edition.margin.inner|default('30mm') }};
-
-    @top-left {
-        border-bottom: 1px solid {{ color_silver }};
-        color: {{ color_gray }};
-        font: 9pt tex-heros, sans-serif;
-        margin-bottom: 12pt;
-        padding-bottom: 3pt;
-        vertical-align: baseline;
-    }
-
-    @top-right {
-        border-bottom: 1px solid {{ color_silver }};
-        color: {{ color_gray }};
-        font: 9pt tex-heros, sans-serif;
-        margin-bottom: 12pt;
-        padding-bottom: 3pt;
-        vertical-align: baseline;
-    }
-
-    @bottom-right {
-        font: bold 12pt tex-heros, sans-serif;
-        padding-top: 11pt;
-        vertical-align: top;
-    }
-
-    @bottom-left {
-    }
-}
-
-@page:left {
-    margin: {{ edition.margin.top|default('25mm') }} {{ edition.margin.inner|default('30mm') }} {{ edition.margin.bottom|default('25mm') }} {{  edition.margin.outer|default(edition.margin.outter)|default('20mm') }};
-
-    @top-left {
-        border-bottom: 1px solid {{ color_silver }};
-        color: {{ color_gray }};
-        font: 9pt tex-heros, sans-serif;
-        margin-bottom: 12pt;
-        padding-bottom: 3pt;
-        vertical-align: baseline;
-    }
-
-    @top-right {
-        border-bottom: 1px solid {{ color_silver }};
-        color: {{ color_gray }};
-        font: 9pt tex-heros, sans-serif;
-        margin-bottom: 12pt;
-        padding-bottom: 3pt;
-        vertical-align: baseline;
-    }
-
-    @bottom-left {
-        font: bold 12pt tex-heros, sans-serif;
-        padding-top: 11pt;
-        vertical-align: top;
-    }
-
-    @bottom-right {
-    }
-}
-{% else %}
 @page {
     margin: {{ edition.margin.top|default('25mm') }} {{ edition.margin.outer|default(edition.margin.outter)|default('20mm') }} {{ edition.margin.bottom|default('25mm') }} {{ edition.margin.inner|default('30mm') }};
 
@@ -97,7 +34,6 @@
     @bottom-left {
     }
 }
-{% endif %}
 
 @page no-header-footer {
     @top-left     { content: ''; border: none; }

@@ -6,9 +6,6 @@
 /* @common
    -------------------------------------------------------------------------- */
 .item {
-{% if edition.two_sided %}
-    page-break-before: right;
-{% endif %}
     page: page_normal;
     prince-page-group: start; /* don't touch this! needed for 'page' property */
 }
@@ -66,28 +63,12 @@
 {% block appendix %}
 /* @appendix
    -------------------------------------------------------------------------- */
-{% if edition.two_sided %}
-@page page_appendix:right {
-    @top-left     { content: string(book_title); }
-    @top-right    { content: string(appendix_title, first); }
-    @bottom-right { content: counter(page); }
-    @bottom-left  { }
-}
-
-@page page_appendix:left {
-    @top-left     { content: string(appendix_title, first); }
-    @top-right    { content: string(book_title); }
-    @bottom-right { }
-    @bottom-left  { content: counter(page); }
-}
-{% else %}
 @page page_appendix {
     @top-left     { content: string(book_title); }
     @top-right    { content: string(appendix_title, first); }
     @bottom-right { content: counter(page); }
     @bottom-left  { }
 }
-{% endif %}
 
 @page page_appendix:first {
     @top       { content: '' !important; border: none; }
@@ -111,28 +92,12 @@
 {% block chapter %}
 /* @chapter
    -------------------------------------------------------------------------- */
-{% if edition.two_sided %}
-@page page_chapter:right {
-    @top-left     { content: string(book_title); }
-    @top-right    { content: string(chapter_title, first); }
-    @bottom-right { content: counter(page); }
-    @bottom-left  { }
-}
-
-@page page_chapter:left {
-    @top-left     { content: string(chapter_title, first); }
-    @top-right    { content: string(book_title); }
-    @bottom-right { }
-    @bottom-left  { content: counter(page); }
-}
-{% else %}
 @page page_chapter {
     @top-left     { content: string(book_title); }
     @top-right    { content: string(chapter_title, first); }
     @bottom-right { content: counter(page); }
     @bottom-left  { }
 }
-{% endif %}
 
 @page page_chapter:first {
     @top       { content: '' !important; border: none; }

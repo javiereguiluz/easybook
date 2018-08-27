@@ -14,6 +14,11 @@ use Symfony\Component\Process\Process;
 final class MobiPublisher extends AbstractPublisher
 {
     /**
+     * @var string
+     */
+    public const NAME = 'mobi';
+
+    /**
      * @var string|null
      */
     private $kindlegenPath;
@@ -22,13 +27,6 @@ final class MobiPublisher extends AbstractPublisher
      * @var SymfonyStyle
      */
     private $symfonyStyle;
-
-    /**
-     * Kindle Publishing Guidelines rule that ebooks should contain an HTML TOC, so it cannot be excluded.
-     *
-     * @var string[]
-     */
-    private $excludedElements = ['cover', 'lot', 'lof'];
 
     /**
      * @var string[]
@@ -58,10 +56,12 @@ final class MobiPublisher extends AbstractPublisher
     {
         $this->ensureExistingKindlegenPathIsSet();
 
-        // depends on epub :)
+        // Kindle Publishing Guidelines rule that ebooks should contain an HTML TOC, so it cannot be excluded.
+        $this->epub2Publisher->setExcludedElements(['cover', 'lot', 'lof']);
         $epubFilePath = $this->epub2Publisher->publishBook($outputDirectory);
 
-        $command = sprintf('%s %s -o book.mobi -c1', $outputDirectory, $epubFilePath);
+        // @todo somehow into source
+        $command = sprintf('%s %s -o book.mobi -c1', $this->kindlegenPath, $epubFilePath);
 
         $process = new Process($command);
         $process->run();
@@ -77,9 +77,12 @@ final class MobiPublisher extends AbstractPublisher
 
     public function getFormat(): string
     {
-        return 'mobi';
+        return self::NAME;
     }
 
+    /**
+     * @todo decouple for this and mobi
+     */
     private function ensureExistingKindlegenPathIsSet(): void
     {
         if ($this->kindlegenPath === null) {
@@ -91,7 +94,7 @@ final class MobiPublisher extends AbstractPublisher
             }
 
             throw new RequiredBinFileNotFoundException(sprintf(
-                'Kindlegen is required to create mobi. The path to is empty though. We also looked into "%s" but did not find it. Set it in "parameters > kindlegen_path".',
+                'Kindlegen bin is required to create mobi. The path to is empty though. We also looked into "%s" but did not find it. Set it in "parameters > kindlegen_path".',
                 implode('", "', $this->possibleKindlegenPaths)
             ));
         }
