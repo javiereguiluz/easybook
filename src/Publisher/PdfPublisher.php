@@ -42,184 +42,6 @@ final class PdfPublisher extends AbstractPublisher
         return self::NAME;
     }
 
-    public function loadContents(): void
-    {
-        parent::loadContents();
-
-        // if the book includes its own cover as a PDF file,
-        // remove the default 'cover' element to prevent
-        // publishing a book with two covers
-        if (null !== $this->getCustomCover()) {
-            $bookItems = array();
-
-            // remove any element of type 'cover' from the
-            // publishing items
-            foreach ($this->app['publishing.items'] as $item) {
-                if ('cover' != $item['config']['element']) {
-                    $bookItems[] = $item;
-                }
-            }
-
-            $this->app['publishing.items'] = $bookItems;
-        }
-    }
-
-    /*
- /**
-  * It looks for custom book cover PDF. The search order is:
-  *   1. <book>/Resources/Templates/<edition-name>/cover.pdf
-  *   2. <book>/Resources/Templates/pdf/cover.pdf
-@@ -201,35 +75,18 @@ public function addBookCover($bookFilePath, $coverFilePath)
-  * @param string $coverFileName The name of the PDF file that defines the book cover
-  *
-  * @return null|string The filePath of the PDF cover or null if none exists
-  *
-  * @protected (set to public to be able to unit test it)
-  */
-    public function getCustomCover($coverFileName = 'cover.pdf')
-    {
-        $paths = array(
-            $this->app['publishing.dir.templates'].'/'.$this->app['publishing.edition'],
-            $this->app['publishing.dir.templates'].'/pdf',
-            $this->app['publishing.dir.templates'] . '/' . $this->app['publishing.edition'],
-            $this->app['publishing.dir.templates'] . '/pdf',
-            $this->app['publishing.dir.templates'],
-        );
-        return $this->app->getFirstExistingFile($coverFileName, $paths);
-    }
-
-    /**
-     * If the book defines a custom PDF cover, this method prepends it
-     * to the PDF book.
-     *
-     * @param string $bookFilePath  The path of the original PDF book without the cover
-     * @param string $coverFilePath The path of the PDF file which will be displayed as the cover of the book
-     *
-     * @protected (set to public to be able to unit test it)
-     */
-    public function addBookCover(string $bookFilePath, string $coverFilePath): void
-    {
-        if (!empty($coverFilePath)) {
-            $pdfBook = PdfDocument::load($bookFilePath);
-            $pdfCover = PdfDocument::load($coverFilePath);
-
-            $pdfCover = clone $pdfCover->pages[0];
-            array_unshift($pdfBook->pages, $pdfCover);
-
-            $pdfBook->save($bookFilePath, true);
-        }
-    }
-
-    /**
-     * @todo Make part of internal API
-     *
-     * Decorates each book item with the appropriate Twig template.
-     */
-    public function decorateContents(): void
-    {
-//        foreach ($this->publishingItems as $item) {
-//            $item->changeContent($this->renderer->render($item->getConfigElement() . '.twig', [
-//                'item' => $item,
-//            ]));
-//        }
-    }
-
-<?php
-    /*
-    * This file is part of the easybook application.
-    *
-    * (c) Javier Eguiluz <javier.eguiluz@gmail.com>
-    *
-    * For the full copyright and license information, please view the LICENSE
-    * file that was distributed with this source code.
-    */
-namespace Easybook\Publishers;
-    /**
-     * It publishes the book as a PDF file. All the internal links are transformed
-     * into clickable cross-section book links. These links even display automatically
-     * the page number where they point into, so no information is lost when printing
-     * the book.
-     */
-class PdfWkhtmltopdfPublisher extends PdfPublisher
-{
-    public function checkIfThisPublisherIsSupported()
-    {
-        if (null !== $this->app['wkhtmltopdf.path'] && file_exists($this->app['wkhtmltopdf.path'])) {
-            $wkhtmltopdfPath = $this->app['wkhtmltopdf.path'];
-        } else {
-            $wkhtmltopdfPath = $this->findWkhtmltopdfPath();
-        }
-        $this->app['wkhtmltopdf.path'] = $wkhtmltopdfPath;
-        return null !== $wkhtmltopdfPath && file_exists($wkhtmltopdfPath);
-    }
-    public function assembleBook(): void
-    {
-        $this->ensureExistingWkhtmlpdfPathIsSet();
-
-        $tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('easybook_pdf_');
-        $this->app['filesystem']->mkdir($tmpDir);
-        // implode all the contents to create the whole book
-        $htmlBookFilePath = $tmpDir . '/book.html';
-        $this->app->render(
-            'book.twig',
-            array('items' => $this->app['publishing.items']),
-            $htmlBookFilePath
-        );
-
-
-        return $outputDirectory . '/book.pdf';
-
-        //        // use khtmltopdf to transform the HTML book into a PDF book
-//        $prince = $this->app['prince'];
-//        $prince->setBaseURL($this->app['publishing.dir.contents'] . '/images');
-//
-//        // Prepare and add stylesheets before PDF conversion
-//        if ($this->app->edition('include_styles')) {
-//            $defaultStyles = $tmpDir . '/default_styles.css';
-//            $this->app->render(
-//                '@theme/style.css.twig',
-//                array('resources_dir' => $this->app['app.dir.resources'] . '/'),
-//                $defaultStyles
-//            );
-//
-//            $prince->addStyleSheet($defaultStyles);
-//        }
-//
-//        $customCss = $this->app->getCustomTemplate('style.css');
-//        if (file_exists($customCss)) {
-//            $prince->addStyleSheet($customCss);
-//        }
-//
-//        $errorMessages = array();
-//        $pdfBookFilePath = $this->app['publishing.dir.output'] . '/book.pdf';
-//        $prince->convert_file_to_file($htmlBookFilePath, $pdfBookFilePath, $errorMessages);
-//        $this->displayPdfConversionErrors($errorMessages);
-//
-//        $this->addBookCover($pdfBookFilePath, $this->getCustomCover());
-    }
-
-    //    /**
-//     * It displays the error messages generated by the PDF conversion
-//     * process in a user-friendly way.
-//     *
-//     * @param array $errorMessages The array of messages generated by PrinceXML
-//     */
-//    protected function displayPdfConversionErrors($errorMessages)
-//    {
-//        if (count($errorMessages) > 0) {
-//            $this->app['console.output']->writeln("\n PrinceXML errors and warnings");
-//            $this->app['console.output']->writeln(" -----------------------------\n");
-//
-//            foreach ($errorMessages as $message) {
-//                $this->app['console.output']->writeln(
-//                    '   [' . strtoupper($message[0]) . '] ' . ucfirst($message[2]) . ' (' . $message[1] . ')'
-//                );
-//            }
-//
-//            $this->app['console.output']->writeln("\n");
-//        }
-//    }
-
     /**
      * @todo decouple for this and mobi
      */
@@ -247,5 +69,358 @@ class PdfWkhtmltopdfPublisher extends PdfPublisher
             'Wkhtmlpdf bin was not found in "%s" path provided in "parameters > wkhtmlpdf_path".',
             $this->wkhtmltopdfPath
         ));
+    }
+
+    /**
+     * Assemble the book using wkhtmltopdf.
+     *
+     * Some limitations/remarks:
+     *
+     * - Hyphenation is unsupported. Currently managed by an
+     *   external Javascript library.
+     *
+     * - PDF cover is not supported. Only HTML cover is supported.
+     *
+     * - Two-sided pages are unsupported.
+     *
+     * - Headers / Footers are set using wkhtmltopdf arguments (very limited).
+     *
+     * - PDF outline cannot be filtered. It will always contain all
+     *   document headings.
+     *
+     * - TOC filtering is (very) limited, performed via XSLT
+     *   tranfsormation.
+     *
+     */
+    public function assembleBook()
+    {
+        $this->ensureExistingWkhtmlpdfPathIsSet();
+
+
+        $tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('easybook_pdf_');
+        $this->app['filesystem']->mkdir($tmpDir);
+
+        /** @var Pdf $wkhtmltopdf */
+        $wkhtmltopdf = $this->app['wkhtmltopdf'];
+
+        // consolidate book images to temp dir
+        $imagesDir = $tmpDir . '/images';
+        $this->app['filesystem']->mkdir($imagesDir);
+        $this->prepareBookImages($imagesDir);
+
+        // filter out unusupported content items and extract certain values
+        $extractedValues = $this->prepareBookItems();
+
+        // render components
+        $htmlBookFilePath = $this->renderBook($tmpDir);
+        $htmlCoverFilePath = $this->renderHtmlCover($tmpDir);
+        $tocFilePath = $this->renderToc($tmpDir, $extractedValues['toc-title']);
+
+        // prepare global options like paper size and margins
+        $globalOptions = $this->setGlobalOptions($tmpDir);
+
+        // add the stylesheet
+        $globalOptions = array_merge($globalOptions, $this->prepareStyleSheet($tmpDir));
+
+        // prepare page options like headers and footers
+        $pageOptions = $this->prepareHeaderAndFooter($tmpDir);
+
+        // top and bottom margins need to be tweaked to make room for header/footer
+        $globalOptions['margin-top'] += $pageOptions['header-spacing'];
+        $globalOptions['margin-bottom'] += $pageOptions['footer-spacing'];
+
+        // set the options as global
+        $wkhtmltopdf->setOptions($globalOptions);
+
+        // cover page
+        $wkhtmltopdf->addPage($htmlCoverFilePath);
+
+        // TOC is always first after cover
+        $tocOptions = array(
+            'xsl-style-sheet' => $tocFilePath,
+        );
+        $wkhtmltopdf->addToc($tocOptions);
+
+        // rest of the book
+        $wkhtmltopdf->addPage($htmlBookFilePath, $pageOptions);
+
+        // do the conversion
+        $pdfBookFilePath = $outputDirectory . '/book.pdf';
+
+        if ($wkhtmltopdf->saveAs($pdfBookFilePath) === false) {
+            $this->displayPdfConversionErrors($wkhtmltopdf->getError());
+        }
+
+        return $outputDirectory . '/book.pdf';
+    }
+
+    /**
+     * It displays the error messages generated by the PDF conversion
+     * process in a user-friendly way.
+     *
+     * @param string $errorMessages The array of messages generated by wkhtmltopdf
+     */
+    protected function displayPdfConversionErrors($errorMessages)
+    {
+        $this->app['console.output']->writeln("\n Wkhtmltopdf errors and warnings");
+        $this->app['console.output']->writeln(" -------------------------------\n");
+        $this->app['console.output']->writeln($errorMessages);
+        $this->app['console.output']->writeln("\n");
+    }
+
+    /**
+     * It returns the needed configuration to set up the custom wkhtmltopdf path
+     * using YAML format.
+     *
+     * @return string The sample YAML configuration
+     */
+    private function getSampleYamlConfiguration()
+    {
+        return <<<YAML
+  easybook:
+      parameters:
+          wkhtmltopdf.path: '/path/to/utils/wkhtmltopdf'
+
+  book:
+      title:  ...
+      author: ...
+      # ...
+YAML;
+    }
+
+    /**
+     * Set global wkhtmptopdf options.
+     *
+     * @param $tmpDir
+     *
+     * @return array options
+     */
+    protected function setGlobalOptions($tmpDir)
+    {
+        // margins and media size
+        // TODO: allow other units (inches, cms)
+        $margin = $this->app->edition('margin');
+        $marginTop = str_replace('mm', '', $margin['top']);
+        $marginBottom = str_replace('mm', '', $margin['bottom']);
+        $marginLeft = str_replace('mm', '', $margin['inner']);
+        $marginRight = str_replace(
+            'mm',
+            '',
+            isset($margin['outer'])
+                ? $margin['outer']
+                : $margin['outter']
+        );
+
+        $orientation = $this->app->edition('orientation') ?: 'portrait';
+
+        $newOptions = array(
+            'page-size'     => $this->app->edition('page_size'),
+            'margin-top'    => $marginTop ?: 25,
+            'margin-bottom' => $marginBottom ?: 25,
+            'margin-left'   => $marginLeft ?: 30,
+            'margin-right'  => $marginRight ?: 20,
+            'orientation'   => $orientation,
+            'encoding'      => 'UTF-8',
+            'print-media-type',
+        );
+
+        // misc.
+        $edition = $this->app->edition('toc');
+        $newOptions['outline-depth'] = $edition['deep'];
+
+        // dump outline xml for easy outline/toc debugging
+        $newOptions['dump-outline'] = $tmpDir . '/outline.xml';
+
+        return $newOptions;
+    }
+
+    /**
+     * Prepare the stylesheets to use in the book.
+     *
+     * @param $tmpDir
+     *
+     * @return array $options
+     */
+    protected function prepareStyleSheet($tmpDir)
+    {
+        $newOptions = [];
+
+        // copy the general styles if edition wants them included
+        if ($this->app->edition('include_styles')) {
+            $defaultStyles = $tmpDir . '/default_styles.css';
+            $this->app->render(
+                '@theme/wkhtmltopdf-style.css.twig',
+                array('resources_dir' => $this->app['app.dir.resources'] . '/'),
+                $defaultStyles
+            );
+
+            $newOptions['user-style-sheet'] = $defaultStyles;
+        }
+
+        // get the custom templates for the book
+        $customCss = $this->app->getCustomTemplate('style.css');
+
+        // concat it to the general styles or set it as default
+        if (file_exists($customCss)) {
+            if (isset($newOptions['user-style-sheet'])) {
+                $customCssText = file_get_contents($customCss);
+                file_put_contents(
+                    $newOptions['user-style-sheet'],
+                    "\n/* --- custom styles --- */\n" . $customCssText,
+                    FILE_APPEND
+                );
+
+            } else {
+                $newOptions['user-style-sheet'] = $customCss;
+            }
+        }
+
+        return $newOptions;
+    }
+
+    /**
+     * Prepare book items to be rendered, filtering out unsupported types
+     * and extracting certain values.
+     *
+     * @return array options
+     */
+    protected function prepareBookItems()
+    {
+        $extracted = array();
+
+        $newItems = array();
+
+        foreach ($this->app['publishing.items'] as $item) {
+
+            // extract toc title
+            if ($item['config']['element'] === 'toc') {
+                $extracted['toc-title'] = $item['title'];
+            }
+
+            // exclude unsupported items
+            // - toc: added by wkhtmltopdf
+            // - lof and lot: no way to render with page numbers
+            // - cover: added after document generation
+            if (!in_array($item['config']['element'], array('toc', 'lof', 'lot', 'cover'))) {
+                $newItems[] = $item;
+            }
+        }
+
+        $this->app['publishing.items'] = $newItems;
+
+        return $extracted;
+    }
+
+    /**
+     * Render header and footer html files and configure options.
+     *
+     * @param $tmpDir
+     *
+     * @return array options
+     */
+    protected function prepareHeaderAndFooter($tmpDir)
+    {
+        $newOptions = array();
+
+        $headerFooterFile = $tmpDir . '/header-footer.yml';
+        $this->app->render(
+            '@theme/wkhtmltopdf-header-footer.yml.twig',
+            array(),
+            $headerFooterFile
+        );
+
+        $values = Yaml::parse(file_get_contents($headerFooterFile));
+
+        $newOptions['header-spacing'] = $values['header']['spacing'] ?: 20;
+        $newOptions['header-font-name'] = $values['header']['font-name'] ?: 'sans-serif';
+        $newOptions['header-font-size'] = $values['header']['font-size'] ?: 12;
+        $newOptions['header-left'] = $values['header']['left'] ?: '[doctitle]';
+        $newOptions['header-center'] = $values['header']['center'] ?: '';
+        $newOptions['header-right'] = $values['header']['right'] ?: '[section]';
+        if ($values['header']['line'] === true) {
+            $newOptions[] = 'header-line';
+        } else {
+            $newOptions[] = 'no-header-line';
+        }
+
+        $newOptions['footer-spacing'] = $values['footer']['spacing'] ?: 20;
+        $newOptions['footer-font-name'] = $values['footer']['font-name'] ?: 'sans-serif';
+        $newOptions['footer-font-size'] = $values['footer']['font-size'] ?: 12;
+        $newOptions['footer-left'] = $values['footer']['left'] ?: '';
+        $newOptions['footer-center'] = $values['footer']['center'] ?: '[page]';
+        $newOptions['footer-right'] = $values['footer']['right'] ?: '';
+        if ($values['footer']['line'] === true) {
+            $newOptions[] = 'footer-line';
+        } else {
+            $newOptions[] = 'no-footer-line';
+        }
+
+        return $newOptions;
+    }
+
+    /**
+     * Render the whole book (except excluded items) and set options.
+     *
+     * @param $tmpDir
+     *
+     * @return string
+     */
+    protected function renderBook($tmpDir)
+    {
+        $htmlBookFilePath = $tmpDir . '/book.html';
+        $this->app->render(
+            'book.twig',
+            array(
+                'items'         => $this->app['publishing.items'],
+                'resources_dir' => $this->app['app.dir.resources'] . '/'
+            ),
+            $htmlBookFilePath
+        );
+
+        return $htmlBookFilePath;
+    }
+
+    /**
+     * Render the cover html file.
+     *
+     * @param $tmpDir
+     *
+     * @return string
+     */
+    protected function renderHtmlCover($tmpDir)
+    {
+        $htmlCoverFilePath = $tmpDir . '/cover.html';
+        $this->app->render(
+            'cover.twig',
+            array(),
+            $htmlCoverFilePath
+        );
+
+        return $htmlCoverFilePath;
+    }
+
+    /**
+     * Render the TOC XSLT file.
+     *
+     * @param $tmpDir
+     * @param $tocTitle
+     *
+     * @return string
+     *
+     */
+    protected function renderToc($tmpDir, $tocTitle)
+    {
+        $tocFilePath = $tmpDir . '/toc.xsl';
+        $toc = $this->app->edition('toc');
+        $this->app->render(
+            'wkhtmltopdf-toc.xsl.twig',
+            array(
+                'toc_title' => $tocTitle,
+                'toc_deep'  => $toc['deep']
+            ),
+            $tocFilePath
+        );
+
+        return $tocFilePath;
     }
 }
