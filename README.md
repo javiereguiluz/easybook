@@ -41,3 +41,7 @@ In order to generate MOBI files, KindleGen library must be installed.
 If you haven't installed it yet, you can download it freely at Amazon:
 
     http://amzn.to/kindlegen
+
+PDF:
+
+- http://wkhtmltopdf.org/downloads.html
