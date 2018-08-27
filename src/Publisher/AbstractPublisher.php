@@ -17,6 +17,7 @@ use Nette\Utils\FileSystem as NetteFileSystem;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Twig_Error_Loader;
 
 abstract class AbstractPublisher implements PublisherInterface
@@ -62,11 +63,17 @@ abstract class AbstractPublisher implements PublisherInterface
     private $markdownExtra;
 
     /**
+     * @var Finder
+     */
+    private $finder;
+
+    /**
      * @required
      */
     public function setRequiredDependencies(
         EventDispatcherInterface $eventDispatcher,
         Filesystem $filesystem,
+        Finder $finder,
         Renderer $renderer,
         Slugger $slugger,
         MarkdownExtra $markdownExtra,
@@ -75,6 +82,7 @@ abstract class AbstractPublisher implements PublisherInterface
     ): void {
         $this->eventDispatcher = $eventDispatcher;
         $this->filesystem = $filesystem;
+        $this->finder = $finder;
         $this->renderer = $renderer;
         $this->slugger = $slugger;
         $this->markdownExtra = $markdownExtra;
@@ -133,7 +141,48 @@ abstract class AbstractPublisher implements PublisherInterface
         }
     }
 
-    abstract protected function assembleBook(string $outputDirectory): string;
+    //abstract protected function assembleBook(string $outputDirectory): string;
+
+    /**
+     * It prepares the book images by copying them into the appropriate
+     * temporary directory. It also prepares an array with all the images
+     * data needed later to generate the full ebook contents manifest.
+     *
+     * @param string $targetDir The directory where the images are copied to.
+     *
+     * @return mixed[] Images data needed to create the book manifest.
+     */
+    protected function prepareBookImages(string $targetDir): array
+    {
+        if (! file_exists($targetDir)) {
+            throw new RuntimeException(
+                sprintf(
+                    " ERROR: Books images couldn't be copied because \n"
+                    . " the given '%s' \n"
+                    . " directory doesn't exist.",
+                    $targetDir
+                )
+            );
+        }
+        $imagesDir = $this->app['publishing.dir.contents'] . '/images';
+        $imagesData = [];
+        if (file_exists($imagesDir)) {
+            $images = $this->finder->files()
+                ->in($imagesDir)
+                ->getIterator();
+
+            $i = 1;
+            foreach ($images as $image) {
+                $this->filesystem->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
+                $imagesData[] = [
+                    'id' => 'figure-' . $i++,
+                    'filePath' => 'images/' . $image->getFileName(),
+                    'mediaType' => 'image/' . pathinfo($image->getFilename(), PATHINFO_EXTENSION),
+                ];
+            }
+        }
+        return $imagesData;
+    }
 
     /**
      * It loads the contents of the given content file name. Most of the time
@@ -222,48 +271,5 @@ abstract class AbstractPublisher implements PublisherInterface
             // the table of contents of this item
             []
         );
-    }
-
-    /**
-     * It prepares the book images by copying them into the appropriate
-     * temporary directory. It also prepares an array with all the images
-     * data needed later to generate the full ebook contents manifest.
-     *
-     * @param string $targetDir The directory where the images are copied.
-     *
-     * @return array Images data needed to create the book manifest.
-     *
-     * @throws \RuntimeException If the $targetDir doesn't exist.
-     */
-    protected function prepareBookImages($targetDir)
-    {
-        if (!file_exists($targetDir)) {
-            throw new \RuntimeException(
-                sprintf(
-                    " ERROR: Books images couldn't be copied because \n"
-                    . " the given '%s' \n"
-                    . " directory doesn't exist.",
-                    $targetDir
-                )
-            );
-        }
-        $imagesDir = $this->app['publishing.dir.contents'] . '/images';
-        $imagesData = array();
-        if (file_exists($imagesDir)) {
-            $images = $this->app['finder']->files()->in($imagesDir);
-            $i = 1;
-            foreach ($images as $image) {
-                $this->app['filesystem']->copy(
-                    $image->getPathName(),
-                    $targetDir . '/' . $image->getFileName()
-                );
-                $imagesData[] = array(
-                    'id'        => 'figure-' . $i++,
-                    'filePath'  => 'images/' . $image->getFileName(),
-                    'mediaType' => 'image/' . pathinfo($image->getFilename(), PATHINFO_EXTENSION),
-                );
-            }
-        }
-        return $imagesData;
     }
 }

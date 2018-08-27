@@ -1,0 +1,8 @@
+parameters:
+    wkhtmltopdf_path: 'incorrect'
+
+    book:
+        name: 'Some Book'
+        editions:
+            first_edition:
+                format: pdf
