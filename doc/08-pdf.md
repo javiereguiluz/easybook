@@ -202,16 +202,10 @@ editions can also set any of the following specific options:
   * `page_size`, the page size of the printed book. Instead of setting the page
     dimensions, **easybook** uses [named page sizes][1] such as `US-Letter`,
     `US-Legal`, `crown-quarto`, `A4`, `A3`, etc.
-  * `two_sided`, if `true` the PDF file is formatted for two-sided printing, 
-    which means that some blank pages will probably be inserted to ensure that
-    the important contents always start at an odd page. If this option is set
-    to `false`, no blank pages will be inserted.
 
 N> **`wkhtmltopdf` compatibility:**
 N> 
 N> * `margin` takes only milimiters (i.e. 10mm).
-N> * `two_sided` is not supported and will be ignored if present. The book will
-N>   be rendered with only one-sided pages.
 N> * `page_size` takes any value listed in its [paper sizes page][2]. 
 
 ## Book cover

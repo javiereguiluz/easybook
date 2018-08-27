@@ -175,7 +175,7 @@ abstract class AbstractPublisher implements PublisherInterface
             foreach ($images as $image) {
                 $this->filesystem->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
                 $imagesData[] = [
-                    'id' => 'figure-' . $i++,
+                    'id' => 'figure-' . ++$i,
                     'filePath' => 'images/' . $image->getFileName(),
                     'mediaType' => 'image/' . pathinfo($image->getFilename(), PATHINFO_EXTENSION),
                 ];

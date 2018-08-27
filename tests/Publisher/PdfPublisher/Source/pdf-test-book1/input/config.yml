@@ -31,7 +31,6 @@ book:
             toc:
                 deep:        2
                 elements:    ["appendix", "chapter"]
-            two_sided:       false
 
         print-wkhtmltopdf:
             extends:        print

@@ -16,13 +16,15 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
      */
     private $pdfPublisher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->pdfPublisher = $this->container->get(PdfPublisher::class)
+        $this->pdfPublisher = $this->container->get(PdfPublisher::class);
     }
 
     /**
      * @dataProvider provideCoverSampleData()
+     *
+     * @param mixed[] $existingCoverFiles
      */
     public function testBookUsesTheRightCustomCover(array $existingCoverFiles, string $coverThatShouldBeUsed): void
     {
@@ -49,53 +51,14 @@ final class PdfPublisherTest extends AbstractContainerAwareTestCase
 
     public function provideCoverSampleData(): Iterator
     {
-yield [
-                ['print/cover.pdf', 'pdf/cover.pdf', 'cover.pdf'],
-                'print/cover.pdf',
-            ];
-yield [
-                ['print/cover.jpg', 'pdf/cover.pdf', 'cover.pdf'],
-                'pdf/cover.pdf',
-            ];
-yield [
-                ['print/cover.jpg', 'pdf/cover.png', 'cover.pdf'],
-                'cover.pdf',
-            ];
-yield [
-                ['pdf/cover.pdf', 'cover.pdf'],
-                'pdf/cover.pdf',
-            ];
-yield [
-                ['print/cover.pdf'],
-                'print/cover.pdf',
-            ];
-yield [
-                ['pdf/cover.pdf'],
-                'pdf/cover.pdf',
-            ];
-yield [
-                ['cover.pdf'],
-                'cover.pdf',
-            ];
-yield [
-                ['print/cover.png'],
-                '',
-            ];
-    }
-
-    public function testOneSidedPrintedBookDontIncludeBlankPages(): void
-    {
-        $app = new Application();
-        $app['publishing.book.config'] = $this->getBookConfig(false);
-        $app['publishing.edition'] = 'print';
-
-        $bookCss = $app->render('@theme/style.css.twig');
-
-        $this->assertNotContains(
-            ".item {\n    page-break-before: right;",
-            $bookCss,
-            "One-sided books don't include blank pages."
-        );
+        yield [['print/cover.pdf', 'pdf/cover.pdf', 'cover.pdf'], 'print/cover.pdf'];
+        yield [['print/cover.jpg', 'pdf/cover.pdf', 'cover.pdf'], 'pdf/cover.pdf'];
+        yield [['print/cover.jpg', 'pdf/cover.png', 'cover.pdf'], 'cover.pdf'];
+        yield [['pdf/cover.pdf', 'cover.pdf'], 'pdf/cover.pdf'];
+        yield [['print/cover.pdf'], 'print/cover.pdf'];
+        yield [['pdf/cover.pdf'], 'pdf/cover.pdf'];
+        yield [['cover.pdf'], 'cover.pdf'];
+        yield [['print/cover.png'], ''];
     }
 
     public function testAddBookCover(): void
@@ -111,8 +74,7 @@ yield [
         $this->createPdfFile($coverFilePath, 'EASYBOOK COVER');
         $this->createPdfFile($bookFilePath, 'easybook contents');
 
-        $publisher = new PdfWkhtmltopdfPublisher($app);
-        $publisher->addBookCover($bookFilePath, $coverFilePath);
+        $this->pdfPublisher->addBookCover($bookFilePath, $coverFilePath);
 
         $resultingPdfBook = PdfDocument::load($bookFilePath);
 
@@ -134,22 +96,7 @@ yield [
         $this->filesystem->remove($tmpDir);
     }
 
-    private function getBookConfig($twoSided)
-    {
-        yield
-            'book' => [
-                'language' => 'en',
-                'editions' => [
-                    'print' => [
-                        'format' => 'pdf',
-                        'theme' => 'clean',
-                        'two_sided' => $twoSided,
-                    ],
-                ],
-        ];
-    }
-
-    private function createPdfFile($filePath, $contents): void
+    private function createPdfFile(string $filePath, string $contents): void
     {
         $pdf = new PdfDocument();
 

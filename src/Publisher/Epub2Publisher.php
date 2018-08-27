@@ -169,10 +169,11 @@ final class Epub2Publisher extends AbstractPublisher
     }
 
     /**
-     * @param $TYPE$[] $$$END$
+     * @param string[] $excludedElements
      */
     public function setExcludedElements(array $excludedElements): void
     {
+        $this->excludedElements = $excludedElements;
     }
 
     /**

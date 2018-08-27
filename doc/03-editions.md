@@ -49,9 +49,6 @@ edition format and others are specific to each format.
 
 ### Common configuration options ### {#common-edition-options}
 
-  * `include_styles`, if `true` **easybook** default CSS styles are applied to
-    the published book. If you want to fully customize the design of your 
-    book, don't apply these styles.
   * `labels`, sets the content types for which **easybook** will add labels
     to their section headings. By default labels are only added to headings of
     chapters and appendices. In addition to the regular content types, you can
