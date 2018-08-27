@@ -88,17 +88,7 @@ final class Epub2Publisher extends AbstractPublisher
         parent::loadContents();
     }
 
-    /**
-     * Overrides the base publisher method to avoid the decoration of the book items.
-     * Instead of using the regular Twig templates based on the item type (e.g. chapter),
-     * ePub books items are decorated afterwards with some special Twig templates.
-     */
-    public function decorateContents(): void
-    {
-        return;
-    }
-
-    public function assembleBook(string $outputDirectory): void
+    public function assembleBook(string $outputDirectory): string
     {
         $bookTmpDir = $this->prepareBookTemporaryDirectory();
 
@@ -169,6 +159,8 @@ final class Epub2Publisher extends AbstractPublisher
 
         // remove temp directory used to build the book
         $this->filesystem->remove($bookTmpDir);
+
+        return $outputDirectory . '/book.epub';
     }
 
     public function getFormat(): string

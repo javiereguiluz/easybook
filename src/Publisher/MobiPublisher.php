@@ -4,7 +4,6 @@ namespace Easybook\Publisher;
 
 use Easybook\Exception\Publisher\RequiredBinFileNotFoundException;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -12,7 +11,7 @@ use Symfony\Component\Process\Process;
  * It publishes the book as a MOBI file. All the internal links are transformed
  * into clickable cross-section book links.
  */
-final class MobiPublisher extends Epub2Publisher
+final class MobiPublisher extends AbstractPublisher
 {
     /**
      * @var string
@@ -25,27 +24,42 @@ final class MobiPublisher extends Epub2Publisher
     private $symfonyStyle;
 
     /**
-     * Kindle Publishing Guidelines rule that ebooks should contain an HTML TOC, so it cannot be
+     * Kindle Publishing Guidelines rule that ebooks should contain an HTML TOC, so it cannot be excluded.
      *
      * @var string[]
      */
     private $excludedElements = ['cover', 'lot', 'lof'];
 
-    public function __construct(?string $kindlegenPath, SymfonyStyle $symfonyStyle, Filesystem $filesystem)
+    /**
+     * @var string[]
+     */
+    private $possibleKindlegenPaths = [
+        # Mac OS X & Linux
+        '/usr/local/bin/kindlegen',
+        '/usr/bin/kindlegen',
+        # Windows
+        'c:\KindleGen\kindlegen',
+        'c:\KindleGen\kindlegen.exe',
+    ];
+
+    /**
+     * @var Epub2Publisher
+     */
+    private $epub2Publisher;
+
+    public function __construct(?string $kindlegenPath, SymfonyStyle $symfonyStyle, Epub2Publisher $epub2Publisher)
     {
         $this->kindlegenPath = $kindlegenPath;
         $this->symfonyStyle = $symfonyStyle;
-        $this->filesystem = $filesystem;
+        $this->epub2Publisher = $epub2Publisher;
     }
 
-    public function assembleBook(string $outputDirectory): void
+    public function assembleBook(string $outputDirectory): string
     {
-        $this->ensureKindlegenPathIsSet();
-
-        parent::assembleBook();
+        $this->ensureExistingKindlegenPathIsSet();
 
         // depends on epub :)
-        $epubFilePath = $outputDirectory . '/book.epub';
+        $epubFilePath = $this->epub2Publisher->publishBook($outputDirectory);
 
         $command = sprintf('%s %s -o book.mobi -c1', $outputDirectory, $epubFilePath);
 
@@ -58,15 +72,27 @@ final class MobiPublisher extends Epub2Publisher
             throw new ProcessFailedException($process);
         }
 
-        // remove the book.epub file used to generate the book.mobi file
-        $this->filesystem->remove($epubFilePath);
+        return $outputDirectory . '/book.mobi';
     }
 
-    private function ensureKindlegenPathIsSet(): void
+    public function getFormat(): string
+    {
+        return 'mobi';
+    }
+
+    private function ensureExistingKindlegenPathIsSet(): void
     {
         if ($this->kindlegenPath === null) {
+            foreach ($this->possibleKindlegenPaths as $possibleKindlegenPath) {
+                if (file_exists($possibleKindlegenPath)) {
+                    $this->kindlegenPath = $possibleKindlegenPath;
+                    return;
+                }
+            }
+
             throw new RequiredBinFileNotFoundException(sprintf(
-                'Path to kindlegen that is required to create mobi files is empty. Did you set it in "parameters > kindlegen_path"?'
+                'Kindlegen is required to create mobi. The path to is empty though. We also looked into "%s" but did not find it. Set it in "parameters > kindlegen_path".',
+                implode('", "', $this->possibleKindlegenPaths)
             ));
         }
 
@@ -75,7 +101,7 @@ final class MobiPublisher extends Epub2Publisher
         }
 
         throw new RequiredBinFileNotFoundException(sprintf(
-            'Kindlegen was not found in "%s" path provided in "parameters > kindlegen_path"',
+            'Kindlegen was not found in "%s" path provided in "parameters > kindlegen_path".',
             $this->kindlegenPath
         ));
     }

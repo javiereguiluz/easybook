@@ -85,7 +85,7 @@ abstract class AbstractPublisher implements PublisherInterface
     /**
      * It controls the book publishing workflow for this particular publisher.
      */
-    public function publishBook(string $outputDirectory): void
+    public function publishBook(string $outputDirectory): string
     {
         $this->loadContents();
         $this->parseContents();
@@ -100,24 +100,12 @@ abstract class AbstractPublisher implements PublisherInterface
     public function parseContents(): void
     {
         foreach ($this->publishingItems as $item) {
-            $itemAwareEvent = new ItemAwareEvent($item, new Edition('pdf'));
+            $itemAwareEvent = new ItemAwareEvent($item, new Edition($this->getFormat()));
             $this->eventDispatcher->dispatch(EasybookEvents::PRE_PARSE, $itemAwareEvent);
 
             $item->changeContent($this->markdownExtra->transform($item->getOriginal()));
 
             $this->eventDispatcher->dispatch(EasybookEvents::POST_PARSE, $itemAwareEvent);
-        }
-    }
-
-    /**
-     * Decorates each book item with the appropriate Twig template.
-     */
-    public function decorateContents(): void
-    {
-        foreach ($this->publishingItems as $item) {
-            $item->changeContent($this->renderer->render($item->getConfigElement() . '.twig', [
-                'item' => $item,
-            ]));
         }
     }
 
@@ -146,7 +134,7 @@ abstract class AbstractPublisher implements PublisherInterface
         }
     }
 
-    abstract protected function assembleBook(string $outputDirectory): void;
+    abstract protected function assembleBook(string $outputDirectory): string;
 
     /**
      * It loads the contents of the given content file name. Most of the time

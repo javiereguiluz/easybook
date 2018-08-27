@@ -2,8 +2,7 @@
 
 ## [WIP] Upgrade to easybook 6.0-dev
 
-- mobi dropped as not supported since 2011 (@todo consider re-adding)
-- use wkhtmlpdf instead of paid prince
+- [@todo] use wkhtmlpdf instead of paid prince - https://github.com/javiereguiluz/easybook/pull/170 
 - `book` moved to `bin/easybook`
 - `--configuration` changed to shorter yet still clear `--config`
 - Performance command dropped, use blackfire
@@ -20,8 +19,9 @@
 - use parameters in YAML instead of --dir and --title and --edition CLI options
 - `customize` command dropped, use `publish` having the same output
 - `html` and `html_chunked` dropped, used [Statie](https://www.statie.org/) or any other [StaticGen](https://www.staticgen.com/) for the same effect; focus on PDF, MOBI and EPUB like [Amazon](https://kdp.amazon.com/en_US/help/topic/G200634390) and [LeanPub](http://help.leanpub.com/reader-help/what-ebook-formats-does-leanpub-publish) do
-
 - objects for `Item`, `ItemConfig`, `Book` and `Edition` are now used instead of weakly-typed arrays 
+- dropped all events apart `PRE_PARSE` and `POST_PARSE`, since they're not used anywhere
+- remove question approach, just use parameters in `easybook.yml`
 
 
 ## Upgrade to easybook 5.0
