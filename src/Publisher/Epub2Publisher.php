@@ -103,22 +103,17 @@ final class Epub2Publisher extends AbstractPublisher
         $bookTmpDir = $this->prepareBookTemporaryDirectory();
 
         // generate easybook CSS file
-//        if ($this->app->edition('include_styles')) {
         $this->renderer->renderToFile(
             '@theme/style.css.twig',
             ['resources_dir' => '..'],
             $bookTmpDir . '/book/OEBPS/css/easybook.css'
         );
-//        }
 
         $this->normalizePageNames($this->publishingItems);
 
-        // generate one HTML page for every book item
+        // generate HTML page for every book item
         foreach ($this->publishingItems as $item) {
             $renderedTemplatePath = $bookTmpDir . '/book/OEBPS/' . $item->getPageName() . '.html';
-            $templateVariables = [
-                'item' => $item,
-            ];
 
             // try first to render the specific template for each content
             // type, if it exists (e.g. toc.twig, chapter.twig, etc.) and
@@ -126,9 +121,9 @@ final class Epub2Publisher extends AbstractPublisher
             try {
                 $templateName = $item->getConfigElement() . '.twig';
 
-                $this->renderer->renderToFile($templateName, $templateVariables, $renderedTemplatePath);
+                $this->renderer->renderToFile($templateName, ['item' => $item], $renderedTemplatePath);
             } catch (Twig_Error_Loader $e) {
-                $this->renderer->renderToFile('chunk.twig', $templateVariables, $renderedTemplatePath);
+                $this->renderer->renderToFile('chunk.twig', ['item' => $item], $renderedTemplatePath);
             }
         }
 
@@ -178,7 +173,7 @@ final class Epub2Publisher extends AbstractPublisher
 
     public function getFormat(): string
     {
-        return 'epub';
+        return self::NAME;
     }
 
     /**

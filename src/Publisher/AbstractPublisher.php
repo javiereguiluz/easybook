@@ -7,6 +7,7 @@ use Easybook\Book\Edition;
 use Easybook\Book\Item;
 use Easybook\Book\ItemConfig;
 use Easybook\Book\Provider\BookProvider;
+use Easybook\Contract\Publisher\PublisherInterface;
 use Easybook\Events\EasybookEvents;
 use Easybook\Events\ItemAwareEvent;
 use Easybook\Templating\Renderer;
@@ -51,11 +52,6 @@ abstract class AbstractPublisher implements PublisherInterface
     protected $bookContentsDir;
 
     /**
-     * @var string
-     */
-    private $publishingDirOutput;
-
-    /**
      * @var BookProvider
      */
     private $bookProvider;
@@ -74,7 +70,6 @@ abstract class AbstractPublisher implements PublisherInterface
         Renderer $renderer,
         Slugger $slugger,
         MarkdownExtra $markdownExtra,
-        string $publishingDirOutput,
         string $bookContentsDir,
         BookProvider $bookProvider
     ): void {
@@ -83,7 +78,6 @@ abstract class AbstractPublisher implements PublisherInterface
         $this->renderer = $renderer;
         $this->slugger = $slugger;
         $this->markdownExtra = $markdownExtra;
-        $this->publishingDirOutput = $publishingDirOutput;
         $this->bookContentsDir = $bookContentsDir;
         $this->bookProvider = $bookProvider;
     }
@@ -95,7 +89,6 @@ abstract class AbstractPublisher implements PublisherInterface
     {
         $this->loadContents();
         $this->parseContents();
-        $this->prepareOutputDir();
         $this->decorateContents();
         $this->assembleBook($outputDirectory);
     }
@@ -154,11 +147,6 @@ abstract class AbstractPublisher implements PublisherInterface
     }
 
     abstract protected function assembleBook(string $outputDirectory): void;
-
-    private function prepareOutputDir(): void
-    {
-        $this->filesystem->mkdir($this->publishingDirOutput);
-    }
 
     /**
      * It loads the contents of the given content file name. Most of the time

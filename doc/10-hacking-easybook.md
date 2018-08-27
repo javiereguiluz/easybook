@@ -8,9 +8,10 @@ you can define all the new settings that you may need.
 Do you want to show the price of the book on the cover? Add a new option called `price` under the `book` option of `config.yml` file:
 
 ```yaml
-book:
-    # ...
-    price: 10
+parameters:
+    book:
+        # ...
+        price: 10
 ```
 
 Now you can use this option in any template with the following expression: 
@@ -19,11 +20,13 @@ Now you can use this option in any template with the following expression:
 Do you want to use different CSS frameworks to generate the book website? Add a new option called `framework` in some editions:
 
 ```yaml
-editions:
-    my_website1:
-        format:    pdf
-        framework: bootstrap_3
-        # ...
+parameters:
+    book:
+        editions:
+            my_website1:
+                format: pdf
+                framework: bootstrap_3
+                # ...
 ```
 
 This new option is now available in any template through the following expression: `{{ edition.framework }}`.
@@ -32,12 +35,15 @@ You can also add new options to the contents of the book.  Do you want to indica
 option for `chapter` elements:
 
 ```yaml
-contents:
-    - { element: cover }
-    - ...
-    - { element: chapter, number: 1, ..., time: 20 }
-    - { element: chapter, number: 2, ..., time: 12 }
-    - ...
+parameters:
+    book:
+        editions:
+            my_website1:
+                contents:
+                    - { element: cover }
+                    - { element: chapter, number: 1, ..., time: 20 }
+                    - { element: chapter, number: 2, ..., time: 12 }
+                    - ...
 ```
 
 And now you can add `{{ item.config.time }}` in `chapter.twig` template to show the estimated reading time for each chapter.
@@ -45,81 +51,36 @@ And now you can add `{{ item.config.time }}` in `chapter.twig` template to show 
 Book configuration options can also use Twig expressions for their values (even for dynamic options set by `--configuration` option explained in the next section):
 
 ```yaml
-book:
-    title:            "{{ book.author }} diary"
-    author:           "..."
-    publication_date: "{{ '+2days'|date('m/d/Y') }}"
-    # ...
+parameters:
+    book:
+        title:            "{{ book.author }} diary"
+        author:           "..."
+        publication_date: "{{ '+2days'|date('m/d/Y') }}"
+        # ...
 ```
 
-## Dynamic configuration options ##
-
-Sometimes, configuration option values can't be defined or are variables themseleves. For that reason, **easybook** allows you to set or override configuration options dynamically with the `publish` command.
-
-Add the `--configuration` option to `publish` command and pass to it a JSON formatted string with the configuration options:
-
-``` .cli
-$ ./book publish the-origin-of-species web
-         --configuration='{ "book": { "title": "My new title" } }'
-```
-
-Using dynamic options you can for example define a new `buyer` option that stores the name of the person that bought the book. Then you can prevent or
-minimize digital piracy displaying the buyer name inside the book (use `{{ book.buyer }}` Twig expression in any book template):
-
-``` .cli
-$ ./book publish the-origin-of-species print
-```
-
-Likewise, any edition option can be set dynamically:
-
-``` .cli
-$ ./book publish the-origin-of-species web
-```
-
-When passing a lot of configuration options, you must be very careful with JSON braces and quotes. If you run the command automatically, it is easier to create
-a PHP array with all the options and then convert it to JSON with the `json_encode()` function.
-
-Dynamic options are so advanced that they even allow you to define on-the-fly editions:
-
-``` .cli
-$ ./book publish the-origin-of-species edition1 --configuration='{ "book": { "editions": { "edition1": { ... } } } }'
-```
-
-When publishing a book, **easybook** uses the following priority hierarchy to combine configuration options (the higher, the more priority):
-
-  1. Dynamic options set with `--configuration` option.
-  2. Options set in the `config.yml` file.
-  3. Default options defined by **easybook**.
-
-Configuration options related to editions also take into account the possible edition inheritance. If an edition inherits from another one, its options always override the options of its *parent* edition.
-
-## Configuring global parameters ## {#global-parameters}
+## Configuring Parameters
 
 In addition to its own configuration options, a book can also modify global **easybook** parameters. To do so, add an `easybook` configuration section inside your `config.yml` file (it's recommended to create it at the top of the file to spot it easily):
 
 ```yaml
 parameters:
-    kindlegen.command_options: '-c0 -gif verbose'
-    kindlegen.path:            '/path/to/utils/KindleGen/kindlegen'
+    kindlegen_path: '/path/to/utils/KindleGen/kindlegen'
 
-book:
-    title: '...'
-    # ...
+    book:
+        title: '...'
 ```
 
-Define the **easybook** global options under the `parameters` key of `easybook` section. In the previous example, the book sets the `kindlegen.command_options`
-option to tweak the command used to generate Kindle-compatible MOBI files. In addition, to avoid repeating it each time the book is generated, the book also 
-sets the path to the `kindlegen` library thanks to the `kindlegen.path`.
+Define the **easybook** global options under the `parameters` key. In the previous example, the book sets the `kindlegen.command_options`
+option to tweak the command used to generate Kindle-compatible MOBI files. In addition, to avoid repeating it each time the book is generated, the book also sets the path to the `kindlegen` library thanks to the `kindlegen.path`.
 
 You can replace any of the parameters defined or used in the `Application.php` class located at `src/Easybook/DependencyInjection/`. Therefore, use the
 following configuration to modify the directory where the book is generated: 
 
 ```yaml
 parameters:
-    publishing_dir_output:  '/my/path/for/books/my-book'
-
-book:
-    title: '...'
+    book:
+        title: '...'
     # ...
 ```
 

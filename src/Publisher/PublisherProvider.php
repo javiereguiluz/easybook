@@ -2,6 +2,7 @@
 
 namespace Easybook\Publisher;
 
+use Easybook\Contract\Publisher\PublisherInterface;
 use Easybook\Exception\Publisher\FormatPublisherNotSupportedException;
 
 final class PublisherProvider

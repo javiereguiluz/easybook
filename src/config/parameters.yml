@@ -27,8 +27,6 @@ parameters:
     book_resources_dir: '%book_dir%/Resources'
     book_templates_dir: '%book_resources_dir/Templates'
 
-    publishing_dir_output: '%kernel.project_dir%/output'
-
     # kindle gen - required fro MOBI
     kindlegen_path: ~
         # common options
