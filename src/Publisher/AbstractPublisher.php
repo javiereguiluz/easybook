@@ -89,7 +89,6 @@ abstract class AbstractPublisher implements PublisherInterface
     {
         $this->loadContents();
         $this->parseContents();
-        $this->decorateContents();
         $this->assembleBook($outputDirectory);
     }
 

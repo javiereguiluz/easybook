@@ -5,9 +5,9 @@ namespace Easybook\Tests\Console\Command;
 use Easybook\Configuration\Option;
 use Easybook\Console\Command\NewCommand;
 use Easybook\Console\Command\PublishCommand;
-use Easybook\Exception\Process\BeforeOrAfterPublishScriptFailedException;
 use Easybook\Tests\AbstractCustomConfigContainerAwareTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 final class FailScriptsTest extends AbstractCustomConfigContainerAwareTestCase
 {
@@ -36,7 +36,7 @@ final class FailScriptsTest extends AbstractCustomConfigContainerAwareTestCase
 
     public function test(): void
     {
-        $this->expectException(BeforeOrAfterPublishScriptFailedException::class);
+        $this->expectException(ProcessFailedException::class);
 
         $tester = new CommandTester($this->bookPublishCommand);
         $tester->execute([

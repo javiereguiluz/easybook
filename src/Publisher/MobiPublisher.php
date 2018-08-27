@@ -14,7 +14,7 @@ use Symfony\Component\Process\Process;
 final class MobiPublisher extends AbstractPublisher
 {
     /**
-     * @var string
+     * @var string|null
      */
     private $kindlegenPath;
 
