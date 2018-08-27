@@ -29,25 +29,11 @@ parameters:
 
     publishing_dir_output: '%kernel.project_dir%/output'
 
-    # holds all the internal links (used "epub" editions)
-    publishing.list.images: []
-    publishing.list.tables: []
-
-    # kindle gen
-    kindlegen.path: ~
-
-    # the common installation dirs for KindleGen in several OS
-    kindlegen.default_paths:
+    # kindle gen - required fro MOBI
+    kindlegen_path: ~
+        # common options
         # Mac OS X & Linux
-        - '/usr/local/bin/kindlegen'
-        - '/usr/bin/kindlegen'
+#        - '/usr/local/bin/kindlegen'
+#        - '/usr/bin/kindlegen'
         # Windows
-        - 'c:\KindleGen\kindlegen'
-
-    # -c0: no compression
-    # -c1: standard DOC compression
-    # -c2: Kindle huffdic compression
-    # -verbose: (even more) verbose output
-    # -western: force Windows-1252 charset
-    # -gif: transform book images to GIF
-    kindlegen.command_options: '-c1'
+#        - 'c:\KindleGen\kindlegen'

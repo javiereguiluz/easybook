@@ -144,9 +144,9 @@ final class Renderer
         $this->twigEnvironment->addGlobal('book', $this->bookProvider->provide());
         $this->twigEnvironment->addGlobal('edition', $this->currentEditionProvider->provide());
 
-        // publishing.list.images
+        // old one: publishing.list.images
         $this->twigEnvironment->addGlobal('all_images', $this->imagesProvider->getImages());
-        // publishing.list.tables
+        // old one: publishing.list.tables
         $this->twigEnvironment->addGlobal('all_table', $this->tablesProvider->getTables());
     }
 }

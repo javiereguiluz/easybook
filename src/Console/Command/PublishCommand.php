@@ -7,7 +7,6 @@ use Easybook\Book\Edition;
 use Easybook\Book\Provider\BookProvider;
 use Easybook\Book\Provider\CurrentEditionProvider;
 use Easybook\Configuration\Option;
-use Easybook\Exception\Process\BeforeOrAfterPublishScriptFailedException;
 use Easybook\Guard\FilesystemGuard;
 use Easybook\Publisher\PublisherProvider;
 use Symfony\Component\Console\Command\Command;
@@ -16,6 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Symplify\PackageBuilder\Console\Command\CommandNaming;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
@@ -118,12 +118,7 @@ final class PublishCommand extends Command
             if ($process->isSuccessful()) {
                 $this->symfonyStyle->success($process->getOutput());
             } else {
-                throw new BeforeOrAfterPublishScriptFailedException(sprintf(
-                    'Executing script "%s" failed in "%s" directory: "%s"',
-                    $script,
-                    $workingDirectory,
-                    $process->getErrorOutput()
-                ));
+                throw new ProcessFailedException($process);
             }
         }
     }
