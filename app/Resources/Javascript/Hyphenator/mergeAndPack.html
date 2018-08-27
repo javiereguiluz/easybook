@@ -1,0 +1,1334 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <title>Hyphenator &ndash; merge+pack</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Content-Style-Type" content="text/css">
+        <style type="text/css">
+            body {
+                font: 11px/1.8em Verdana;
+                margin-left: 20%;
+                margin-right:20%;
+                background-color:#EEEEEE;
+                width:60em;
+            }
+            fieldset {
+                background-color:#FFFFFF;
+                border:1px solid #AAAAAA;
+                margin:1em 0em;
+                padding: 0em 1em 2em 1em;
+            }
+            h1 {
+                background-color:#FFFFFF;
+                border:1px solid #AAAAAA;
+                margin:1em 0em;
+                color: #404041;
+                text-align:right;
+                
+            }
+            img {
+                vertical-align:middle;
+            }
+            .info_btn {
+                vertical-align:text-bottom;
+                cursor:pointer;
+            }
+            .info_box {
+                display:none;
+                border:1px dashed #AAAAAA;
+                padding:0.2em 1em;
+                font-style:italic;
+            }
+            .multicol {
+                text-align:justify;
+                width: 28em;
+                float:left;
+                margin:0em 1em;
+            }
+            ul.multicol {
+                width:28em;
+                padding:0;
+                margin:0;
+                
+            }
+            li {
+                list-style:none;
+            }
+            form {
+                clear: both;
+                padding-top:2em;
+            }
+            legend {
+                border:1px solid #AAAAAA;
+                background-color:#FFFFFF;
+                padding:0em 1em;
+                font-style: italic;
+                font-weight: 200;
+            }
+            input {
+                margin-right:1em;
+            }
+            textarea {
+                width:100%;
+            }
+            .grayedout {
+                border: 1px solid grey;
+                color: grey;
+            }
+            #Hyphenator_output_block {
+                display: none;
+            }
+            #Hyphenator_Loader_output_block {
+                display: none;
+            }
+         </style>
+         <script src="Hyphenator.js" type="text/javascript"></script>
+         <script src="patterns/en-us.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        Hyphenator.config({
+            displaytogglebox:true,
+            remoteloading:false,
+            safecopy:false
+        });
+        Hyphenator.run();
+        
+        
+/* jsmin.js - 2006-08-31
+Author: Franck Marcia
+This work is an adaptation of jsminc.c published by Douglas Crockford.
+Permission is hereby granted to use the Javascript version under the same
+conditions as the jsmin.c on which it is based.
+
+jsmin.c
+2006-05-04
+
+Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+The Software shall be used for Good, not Evil.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Update:
+    add level:
+        1: minimal, keep linefeeds if single
+        2: normal, the standard algorithm
+        3: agressive, remove any linefeed and doesn't take care of potential
+           missing semicolons (can be regressive)
+    store stats
+        jsmin.oldSize
+        jsmin.newSize
+*/
+
+String.prototype.has = function(c) {
+    return this.indexOf(c) > -1;
+};
+
+function jsmin(comment, input, level) {
+    if (input === undefined) {
+        input = comment;
+        comment = '';
+        level = 2;
+    } else if (level === undefined || level < 1 || level > 3) {
+        level = 2;
+    }
+
+    if (comment.length > 0) {
+        comment += '\n';
+    }
+
+    var a = '',
+        b = '',
+        EOF = -1,
+        LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+        DIGITS = '0123456789',
+        ALNUM = LETTERS + DIGITS + '_$\\',
+        theLookahead = EOF;
+
+
+    /* isAlphanum -- return true if the character is a letter, digit, underscore,
+            dollar sign, or non-ASCII character.
+    */
+
+    function isAlphanum(c) {
+        return c != EOF && (ALNUM.has(c) || c.charCodeAt(0) > 126);
+    }
+
+
+    /* get -- return the next character. Watch out for lookahead. If the
+            character is a control character, translate it to a space or
+            linefeed.
+    */
+
+    function get() {
+
+        var c = theLookahead;
+        if (get.i == get.l) {
+            return EOF;
+        }
+        theLookahead = EOF;
+        if (c == EOF) {
+            c = input.charAt(get.i);
+            ++get.i;
+        }
+        if (c >= ' ' || c == '\n') {
+            return c;
+        }
+        if (c == '\r') {
+            return '\n';
+        }
+        return ' ';
+    }
+
+    get.i = 0;
+    get.l = input.length;
+
+
+    /* peek -- get the next character without getting it.
+    */
+
+    function peek() {
+        theLookahead = get();
+        return theLookahead;
+    }
+
+
+    /* next -- get the next character, excluding comments. peek() is used to see
+            if a '/' is followed by a '/' or '*'.
+    */
+
+    function next() {
+
+        var c = get();
+        if (c == '/') {
+            switch (peek()) {
+            case '/':
+                for (;;) {
+                    c = get();
+                    if (c <= '\n') {
+                        return c;
+                    }
+                }
+                break;
+            case '*':
+                get();
+                for (;;) {
+                    switch (get()) {
+                    case '*':
+                        if (peek() == '/') {
+                            get();
+                            return ' ';
+                        }
+                        break;
+                    case EOF:
+                        throw 'Error: Unterminated comment.';
+                    }
+                }
+                break;
+            default:
+                return c;
+            }
+        }
+        return c;
+    }
+
+
+    /* action -- do something! What you do is determined by the argument:
+            1   Output A. Copy B to A. Get the next B.
+            2   Copy B to A. Get the next B. (Delete A).
+            3   Get the next B. (Delete B).
+       action treats a string as a single character. Wow!
+       action recognizes a regular expression if it is preceded by ( or , or =.
+    */
+
+    function action(d) {
+
+        var r = [];
+
+        if (d == 1) {
+            r.push(a);
+        }
+
+        if (d < 3) {
+            a = b;
+            if (a == '\'' || a == '"') {
+                for (;;) {
+                    r.push(a);
+                    a = get();
+                    if (a == b) {
+                        break;
+                    }
+                    if (a <= '\n') {
+                        throw 'Error: unterminated string literal: ' + a;
+                    }
+                    if (a == '\\') {
+                        r.push(a);
+                        a = get();
+                    }
+                }
+            }
+        }
+
+        b = next();
+
+        if (b == '/' && '(,=:[!&|'.has(a)) {
+            r.push(a);
+            r.push(b);
+            for (;;) {
+                a = get();
+                if (a == '/') {
+                    break;
+                } else if (a =='\\') {
+                    r.push(a);
+                    a = get();
+                } else if (a <= '\n') {
+                    throw 'Error: unterminated Regular Expression literal';
+                }
+                r.push(a);
+            }
+            b = next();
+        }
+
+        return r.join('');
+    }
+
+
+    /* m -- Copy the input to the output, deleting the characters which are
+            insignificant to JavaScript. Comments will be removed. Tabs will be
+            replaced with spaces. Carriage returns will be replaced with
+            linefeeds.
+            Most spaces and linefeeds will be removed.
+    */
+
+    function m() {
+
+        var r = [];
+        a = '\n';
+
+        r.push(action(3));
+
+        while (a != EOF) {
+            switch (a) {
+            case ' ':
+                if (isAlphanum(b)) {
+                    r.push(action(1));
+                } else {
+                    r.push(action(2));
+                }
+                break;
+            case '\n':
+                switch (b) {
+                case '{':
+                case '[':
+                case '(':
+                case '+':
+                case '-':
+                    r.push(action(1));
+                    break;
+                case ' ':
+                    r.push(action(3));
+                    break;
+                default:
+                    if (isAlphanum(b)) {
+                        r.push(action(1));
+                    } else {
+                        if (level == 1 && b != '\n') {
+                            r.push(action(1));
+                        } else {
+                            r.push(action(2));
+                        }
+                    }
+                }
+                break;
+            default:
+                switch (b) {
+                case ' ':
+                    if (isAlphanum(a)) {
+                        r.push(action(1));
+                        break;
+                    }
+                    r.push(action(3));
+                    break;
+                case '\n':
+                    if (level == 1 && a != '\n') {
+                        r.push(action(1));
+                    } else {
+                        switch (a) {
+                        case '}':
+                        case ']':
+                        case ')':
+                        case '+':
+                        case '-':
+                        case '"':
+                        case '\'':
+                            if (level == 3) {
+                                r.push(action(3));
+                            } else {
+                                r.push(action(1));
+                            }
+                            break;
+                        default:
+                            if (isAlphanum(a)) {
+                                r.push(action(1));
+                            } else {
+                                r.push(action(3));
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    r.push(action(1));
+                    break;
+                }
+            }
+        }
+
+        return r.join('');
+    }
+
+    jsmin.oldSize = input.length;
+    ret = m(input);
+    jsmin.newSize = ret.length;
+
+    return comment + ret;
+
+}
+/* End of jsmin.js */        
+        
+        
+        var base = window.location.href.replace(/[^/]*$/, '');
+        function $(id) {
+            return document.getElementById(id);
+        } 
+        
+        function toggleAllLanguages(value) {
+            var inputelements = document.getElementsByName('language[]');
+            for(var i=0; i<inputelements.length; i++) {
+                inputelements[i].checked = value;
+            }
+        }
+        
+        function getSelMethod() {
+            var radio = document.getElementsByName('selMethod');
+            for(var i = 0; i<radio.length; i++) {
+                if(radio[i].checked == true) {
+                    return radio[i].value;
+                }
+            }
+        }
+        
+        function toggleSelectorFunction(value) {
+            switch(value) {
+                case 'standard':
+                    $('classname_block').style.display='block';
+                    $('selectorfunction_block').style.display='none';
+                break;
+                case 'custom':
+                    $('classname_block').style.display='none';
+                    $('selectorfunction_block').style.display='block';
+                break;
+            }
+        }
+        
+        function toggleTBSettings(value) {
+            switch(value) {
+                case true:
+                    $('togglebox_block').style.display = 'block';
+                    $('tbStandard').disabled=false;
+                    $('tbCustom').disabled=false;
+                    $('togglebox').disabled=$('tbStandard').checked;
+                    $('tbStandard').className='';
+                    $('tbCustom').className='';
+                    $('togglebox').className='';
+                break;
+                case false:
+                    $('togglebox_block').style.display = 'none';
+                break;
+            }
+        }
+        
+        function getTBMethod() {
+            var radio = document.getElementsByName('tbMethod');
+            for(var i = 0; i<radio.length; i++) {
+                if(radio[i].checked == true) {
+                    return radio[i].value;
+                }
+            }
+        }
+
+        function toggletogglebox(value) {
+            switch(value) {
+                case 'standard':
+                    $('toggleboxfunction_block').style.display='none';
+                break;
+                case 'custom':
+                    $('toggleboxfunction_block').style.display='block';
+                break;
+            }
+        }
+        
+        function toggleonhyphenationdonecallback(value) {
+            switch(value) {
+                case true:
+                    $('onhyphenationdonecallback_block').style.display='block';
+                break;
+                 case false:
+                    $('onhyphenationdonecallback_block').style.display='none';
+                break;
+               }
+        }
+
+        function toggleonerrorhandler(value) {
+            switch(value) {
+                case true:
+                    $('onerrorhandler_block').style.display='block';
+                break;
+                 case false:
+                    $('onerrorhandler_block').style.display='none';
+                break;
+               }
+        }
+        
+        function toggleonwarninghandler(value) {
+            switch(value) {
+                case true:
+                    $('onwarninghandler_block').style.display='block';
+                break;
+                 case false:
+                    $('onwarninghandler_block').style.display='none';
+                break;
+               }
+        }
+
+        function toggleonbeforehyphenationhandler(value) {
+            switch(value) {
+                case true:
+                    $('onbeforehyphenationhandler_block').style.display='block';
+                break;
+                 case false:
+                    $('onbeforehyphenationhandler_block').style.display='none';
+                break;
+               }
+        }
+
+        function toggleonafterhyphenationhandler(value) {
+            switch(value) {
+                case true:
+                    $('onafterhyphenationhandler_block').style.display='block';
+                break;
+                 case false:
+                    $('onafterhyphenationhandler_block').style.display='none';
+                break;
+               }
+        }
+
+        function toggleLoaderSettings(value) {
+            switch(value) {
+                case true:
+                    $('useLoader_block').style.display='block';
+                    $('languageSelector').style.display='none';
+                    $('useCSS3hyphenation').checked = true;
+                    toggleAllLanguages(false);
+                break;
+                 case false:
+                    $('useLoader_block').style.display='none';
+                    $('languageSelector').style.display='block';
+                    //$('useCSS3hyphenation').checked = false;
+                break;
+               }
+        }
+
+
+        function toggleInfoBoxDisplay(elem, btn, disp) {
+            if(disp) {
+                elem.style.display = 'block';
+                btn.onclick = function() {
+                    toggleInfoBoxDisplay(elem, btn, false);
+                };
+            } else {
+                elem.style.display = 'none';
+                btn.onclick = function() {
+                    toggleInfoBoxDisplay(elem, btn, true);
+                };
+            }
+        }
+                
+        window.onload = function(){
+            var ul = navigator.language ? navigator.language.slice(0,2) : navigator.userLanguage.slice(0,2);
+            if(ul) {
+                switch (ul) {
+                    case 'en':
+                        ul = 'en-us';
+                        break;
+                    case 'el':
+                        ul = 'el-monoton';
+                        break;
+                }
+                $(ul).checked = true;
+            }            
+            $('alllanguages').onclick = function(){
+                if(this.checked == true) {
+                    toggleAllLanguages(true);
+                } else {
+                    toggleAllLanguages(false);
+                }
+            };
+            
+            toggleSelectorFunction(getSelMethod());
+            var radio = document.getElementsByName('selMethod');
+            for(var i = 0; i<radio.length; i++) {
+                   radio[i].onclick = function() {
+                       toggleSelectorFunction(getSelMethod());
+                   };
+            }
+            
+            toggleTBSettings(false);
+            $('displaytogglebox').onclick = function(){
+                toggleTBSettings(this.checked);
+            };
+            toggletogglebox(getTBMethod());
+            radio = document.getElementsByName('tbMethod');
+            for(var i = 0; i<radio.length; i++) {
+                   radio[i].onclick = function() {
+                       toggletogglebox(getTBMethod());
+                   };
+            }
+            
+            
+            toggleLoaderSettings($('useLoader').checked);
+            $('useLoader').onclick = function(){
+                toggleLoaderSettings(this.checked);
+            }
+
+
+            toggleonhyphenationdonecallback($('usecb').checked);
+            $('usecb').onclick = function(){
+                toggleonhyphenationdonecallback(this.checked);
+            }
+
+            toggleonerrorhandler($('useer').checked);
+            $('useer').onclick = function(){
+                toggleonerrorhandler(this.checked);
+            }
+
+            toggleonwarninghandler($('usewa').checked);
+            $('usewa').onclick = function(){
+                toggleonwarninghandler(this.checked);
+            }
+            toggleonbeforehyphenationhandler($('usebh').checked);
+            $('usebh').onclick = function(){
+                toggleonbeforehyphenationhandler(this.checked);
+            }
+            toggleonafterhyphenationhandler($('useah').checked);
+            $('useah').onclick = function(){
+                toggleonafterhyphenationhandler(this.checked);
+            }
+           
+            $('minwordlength_btn').onclick = function () {
+                toggleInfoBoxDisplay($('minwordlength_box'), this, true);
+            };
+            $('defaultlanguage_btn').onclick = function () {
+                toggleInfoBoxDisplay($('defaultlanguage_box'), this, true);
+            };
+            $('dohyphenation_btn').onclick = function () {
+                toggleInfoBoxDisplay($('dohyphenation_box'), this, true);
+            };
+            $('remoteloading_btn').onclick = function () {
+                toggleInfoBoxDisplay($('remoteloading_box'), this, true);
+            };
+            $('enablecache_btn').onclick = function () {
+                toggleInfoBoxDisplay($('enablecache_box'), this, true);
+            };
+            $('safecopy_btn').onclick = function () {
+                toggleInfoBoxDisplay($('safecopy_box'), this, true);
+            };
+            $('doframes_btn').onclick = function () {
+                toggleInfoBoxDisplay($('doframes_box'), this, true);
+            };
+            $('persistentconfig_btn').onclick = function () {
+                toggleInfoBoxDisplay($('persistentconfig_box'), this, true);
+            };
+            $('intermediatestate_btn').onclick = function () {
+                toggleInfoBoxDisplay($('intermediatestate_box'), this, true);
+            };
+            $('storagetype_btn').onclick = function () {
+                toggleInfoBoxDisplay($('storagetype_box'), this, true);
+            };
+            $('classname_btn').onclick = function () {
+                toggleInfoBoxDisplay($('classname_box'), this, true);
+            };
+            $('selectorfunction_btn').onclick = function () {
+                toggleInfoBoxDisplay($('selectorfunction_box'), this, true);
+            };
+            $('donthyphenate_btn').onclick = function () {
+                toggleInfoBoxDisplay($('donthyphenate_box'), this, true);
+            };
+            $('urlhyphenate_btn').onclick = function () {
+                toggleInfoBoxDisplay($('urlhyphenate_box'), this, true);
+            };
+            $('togglebox_btn').onclick = function () {
+                toggleInfoBoxDisplay($('togglebox_box'), this, true);
+            };
+            $('callback_btn').onclick = function () {
+                toggleInfoBoxDisplay($('callback_box'), this, true);
+            };
+            $('onerror_btn').onclick = function () {
+                toggleInfoBoxDisplay($('onerror_box'), this, true);
+            };
+            $('onwarning_btn').onclick = function () {
+                toggleInfoBoxDisplay($('onwarning_box'), this, true);
+            };
+            $('onbeforehyphenation_btn').onclick = function () {
+                toggleInfoBoxDisplay($('onbeforehyphenation_box'), this, true);
+            };
+            $('onafterhyphenation_btn').onclick = function () {
+                toggleInfoBoxDisplay($('onafterhyphenation_box'), this, true);
+            };
+            $('useCSS3hyphenation_btn').onclick = function () {
+                toggleInfoBoxDisplay($('useCSS3hyphenation_box'), this, true);
+            };
+            $('unhide_btn').onclick = function () {
+                toggleInfoBoxDisplay($('unhide_box'), this, true);
+            };
+                        
+            $('myform').onsubmit = function(){
+                var xhr = null;
+                var script1, script2;
+                if (typeof XMLHttpRequest != 'undefined') {
+                    xhr = new XMLHttpRequest();
+                }
+                if (!xhr) {
+                    try {
+                        xhr  = new ActiveXObject("Msxml2.XMLHTTP");
+                    } catch(e) {
+                        xhr  = null;
+                    }
+                }
+                if (xhr) {
+                    xhr.open('GET', base+'Hyphenator.js', false);
+                    xhr.send(null);
+                    if(xhr.status == 200) {
+                        var script1 = xhr.responseText;
+                    }
+                    xhr.open('GET', base+'Hyphenator_Loader.js', false);
+                    xhr.send(null);
+                    if(xhr.status == 200) {
+                        var script2 = xhr.responseText;
+                    }
+                    var langBoxes = document.getElementsByName('language[]');
+                    var l = langBoxes.length;
+                    for(var i = 0; i<l; i++) {
+                        if(langBoxes[i].checked) {
+                            xhr.open('GET', base+'patterns/'+langBoxes[i].value+'.js', false);
+                            xhr.send(null);
+                            if(xhr.status == 200) {
+                                script1+='\r\r'+xhr.responseText;
+                            }
+                        }
+                    }
+
+                }
+
+                
+                var classname = $('classname').value;
+                var urlclassname = $('urlclassname').value;
+                var donthyphenateclassname = $('donthyphenateclassname').value;
+                var minwordlength = $('minwordlength').value;
+                var defaultlanguage = $('defaultlanguage').value;
+                var hyphenchar = $('hyphenchar').value;
+                var urlhyphenchar = $('urlhyphenchar').value;
+                var togglebox = $('togglebox').value;
+                var displaytogglebox = $('displaytogglebox').checked;
+                var dohyphenation = $('dohyphenation').checked;
+                var remoteloading = $('remoteloading').checked;
+                var enablecache = $('enablecache').checked;
+                var safecopy = $('safecopy').checked;
+                var doframes = $('doframes').checked;
+                var persistentconfig = $('persistentconfig').checked;
+                var onhyphenationdonecallback = $('onhyphenationdonecallback').value;
+                var onerrorhandler = $('onerrorhandler').value;
+                var onwarninghandler = $('onwarninghandler').value;
+                var onbeforehyphenationhandler = $('onbeforehyphenationhandler').value;
+                var onafterhyphenationhandler = $('onafterhyphenationhandler').value;
+                var intermediatestate = $('intermediatestate').value;
+                var storagetype = $('storagetype').value;
+                var unhide = $('unhide').value;
+                var useCSS3hyphenation = $('useCSS3hyphenation').checked;
+                var selectorfunction = $('selectorfunction').value;
+                var pack = $('pack').checked;
+                var packlevel = parseInt($('packlevel').value, 10);
+
+                var config_head = '\r\rHyphenator.config({\n\t';
+                var config = '';
+                if($('selStandard').checked) {
+                    if(classname !== '') {
+                        config += 'classname : \''+classname+'\',\n\t';
+                    }
+                } else {
+                    config += 'selectorfunction : '+selectorfunction+',\n\t';
+                }
+                if(donthyphenateclassname !== '') {
+                    config += 'donthyphenateclassname : \''+donthyphenateclassname+'\',\n\t';
+                }
+                if(urlclassname !== '') {
+                    config += 'urlclassname : \''+urlclassname+'\',\n\t';
+                }
+                if(minwordlength !== '') {
+                    config += 'minwordlength : '+minwordlength+',\n\t';
+                }
+                if(defaultlanguage !== '') {
+                    config += 'defaultlanguage : \''+defaultlanguage+'\',\n\t';
+                }
+                if(hyphenchar !== '') {
+                    config += 'hyphenchar : \''+hyphenchar+'\',\n\t';
+                }
+                if(urlhyphenchar !== '') {
+                    config += 'urlhyphenchar : \''+urlhyphenchar+'\',\n\t';
+                }
+                if(displaytogglebox === true) {
+                    config += 'displaytogglebox : '+true+',\n\t';
+                    if($('tbCustom').checked) {
+                        config += 'togglebox : '+togglebox+',\n\t';
+                    }
+                }
+                if(dohyphenation === false) {
+                    config += 'dohyphenation : false,\n\t';
+                }
+                if(remoteloading === false) {
+                    config += 'remoteloading : false,\n\t';
+                }
+                if(enablecache === false) {
+                    config += 'enablecache : false,\n\t';
+                }
+                if(safecopy === false) {
+                    config += 'safecopy : false,\n\t';
+                }
+                if(doframes === true) {
+                    config += 'doframes : true,\n\t';
+                }
+                if(persistentconfig === true) {
+                    config += 'persistentconfig : true,\n\t';
+                }
+                if($('usecb').checked) {
+                    config += 'onhyphenationdonecallback : '+onhyphenationdonecallback+',\n\t';
+                }
+                if($('useer').checked) {
+                    config += 'onerrorhandler : '+onerrorhandler+',\n\t';
+                }
+                if($('usewa').checked) {
+                    config += 'onwarninghandler : '+onwarninghandler+',\n\t';
+                }
+                if($('usebh').checked) {
+                    config += 'onbeforehyphenationhandler : '+onbeforehyphenationhandler+',\n\t';
+                }
+                if($('useah').checked) {
+                    config += 'onafterhyphenationhandler : '+onafterhyphenationhandler+',\n\t';
+                }
+                if(intermediatestate !== 'hidden') {
+                    config += 'intermediatestate : \''+intermediatestate+'\',\n\t';    
+                }
+                if(storagetype !== 'local') {
+                    config += 'storagetype : \''+storagetype+'\',\n\t';    
+                }
+                
+                if(unhide !== 'wait') {
+                    config += 'unhide : \''+unhide+'\',\n\t';    
+                }
+                if(useCSS3hyphenation === true) {
+                    config += 'useCSS3hyphenation : true,\n\t';
+                }
+
+                if(!$('useLoader').checked) {
+                    if(config.length > 0) {
+                        script1 += config_head + config.slice(0,-3) + '\n});\n\n';                    
+                    }
+                    script1 += 'Hyphenator.run();';
+                    if(navigator.userAgent.indexOf('MSIE') != -1) {
+                        script1 = script1.replace(/\n/gi, "\r");
+                    }
+                    if(pack) {
+                        var license = script1.slice(script1.indexOf('/** @license'), script1.indexOf('*/')+2).replace('* @license', '\n * ');
+                        script1 = jsmin(license, script1, packlevel);
+                    }
+                    var output1 = $('output1');
+                    output1.firstChild.data = '';
+                    output1.firstChild.data = script1;
+                    $('Hyphenator_output_block').style.display = 'block';
+                    output1.focus();
+                    output1.select();
+                    return false;               
+                } else {
+
+                    if(navigator.userAgent.indexOf('MSIE') != -1) {
+                        script1 = script1.replace(/\n/gi, "\r");
+                    }
+                    if(pack) {
+                        var license = script1.slice(script1.indexOf('/** @license'), script1.indexOf('*/')+2).replace('* @license', '\n * ');
+                        script1 = jsmin(license, script1, packlevel);
+                    }
+                    var output2 = $('output2');
+                    output2.firstChild.data = '';
+                    output2.firstChild.data = script1;
+
+                    var loaderLanguages = $('LoaderLanguages').value;
+                    var loaderPath = $('LoaderPath').value
+                    var output3 = $('output3');
+                    if(config.length > 0) {
+                        config = '{' + config.slice(0, -3)+ '\n}';
+                        script2 += 'Hyphenator_Loader.init(' + loaderLanguages + ', "' + loaderPath + '",' + config + ');'
+                    } else {
+                        script2 += 'Hyphenator_Loader.init(' + loaderLanguages + ', "' + loaderPath + '");'
+                    }
+                    if(navigator.userAgent.indexOf('MSIE') != -1) {
+                        script2 = script2.replace(/\n/gi, "\r");
+                    }
+                    if(pack) {
+                        var license = script2.slice(script2.indexOf('/** @license'), script2.indexOf('*/')+2).replace('* @license', '\n * ');
+                        script2 = jsmin(license, script2, packlevel);
+                    }
+                    output3.firstChild.data = '';
+                    output3.firstChild.data = script2;
+                    $('Hyphenator_Loader_output_block').style.display = 'block';
+                    output3.focus();
+                    output3.select();
+                    return false;
+                }
+            };
+        };
+        </script>
+
+    </head>
+    <body>
+        <h1>mergeAndPack <svg  height="60" width="150" version="1.1" style="vertical-align: middle">
+                <g font-family="Consolas" font-weight="bold" font-size="36px" transform="translate(-90,-191)">
+                    <text y="230" x="139" fill="#bbb">&amp;shy;</text>
+                    <text line-height="70%" fill="#444">
+                        <tspan y="218" x="103">Hyphen-</tspan>
+                        <tspan y="243" x="103">ator.js</tspan>
+                    </text>
+                    <text font-weight="normal" line-height="125%" font-size="32px" y="228" x="89" fill="#000">{</text>
+                </g>
+            </svg>
+        </h1>
+        <p class="multicol hyphenate">
+            This page helps you configure, merge and pack Hyphenator.js, Hyphenator_Loader.js and the pattern files. The information that accompanies each setting should be clear enough. If you need more information you will find some in the wiki on <a href="https://github.com/mnater/Hyphenator.js/blob/wiki/en_PublicAPI.md">https://github.com/mnater/Hyphenator.js/blob/wiki/en_PublicAPI.md</a>.
+        </p>
+        <p class="multicol hyphenate">
+            Since this page uses XMLHttpRequests to load the script and pattern files, it will not work if you call it with the file:// protocol. Instead put it on your server or go to <a href="http://hyphenator.googlecode.com/svn/trunk/mergeAndPack.html">http://code.google.com/p/hyphenator/</a>.
+        </p>
+        <p class="multicol hyphenate">
+            The script loads the versions of Hyphenator.js (and Hyphenator_Loader.js and the patterns) that resides in the same directory like this page.
+        </p>
+        <form action="#outanchor" method="post" id="myform">
+
+            <fieldset>
+                <legend>Hyphenator_Loader.js</legend>
+                <p class="hyphenate">Hyphenator_Loader.js is a small script that tests if the client supports css3 hyphenation for the given languages. If at least one language isn't supported by the client it loads Hyphenator.js.<br>
+                If you check this box the language selection below will be hidden and two scripts will be outputted at the end of the page.<p>
+                <label><input type="checkbox" id="useLoader" name="useLoader" title="useLoader"> Use Hyphenator_Loader.js </label>
+                <div id="useLoader_box" class="info_box">Hyphenator_Loader.js needs some information:</div>
+                <div id="useLoader_block">
+                    <p>Test language(s):</p>
+                    <div class="info_box" style="display:block">Create an object where the keys are the language codes and the values are a long word in that language (at least 12 characters long). If the website is written in one language only one key/value pair is needed (the example shows the entries for a dual language site: english and armenian).</div>
+                    <textarea cols="80" rows="5" id="LoaderLanguages" name="LoaderLanguages">{
+    "en": "hyphenationalgorithm",
+    "hy": "Հայերենն"
+}</textarea>
+
+                    <p>Path to Hyphenator.js:</p>
+                    <div class="info_box" style="display:block">Specify the path to Hyphenator.js. This can be absolute or relative. The example implies that Hyphenator.js is in the same directory like Hyphenator_Loader.js<br>
+                    Use the minified version of Hyphenator.js (without any patterns included) that you get at the end of this page.</div>
+                    <input type="text" id="LoaderPath" name="LoaderPath" value="./Hyphenator.js" size="80" title="LoaderPath">
+                    <p class="hyphenate">The settings for Hyphenator.js can be made below. They will be passed by Hyphenator_Loader.js to Hyphenator.js</p>
+                </div>
+            </fieldset>
+
+            <fieldset id="languageSelector">
+            <legend>Languages</legend>
+                <p class="hyphenate">
+                    Select the language you use on your website. The patterns of the selected languages will be included in the ouputted script for faster page loading.
+                    If you select no language, make sure that "enable remote loading" is on (see below)!
+                </p>
+                <ul class="multicol">
+                    <li><label><input type="checkbox" id="be" name="language[]" value="be">Беларуская (Belarusian)</label></li>
+                    <li><label><input type="checkbox" id="bn" name="language[]" value="bn">বাংলা (Bengali)</label></li>
+                    <li><label><input type="checkbox" id="ca" name="language[]" value="ca">Català (Catalan)</label></li>
+                    <li><label><input type="checkbox" id="cs" name="language[]" value="cs">Česky (Czech)</label></li>
+                    <li><label><input type="checkbox" id="da" name="language[]" value="da">Dansk (Danish)</label></li>
+                    <li><label><input type="checkbox" id="de" name="language[]" value="de">Deutsch (German)</label></li>
+                    <li><label><input type="checkbox" id="el-monoton" name="language[]" value="el-monoton">Ελληνική monotone (monotone greek)</label></li>
+                    <li><label><input type="checkbox" id="el-polyton" name="language[]" value="el-polyton">Ελληνική polytone (polytone greek)</label></li>
+                    <li><label><input type="checkbox" id="en-gb" name="language[]" value="en-gb">British English (British English)</label></li>
+                    <li><label><input type="checkbox" id="en-us" name="language[]" value="en-us">American English (American English)</label></li>
+                    <li><label><input type="checkbox" id="eo" name="language[]" value="eo">Esperanto (Esperanto)</label></li>
+                    <li><label><input type="checkbox" id="es" name="language[]" value="es">Español (Spanish)</label></li>
+                    <li><label><input type="checkbox" id="et" name="language[]" value="et">Eesti (Estonian)</label></li>
+                    <li><label><input type="checkbox" id="fi" name="language[]" value="fi">Suomi (Finnish)</label></li>                    
+                    <li><label><input type="checkbox" id="fr" name="language[]" value="fr">Français (French)</label></li>
+                    <li><label><input type="checkbox" id="grc" name="language[]" value="grc">Ελληνική ancient (ancient greek)</label></li>
+                    <li><label><input type="checkbox" id="gu" name="language[]" value="gu">ગુજરાતી (Gujarati)</label></li>
+                    <li><label><input type="checkbox" id="hi" name="language[]" value="hi">हिंदी (Hindi)</label></li>
+                    <li><label><input type="checkbox" id="hu" name="language[]" value="hu">Magyar (Hungarian)</label></li>
+                    <li><label><input type="checkbox" id="hy" name="language[]" value="hy">Հայերեն լեզու (Armenian)</label></li>
+                    <li><label><input type="checkbox" id="it" name="language[]" value="it">Italiano (Italian)</label></li>
+                </ul>
+                <ul class="multicol">
+                    <li><label><input type="checkbox" id="ka" name="language[]" value="kn">ಕನ್ನಡ (Kannada)</label></li>
+                    <li><label><input type="checkbox" id="la" name="language[]" value="la">Latina (Latin)</label></li>
+                    <li><label><input type="checkbox" id="lt" name="language[]" value="lt">Lietuvių (Lithuanian)</label></li>
+                    <li><label><input type="checkbox" id="lv" name="language[]" value="lv">latviešu valoda (Latvian)</label></li>
+                    <li><label><input type="checkbox" id="ml" name="language[]" value="ml">മലയാളം (Malayalam)</label></li>
+                    <li><label><input type="checkbox" id="nl" name="language[]" value="nl">Nederlands (Dutch)</label></li>
+                    <li><label><input type="checkbox" id="nb-no" name="language[]" value="nb-no">Norsk (Norwegian)</label></li>
+                    <li><label><input type="checkbox" id="or" name="language[]" value="or">ଓଡ଼ିଆ (Oriya)</label></li>
+                    <li><label><input type="checkbox" id="pa" name="language[]" value="pa">ਪੰਜਾਬੀ (Punjabi)</label></li>
+                    <li><label><input type="checkbox" id="pl" name="language[]" value="pl">Polski (Polish)</label></li>
+                    <li><label><input type="checkbox" id="pt" name="language[]" value="pt">Português (Portuguese)</label></li>
+                    <li><label><input type="checkbox" id="ro" name="language[]" value="ro">Română (Romanian)</label></li>
+                    <li><label><input type="checkbox" id="ru" name="language[]" value="ru">Pyccĸий (Russian)</label></li>
+                    <li><label><input type="checkbox" id="sk" name="language[]" value="sk">Slovenčina (Slovak)</label></li>
+                    <li><label><input type="checkbox" id="sl" name="language[]" value="sl">Slovenščina (Slovenian)</label></li>
+                    <li><label><input type="checkbox" id="sr-cyrl" name="language[]" value="sr-cyrl">Српски (Serbian, Cyrillic script)</label></li>
+                    <li><label><input type="checkbox" id="sr-latn" name="language[]" value="sr-latn">Srpski (Serbian, Latin script)</label></li>
+                    <li><label><input type="checkbox" id="sv" name="language[]" value="sv">Svenska (Swedish)</label></li>
+                    <li><label><input type="checkbox" id="ta" name="language[]" value="ta">தமிழ் (Tamil)</label></li>
+                    <li><label><input type="checkbox" id="te" name="language[]" value="te">తెలుగు (Telugu)</label></li>
+                    <li><label><input type="checkbox" id="tr" name="language[]" value="tr">Türkçe (Turkish)</label></li>
+                    <li><label><input type="checkbox" id="uk" name="language[]" value="uk">Українська (Ukrainian)</label></li>                
+                </ul>
+                <ul class="multicol">
+                    <li><label><input type="checkbox" id="alllanguages" name="alllanguages" value="alllang"><em>Select all</em></label></li>
+                </ul>
+            </fieldset>
+
+            <fieldset>
+            <legend>Configuration</legend>
+                <p class="hyphenate">
+                    Make the settings for Hyphenator. Leave empty textfields empty for the default value to be set. If no special configuration is made, there will be no Hyphenator.config(); function in the output.
+                </p>
+                <p>
+                <label><input type="text" id="minwordlength" name="minwordlength" value="" size="10" title="minwordlength"> Don't hyphenate words shorter than this value (leave empty for default value 6) </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="minwordlength_btn" class="info_btn" alt="Show-Info Button">
+                </p>
+                <div id="minwordlength_box" class="info_box">A value lesser than 4 makes no sense. By increasing this value lesser words will be hyphenated, thus, there's a small speed gain.</div>
+                <p>
+                <label><input type="text" id="hyphenchar" name="hyphenchar" value="" size="10" title="hyphenchar"> The hyphen char for words (leave empty for &amp;shy;)</label>
+                </p>
+                <p>
+                <label><input type="text" id="urlhyphenchar" name="urlhyphenchar" value="" size="10" title="urlhyphenchar"> The hyphen char for URLs and E-Mail (leave empty for zero width space)</label>
+                </p>
+                
+                <p>
+                <label><input type="text" id="defaultlanguage" name="defaultlanguage" value="" size="10" title="defaultlanguage"> Make Hyphenator to use this language as a fallback </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="defaultlanguage_btn" class="info_btn" alt="Show-Info Button">
+                </p>
+                <div id="defaultlanguage_box" class="info_box">At best you define the language by using the lang-Attribute in your HTML-Document. But sometimes this isn't possible. In this case you can set the language here. Use a two-letter language code (e.g. en for English).</div>
+                
+                <p>
+                <label><input type="checkbox" id="dohyphenation" name="dohyphenation" title="dohyphenation" checked> Hyphenate the Document when Hyphenator.run() is called. </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="dohyphenation_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="dohyphenation_box" class="info_box">Sometimes you like to run the script, prepare everything, but not to hyphenate yet.<br>Hyphenation can later be executed by calling Hyphenator.toggleHyphenation()</div>
+                
+                <p>
+                <label><input type="checkbox" id="remoteloading" name="remoteloading" title="remoteloading" checked> Enable remote loading of language patterns. </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="remoteloading_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="remoteloading_box" class="info_box">By enabling remote loading Hyphenator will automatically load language patterns of supported languages when they are needed.<br>
+                If you turn off remote loading Hyphenator only hyphenates texts in languages it has the patterns for. Make sure you have them selected!</div>
+                <p>
+                <label><input type="checkbox" id="enablecache" name="enablecache" title="enablecache" checked> Enable cache </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="enablecache_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="enablecache_box" class="info_box">Once a word is hyphenated it is cached, thus a word has only to be hyphenated once. You can turn this mechanism off &ndash; mainly for performance-measuring.
+                </div>
+                <p>
+                <label><input type="checkbox" id="safecopy" name="safecopy" title="safecopy" checked> Remove hyphenation when copying text </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="safecopy_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="safecopy_box" class="info_box">Browsers don't remove soft hyphens from copied text. By enabling this feature hyphenation is removed on copy. This only works in browsers that support the oncopy-event.
+                </div>
+                <p>
+                <label><input type="checkbox" id="doframes" name="doframes" title="doframes"> Hyphenate frames and iframes, too </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="doframes_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="doframes_box" class="info_box">By default, hyphenator doesn't hyphenate text in frames. You can turn this on, but it will only work on frames that fullfill the same origin policy!
+                </div>
+                <p>
+                <label><input type="checkbox" id="persistentconfig" name="persistentconfig" title="persistentconfig"> Store settings over page reload (only if DOMStorage is available). </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="persistentconfig_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="persistentconfig_box" class="info_box">With this option enabled, all configuration options are stored in a object called `Hyphenator_config` in the storage type defined by the property `storagetype` (if `storagetype is none` or storage isn't supported, nothing is stored).<br>By reloading or going to an other page, those settings remain set. This is very and specially usefull for the toggle-button.<br>Be carefull with this option!
+                </div>
+                <p>
+                <label><select id="intermediatestate" name="intermediatestate" size="1" title="intermediatestate">
+                    <option>hidden</option>
+                    <option>visible</option>
+                </select>
+                 Define intermediate state (style.visibility of elements while they are hyphenated). </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="intermediatestate_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="intermediatestate_box" class="info_box">Since Javascript is executed after the page is loaded, the user may see the unhyphenated text for a short time befor it is hyphenated and redrawn. To prevent this all textblocks treated by Hyphenator are set to invisible upon hyphenation (setting: "hidden"). The result is, that only hyphenated text is displayed.<br>
+                On the other hand &ndash; if there's an error in the execution of Hyphenator.js &ndash; the text may stay invisible. Turn hiding off for debugging or if you prefer to see the redrawing of the text (setting: "visible").
+                </div>
+                
+                
+                <p>
+                <label><select id="storagetype" name="storagetype" size="1" title="storagetype">
+                    <option>local</option>
+                    <option>session</option>
+                    <option>none</option>
+                </select>
+                 Define DOM-Storage type (for modern browsers only). </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="storagetype_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="storagetype_box" class="info_box">Hyphenation patterns can be stored in DOM-Storage for later reuse. You can define the method (if at all):<br>
+                'local': patterns are stored locally (they will be there even after a restart)<br>
+                'session': patterns are removed if the window is closed<br>
+                'none': DOM-Storage is not used<br>
+                Degrades gracefully, if the browser does not support DOM-Storage.
+                </div>
+
+                <p>
+                <label><select id="unhide" name="unhide" size="1" title="unhide">
+                    <option>wait</option>
+                    <option>progressive</option>
+                </select>
+                 Define, when elements are hyphenated. </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="unhide_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="unhide_box" class="info_box">Elements can either be hyphenated when all necessary patterns are loaded ('wait') or when the patterns for the specified language are loaded ('progressive').<br>
+                The second option may be useful on multilanguage pages, where one language takes much longer to load.
+                </div>
+
+                <p>
+                <label><input type="checkbox" id="useCSS3hyphenation" name="useCSS3hyphenation" title="useCSS3hyphenation" checked> Use the in-browser CSS3 hyphenation if available. </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="useCSS3hyphenation_btn" class="info_btn" alt="Show-Info Button"></p>
+                <div id="useCSS3hyphenation_box" class="info_box">With this option enabled Hyphenator.js checks if the browser supports CSS3-hyphenation. If so, the elements are hyphenated by the browser instead of Hyphenator.js.<br>
+                For unsupported languages or other browsers Hyphenator.js fills the gap and hyphenates as expected.<br>
+                Make sure to check this box if you use Hyphenator_Loader.js!
+                </div>
+                <p>
+                
+                
+                
+                
+                <fieldset>
+                <legend>Element Selection</legend>
+                    <p>Indicate how to get the elements for hyphenation:</p>
+                    <p>
+                    <label><input type="radio" id="selStandard" name="selMethod" value="standard" checked> Standard: Collecting elements by a classname </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="classname_btn" class="info_btn" alt="Show-Info Button">
+                    <br>
+                    <label><input type="radio" id="selCustom" name="selMethod" value="custom"> Custom: Collecting elements by a custom Selector-Function </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="selectorfunction_btn" class="info_btn" alt="Show-Info Button">
+                    </p>
+                    <div id="classname_block">
+                    <label><input type="text" id="classname" name="classname" value="" size="10"> indicate a classname (leave empty for default "hyphenate")</label>
+                    </div>
+                    <div id="selectorfunction_block">
+                    <label>Selector Function:<br>
+                    <textarea cols="80" rows="20" id="selectorfunction" name="selectorfunction">function (hyphenateClass) {
+    var tmp, el = [], i, l;
+    if (window.document.getElementsByClassName) {
+        el = contextWindow.document.getElementsByClassName(hyphenateClass);
+    } else if (window.document.querySelectorAll) {
+        el = contextWindow.document.querySelectorAll('.' + hyphenateClass);
+    } else {
+        tmp = contextWindow.document.getElementsByTagName('*');
+        l = tmp.length;
+        for (i = 0; i < l; i += 1) {
+            if (tmp[i].className.indexOf(hyphenateClass) !== -1 && tmp[i].className.indexOf(dontHyphenateClass) === -1) {
+                el.push(tmp[i]);
+            }
+        }
+    }
+    return el;
+}</textarea>
+                    </label>
+                    </div>
+                    <div id="classname_box" class="info_box">Using this method Hyphenator.js searches the DOM for elements with the indicated classname. Note: an element can have multiple classnames; separate them with spaces (e.g. &lt;div&nbsp;class="content&nbsp;hyphenate"&gt;)
+                    </div>
+                    <div id="selectorfunction_box" class="info_box">If you want to have more control over the element selection you may define your own selector function. It has to return an HTMLCollection of elements to be hyphenated. Specifially if you use a JavaScript-Framework, this may be very interesting…
+                    </div>
+
+                <p>Indicate a classname for elements that should NOT be hyphenated:<br>
+                <label><input type="text" id="donthyphenateclassname" name="donthyphenateclassname" value="" size="10"> indicate a classname (leave empty for default "donthyphenate") </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="donthyphenate_btn" class="info_btn" alt="Show-Info Button">
+                </p>
+                <div id="donthyphenate_box" class="info_box">You can turn off hyphenation for elements with the indicated classname. (Note: The following elements are never hyphenated: video, audio, script, code, pre, img, br, samp, kbd, var, abbr, acronym, sub, sup, button, option, label, textarea, input, math, svg, style)
+                </div>
+
+                <p>Indicate a classname for elements that should be hyphenated like URLs:<br>
+                <label><input type="text" id="urlclassname" name="urlclassname" value="" size="10"> indicate a classname (leave empty for default "urlhyphenate") </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="urlhyphenate_btn" class="info_btn" alt="Show-Info Button">
+                </p>
+                <div id="urlhyphenate_box" class="info_box">If there are elements that are not normal text (e.g. programming code) they can by hyphenated like URLs (using the hyphen character for URLs).
+                </div>
+
+
+                </fieldset>
+                <fieldset>
+                <legend>Toggle Box</legend>
+                    <p>Indicate how the Togglebox should be displayed:</p>
+                    <p><label><input type="checkbox" id="displaytogglebox" name="displaytogglebox"> Display Toggle Box </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="togglebox_btn" class="info_btn" alt="Show-Info Button"></p>
+                    <div id="togglebox_box" class="info_box">The standard togglebox is a small button in the upper right corner of the page. By clicking on it, the user can turn off/on hyphenation. This is useful for copying or searching text on the site.<br>
+                    Since the standard togglebox may interfere with the design of your page, you can define it on your own.
+                    </div>
+                    <div id="togglebox_block">
+                    <label><input type="radio" id="tbStandard" name="tbMethod" value="standard" checked> Standard: The standard togglebox is used.</label><br>
+                    <label><input type="radio" id="tbCustom" name="tbMethod" value="custom"> Custom: A custom Toggle Box is used</label><br>
+                    <div id="toggleboxfunction_block">
+                    <label>Toggle Box Function:<br>
+                    <textarea cols="80" rows="20" id="togglebox" name="togglebox">function () {
+    var bdy, myTextNode,
+        text = (Hyphenator.doHyphenation ? 'Hy-phen-a-tion' : 'Hyphenation'),
+        myBox = contextWindow.document.getElementById('HyphenatorToggleBox');
+    if (!!myBox) {
+        myBox.firstChild.data = text;
+    } else {
+        bdy = contextWindow.document.getElementsByTagName('body')[0];
+        myBox = createElem('div', contextWindow);
+        myBox.setAttribute('id', 'HyphenatorToggleBox');
+        myBox.setAttribute('class', dontHyphenateClass);
+        myTextNode = contextWindow.document.createTextNode(text);
+        myBox.appendChild(myTextNode);
+        myBox.onclick =  Hyphenator.toggleHyphenation;
+        myBox.style.position = 'absolute';
+        myBox.style.top = '0px';
+        myBox.style.right = '0px';
+        myBox.style.margin = '0';
+        myBox.style.backgroundColor = '#AAAAAA';
+        myBox.style.color = '#FFFFFF';
+        myBox.style.font = '6pt Arial';
+        myBox.style.letterSpacing = '0.2em';
+        myBox.style.padding = '3px';
+        myBox.style.cursor = 'pointer';
+        myBox.style.WebkitBorderBottomLeftRadius = '4px';
+        myBox.style.MozBorderRadiusBottomleft = '4px';
+        myBox.style.borderBottomLeftRadius = '4px';
+        bdy.appendChild(myBox);
+    }
+}</textarea>
+                    </label></div>
+                </div>
+                </fieldset>
+
+                <fieldset>
+                <legend>Special Settings</legend>
+                    <p>
+                        <label><input type="checkbox" id="usecb" name="usecb"> Trigger callback function when hyphenation is done </label><img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="callback_btn" class="info_btn" alt="Show-Info Button">
+                    </p>
+                    <div id="onhyphenationdonecallback_block">
+                        <label>onhyphenationdonecallback function:<br>
+                            <textarea cols="80" rows="10" id="onhyphenationdonecallback" name="onhyphenationdonecallback">onHyphenationDone = function (context) {
+    return undefined;
+}</textarea>
+                        </label>
+                    </div>
+                    <div id="callback_box" class="info_box">This function is called, when hyphenation of a page is completed. The 'context' paramater gets the href of the document.</div>
+
+
+                    <p>
+                    <label><input type="checkbox" id="useer" name="useer"> Overwrite onerrorhandler </label>
+                    <img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="onerror_btn" class="info_btn" alt="Show-Info Button">
+                    </p>
+                    <div id="onerrorhandler_block">
+                    <label>onerrorhandler function:<br>
+                    <textarea cols="80" rows="10" id="onerrorhandler" name="onerrorhandler">function(e){
+    alert("Hyphenator.js says:\n\nAn Error ocurred:\n"+e.message);
+}</textarea>
+                    </label>
+                    </div>
+                    <div id="onerror_box" class="info_box">Most errors (critical problems) are catched and catched errors dipatch the onerror function. By default there's an alert with a predefined text. You can change this function.</div>
+
+
+                    <p>
+                    <label><input type="checkbox" id="usewa" name="usewa"> Overwrite onwarninghandler </label>
+                    <img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="onwarning_btn" class="info_btn" alt="Show-Info Button"></p>
+                    <div id="onwarninghandler_block">
+                    <label>onwarninghandler function:<br>
+                    <textarea cols="80" rows="10" id="onwarninghandler" name="onwarninghandler">function (e) {
+    window.console.log(e.message);
+}</textarea>
+                    </label>
+                    </div>
+                    <div id="onwarning_box" class="info_box">Most non critical problems are catched and catched problem dipatch the onwarning function. By default there's an console.log with a predefined text. You can change this function.</div>
+        
+                    <p>
+                    <label><input type="checkbox" id="usebh" name="usebh"> Overwrite onbeforehyphenationhandler </label>
+                    <img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="onbeforehyphenation_btn" class="info_btn" alt="Show-Info Button">
+                    </p>
+                    <div id="onbeforehyphenationhandler_block">
+                    <label>onbeforehyphenationhandler function:<br>
+                    <textarea cols="80" rows="10" id="onbeforehyphenationhandler" name="onbeforehyphenationhandler">function (word) {
+    return word;
+}</textarea>
+                    </label>
+                    </div>
+                    <div id="onbeforehyphenation_box" class="info_box">This function is called for each word just before it gets hyphenated. You can change this function.</div>
+
+                    <p>
+                    <label><input type="checkbox" id="useah" name="useah"> Overwrite onbeforehyphenationhandler </label>
+                    <img src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0B%00%00%00%0B%08%03%00%00%00%9Er%87%14%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%00%0CPLTE%C1%C1%C1%D2%D2%D2%FF%FF%FF%AA%AA%AA%0D%86%93%E6%00%00%00!IDATx%DAb%60F%00%060%C1%C8%00g321%C2%D9%C8j%90%C5)aC%01%40%80%01%00R%EC%01A1%DAn%B3%00%00%00%00IEND%AEB%60%82" width="11" height="11" id="onafterhyphenation_btn" class="info_btn" alt="Show-Info Button">
+                    </p>
+                    <div id="onafterhyphenationhandler_block">
+                    <label>onafterhyphenationhandler function:<br>
+                    <textarea cols="80" rows="10" id="onafterhyphenationhandler" name="onafterhyphenationhandler">function (word) {
+    return word;
+}</textarea>
+                    </label>
+                    </div>
+                    <div id="onafterhyphenation_box" class="info_box">This function is called for each word just after it has been hyphenated. You can change this function</div>
+
+                </fieldset>
+
+                <fieldset>
+                <legend>Minify</legend>
+                <p>By minifying the resulting script you can save some bandwith. This page uses the <a href="http://fmarcia.info/jsmin/">JavaScript-Version</a> of <a href="http://www.crockford.com/javascript/jsmin.html">jsmin</a> since it's easy to run on a webpage. You may achieve better results if you pack the resulting script with other minifiers/packers such as <a href="http://developer.yahoo.com/yui/compressor/">YUI Compressor</a> or <a href="http://closure-compiler.appspot.com/home">Google's Closure Compiler</a>.</p>
+                <p>
+                    <label>
+                        <input type="checkbox" id="pack" checked> pack with jsmin
+                    </label>
+                    <label>
+                        Level
+                        <select id="packlevel" size="1" title="packlevel">
+                            <option value="1">1 - minimal</option>
+                            <option value="2">2 - normal</option>
+                            <option value="3" selected>3 - aggressive</option>
+                        </select>
+                    </label>
+                </p>
+                </fieldset>
+            </fieldset>
+            <p>
+            <input type="reset" value=" Reset! ">
+            <input id="create2" type="submit" value=" Create! ">
+            </p>
+        </form>
+        <hr>
+        <div id="Hyphenator_output_block">
+            <p class="hyphenate">Copy the merged and packed script from the output field as is to a new text-file, give it a name (e.g. <code>"hyphenate.js"</code>) and include it in your website (<code>&lt;script src="hyphenate.js" type="text/javascript"&gt;&lt;/script&gt;</code>).<br>
+            It will run automatically.</p>
+            <p class="hyphenate">
+            Note: You are not allowed to remove the licensing at the beginning of the script!</p>
+            <p>
+            <label>Output Hyphenator.js (plus patterns):<br>
+            <a name="outanchor1"></a>
+            <textarea id="output1" name="output1" cols="80" rows="20"> </textarea></label>
+            </p>
+        </div>
+        <div id="Hyphenator_Loader_output_block">
+            <p class="hyphenate">You are using Hyphenator_Loader.js. Therefor you have to create two script files as described below:</p>
+            <p class="hyphenate">Copy the packed script from the first output field below as is to a new text-file, give it a name (e.g. <code>"hyphenator.js"</code>. Make sure this is the same name as you configured Hyphenator_Loader.js for.) and include it in your website (<code>&lt;script src="hyphenator.js" type="text/javascript"&gt;&lt;/script&gt;</code>).</p>
+            <p class="hyphenate">
+            Note: You are not allowed to remove the licensing at the beginning of the script!</p>
+            <p>
+            <label>Output Hyphenator.js:<br>
+            <a name="outanchor2"></a>
+            <textarea id="output2" name="output2" cols="80" rows="20"> </textarea></label>
+            </p>
+
+            <p class="hyphenate">Copy the script from the output field as is to a new text-file, give it a name (e.g. <code>"hylo.js"</code>) and include it in your website (<code>&lt;script src="hylo.js" type="text/javascript"&gt;&lt;/script&gt;</code>).<br>
+            It will run automatically. Make sure that Hyphenator.js  and the pattern files are available, too!</p>
+            <p class="hyphenate">
+            Note: You are not allowed to remove the licensing at the beginning of the script!</p>        
+            <p>
+            <label>Output Hyphenator_Loader.js:<br>
+            <a name="outanchor3"></a>
+            <textarea id="output3" name="output3" cols="80" rows="20"> </textarea></label>
+            </p>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Hyphenator.js</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <style type="text/css">
+            body {
+                width:30%;
+                margin-left:35%;
+                margin-right:35%;
+            }
+            .hyphenate {
+                text-align:justify;
+                hyphens: auto;
+                -webkit-hyphens: auto;
+                -ms-hyphens: auto;
+                -moz-hyphens: auto;
+            }
+        </style>
+        <script src="Hyphenator_Loader.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        	Hyphenator_Loader.init(
+                {
+                    "en": "automatically",
+                    "de": "Silbentrennungsalgorithmus"
+                },
+                "./Hyphenator.js"
+            );
+        </script>
+    </head>
+    <body>
+        <h1>Example of using Hyphenator.js</h1>
+        <h2>Deutsch</h2>
+        <p class="hyphenate" lang="de">Deutschsprachige Beispieltexte haben natürlicherweise längere Wortzusammensetzungen als englischsprachige. Aber auch <span lang="en">“hyphenation”</span> ist ein ziemlich langes Kompositum.</p>
+        <p class="hyphenate" lang="de">Verändern Sie die Fenstergrösse um den Effekt der Silbentrennung zu sehen.</p>
+        <h2>English</h2>
+        <p class="hyphenate" lang="en">English words are shorter in the average then german words. <span lang="de">«Silbentrennungsalgorithmus»</span> for example is quite long.</p>
+        <p class="hyphenate" lang="en">Resize the window to see hyphenation in effect.</p>
+        <h2>Links</h2>
+        <p class="hyphenate" lang="en">Not only words but also links like <a href="https://github.com/mnater/Hyphenator">https://github.com/mnater/Hyphenator</a> are processed. But in a special manner (using zero width space).</p>
+    </body>
+</html>

@@ -16,5 +16,8 @@
     {{ item.content }}
 {% endfor %}
 
+{% if edition.pdf_engine == 'wkhtmltopdf' %}
+    {% include 'wkhtmltopdf-book-body.twig' %}
+{% endif %}
 </body>
 </html>

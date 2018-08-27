@@ -1,0 +1,237 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <title>Hyphenator &ndash; reducePatternSet</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <style type="text/css">
+            body {
+                font: 11px/1.8em Verdana;
+                margin-left: 20%;
+                margin-right:20%;
+                background-color:#EEEEEE;
+                width:60em;
+            }
+            fieldset {
+                background-color:#FFFFFF;
+                border:1px solid #AAAAAA;
+                margin:1em 0em;
+                padding: 0em 1em 2em 1em;
+            }
+            h1 {
+                background-color:#FFFFFF;
+                border:1px solid #AAAAAA;
+                margin:1em 0em;
+                color: #404041;
+                text-align:right;
+                
+            }
+            img {
+                vertical-align:middle;
+            }
+            .info_btn {
+                vertical-align:text-bottom;
+                cursor:pointer;
+            }
+            .info_box {
+                display:none;
+                border:1px dashed #AAAAAA;
+                padding:0.2em 1em;
+                font-style:italic;
+            }
+            .multicol {
+                text-align:justify;
+                width: 28em;
+                float:left;
+                margin:0em 1em;
+            }
+            ul.multicol {
+                width:21em;
+                padding:0;
+                margin:0;
+                
+            }
+            li {
+                list-style:none;
+            }
+            form {
+                clear: both;
+                padding-top:2em;
+            }
+            legend {
+                border:1px solid #AAAAAA;
+                background-color:#FFFFFF;
+                padding:0em 1em;
+                font-style: italic;
+                font-weight: 200;
+            }
+            input {
+                margin-right:1em;
+            }
+            textarea {
+                width:100%;
+            }
+            .grayedout {
+                border: 1px solid grey;
+                color: grey;
+            }
+         </style>
+         <script src="Hyphenator.js" type="text/javascript"></script>
+        <script src="patterns/be.js" type="text/javascript"></script>
+        <script src="patterns/bn.js" type="text/javascript"></script>
+        <script src="patterns/ca.js" type="text/javascript"></script>
+        <script src="patterns/cs.js" type="text/javascript"></script>
+        <script src="patterns/da.js" type="text/javascript"></script>
+        <script src="patterns/de.js" type="text/javascript"></script>
+        <script src="patterns/el-monoton.js" type="text/javascript"></script>
+        <script src="patterns/el-polyton.js" type="text/javascript"></script>
+        <script src="patterns/en-gb.js" type="text/javascript"></script>
+        <script src="patterns/en-us.js" type="text/javascript"></script>
+        <script src="patterns/eo.js" type="text/javascript"></script>
+        <script src="patterns/es.js" type="text/javascript"></script>
+        <script src="patterns/et.js" type="text/javascript"></script>
+        <script src="patterns/fi.js" type="text/javascript"></script>
+        <script src="patterns/fr.js" type="text/javascript"></script>
+        <script src="patterns/gu.js" type="text/javascript"></script>
+        <script src="patterns/grc.js" type="text/javascript"></script>
+        <script src="patterns/hi.js" type="text/javascript"></script>
+        <script src="patterns/hu.js" type="text/javascript"></script>
+        <script src="patterns/hy.js" type="text/javascript"></script>
+        <script src="patterns/it.js" type="text/javascript"></script>
+        <script src="patterns/kn.js" type="text/javascript"></script>
+        <script src="patterns/la.js" type="text/javascript"></script>
+        <script src="patterns/lt.js" type="text/javascript"></script>
+        <script src="patterns/lv.js" type="text/javascript"></script>
+        <script src="patterns/ml.js" type="text/javascript"></script>
+        <script src="patterns/nl.js" type="text/javascript"></script>
+        <script src="patterns/nb-no.js" type="text/javascript"></script>
+        <script src="patterns/or.js" type="text/javascript"></script>
+        <script src="patterns/pa.js" type="text/javascript"></script>
+        <script src="patterns/pl.js" type="text/javascript"></script>
+        <script src="patterns/pt.js" type="text/javascript"></script>
+        <script src="patterns/ro.js" type="text/javascript"></script>
+        <script src="patterns/ru.js" type="text/javascript"></script>
+        <script src="patterns/sk.js" type="text/javascript"></script>
+        <script src="patterns/sl.js" type="text/javascript"></script>
+        <script src="patterns/sr-latn.js" type="text/javascript"></script>
+        <script src="patterns/sv.js" type="text/javascript"></script>
+        <script src="patterns/ta.js" type="text/javascript"></script>
+        <script src="patterns/te.js" type="text/javascript"></script>
+        <script src="patterns/tr.js" type="text/javascript"></script>
+        <script src="patterns/uk.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        window.onload = function () {
+            document.getElementById('myform').onsubmit = function (e) {
+                if (e && e.preventDefault) {
+                        e.preventDefault();
+                } else if (window.event) {
+                    window.event.returnValue = false;
+                }
+                var text = document.getElementById('text').value,
+                language = document.getElementById('language').value;
+                Hyphenator.hyphenate(text, language);
+                var patSet = Hyphenator.getRedPatternSet(language),
+                s = '', k;
+                for(k in patSet) {
+                    s += patSet[k].replace(/_/g, '.') + ' ';
+                }
+                var output = document.getElementById('output');
+                output.firstChild.data = '';
+                output.firstChild.data = s;
+                
+                output.focus();
+                output.select();
+                return false;
+            };
+        };
+        Hyphenator.config({
+            remoteloading:false,
+            displaytogglebox: true,
+            enablereducedpatternset: true,
+            storagetype: 'none'
+        });
+        </script>
+        
+    </head>
+    <body>
+        <h1>reducePatternSet <svg  height="60" width="150" version="1.1" style="vertical-align: middle">
+                <g font-family="Consolas" font-weight="bold" font-size="36px" transform="translate(-90,-191)">
+                    <text y="230" x="139" fill="#bbb">&amp;shy;</text>
+                    <text line-height="70%" fill="#444">
+                        <tspan y="218" x="103">Hyphen-</tspan>
+                        <tspan y="243" x="103">ator.js</tspan>
+                    </text>
+                    <text font-weight="normal" line-height="125%" font-size="32px" y="228" x="89" fill="#000">{</text>
+                </g>
+            </svg>
+        </h1>
+        <p class="multicol hyphenate">
+            Hyphenator uses a large set of patterns to hyphenate words. If you have a static site (i.e. a site that will not be changed) it may be convenient to reduce the set of patterns to those wich are actually used. This helps to save lots of bits of your pageload.</p>
+        <p class="multicol hyphenate">
+            The script loads the version of Hyphenator.js that resides in the same directory as this page.
+        </p>
+        <form action="#outanchor" method="post" id="myform">
+            <fieldset>
+                <legend>Reduce Patterns for this text:</legend>
+                <p>Enter the text(s) of your static site here:</p>
+                <textarea id="text" rows="20" cols="20"></textarea>
+                <p>Select the language:</p>
+                <select id="language" name="language" size="1" title="language">
+                    <option value="be">Беларуская (Belarusian)</option>
+                    <option value="bn">বাংলা (Bengali)</option>
+                    <option value="ca">Català (Catalan)</option>
+                    <option value="cs">Česky (Czech)</option>
+                    <option value="da">Dansk (Danish)</option>
+                    <option value="de" selected>Deutsch (German)</option>
+                    <option value="el-monoton">monton greek</option>
+                    <option value="el-polyton">polyton greek</option>
+                    <option value="en-us">American English</option>
+                    <option value="en-gb">British English</option>
+                    <option value="et">Eesti (Estonian)</option>
+                    <option value="eo">Esperanto (Esperanto)</option>
+                    <option value="es">Español (Spanish)</option>
+                    <option value="fi">Suomi (Finnish)</option>                    
+                    <option value="fr">Français (French)</option>
+                    <option value="grc">ancient greek</option>
+                    <option value="gu">ગુજરાતી (Gujarati)</option>
+                    <option value="hi">हिंदी (Hindi)</option>
+                    <option value="hu">Magyar (Hungarian)</option>
+                    <option value="hy">Հայերեն լեզու (Armenian)</option>
+                    <option value="it">Italiano (Italian)</option>
+                    <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                    <option value="la">Latin (Latin)</option>
+                    <option value="lt">Lietuvių (Lithuanian)</option>
+                    <option value="lv">latviešu valoda (Latvian)</option>
+                    <option value="ml">മലയാളം (Malayalam)</option>
+                    <option value="nl">Nederlands (Dutch)</option>
+                    <option value="nb-no">Norsk (Norwegian)</option>
+                    <option value="or">ଓଡ଼ିଆ (Oriya)</option>
+                    <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                    <option value="pl">Polski (Polish)</option>
+                    <option value="pt">Português (Portuguese)</option>
+                    <option value="ro">Română (Romanian)</option>
+                    <option value="ru">Pyccĸий (Russian)</option>
+                    <option value="sk">Slovenčina (Slovak)</option>
+                    <option value="sl">Slovenščina (Slovenian)</option>
+                    <option value="sr-latn">Srpski (Serbian, Latin script)</option>
+                    <option value="sv">Svenska (Swedish)</option>
+                    <option value="ta">தமிழ் (Tamil)</option>
+                    <option value="te">తెలుగు (Telugu)</option>
+                    <option value="tr">Türkçe (Turkish)</option>
+                    <option value="uk">Українська (Ukrainian)</option>
+                </select>
+                <p>
+                <input id="create2" type="submit" value=" Go! ">
+                <input type="reset" value=" Reset! ">
+                </p>
+            </fieldset>
+            <fieldset>
+                <legend>Output:</legend>
+                <a name="outanchor"></a>
+                <p>Copy this to the inputfield in <a href="compressor.html">compressor.html</a>:</p>
+                <textarea id="output" rows="20" cols="20">
+                </textarea>
+            </fieldset>
+        </form>
+    </body>
+</html>
