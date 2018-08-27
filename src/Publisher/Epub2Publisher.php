@@ -200,45 +200,6 @@ final class Epub2Publisher extends AbstractPublisher
     }
 
     /**
-     * It prepares the book images by copying them into the appropriate
-     * temporary directory. It also prepares an array with all the images
-     * data needed later to generate the full ebook contents manifest.
-     *
-     * @param string $targetDir The directory where the images are copied.
-     *
-     * @return mixed[]
-     */
-    private function prepareBookImages(string $targetDir): array
-    {
-        $this->ensureDirectoryExists($targetDir, 'images');
-
-        $imagesDir = $this->bookContentsDir . '/images';
-        if (! file_exists($imagesDir)) {
-            return [];
-        }
-
-        $imagesData = [];
-
-        $images = $this->finder->files()
-            ->in($imagesDir)
-            ->getIterator();
-
-        $i = 1;
-        foreach ($images as $image) {
-            $this->filesystem->copy($image->getPathName(), $targetDir . '/' . $image->getFileName());
-
-            // @todo object?
-            $imagesData[] = [
-                'id' => 'figure-' . ++$i,
-                'filePath' => 'images/' . $image->getFileName(),
-                'mediaType' => 'image/' . pathinfo($image->getFilename(), PATHINFO_EXTENSION),
-            ];
-        }
-
-        return $imagesData;
-    }
-
-    /**
      * It prepares the book cover image if defined
      *
      * @return mixed[]|null
