@@ -24,6 +24,11 @@ final class Edition
      */
     private $imagesBaseDir;
 
+    /**
+     * @var mixed[]
+     */
+    private $tableOfContents = [];
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -74,5 +79,21 @@ final class Edition
     public function getImagesBaseDir(): ?string
     {
         return $this->imagesBaseDir;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getTableOfContents(): array
+    {
+        return $this->tableOfContents;
+    }
+
+    /**
+     * @param mixed[] $tableOfContents
+     */
+    public function setTableOfContents(array $tableOfContents): void
+    {
+        $this->tableOfContents = $tableOfContents;
     }
 }

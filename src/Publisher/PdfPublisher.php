@@ -2,6 +2,7 @@
 
 namespace Easybook\Publisher;
 
+use Easybook\Book\Edition;
 use Easybook\Exception\Publisher\PublisherException;
 use Easybook\Exception\Publisher\RequiredBinFileNotFoundException;
 use mikehaertl\wkhtmlto\Pdf;
@@ -39,10 +40,16 @@ final class PdfPublisher extends AbstractPublisher
      */
     private $pdf;
 
-    public function __construct(?string $wkhtmltopdfPath, Pdf $pdf)
+    /**
+     * @var string
+     */
+    private $kernelCacheDir;
+
+    public function __construct(?string $wkhtmltopdfPath, Pdf $pdf, string $kernelCacheDir)
     {
         $this->wkhtmltopdfPath = $wkhtmltopdfPath;
         $this->pdf = $pdf;
+        $this->kernelCacheDir = $kernelCacheDir;
     }
 
     public function getFormat(): string
@@ -70,11 +77,11 @@ final class PdfPublisher extends AbstractPublisher
      * - TOC filtering is (very) limited, performed via XSLT
      *   tranfsormation.
      */
-    public function assembleBook(string $outputDirectory): string
+    public function assembleBook(string $outputDirectory, Edition $edition): string
     {
         $this->ensureExistingWkhtmlpdfPathIsSet();
 
-        $tmpDir = $this->app['app.dir.cache'] . '/' . uniqid('easybook_pdf_');
+        $tmpDir = $this->kernelCacheDir . '/' . uniqid('easybook_pdf_');
         $this->filesystem->mkdir($tmpDir);
 
         // consolidate book images to temp dir
@@ -97,7 +104,7 @@ final class PdfPublisher extends AbstractPublisher
         $globalOptions = array_merge($globalOptions, $this->prepareStyleSheet($tmpDir));
 
         // prepare page options like headers and footers
-        $pageOptions = $this->prepareHeaderAndFooter($tmpDir);
+        $pageOptions = $this->prepareHeaderAndFooter($tmpDir, $edition);
 
         // top and bottom margins need to be tweaked to make room for header/footer
         $globalOptions['margin-top'] += $pageOptions['header-spacing'];
@@ -126,44 +133,6 @@ final class PdfPublisher extends AbstractPublisher
         }
 
         return $outputDirectory . '/book.pdf';
-    }
-
-    /**
-     * Set global wkhtmptopdf options.
-     *
-     * @return mixed[] options
-     */
-    protected function setGlobalOptions(string $tmpDir): array
-    {
-        // margins and media size
-        // TODO: allow other units (inches, cms)
-        $margin = $this->app->edition('margin');
-        $marginTop = str_replace('mm', '', $margin['top']);
-        $marginBottom = str_replace('mm', '', $margin['bottom']);
-        $marginLeft = str_replace('mm', '', $margin['inner']);
-        $marginRight = str_replace('mm', '', $margin['outer'] ?? $margin['outter']);
-
-        $orientation = $this->app->edition('orientation') ?: 'portrait';
-
-        $newOptions = [
-            'page-size' => $this->app->edition('page_size'),
-            'margin-top' => $marginTop ?: 25,
-            'margin-bottom' => $marginBottom ?: 25,
-            'margin-left' => $marginLeft ?: 30,
-            'margin-right' => $marginRight ?: 20,
-            'orientation' => $orientation,
-            'encoding' => 'UTF-8',
-            'print-media-type',
-        ];
-
-        // misc.
-        $edition = $this->app->edition('toc');
-        $newOptions['outline-depth'] = $edition['deep'];
-
-        // dump outline xml for easy outline/toc debugging
-        $newOptions['dump-outline'] = $tmpDir . '/outline.xml';
-
-        return $newOptions;
     }
 
     /**
@@ -203,12 +172,12 @@ final class PdfPublisher extends AbstractPublisher
      *
      * @return mixed[] options
      */
-    protected function prepareHeaderAndFooter(string $tmpDir): array
+    protected function prepareHeaderAndFooter(string $tmpDir, Edition $edition): array
     {
         $newOptions = [];
 
         $headerFooterFile = $tmpDir . '/header-footer.yml';
-        $this->renderer->render('@theme/wkhtmltopdf-header-footer.yml.twig', [], $headerFooterFile);
+        $this->renderer->renderToFile('@theme/wkhtmltopdf-header-footer.yml.twig', [], $headerFooterFile);
 
         $values = Yaml::parse(file_get_contents($headerFooterFile));
 
@@ -260,10 +229,10 @@ final class PdfPublisher extends AbstractPublisher
     /**
      * Render the TOC XSLT file.
      */
-    protected function renderToc(string $tmpDir, string $tocTitle): string
+    protected function renderToc(string $tmpDir, string $tocTitle, Edition $edition): string
     {
         $tocFilePath = $tmpDir . '/toc.xsl';
-        $toc = $this->app->edition('toc');
+        $toc = $edition->getTableOfContents();
 
         $this->renderer->render(
             'wkhtmltopdf-toc.xsl.twig',
@@ -275,6 +244,44 @@ final class PdfPublisher extends AbstractPublisher
         );
 
         return $tocFilePath;
+    }
+
+    /**
+     * Set global wkhtmptopdf options.
+     *
+     * @return mixed[] options
+     */
+    private function setGlobalOptions(string $tmpDir): array
+    {
+        // margins and media size
+        // TODO: allow other units (inches, cms)
+        $margin = $this->app->edition('margin');
+        $marginTop = str_replace('mm', '', $margin['top']);
+        $marginBottom = str_replace('mm', '', $margin['bottom']);
+        $marginLeft = str_replace('mm', '', $margin['inner']);
+        $marginRight = str_replace('mm', '', $margin['outer'] ?? $margin['outter']);
+
+        $orientation = $this->app->edition('orientation') ?: 'portrait';
+
+        $newOptions = [
+            'page-size' => $this->app->edition('page_size'),
+            'margin-top' => $marginTop ?: 25,
+            'margin-bottom' => $marginBottom ?: 25,
+            'margin-left' => $marginLeft ?: 30,
+            'margin-right' => $marginRight ?: 20,
+            'orientation' => $orientation,
+            'encoding' => 'UTF-8',
+            'print-media-type',
+        ];
+
+        // misc.
+        $edition = $this->app->edition('toc');
+        $newOptions['outline-depth'] = $edition['deep'];
+
+        // dump outline xml for easy outline/toc debugging
+        $newOptions['dump-outline'] = $tmpDir . '/outline.xml';
+
+        return $newOptions;
     }
 
     /**

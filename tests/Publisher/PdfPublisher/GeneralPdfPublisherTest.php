@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Easybook\Tests\Publishers;
+namespace Easybook\Tests\Publisher\PdfPublisher;
 
 use Easybook\Console\Command\PublishCommand;
 use Easybook\Tests\AbstractContainerAwareTestCase;

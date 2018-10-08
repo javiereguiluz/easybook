@@ -13,4 +13,6 @@ interface PublisherInterface
      * @return string Path to published file.
      */
     public function publishBook(string $outputDirectory): string;
+
+    // @todo interfac - create book from edition to output.
 }
